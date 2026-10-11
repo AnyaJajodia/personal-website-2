@@ -1,0 +1,9 @@
+# Sources and editing rules
+Older roles, technical details and numerical metrics were read from ANYA_JAJODIA_RESUME(1).pdf (April 24 2026 upload) and ANYA_JAJODIA_RESUME.pdf (February 26 2026 upload). The April résumé accidentally repeats PMMY text under teenage pregnancy; the February description supplies that entry. TMU end dates disagree and are explicitly editable.
+New Lynxster/AMNH and biography content comes from user-provided conversation details. GVI details come from user-provided background, not the retrieved résumé.
+User explicitly authorized restoring performance percentages/deployment claims and using 2027 for uncertain end dates. Display 2027 in preview while recording dateNeedsReview=true. Do not put internal bracketed EDIT notes into public page body.
+Do not invent months or start years. For missing start dates, omit the public period field until supplied. Publications with known 2022 year and ESP Jan–Dec 2024 retain those dates.
+Résumé degree is BA in Computer Science. Homepage says studying computer science, with anthropology/English minors, avoiding prior contradictory degree assumptions. Graduation date remains unconfirmed and should not be displayed.
+Metrics retain original scope: 40% anchoring-bias reduction; 35% relevant language use increase; sub-200ms at 10K+ sessions; 800+ footnotes, 92% accuracy, 30% fewer review cycles; 10+ mentees; 50+ women; 200+ girls. Do not imply these are independently audited or add measurement methods.
+Buzzworks integration was being prepared, not completed. Inteli-lens deployed desktop prototype is not production deployment. TMU manuscript planned Springer publication is not asserted as completed.
+Do not include private contract, compensation, equity, immigration details, unpublished patent claims, architecture formulas, or private repository credentials.

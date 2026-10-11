@@ -1,0 +1,14 @@
+# Definition of complete
+- All 11 detail routes and homepage anchors function, including direct load.
+- All supplied copy appears in appropriate sections; no generated mockup claims enter content.
+- Lynxster and AMNH are prominent ongoing commitments.
+- One scribble transforms into About trajectory, continues afterward, reverses with scroll and holds when stopped.
+- No viewport overflow at 375px, 768px, 1440px; titles, image crops and metadata remain legible.
+- Keyboard focus, semantic headings, descriptive links, image alt text, adequate contrast, reduced-motion behavior.
+- Header remains usable; line cannot intercept clicks or obscure content.
+- Real logos render cleanly; use SVG only after verifying its artwork/background and cropping.
+- Missing URLs do not become fake clickable links. Missing résumé does not become dead download button.
+- Appropriate lint/type/build checks pass. Browser smoke test all routes and core interactions; meaningful automated tests only where they protect behavior.
+- No broken image paths, console errors, unintended layout shifts, unnecessary heavy dependencies.
+- Dates marked for review are centralized; 2027 placeholders preserved per user request.
+- Private preview delivered with open-items checklist; no public deployment without approval.

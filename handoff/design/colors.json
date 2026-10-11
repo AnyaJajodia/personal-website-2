@@ -1,0 +1,32 @@
+{
+  "portfolio": {
+    "background": "#F7F4EE",
+    "text": "#242321",
+    "muted": "#625F59",
+    "divider": "#D6D0C6",
+    "accent": "#1D4F8C",
+    "secondary": "#5A789E"
+  },
+  "lynxster_dark": {
+    "background": "#070907",
+    "surface": "#101412",
+    "divider": "#323838",
+    "text": "#D0DEE3",
+    "muted": "#939EA1",
+    "accent": "#36AFBB"
+  },
+  "lynxster_light": {
+    "background": "#E8ECEE",
+    "surface": "#F4F5F7",
+    "accent": "#1D4F8C",
+    "text": "#070907"
+  },
+  "amnh": {
+    "background": "#F3EDE2",
+    "surface": "#FAF7F1",
+    "text": "#292722",
+    "muted": "#655F55",
+    "divider": "#D4CABB",
+    "accent": "#5A789E"
+  }
+}
