@@ -1,0 +1,86 @@
+PASS  route / @375  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/lynxster @375  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/amnh @375  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/crackd-ai @375  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/buzzworks @375  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/tmu-citation-tooling @375  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/inteli-lens @375  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/gvi-conservation @375  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/pmmy-research @375  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/teenage-pregnancy-research @375  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/esp-teaching @375  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/adi-mentorship @375  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route / @768  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/lynxster @768  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/amnh @768  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/crackd-ai @768  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/buzzworks @768  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/tmu-citation-tooling @768  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/inteli-lens @768  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/gvi-conservation @768  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/pmmy-research @768  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/teenage-pregnancy-research @768  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/esp-teaching @768  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/adi-mentorship @768  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route / @1440  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/lynxster @1440  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/amnh @1440  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/crackd-ai @1440  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/buzzworks @1440  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/tmu-citation-tooling @1440  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/inteli-lens @1440  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/gvi-conservation @1440  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/pmmy-research @1440  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/teenage-pregnancy-research @1440  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/esp-teaching @1440  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  route /work/adi-mentorship @1440  — status 200, overflow 0, h1 1, errors 0, failed 
+PASS  unknown route returns 404  — status 404
+PASS  nav anchor #about  — section top 67px, url #about
+PASS  nav anchor #work  — section top 67px, url #work
+PASS  nav anchor #more  — section top 67px, url #more
+PASS  nav anchor #contact  — section top 210px, url #contact
+PASS  sticky header settles (name appears, stays at top)  — opacity 0 → 1, header top 0
+PASS  direct load /#contact scrolls to Contact  — scrollY 4457
+PASS  homepage links every detail route  — 11 unique detail links
+PASS  selected-work panel opens detail page
+PASS  browser Back restores homepage scroll  — before 2844, after 2844
+PASS  Back to work returns to /#work  — #work top 67
+PASS  detail header About → /#about  — #about top 67
+PASS  next-project link
+PASS  line shown once fonts are ready, in scroll mode
+PASS  line extends as you scroll forward  — drawn 0.0957 → 0.1434 → 0.4289 → 0.8304
+PASS  route itself never moves (no drifting attachment)
+PASS  line holds when scrolling stops
+PASS  reverse scroll retracts exactly
+PASS  line starts inside the final "a" at every scroll position  — 0.03px, 0.03px, 0.03px
+PASS  line never intercepts pointer input  — pointer-events none, z 0, hits h1/h1/h1
+PASS  reduced motion: complete line drawn statically  — {"mode":"static","paths":[102932,475],"dash":"none","behavior":"auto","labels":5,"marquee":"none"}
+PASS  reduced motion: bento marquee stopped  — none
+PASS  reduced motion: no CSS smooth scrolling
+PASS  trajectory labels are real DOM text
+PASS  reduced motion: detail line fully drawn  — dashoffset 0
+PASS  first Tab focuses skip link (visible)  — Skip to content
+PASS  keyboard order: nav then content, focus outline visible  — About|outline · Work|outline · More|outline · Contact|outline · Scroll to follow the thread |outline · Explore Lynxster ↗|card-outline · Explore AMNH ↗|card-outline · Crackd.aiSep 2025–2027Engine|outline
+PASS  detail page: brand reachable by keyboard  — Anya Jajodia.
+PASS  real Lynxster logo asset loads; role=img elements labelled  — logo 200
+PASS  no empty/placeholder hrefs anywhere
+PASS  panels: first panel open by default, names legible collapsed  — crackd 605px, buzzworks 202px
+PASS  panels: two compact rows (220–250px)  — 240 / 240px
+PASS  panels: collapsed panels show logo/mark, readable name, dates from content  — Sep 2025–2027 · May 2025–2027 · May 2025–2027 · — · — · 2022 · Jan 2024–2027
+PASS  panels: hover expands a panel and reveals its summary
+PASS  panels: expansion changes width only; logo stays put  — heights 240,240,240,240,240,240,240, logo offset 19 → 19
+PASS  panels: keyboard focus expands a panel  — /work/inteli-lens
+PASS  panels: grouped sub-links reachable and open their panel  — /work/pmmy-research
+PASS  panels: every destination present, no nested interactive elements  — 9 links, 0 nested
+PASS  bento: experiments diagram responds to pointer  — active node 0, beams 2
+PASS  bento: placeholders are not links
+PASS  mobile/touch: stacked cards with summaries and dates visible  — {"more":"1","date":true,"w":349}
+PASS  mobile: Currently features stack  — 20,20
+PASS  supplied logos load undistorted (rendered ratio = file ratio)  — amnh.png 4.59/4.59, crackd.png 2.4/2.4, buzzworks.png 3.77/3.77, tmu.png 1.83/1.83, gvi.webp 1.27/1.27
+PASS  Currently: Lynxster lockup sizeable and labelled  — {"w":189,"h":116,"label":"Lynxster"}
+PASS  dot field: reacts to pointer, then settles and stops  — {"mode":"interactive","anim":"true","pe":"none"} → false
+PASS  trajectory: the reached milestone is emphasised  — active point 4
+PASS  dot field: static on touch
+PASS  dot field: static with reduced motion
+
+84/84 checks passed

@@ -1,0 +1,7 @@
+at rest: [{"mode":"interactive","anim":"idle","vis":"true","pe":"none","z":"0"},{"mode":"interactive","anim":"idle","vis":"false","pe":"none","z":"0"}]
+pointer moving: {"mode":"interactive","anim":"true","vis":"true","pe":"none","z":"0"}
+after pointer leaves (should settle and stop): {"mode":"interactive","anim":"false","vis":"true","pe":"none","z":"0"}
+element under pointer in hero: H1
+hero field when scrolled away (visible?): false
+touch device mode: static
+reduced motion mode / animating: static / idle

@@ -1,0 +1,5 @@
+scroll 0: start (491.6, 307.2) vs expected-in-tail offset 0.03px · ready true
+scroll 120: start (491.6, 187.2) vs expected-in-tail offset 0.03px · ready true
+scroll 0: start (196.5, 433.0) vs expected-in-tail offset 0.02px · ready true
+scroll 100: start (196.5, 333.0) vs expected-in-tail offset 0.02px · ready true
+scroll 200: start (196.5, 233.0) vs expected-in-tail offset 0.02px · ready true

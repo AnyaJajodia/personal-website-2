@@ -1,0 +1,6 @@
+{"size":"1440x900","max":4457,"samples":76,"startDrawn":0.0957,"endDrawn":1,"monotonic":true,"reversible":true,"bigJumps":[],"tipOffscreen":[]}
+tip y by scroll: 0→720  300→747  600→651  900→496  1200→648  1500→662  1800→514  2100→649  2400→693  2700→498  3000→688  3300→681  3600→665  3900→692  4200→653  4457→381
+{"size":"768x1024","max":4854,"samples":82,"startDrawn":0.1087,"endDrawn":1,"monotonic":true,"reversible":true,"bigJumps":[],"tipOffscreen":[]}
+tip y by scroll: 0→819  300→758  600→719  900→779  1200→585  1500→802  1800→707  2100→746  2400→698  2700→692  3000→712  3300→732  3600→752  3900→716  4200→726  4500→754  4800→653
+{"size":"390x844","max":6814,"samples":115,"startDrawn":0.0546,"endDrawn":1,"monotonic":true,"reversible":true,"bigJumps":[],"tipOffscreen":[]}
+tip y by scroll: 0→675  300→625  600→613  900→579  1200→432  1500→587  1800→577  2100→574  2400→597  2700→619  3000→563  3300→551  3600→563  3900→575  4200→588  4500→600  4800→612  5100→623  5400→569  5700→586  6000→605  6300→623  6600→482
