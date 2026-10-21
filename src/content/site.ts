@@ -70,6 +70,14 @@ export const currently = {
       description:
         "Digitizing archival dragonfly records, helping set up 3D-printed digitization rigs, and improving the workflows around them.",
       cta: "Explore AMNH",
+      /** two separate workstreams within the museum */
+      streams: [
+        {
+          name: "Collections digitization",
+          text: "Digitizing archival dragonfly records, helping set up 3D-printed digitization rigs, and improving the workflows around them.",
+        },
+        { name: "Mantis behavioral research", text: "Joined a mantis behavioral research project. Details to come." },
+      ],
     },
   ],
 };

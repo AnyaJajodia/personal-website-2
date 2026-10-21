@@ -3,10 +3,16 @@
  *
  * ONE path, authored in DOCUMENT coordinates from measured element rects:
  *
- *   final "a" of Anya → flows right → rounded turn down the right side →
- *   sweeps left above the career trajectory → U-turn → through the five
- *   trajectory points → down the margin past Currently / Selected work / More
- *   (stepping in beside headings) → flourish by "Say hello." → leaves.
+ *   final "a" of Anya → flows right over the (empty) avatar slot → rounded
+ *   turn into the right margin → in beside the About heading → sweeps left
+ *   above the career trajectory → through the five trajectory points → back
+ *   to the margin → a knot beside "Two threads…" → the margin past the work,
+ *   stitching in at each section boundary → loop and underline at "Say hello."
+ *
+ * The line never leaves the page: wherever content runs full width it keeps
+ * to the margin (quiet, gently uneven), and it only steps into the page where
+ * there is open space — beside headings and in the gaps between sections — so
+ * some of it is always on screen.
  *
  * The path never moves (so its start stays welded to the letter). What scroll
  * controls is how much of it is drawn: every `mark` pins a waypoint to the
@@ -31,6 +37,8 @@ export type HomeLayout = {
   /** end of the final "a" of "Anya" (advance edge), on its baseline */
   nameEnd: Pt;
   hero: Rect;
+  /** the empty slot held for a future avatar (zero rect when hidden) */
+  heroSlot: Rect;
   heroIntro: Rect;
   heroCue: Rect;
   aboutHeading: Rect;
@@ -40,18 +48,24 @@ export type HomeLayout = {
   currentLabel: Rect;
   currentHeading: Rect;
   features: Rect[];
+  /** the two Currently cards together */
+  featureRow: Rect;
+  aboutBody: Rect;
   selectedLabel: Rect;
   selectedHeading: Rect;
   panels: Rect;
   moreLabel: Rect;
+  moreIntro: Rect;
+  bento: Rect;
   contact: Rect;
   contactHeading: Rect;
 };
 
 /** waypoint index `k` is reached when scrollY === s */
 export type Mark = { k: number; s: number };
-/** milestones: waypoint index where each trajectory point's shape begins */
-export type Route = { points: Pt[]; marks: Mark[]; milestones: number[] };
+/** milestones: waypoint index where each trajectory point's shape begins;
+ * guide: waypoint span [from, to] of the trajectory, faintly pre-drawn */
+export type Route = { points: Pt[]; marks: Mark[]; milestones: number[]; guide?: [number, number] };
 
 /**
  * Exit stroke of Cormorant Garamond 500 "a", relative to the end of the
@@ -61,7 +75,6 @@ export type Route = { points: Pt[]; marks: Mark[]; milestones: number[] };
 export const A_TAIL = { dx: 0.0305, dy: -0.0496, angle: 0.45 };
 
 const cx = (r: Rect) => r.left + r.width / 2;
-const cy = (r: Rect) => r.top + r.height / 2;
 
 /** Slant points like handwriting (positive = lean right) around baseline y0. */
 function slant(points: Pt[], y0: number, k = 0.22): Pt[] {
@@ -71,19 +84,6 @@ function slant(points: Pt[], y0: number, k = 0.22): Pt[] {
 /** Loop drawn while travelling downwards; bulges to the right when side = 1. */
 function vloop(x: number, y: number, rx: number, ry: number, side: 1 | -1 = 1, drift?: number): Pt[] {
   return loop(0, -ry, rx, ry, { drift: drift ?? rx * 0.9 }).map((p) => pt(x + side * -p.y, y + p.x));
-}
-
-/** A small run of cursive loops travelling right, varied so they don't look stamped. */
-function cursive(x: number, base: number, ry: number, count: number): Pt[] {
-  const sizes = [0.86, 1, 0.92, 0.8];
-  const pts: Pt[] = [];
-  let px = x;
-  for (let i = 0; i < count; i++) {
-    const r = ry * sizes[i % sizes.length];
-    pts.push(...slant(loop(px, base - r, r * 0.52, r, { drift: r * 0.5 }), base));
-    px += r * 0.95;
-  }
-  return pts;
 }
 
 export function tailTip(L: HomeLayout): { tip: Pt; dir: Pt } {
@@ -98,6 +98,17 @@ class Pen {
   pts: Pt[] = [];
   marks: Mark[] = [];
   miles: number[] = [];
+  guide: [number, number] = [0, 0];
+  /** the next waypoint starts the faint pre-drawn guide under the trajectory */
+  guideFrom() {
+    this.guide[0] = this.pts.length;
+    return this;
+  }
+  /** the last waypoint ends it */
+  guideTo() {
+    this.guide[1] = this.pts.length - 1;
+    return this;
+  }
   /** the next waypoint starts a trajectory milestone */
   mile() {
     this.miles.push(this.pts.length);
@@ -126,6 +137,32 @@ class Pen {
   }
 }
 
+/** The quiet margin and the gestures that step in from it. */
+class Margin {
+  constructor(
+    private P: Pen,
+    private gx: number,
+    private amp: number,
+    private yAt: (y: number) => number,
+  ) {}
+  /** gently uneven travel down the margin, the pen tracking the scroll */
+  run(y0: number, y1: number) {
+    if (y1 - y0 < 40) return this;
+    this.P.meander(this.gx, y0, y1, this.amp, 220, this.yAt);
+    return this;
+  }
+  /** a stitch: in from the margin through an empty band between sections, and back */
+  stitch(y0: number, y1: number, toX: number) {
+    if (y1 - y0 < 50) return this;
+    const ym = (y0 + y1) / 2;
+    const d = this.gx - toX;
+    this.P.to(pt(this.gx - d * 0.18, y0 + (y1 - y0) * 0.12), pt(toX + d * 0.08, ym - (y1 - y0) * 0.08));
+    this.P.to(pt(toX, ym + (y1 - y0) * 0.06)).at(this.yAt(ym));
+    this.P.to(pt(this.gx - d * 0.35, y1 - (y1 - y0) * 0.16), pt(this.gx, y1)).at(this.yAt(y1));
+    return this;
+  }
+}
+
 /* ---------------------------------------------------------------- wide */
 
 function wideRoute(L: HomeLayout): Route {
@@ -134,124 +171,113 @@ function wideRoute(L: HomeLayout): Route {
   const f = L.nameSize;
   const { tip: A, dir } = tailTip(L);
   const gw = vw - L.contentRight;
-  const g = gw >= 64 ? L.contentRight + gw * 0.5 : vw - Math.max(10, gw * 0.45);
-  const amp = clamp(gw * 0.22, 5, 24);
   const pen = 0.74; // where the pen sits in the viewport while the page scrolls
+  const yAt = (y: number) => y - pen * vh;
+  // the margin the line keeps beside full-width content
+  const gx = L.contentRight + gw * 0.5;
+  const M = new Margin(P, gx, clamp(gw * 0.09, 3, 9), yAt);
 
   // 1. out of the letter: start inside the tail so the join is seamless
   P.to(pt(A.x - dir.x * 0.06 * f, A.y - dir.y * 0.06 * f)).at(-1);
   P.to(A, pt(A.x + dir.x * 0.14 * f, A.y + dir.y * 0.14 * f));
 
-  // 2. flow right at about x-height, one handwritten loop on the way
-  const xr = Math.min(L.contentRight - 24, vw * 0.88);
-  const yc = A.y - 0.3 * f;
+  // 2. flow right with one handwritten loop, passing ABOVE the avatar slot
+  //    (held empty for later) rather than through it
+  const slot = L.heroSlot;
+  const hasSlot = slot.width > 0 && slot.height > 0;
+  const yc = hasSlot ? Math.min(A.y - 0.3 * f, slot.top - 40) : A.y - 0.3 * f;
   const ry = clamp(f * 0.15, 16, 32);
-  const lx = A.x + (xr - A.x) * 0.34;
+  const lx = hasSlot ? Math.min(A.x + (gx - A.x) * 0.3, slot.left - ry * 0.4) : A.x + (gx - A.x) * 0.3;
   P.to(pt(A.x + 0.4 * f, A.y - 0.2 * f), pt(lx - ry * 1.6, yc + ry * 0.55));
   P.to(...slant(loop(lx, yc - ry * 0.25, ry * 0.55, ry, { drift: ry * 0.7 }), yc + ry * 0.75));
-  P.to(pt(lx + ry * 2.4, yc + ry * 0.35), pt(A.x + (xr - A.x) * 0.68, yc - 0.03 * f));
+  P.to(pt(lx + ry * 2.4, yc + ry * 0.35), pt(A.x + (gx - A.x) * 0.7, yc - 0.03 * f));
 
-  // 3. a rounded turn down the right side, then an unhurried S through the
-  //    open space beside the intro
+  // 3. a rounded turn down into the margin, past the slot
   const R = clamp(0.42 * f, 54, 92);
-  P.to(pt(xr - R * 0.85, yc - 0.02 * f), pt(xr - R * 0.12, yc + R * 0.38), pt(xr + 4, yc + R * 1.15));
-  const xin = Math.max(L.heroIntro.right + 140, vw * 0.7, xr - 150);
+  P.to(pt(gx - R * 0.9, yc - 0.02 * f), pt(gx - R * 0.14, yc + R * 0.4), pt(gx, yc + R * 1.15));
   const h = L.hero;
-  P.to(pt(xr - 14, h.top + vh * 0.52));
-  P.to(...vloop((xr + xin) / 2, h.top + vh * 0.62, 15, 21, -1));
-  P.to(pt(xr - 4, h.top + vh * 0.8)).at(0);
-  // no ruled margin: a broad sway into the open space beside the About
-  // heading, with one small loop, before the sweep
+  const below = hasSlot ? slot.bottom : h.top + vh * 0.55;
+  // a slight hand sway on the way down, so the margin never reads as a rule
+  const sway = clamp(gw * 0.12, 4, 9);
+  const y0 = yc + R * 1.15;
+  P.to(pt(gx + sway, y0 + (below - y0) * 0.3), pt(gx - sway * 0.6, y0 + (below - y0) * 0.62)).at(0);
+  P.to(pt(gx + sway * 0.4, below - 10));
+  // then in, through the hero's open lower right, to beside the About heading
   const AH = L.aboutHeading;
-  P.to(pt(xr + 14, h.bottom - vh * 0.06));
-  P.to(pt(xr - 34, AH.top - 46));
-  P.to(...vloop(xr - 58, AH.top + AH.height * 0.3, 11, 16, -1));
-  P.to(pt(xr - 40, AH.top + AH.height * 0.62)).at(AH.top + AH.height * 0.5 - pen * vh);
+  const xa = clamp(Math.max(AH.right + 160, vw * 0.6), vw * 0.5, L.contentRight - 120);
+  P.to(pt((gx + xa) / 2 + 30, below + 70), pt(xa + 20, h.bottom - vh * 0.08)).at(h.bottom - vh * 0.08 - pen * vh);
+  P.to(pt(xa - 10, AH.top - 20));
+  P.to(...vloop(xa + 6, AH.top + AH.height * 0.32, 11, 16, 1));
+  P.to(pt(xa + 24, AH.top + AH.height * 0.72)).at(AH.top + AH.height * 0.5 - pen * vh);
 
   // 4. sweep left above the trajectory, U-turn, then through it left → right
   const c = L.trajPoints;
   const band = L.trajBand;
   const sweepY = band.top + 26;
   const ly = band.top + band.height - 24; // the trajectory's own line, close above the labels
-  const R2 = 64;
-  P.to(pt(xr - 2, sweepY - R2 * 1.3)).at(sweepY - R2 * 1.3 - 0.78 * vh);
-  P.to(pt(xr - R2 * 0.55, sweepY - 6), pt(vw * 0.62, sweepY + 7), pt(vw * 0.4, sweepY - 5));
+  P.guideFrom().to(pt(xa + 30, sweepY - 40)).at(sweepY - 40 - 0.78 * vh);
+  P.to(pt(xa - 20, sweepY - 4), pt(vw * 0.4, sweepY + 6));
   const cl = L.contentLeft;
   P.to(pt(cl + 70, sweepY + 1), pt(cl - 16, sweepY + 26), pt(cl - 24, (sweepY + ly) / 2 + 6), pt(cl + 6, ly - 8));
 
   if (c.length >= 5) {
     const xs = c.map(cx);
     const gap = xs[1] - xs[0];
-    P.to(pt(xs[0] - 46, ly - 16));
-    // 01 — the original plan: a tangle
-    P.mile().to(...knotShape(xs[0], ly - 30, 26, { turns: 3.3, phase: Math.PI * 0.9 }));
-    P.to(pt(xs[0] + gap * 0.48, ly + 12));
-    // 02 — one clear loop
-    P.mile().to(...slant(loop(xs[1], ly - 30, 15, 30), ly));
-    P.to(pt(xs[1] + gap * 0.5, ly - 4));
-    // 03 — one interest became several
-    P.mile().to(...cursive(xs[2] - 26, ly + 2, 29, 3));
-    P.to(pt(xs[2] + gap * 0.42, ly + 12));
-    // 04 — a wide loop that swings back over earlier ground
-    P.mile().to(pt(xs[3] + gap * 0.08, ly - 6), pt(xs[3] - gap * 0.18, ly - 56), pt(xs[3] - gap * 0.6, ly - 44));
-    P.to(pt(xs[3] - gap * 0.4, ly - 8), pt(xs[3] + gap * 0.05, ly + 10), pt(xs[3] + gap * 0.5, ly - 2));
+    P.to(pt(xs[0] - 42, ly - 14));
+    // 01 — the original plan: a small tangle
+    P.mile().to(...knotShape(xs[0], ly - 24, 19, { turns: 2.6, phase: Math.PI * 0.9 }));
+    P.to(pt(xs[0] + gap * 0.5, ly + 4));
+    // 02–04 — stops on one line: a quiet crest over each point, nothing more
+    for (const i of [1, 2, 3]) {
+      P.mile().to(pt(xs[i] - 22, ly + 1), pt(xs[i], ly - 11), pt(xs[i] + 22, ly + 1));
+      P.to(pt(xs[i] + gap * 0.5, ly + 3));
+    }
     // 05 — Lynxster + AMNH: two threads wound together
-    P.mile().to(...knotShape(xs[4], ly - 26, 17, { turns: 2.2, phase: Math.PI * 1.1 }));
-    P.to(pt(xs[4] + gap * 0.45, ly + 8));
+    P.mile().to(...knotShape(xs[4], ly - 20, 14, { turns: 2, phase: Math.PI * 1.1 }));
+    P.to(pt(xs[4] + gap * 0.45, ly + 6));
   }
-  // still following the thread: on past the last point, then a rounded turn down
-  P.to(pt(cx(L.trajEnd), ly - 18)).at(band.top + band.height * 0.5 - 0.32 * vh);
-  P.to(pt(g - 26, ly - 14), pt(g + 2, ly + 34));
+  // still following the thread: on past the last point and back to the margin
+  P.to(pt(cx(L.trajEnd), ly - 18)).at(band.top + band.height * 0.5 - 0.32 * vh).guideTo();
+  P.to(pt(L.contentRight + gw * 0.2, ly + 16), pt(gx, ly + 80)).at(yAt(ly + 80));
 
-  // 5. released into the work sections, along the margin with rounded swings
-  const yAt = (y: number) => y - pen * vh;
-  P.meander(g, ly + 34, L.currentLabel.top - 110, amp, 420, yAt);
-  // Currently: a knot beside "Two threads I'm following."
+  // 5. down the margin beside the About text, then a knot beside
+  //    "Two threads I'm following." — the one gesture in Currently
   const C = L.currentHeading;
+  M.run(ly + 80, C.top - 50);
   const r = 22;
-  const kx = clamp(C.right + 150, C.right + 90, L.contentRight - 70);
+  const kx = Math.max(C.right + 140, L.contentRight - 230);
   const ky = C.top + C.height * 0.45;
-  P.to(pt(g - 14, L.currentLabel.top - 44), pt(kx + r * 2.6, ky - r * 1.8)).at(yAt(ky - r * 1.8));
+  P.to(pt(gx - 16, C.top - 14), pt(kx + r * 2.6, ky - r * 1.8)).at(yAt(ky - r * 1.8));
   P.to(...knotShape(kx, ky, r, { turns: 2.6, phase: 0, dir: -1 }));
-  P.to(pt(kx + r * 1.8, ky + r * 2.1)).at(yAt(ky) + 120);
-  P.to(pt(g, C.bottom + 70));
-  const fb = L.features.length ? Math.max(...L.features.map((x) => x.bottom)) : C.bottom + 300;
-  const ft = L.features.length ? Math.min(...L.features.map((x) => x.top)) : C.bottom + 60;
-  P.meander(g, C.bottom + 70, (ft + fb) / 2 - 40, amp, 380, yAt);
-  P.to(...vloop(g + 2, (ft + fb) / 2 - 14, 10, 14, -1));
-  P.meander(g, (ft + fb) / 2 + 30, L.selectedLabel.top - 110, amp, 380, yAt);
+  const F = L.featureRow;
+  P.to(pt(kx + r * 2.2, ky + r * 2), pt(gx - 6, F.top + 4)).at(yAt(F.top + 4));
 
-  // Selected work: loops beside the heading (or in the label row if tight)
-  const S = L.selectedHeading;
-  const useHeading = L.contentRight - S.right > 280;
-  const base = useHeading ? S.top + S.height * 0.62 : cy(L.selectedLabel) + 12;
-  const sx = useHeading ? S.right + 80 : Math.max(L.contentRight - 220, L.selectedLabel.right + 40);
-  P.to(pt(g - 16, base - 90), pt(sx - 20, base + 2)).at(yAt(base));
-  P.to(...cursive(sx, base + 4, 23, 3));
-  P.to(pt(sx + 3 * 23 + 40, base + 10)).at(yAt(base) + 90);
-  P.to(pt(g, base + 110));
-  P.meander(g, base + 110, L.panels.bottom - 30, amp, 400, yAt);
+  // 6. where the work dominates, the line keeps quietly to the margin —
+  //    stepping in only through the empty band between sections
+  M.run(F.top + 4, F.bottom + 10);
+  const W = L.panels;
+  M.stitch(F.bottom + 10, W.top - 12, L.contentRight - clamp(vw * 0.1, 70, 150));
+  M.run(W.top - 12, W.bottom + 10);
+  // More: the intro sits on the right at wide widths, so the stitch stays above it
+  const mi = L.moreIntro;
+  const B = L.bento;
+  const introRight = mi.width > 0 && mi.left > vw * 0.4;
+  M.stitch(W.bottom + 10, (introRight ? mi.top : B.top) - 14, L.contentRight - clamp(vw * 0.08, 60, 120));
+  M.run((introRight ? mi.top : B.top) - 14, B.bottom + 10);
 
-  // More: one loose loop in the open band between the panels and the More rule
-  const gapTop = L.panels.bottom;
-  const gapBot = L.moreLabel.top;
-  const my = (gapTop + gapBot) / 2 + 8;
-  const ry2 = clamp((gapBot - gapTop) * 0.2, 14, 26);
-  const mx = clamp(vw * 0.8, L.contentLeft + 200, L.contentRight - 60);
-  P.to(pt(g - 14, gapTop + 16), pt(mx + ry2 * 2.4, my - ry2 * 0.6)).at(yAt(my));
-  P.to(...slant(loop(mx, my - ry2, ry2 * 0.55, ry2, { dir: -1, drift: ry2 * 0.7 }), my));
-  P.to(pt(mx - ry2 * 1.6, my + ry2 * 0.3), pt(g - 30, gapBot - 4), pt(g, gapBot + 60)).at(yAt(my) + 90);
-  P.meander(g, gapBot + 60, L.contact.top - 150, amp, 400, yAt);
-
-  // Contact: sweep in above the label row, drop beside "Say hello.", leave quietly
+  // 7. the ending: in for "Say hello.", one loop past the full stop, and it
+  //    comes to rest as an underline beneath the words
   const K = L.contactHeading;
-  const kb = K.top + K.height * 0.62;
-  const kxs = K.right + Math.min(110, (vw - K.right) * 0.2);
-  P.to(pt(g - 10, L.contact.top - 110), pt(vw * 0.6, L.contact.top - 30)).at(yAt(L.contact.top - 30));
-  P.to(pt(kxs - 10, K.top + K.height * 0.1), pt(kxs - 24, kb - 6), pt(kxs - 6, kb + 6));
-  P.to(...cursive(kxs + 14, kb + 6, clamp(K.height * 0.24, 16, 28), 3));
-  P.to(pt(kxs + 150, kb + 14), pt(kxs + 320, kb - 4), pt(vw + 60, kb - 26)).at(Number.POSITIVE_INFINITY);
-  return { points: P.pts, marks: P.marks, milestones: P.miles };
+  M.run(B.bottom + 10, K.top - 90);
+  const kr = clamp(K.height * 0.2, 16, 30);
+  const lp = K.right + Math.min(90, (vw - K.right) * 0.18);
+  const uy = K.top + K.height * 1.1;
+  P.to(pt(gx - 20, K.top - 50), pt(K.right + Math.min(320, (vw - K.right) * 0.6), K.top - 20)).at(yAt(K.top - 20));
+  P.to(pt(lp + kr * 2.4, K.top + K.height * 0.3));
+  P.to(...slant(loop(lp, K.top + K.height * 0.62 - kr, kr * 0.55, kr, { dir: -1, drift: kr * 0.8 }), K.top + K.height * 0.62));
+  P.to(pt(lp - kr * 1.4, K.top + K.height * 0.8), pt(K.right - 6, uy - 2));
+  P.to(pt(K.left + K.width * 0.55, uy + 5), pt(K.left + 18, uy + 1), pt(K.left - 4, uy - 12)).at(Number.POSITIVE_INFINITY);
+  return { points: P.pts, marks: P.marks, milestones: P.miles, guide: P.guide };
 }
 
 /* -------------------------------------------------------------- narrow */
@@ -262,84 +288,86 @@ function narrowRoute(L: HomeLayout): Route {
   const f = L.nameSize;
   const { tip: A, dir } = tailTip(L);
   const gw = vw - L.contentRight;
-  const edge = vw - Math.max(8, gw * 0.42);
-  const off = vw + 36;
+  const gx = L.contentRight + gw * 0.5;
   const yAt = (y: number) => y - 0.74 * vh;
+  const M = new Margin(P, gx, clamp(gw * 0.14, 2, 7), yAt);
 
   P.to(pt(A.x - dir.x * 0.06 * f, A.y - dir.y * 0.06 * f)).at(-1);
   P.to(A, pt(A.x + dir.x * 0.13 * f, A.y + dir.y * 0.13 * f));
-  const W = edge - A.x;
+  const W0 = gx - A.x;
   const yc = A.y - 0.28 * f;
-  if (W > 140) {
+  if (W0 > 140) {
     const ry = clamp(f * 0.15, 10, 18);
-    const lx = A.x + W * 0.42;
+    const lx = A.x + W0 * 0.42;
     P.to(pt(lx - ry * 1.6, yc + ry * 0.6));
     P.to(...slant(loop(lx, yc - ry * 0.25, ry * 0.55, ry, { drift: ry * 0.7 }), yc + ry * 0.75));
     P.to(pt(lx + ry * 2.2, yc + ry * 0.3));
   } else {
-    P.to(pt(A.x + W * 0.5, yc + 4));
+    P.to(pt(A.x + W0 * 0.5, yc + 4));
   }
-  // rounded turn down the right edge
-  P.to(pt(edge - 20, yc - 2), pt(edge - 3, yc + 22), pt(edge, yc + 60));
-  const h = L.hero;
-  const y80 = Math.max(yc + 90, h.top + vh * 0.8);
-  P.meander(edge, yc + 60, y80, Math.min(gw * 0.18, 6), 260);
-  P.at(0);
-  // past the cue and heading just inside the edge, then sweep left into the
-  // open gap under "A fairly straightforward career trajectory."
+  // the flourish turns down into the margin (the slot above the name stays clear) …
   const H = L.aboutHeading;
-  P.meander(edge, y80, H.bottom - 6, Math.min(gw * 0.18, 6), 300, yAt);
+  P.to(pt(gx - 16, yc + 2), pt(gx, yc + 34)).at(0);
+  // … keeps to it past the intro, and sweeps in below the About heading
+  M.run(yc + 34, H.bottom - 6);
   const c = L.trajPoints;
   const lx = L.contentLeft + 16;
   const sweepY = H.bottom + 28;
-  P.to(pt(edge - 18, sweepY - 4), pt(vw * 0.55, sweepY + 6)).at(yAt(sweepY));
+  P.guideFrom().to(pt(gx - 14, sweepY - 6), pt(vw * 0.55, sweepY + 6)).at(yAt(sweepY));
   if (c.length >= 5) {
     const ys = c.map((r) => r.top + 16);
     const step = ys[1] - ys[0];
     P.to(pt(lx + 40, ys[0] - 34));
-    P.mile().to(...knotShape(lx + 4, ys[0], 13, { turns: 3, phase: -Math.PI / 2 }));
+    P.mile().to(...knotShape(lx + 4, ys[0], 11, { turns: 2.6, phase: -Math.PI / 2 }));
     P.to(pt(lx - 2, ys[0] + step * 0.5)).at(yAt(ys[0] + step * 0.5));
-    P.mile().to(...vloop(lx, ys[1] - 8, 9, 13));
-    P.to(pt(lx + 2, ys[1] + step * 0.45)).at(yAt(ys[1] + step * 0.45));
-    P.mile().to(...vloop(lx, ys[2] - 16, 7, 10), ...vloop(lx, ys[2] + 2, 8, 12));
-    P.to(pt(lx - 1, ys[2] + step * 0.5)).at(yAt(ys[2] + step * 0.5));
-    // revisit: swing back up before continuing
-    P.mile().to(pt(lx + 8, ys[3] + 6), pt(lx + 22, ys[3] - step * 0.35), pt(lx + 6, ys[3] - step * 0.55));
-    P.to(pt(lx - 6, ys[3] - step * 0.2), pt(lx, ys[3] + step * 0.3)).at(yAt(ys[3] + step * 0.3));
-    P.mile().to(...knotShape(lx + 4, ys[4], 11, { turns: 2.2, phase: -Math.PI / 2 }));
+    for (const i of [1, 2, 3]) {
+      P.mile().to(pt(lx - 1, ys[i] - 14), pt(lx + 9, ys[i]), pt(lx - 1, ys[i] + 14));
+      P.to(pt(lx, ys[i] + step * 0.5)).at(yAt(ys[i] + step * 0.5));
+    }
+    P.mile().to(...knotShape(lx + 3, ys[4], 10, { turns: 2, phase: -Math.PI / 2 }));
     P.to(pt(lx, ys[4] + step * 0.5));
   }
-  const exitY = L.trajEnd.bottom + 30;
-  P.to(pt(lx + 2, L.trajEnd.top + L.trajEnd.height * 0.5), pt(lx + 30, exitY)).at(yAt(exitY));
-  P.to(pt(vw * 0.55, exitY + 6), pt(edge - 14, exitY + 2), pt(edge + 4, exitY + 40));
+  // across under the last point, back to the margin beside the About text
+  const exitY = (L.trajEnd.bottom + L.aboutBody.top) / 2;
+  P.to(pt(lx + 2, L.trajEnd.top + L.trajEnd.height * 0.5), pt(lx + 30, exitY)).at(yAt(exitY)).guideTo();
+  // the crossing gets its own stretch of scroll so it is drawn, not flicked
+  P.to(pt(vw * 0.55, exitY + 4), pt(gx - 16, exitY + 2), pt(gx, exitY + 30)).at(yAt(exitY) + 0.2 * vh);
 
-  // the thread slips just past the edge and steps back in beside headings
-  P.to(pt(off, exitY + 140), pt(off, L.currentLabel.top - 140)).at(yAt(L.currentLabel.top - 140));
-  const ky = cy(L.currentLabel);
-  P.to(pt(vw - 20, ky - 40), pt(vw - 30, ky - 16));
-  P.to(...knotShape(vw - 46, ky, 14, { turns: 2.4, dir: -1 }));
-  P.to(pt(vw - 14, ky + 34)).at(yAt(ky) + 80);
-  P.to(pt(off, ky + 80), pt(off, L.selectedLabel.top - 120)).at(yAt(L.selectedLabel.top - 120));
-  const sy = cy(L.selectedLabel) + 8;
-  const sx = Math.max(L.selectedLabel.right + 30, vw - 120);
-  P.to(pt(vw - 20, sy - 50), pt(sx - 14, sy + 2));
-  P.to(...cursive(sx, sy + 4, 14, 3));
-  P.to(pt(vw - 10, sy + 10)).at(yAt(sy) + 70);
-  P.to(pt(off, sy + 50), pt(off, L.moreLabel.top - 120)).at(yAt(L.moreLabel.top - 120));
-  const my = cy(L.moreLabel) + 6;
-  const mx = Math.max(L.moreLabel.right + 40, vw - 90);
-  P.to(pt(vw - 16, my - 44), pt(mx + 22, my - 8));
-  P.to(...slant(loop(mx, my - 14, 8, 14, { dir: -1, drift: 10 }), my));
-  P.to(pt(vw - 8, my + 18)).at(yAt(my) + 60);
+  // a knot beside "Two threads…", then the margin past the work, stitching in
+  // through the empty bands between sections
+  const C = L.currentHeading;
+  const ky = C.top + C.height * 0.5;
+  const kr = 13;
+  const kxx = Math.max(C.right + kr * 3, L.contentRight - kr * 3);
+  M.run(exitY + 30, C.top - 40);
+  P.to(pt(gx - 6, ky - 44), pt(kxx + kr * 1.6, ky - kr * 1.9)).at(yAt(ky - kr * 1.9));
+  P.to(...knotShape(kxx, ky, kr, { turns: 2.4, dir: -1 }));
+  const F = L.featureRow;
+  P.to(pt(kxx + kr * 1.6, ky + kr * 2), pt(gx, F.top + 4)).at(yAt(F.top + 4));
+  M.run(F.top + 4, F.bottom + 8);
+  const Wp = L.panels;
+  const depth = clamp(vw * 0.16, 50, 110);
+  M.stitch(F.bottom + 8, Wp.top - 10, L.contentRight - depth);
+  M.run(Wp.top - 10, Wp.bottom + 8);
+  const mh = L.moreLabel;
+  M.stitch(Wp.bottom + 8, Math.max(mh.bottom, L.moreIntro.top - 10), L.contentRight - depth);
+  const B = L.bento;
+  M.run(Math.max(mh.bottom, L.moreIntro.top - 10), B.bottom + 8);
+
+  // the ending under "Say hello."
   const K = L.contactHeading;
-  P.to(pt(off, my + 70), pt(off, K.top - 120)).at(yAt(K.top - 120));
-  const kb = K.top + K.height * 0.6;
+  M.run(B.bottom + 8, K.top - 60);
   const Wk = vw - K.right;
-  const kxs = K.right + Math.min(30, Wk * 0.18);
-  P.to(pt(vw - 16, K.top - 40), pt(kxs - 6, kb + 2));
-  P.to(...cursive(kxs + 8, kb + 4, clamp(K.height * 0.22, 12, 18), Wk > 150 ? 3 : 2));
-  P.to(pt(vw + 50, kb - 18)).at(Number.POSITIVE_INFINITY);
-  return { points: P.pts, marks: P.marks, milestones: P.miles };
+  const uy = K.top + K.height * 1.1;
+  P.to(pt(gx - 4, K.top - 26)).at(yAt(K.top - 26));
+  if (Wk > 80) {
+    const lr = clamp(K.height * 0.2, 10, 16);
+    const lp = K.right + Math.min(38, Wk * 0.42);
+    P.to(pt(lp + lr * 2, K.top + K.height * 0.35));
+    P.to(...slant(loop(lp, K.top + K.height * 0.62 - lr, lr * 0.55, lr, { dir: -1, drift: lr * 0.8 }), K.top + K.height * 0.62));
+  }
+  P.to(pt(K.right - 4, uy - 2), pt(K.left + K.width * 0.5, uy + 4), pt(K.left + 12, uy), pt(K.left - 2, uy - 10)).at(Number.POSITIVE_INFINITY);
+  return { points: P.pts, marks: P.marks, milestones: P.miles, guide: P.guide };
 }
 
 /* ---------------------------------------------------------- composition */

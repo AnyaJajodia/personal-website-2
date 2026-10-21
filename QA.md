@@ -1,4 +1,206 @@
-# QA report — private preview, iteration 3 (12 Oct 2026)
+# QA report — private preview, iteration 6 (21 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build, `npm run start`).
+
+Iteration 6 is a focused polish of Selected work:
+- muted coloured-paper palette
+- three-layer logo identifiers
+- flat panels
+- a faint underdrawing beneath the About trajectory
+
+Copy, dates, routes, panel behaviour, the two-row layout and mobile cards are unchanged.
+
+## Commands and results (final build)
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `npm run lint` / `npm run build` | exit 0 / exit 0 / exit 0 (15 static pages) |
+| `node qa/check.mjs` (production) | **116/116 PASS** → `qa/check-output.txt` (36/36 route × width: status 200, 0 overflow, 0 console errors, 0 failed requests) |
+| `node qa/visible.mjs` 1440/1024/768/390 (+ reduced) | line in view at every 40 px position forward and back (minimum 597 / 498 / 687 / 486 px; reduced 987 px), monotonic, reversible, no text crossings → `qa/visible-output.txt` (see note) |
+| `node qa/pen.mjs` 1440/768/390 | monotonic, reversible, no jumps, tip on screen → `qa/pen-output.txt` |
+| `node qa/milestone.mjs` | milestones 1→5; layout unchanged by emphasis → `qa/milestone-output.txt` |
+| `node qa/context-shots.mjs before|after` | in-context captures at 1440/768/390; **no console errors** |
+| Impeccable detector (`detect.mjs --json`, changed files) | **0 findings** |
+
+**Reversal note:**
+- The first `visible.mjs` run at 768 after the server started reported `reversible: false`.
+- Six further runs (768 ×3, 1440, 390, plus the final set) were reversible, and the script now also reports whether the route was rebuilt mid-run (it was not, in any of them).
+- The cause of that first result was not found, so it is recorded as intermittent rather than resolved.
+
+### New and updated checks in `qa/check.mjs` (116)
+- **Identifier container:** one size and shape for all seven panels (60×60, 6 px). Its background alpha is between 0 and 1; the artwork has opacity 1 through every ancestor and `filter: none`.
+- **Compact symbols:** Crackd and Buzzworks use the compact symbols, and Crackd's backing is charcoal.
+- **Flat panels:** no gradients on the panel or its pseudo-elements, no watermark motifs, 2 px corners.
+- **Palette:** the new palette, with Crackd unchanged.
+- **Contrast:** charcoal text ≥ 4.5:1 on every panel (6.82–11.08), and small date/category text ≥ 4.5:1 (5.14–8.35).
+- **Trajectory underdrawing** (at 1440/1024/768/390):
+  - it uses the same `d` as the ink;
+  - its opacity is ≤ 0.25;
+  - it is dashed to cover only the trajectory span;
+  - it sits beneath the ink;
+  - it is hidden in reduced motion.
+- **Carried over:** two rows of 240 px, width-only expansion, hover and keyboard expansion, grouped sub-links, 9 destinations with nothing nested, touch cards with summaries and dates, and the line checks.
+
+## Browser inspection (captured and viewed)
+- **Claude in Chrome:** not connected; Playwright driving installed Google Chrome was used.
+- **Work section in context, before / after:** `qa/sheet-it6-before-work.png` / `qa/sheet-it6-after-work.png` (1440, 768, 390), and side by side at desktop: `qa/sheet-it6-before-after-desktop.png`.
+- **Trajectory while scrolling:** before / after `qa/sheet-it6-before-traj.png` / `qa/sheet-it6-after-traj.png` (three forward positions plus one after scrolling back), with per-width frames in `qa/screenshots/ctx-after-{desktop,tablet,mobile}-traj-*.png`.
+- **Panel states:** `qa/sheet-it6-panels.png` (resting with Crackd open; TMU hovered; Teaching sub-link keyboard-focused) and `qa/screenshots/it6-panels-touch.png` (390 touch, 2×: stacked cards, summaries and dates visible, logos opaque).
+
+## Remaining limitations
+- **Browser coverage:** the Claude in Chrome extension was not connected, so there was no check in your own Chrome profile. Only Chrome was tested.
+- **Crackd yellow:** kept as requested; it is visibly the most saturated swatch.
+- **TMU logo:** its lettering is very small at 1× inside the shared container.
+- **Taller on small screens:** about 51 px on tablet and 91 px on phone, from the larger identifier containers.
+- **Filename:** the compact Crackd file is `crackd-minimal.png` (no `crakd-minimal.png` exists); used unchanged.
+- **Reversal audit:** one unexplained first-run result at 768 (see above).
+- **Version control:** nothing has been committed or pushed.
+
+---
+
+# QA report — private preview, iteration 5 (21 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build, `npm run start`).
+
+Iteration 5 is a refinement pass. Its scope:
+- Hero dragonfly removed and the space held for an avatar.
+- The line always partly in view.
+- Two AMNH workstreams.
+- Compact Crackd/Buzzworks symbols and the new panel palette.
+- An empty Experiments plate.
+
+Other copy, routes, typography, the cream foundation and the dot field are unchanged.
+
+## Commands and results (final build)
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `npm run lint` / `npm run build` | exit 0 / exit 0 / exit 0 (15 static pages) |
+| `node qa/check.mjs` (production) | **108/108 PASS** → `qa/check-output.txt` (36/36 route × width: status 200, 0 overflow, 0 console errors, 0 failed requests) |
+| `node qa/visible.mjs` 1440/1280/1024/768/390, 40 px steps, forward then back | the drawn line is in view below the header at every position. Minimum visible: 597 / 522 / 498 / 687 / 486 px. Monotonic, reversible, no jumps, 0 text crossings → `qa/visible-output.txt` |
+| `node qa/visible.mjs 1440x900 120 --reduced` | static full line; minimum 981 px visible; 0 text crossings |
+| `node qa/pen.mjs` 1440/768/390 | monotonic ✓, reversible ✓, no jumps, pen tip always on screen → `qa/pen-output.txt` |
+| `node qa/join.mjs` | line start within 0.05 px of the "a" tail → `qa/join-output.txt` |
+| `node qa/hold.mjs` 1440/390 | drawn amount and scroll unchanged after 2 s idle at 4 positions each (holds) |
+| `node qa/scroll-film.mjs` 1440/768/390 | 32 real-viewport frames each, scrolled by wheel forward then back: intermediate positions plus each section boundary at mid-viewport. 0 console errors; drawn amount identical forward and back (see note) |
+| `node qa/milestone.mjs`, `node qa/dots.mjs` | milestones 1→5 with layout unchanged; dot field reacts, settles, pauses off-screen, static on touch and reduced motion |
+| Impeccable detector (`detect.mjs --json`, changed files) | **0 findings** |
+
+**Film reversal note:**
+- The first film runs at 1440 and 768 reported one position each where forward and back differed.
+- Cause: the script read the frame while Chrome's smooth wheel scrolling was still moving the page.
+- After the script waited for the wheel animation to settle, five further runs (1440 ×2, 768, 390 ×2) matched at all 32 frames.
+- The instant-scroll audits (`pen.mjs`, `visible.mjs`, `check.mjs`) were reversible throughout.
+
+### New and updated checks in `qa/check.mjs` (108)
+- **Hero:** no dragonfly; the avatar slot is empty and invisible; 0 line points inside it at 1440/1024/768/390.
+- **Line:** never leaves the page horizontally, and partly in view at every 90 px scroll step, forward and back, at four widths. It ends under "Say hello.".
+- **Panels:**
+  - Crackd and Buzzworks use the `-minimal` files on round translucent backings.
+  - The palette is as requested.
+  - Text contrast ≥ 4.5:1 on all seven panels (5.05–12.22).
+- **Currently:** the AMNH card lists both workstreams, with still two cards.
+- **More:** Experiments has no graphic and reads "Later".
+- **AMNH detail:**
+  - Two separate sections, indexed.
+  - Digitization copy preserved.
+  - The research is described only as joining.
+  - Three photo placeholders.
+- **Removed checks:** the specimen-plate check, the off-stage check and the lens check.
+
+## Browser inspection (captured and viewed)
+- **Claude in Chrome:** not available this session ("Browser extension is not connected", two attempts). All inspection used Playwright driving installed Google Chrome (`channel: "chrome"`).
+- **Scroll films:**
+  - desktop forward and back: `qa/sheet-it5-film-desktop-{f,b}.png`
+  - tablet: `qa/sheet-it5-film-tablet.png`
+  - mobile: `qa/sheet-it5-film-mobile.png`
+  - frames: `qa/screenshots/film-{desktop,tablet,mobile}/`
+- **Review set:** `.impeccable/review/{desktop,tablet,mobile}.png` (full page, reduced motion) and `*-first-viewport.png`.
+- **Panels:**
+  - `qa/sheet-it5-panels.png` (resting, TMU hovered, Teaching link keyboard-focused)
+  - `qa/screenshots/it5-panels-touch.png` (390 touch: stacked cards with summaries and dates)
+- **Currently:** `qa/screenshots/it5-current.png`
+- **More:** `qa/screenshots/it5-bento.png`
+- **AMNH detail:** `qa/screenshots/it5-amnh-{1440,390}.png` (full page; no horizontal overflow)
+
+## Remaining limitations
+- **Browser coverage:**
+  - The Claude in Chrome extension was not connected, so there was no inspection in your own Chrome profile or at its zoom level. Playwright-driven Chrome only.
+  - Chrome only; Safari and Firefox are untested.
+- **Reviewer:** no fresh-context finish-reviewer pass this round.
+- **Narrow gutter:** on 390 px phones the line runs in a 20 px gutter (≥ 6 px from the edge), close to card edges.
+- **Hero on tablet:** the avatar slot leaves a large intentional gap above the name on tablet.
+- **Placeholders:** mantis research details, all AMNH photographs and the 2027 dates are still placeholders (EDITING_CHECKLIST.md).
+- **Filename:** the supplied compact Crackd file is named `crackd-minimal.png`, not `crakd-minimal.png` as written in the brief; the existing file was used unchanged.
+- **Version control:** nothing has been committed or pushed.
+
+---
+
+# QA report — private preview, iteration 4 (12 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build, `npm run start`).
+
+Iteration 4 is the Impeccable design pass. Its scope:
+- Hero plate, Currently plates, Selected Work refinements and the More drawings.
+- The line's composition.
+- Rhythm, typography and the ending.
+
+Copy, facts, routes and detail pages are unchanged. Two things were removed: the visual section eyebrows ("01 / About" etc.), whose names remain in the nav; and blue on non-link text.
+
+## Commands and results (final build)
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `npm run lint` / `npm run build` | exit 0 / exit 0 / exit 0 (15 static pages) |
+| `node qa/check.mjs` (production) | **90/90 PASS** → `qa/check-output.txt` (36/36 route × width: 0 overflow, 0 console errors, 0 failed requests) |
+| `node qa/pen.mjs` 1440/768/390 | monotonic ✓, reversible ✓, no jumps, pen tip always on screen → `qa/pen-output.txt` |
+| `node qa/join.mjs` | line start within 0.01–0.05 px of the "a" tail at scroll 0/100/120/200 → `qa/join-output.txt` |
+| `node qa/milestone.mjs` | milestone 1→5 as drawn; layout unchanged by emphasis → `qa/milestone-output.txt` |
+| `node qa/dots.mjs` | animates near the pointer, settles and stops; paused off-screen; static on touch and reduced motion; `h1` under the cursor → `qa/dots-output.txt` |
+| Impeccable detector (`detect.mjs --json`, changed files) | first run: 2 findings, both fixed; final run: **0 findings** |
+| Finish reviewer (fresh-context subagent) | fix → fix → fix → **ship**, scoped to the scored fixes (REVIEW.md, iteration 4) |
+
+### New and updated checks in `qa/check.mjs`
+- **Line around the plate:** 0 points of the path fall inside the specimen plate (1440 and 390).
+- **Off-stage through the work:** 0 visible path points beside the panels and More (1440 and 390).
+- **Ending:** the path ends under "Say hello." (1440: end 96,4977 under heading bottom 4972; 390: likewise).
+- **More:** the Experiments lens follows the pointer.
+- **Reduced motion:** the Writing flourish doesn't animate.
+- **Lynxster lockup:** at least 64 px and labelled.
+- **Carried over:** panels (two rows, 220–250 px, expansion width-only, keyboard and hover, 9 destinations, nothing nested), logos undistorted, mobile cards with summaries and dates, Back restores scroll, line hold and retract and start-in-the-"a", reduced motion, keyboard rings.
+
+## Browser inspection
+
+### Playwright (captured and viewed)
+- **Before (iteration-3 build):** `qa/screenshots/it3-before-*`; the iteration-3 after set at `qa/sheet-after3-*.png`.
+- **Review set (final build):** `.impeccable/review/{desktop,tablet,mobile}.png` (full pages with reduced motion, so the whole line is visible) and `*-first-viewport.png`.
+- **Working and close-up captures:**
+  - Heroes at 1440/1280/768/390: `qa/sheet-it4-hero.png`, `it4-hero-final.png`
+  - Currently: `it4-cur-1440.png`, `it4-cur-final.png`
+  - Panels: `it4-panels-1440.png`
+  - More: `it4-bento-final.png`, `it4-bento-lens.png`, `it4-bento-768.png`, `it4-photo-{1440,390}.png` → `qa/sheet-it4-photo.png`
+  - Ending: the contact crop in scratchpad, plus `it4-b-1440-*.png` → `qa/sheet-it4-b.png`
+
+### Claude in Chrome (your Chrome, 110% zoom, 1374 CSS px)
+- **Images:** all six load (the funnel and five logos).
+- **Hero:** the specimen plate is attached to the line.
+- **Currently:** the plates render.
+- **More:** a real hover moves the Experiments lens (330,96 → 231,124).
+- **Panels:** rows are 234 px; the category echoes are gone.
+- **Tablet and phone:** 768 and 390 iframes (media queries apply) show the plate above the name, the flourish slipping off the edge, the Currently plates stacked, no horizontal overflow (scrollWidth 768/390) and all images loaded.
+- **Console:** no errors.
+
+## Remaining limitations
+- PRODUCT.md and DESIGN.md don't exist; record them with `/impeccable init` and `/impeccable document`. A newer Impeccable (v4.5.2) is available.
+- The finish reviewer's final **ship** covers the fixes it scored across four rounds, not a fresh whole-surface review.
+- Chrome only (Safari 16+ and Firefox 121+ are needed for `:has()`, container units and subgrid). Physical touch devices are untested.
+- Illustrations are authored drawings, not records. The Lynxster crop is the only real product image, and the contact sheet stands in for photographs. The placeholders and 2027 dates listed in EDITING_CHECKLIST.md are unchanged.
+- The Claude in Chrome capture artifact at 110% zoom (blank band, cropped edge) persists.
+- Nothing has been committed, pushed or deployed.
+
+---
+
+## Iteration 3 report (12 Oct 2026)
 
 **Preview:** http://localhost:3100 (production build, `npm run start`). Port 3000 is another local app and was left untouched.
 

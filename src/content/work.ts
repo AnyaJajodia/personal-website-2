@@ -22,6 +22,16 @@ export type Period = {
 
 export type Section = { heading: string; paragraphs: string[] };
 
+/** A distinct workstream within one organisation, with its own sections and figure. */
+export type Stream = {
+  id: string;
+  heading: string;
+  figure?: Figure;
+  sections: Section[];
+  /** an honest note about what is not yet confirmed */
+  pending?: string;
+};
+
 export type FlowStep = { title: string; note: string };
 
 export type Figure =
@@ -45,6 +55,8 @@ export type WorkEntry = {
   /** Lynxster: opening statement shown in the dark hero beside the title */
   lede?: string[];
   figure?: Figure;
+  /** separate workstreams, shown before the shared `sections` */
+  streams?: Stream[];
   sections: Section[];
   links?: (ExternalLink & { needsReview?: boolean })[];
   /** Short description used in <meta name="description"> */
@@ -123,37 +135,61 @@ export const work: WorkEntry[] = [
       needsReview: true,
       reviewNote: "Placeholder end year; start month to confirm.",
     },
-    meta: [{ label: "Focus", value: "Archival digitization · Digitization rigs · Workflow improvement" }],
-    figure: {
-      kind: "plates",
-      note: "Original photographs to come.",
-      plates: [
-        { caption: "Archival dragonfly record, Invertebrate Zoology.", pattern: "ledger" },
-        { caption: "3D-printed digitization rig.", pattern: "grid" },
-      ],
-    },
+    meta: [{ label: "Focus", value: "Archival digitization · Digitization rigs · Workflow improvement · Mantis behavioral research" }],
+    streams: [
+      {
+        id: "collections-digitization",
+        heading: "Collections digitization",
+        figure: {
+          kind: "plates",
+          note: "Original photographs to come.",
+          plates: [
+            { caption: "Archival dragonfly record, Invertebrate Zoology.", pattern: "ledger" },
+            { caption: "3D-printed digitization rig.", pattern: "grid" },
+          ],
+        },
+        sections: [
+          {
+            heading: "Overview",
+            paragraphs: [
+              "I volunteer in the American Museum of Natural History’s Invertebrate Zoology department, where I help digitize archival dragonfly records.",
+              "The work brings together historical material, careful handling, and the practical question of how to make records easier to access and use.",
+            ],
+          },
+          {
+            heading: "Records, rigs, and workflows",
+            paragraphs: [
+              "Alongside digitization, I help set up 3D-printed rigs and look for ways to improve the workflow around them. It’s a combination of working with the records themselves and paying attention to the tools and repeated steps involved in capturing them.",
+              "Small practical changes matter when a process has to be repeated across an archive.",
+            ],
+          },
+          {
+            heading: "Why this work",
+            paragraphs: [
+              "I’m interested in natural history, conservation, and the ways information moves between physical collections and digital systems. This work lets me approach those interests through something tangible: a record, a setup, and the care required to preserve what the record contains.",
+              "It also gives me a reason to spend time thinking about dragonflies. I’m comfortable with that outcome.",
+            ],
+          },
+        ],
+      },
+      {
+        id: "mantis-research",
+        heading: "Mantis behavioral research",
+        figure: {
+          kind: "plates",
+          note: "Original photographs to come.",
+          plates: [{ caption: "Mantis behavioral research.", pattern: "field" }],
+        },
+        sections: [
+          {
+            heading: "Overview",
+            paragraphs: ["I’ve joined a mantis behavioral research project at the museum."],
+          },
+        ],
+        pending: "The research question, methods, my responsibilities and any outcomes will be added once they’re confirmed.",
+      },
+    ],
     sections: [
-      {
-        heading: "Overview",
-        paragraphs: [
-          "I volunteer in the American Museum of Natural History’s Invertebrate Zoology department, where I help digitize archival dragonfly records.",
-          "The work brings together historical material, careful handling, and the practical question of how to make records easier to access and use.",
-        ],
-      },
-      {
-        heading: "Records, rigs, and workflows",
-        paragraphs: [
-          "Alongside digitization, I help set up 3D-printed rigs and look for ways to improve the workflow around them. It’s a combination of working with the records themselves and paying attention to the tools and repeated steps involved in capturing them.",
-          "Small practical changes matter when a process has to be repeated across an archive.",
-        ],
-      },
-      {
-        heading: "Why this work",
-        paragraphs: [
-          "I’m interested in natural history, conservation, and the ways information moves between physical collections and digital systems. This work lets me approach those interests through something tangible: a record, a setup, and the care required to preserve what the record contains.",
-          "It also gives me a reason to spend time thinking about dragonflies. I’m comfortable with that outcome.",
-        ],
-      },
       {
         heading: "What I’m exploring",
         paragraphs: [

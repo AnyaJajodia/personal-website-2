@@ -38,49 +38,81 @@ PASS  unknown route returns 404  — status 404
 PASS  nav anchor #about  — section top 67px, url #about
 PASS  nav anchor #work  — section top 67px, url #work
 PASS  nav anchor #more  — section top 67px, url #more
-PASS  nav anchor #contact  — section top 210px, url #contact
+PASS  nav anchor #contact  — section top 259px, url #contact
 PASS  sticky header settles (name appears, stays at top)  — opacity 0 → 1, header top 0
-PASS  direct load /#contact scrolls to Contact  — scrollY 4457
+PASS  direct load /#contact scrolls to Contact  — scrollY 4277
 PASS  homepage links every detail route  — 11 unique detail links
 PASS  selected-work panel opens detail page
-PASS  browser Back restores homepage scroll  — before 2844, after 2844
+PASS  browser Back restores homepage scroll  — before 2790, after 2790
 PASS  Back to work returns to /#work  — #work top 67
 PASS  detail header About → /#about  — #about top 67
 PASS  next-project link
 PASS  line shown once fonts are ready, in scroll mode
-PASS  line extends as you scroll forward  — drawn 0.0957 → 0.1434 → 0.4289 → 0.8304
+PASS  line extends as you scroll forward  — drawn 0.1247 → 0.2391 → 0.5232 → 0.8268
 PASS  route itself never moves (no drifting attachment)
 PASS  line holds when scrolling stops
 PASS  reverse scroll retracts exactly
-PASS  line starts inside the final "a" at every scroll position  — 0.03px, 0.03px, 0.03px
+PASS  line starts inside the final "a" at every scroll position  — 0.05px, 0.05px, 0.05px
 PASS  line never intercepts pointer input  — pointer-events none, z 0, hits h1/h1/h1
-PASS  reduced motion: complete line drawn statically  — {"mode":"static","paths":[102932,475],"dash":"none","behavior":"auto","labels":5,"marquee":"none"}
-PASS  reduced motion: bento marquee stopped  — none
+PASS  reduced motion: complete line drawn statically  — {"mode":"static","paths":[84887,84887,472],"dash":"none","behavior":"auto","labels":5,"marquee":"none"}
+PASS  reduced motion: More writing flourish not animated  — none
+PASS  reduced motion: trajectory underdrawing hidden (full line drawn)
 PASS  reduced motion: no CSS smooth scrolling
 PASS  trajectory labels are real DOM text
 PASS  reduced motion: detail line fully drawn  — dashoffset 0
 PASS  first Tab focuses skip link (visible)  — Skip to content
-PASS  keyboard order: nav then content, focus outline visible  — About|outline · Work|outline · More|outline · Contact|outline · Scroll to follow the thread |outline · Explore Lynxster ↗|card-outline · Explore AMNH ↗|card-outline · Crackd.aiSep 2025–2027Engine|outline
+PASS  keyboard order: nav then content, focus outline visible  — About|outline · Work|outline · More|outline · Contact|outline · Scroll to follow the thread |outline · Explore Lynxster→|card-outline · Explore AMNH→|card-outline · Crackd.aiSep 2025–2027, Engi|outline
 PASS  detail page: brand reachable by keyboard  — Anya Jajodia.
 PASS  real Lynxster logo asset loads; role=img elements labelled  — logo 200
 PASS  no empty/placeholder hrefs anywhere
-PASS  panels: first panel open by default, names legible collapsed  — crackd 605px, buzzworks 202px
+PASS  panels: first panel open by default, names legible collapsed  — crackd 600px, buzzworks 201px
 PASS  panels: two compact rows (220–250px)  — 240 / 240px
 PASS  panels: collapsed panels show logo/mark, readable name, dates from content  — Sep 2025–2027 · May 2025–2027 · May 2025–2027 · — · — · 2022 · Jan 2024–2027
 PASS  panels: hover expands a panel and reveals its summary
-PASS  panels: expansion changes width only; logo stays put  — heights 240,240,240,240,240,240,240, logo offset 19 → 19
+PASS  panels: expansion changes width only; logo stays put  — heights 240,240,240,240,240,240,240, logo offset 20 → 20
 PASS  panels: keyboard focus expands a panel  — /work/inteli-lens
 PASS  panels: grouped sub-links reachable and open their panel  — /work/pmmy-research
 PASS  panels: every destination present, no nested interactive elements  — 9 links, 0 nested
-PASS  bento: experiments diagram responds to pointer  — active node 0, beams 2
+PASS  More: Experiments is an empty, clearly forthcoming plate (no graphic)  — {"graphics":0,"text":"ExperimentsLater"}
 PASS  bento: placeholders are not links
 PASS  mobile/touch: stacked cards with summaries and dates visible  — {"more":"1","date":true,"w":349}
 PASS  mobile: Currently features stack  — 20,20
-PASS  supplied logos load undistorted (rendered ratio = file ratio)  — amnh.png 4.59/4.59, crackd.png 2.4/2.4, buzzworks.png 3.77/3.77, tmu.png 1.83/1.83, gvi.webp 1.27/1.27
-PASS  Currently: Lynxster lockup sizeable and labelled  — {"w":189,"h":116,"label":"Lynxster"}
+PASS  supplied logos load undistorted (rendered ratio = file ratio)  — amnh.png 4.59/4.59, crackd-minimal.png 0.83/0.83, buzzworks-minimal.png 1.07/1.07, tmu.png 1.83/1.83, gvi.webp 1.27/1.27
+PASS  Currently: Lynxster lockup sizeable and labelled  — {"w":125,"h":78,"label":"Lynxster"}
+PASS  panels: one identifier container (same size/shape) with a translucent background, opaque unfiltered artwork  — 60x606px · crackd bg0.86 art1, buzzworks bg0.5 art1, tmu bg0.5 art1, inteli bg0.5 art1, gvi bg0.5 art1, pubs bg0.5 art1, teaching bg0.5 art1
+PASS  panels: compact Crackd/Buzzworks symbols; Crackd's yellow on a dark backing
+PASS  panels: flat paper surfaces (no gradients, no watermark motifs, 2px corners)  — {"motifs":0,"gradients":0,"radius":"2px"}
+PASS  panels: muted coloured-paper palette (Crackd yellow kept)  — crackd rgb(248, 215, 77); buzzworks rgb(232, 178, 141); tmu rgb(169, 193, 217); inteli rgb(185, 164, 190); gvi rgb(165, 189, 176); pubs rgb(211, 161, 173); teaching rgb(176, 185, 218)
+PASS  panels: charcoal text, contrast ≥ 4.5:1 on every panel colour  — crackd 11.08, buzzworks 8.36, tmu 8.46, inteli 6.82, gvi 7.86, pubs 7.08, teaching 8.07
+PASS  panels: dates/categories (small text) ≥ 4.5:1 too  — 8.35, 6.3, 6.38, 5.14, 5.92, 5.34, 6.09
+PASS  Currently: AMNH card separates its two workstreams (still two cards)
+PASS  hero: dragonfly removed; avatar space left empty  — {"specimen":0,"slotKids":0,"slotVis":"hidden"}
 PASS  dot field: reacts to pointer, then settles and stops  — {"mode":"interactive","anim":"true","pe":"none"} → false
 PASS  trajectory: the reached milestone is emphasised  — active point 4
 PASS  dot field: static on touch
 PASS  dot field: static with reduced motion
+PASS  line keeps clear of the empty avatar slot @1440  — 0 points inside the slot
+PASS  line never leaves the page horizontally @1440  — 0 points outside the viewport
+PASS  line stays partly in view at every scroll position, forward and back @1440  — 98 positions
+PASS  line comes to rest under "Say hello." @1440  — end 96,4783, heading left/bottom 100,4779
+PASS  trajectory underdrawing: same path, faint, trajectory span only, beneath the ink @1440  — [0,2467,2474,10870]
+PASS  line keeps clear of the empty avatar slot @1024  — 0 points inside the slot
+PASS  line never leaves the page horizontally @1024  — 0 points outside the viewport
+PASS  line stays partly in view at every scroll position, forward and back @1024  — 88 positions
+PASS  line comes to rest under "Say hello." @1024  — end 49,4247, heading left/bottom 53,4247
+PASS  trajectory underdrawing: same path, faint, trajectory span only, beneath the ink @1024  — [0,1855,1978,8852]
+PASS  line keeps clear of the empty avatar slot @768  — 0 points inside the slot
+PASS  line never leaves the page horizontally @768  — 0 points outside the viewport
+PASS  line stays partly in view at every scroll position, forward and back @768  — 104 positions
+PASS  line comes to rest under "Say hello." @768  — end 38,5241, heading left/bottom 40,5242
+PASS  trajectory underdrawing: same path, faint, trajectory span only, beneath the ink @768  — [0,1199,1402,8017]
+PASS  line keeps clear of the empty avatar slot @390  — 0 points inside the slot
+PASS  line never leaves the page horizontally @390  — 0 points outside the viewport
+PASS  line stays partly in view at every scroll position, forward and back @390  — 150 positions
+PASS  line comes to rest under "Say hello." @390  — end 18,6947, heading left/bottom 20,6950
+PASS  trajectory underdrawing: same path, faint, trajectory span only, beneath the ink @390  — [0,882,1075,8298]
+PASS  AMNH detail: Collections digitization and Mantis behavioral research as separate sections  — Collections digitization | Mantis behavioral research
+PASS  AMNH detail: digitization content preserved; research described only as joining
+PASS  AMNH detail: honest photo placeholders for both workstreams  — 3 placeholders
 
-84/84 checks passed
+116/116 checks passed

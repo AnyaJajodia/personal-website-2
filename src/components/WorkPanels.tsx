@@ -13,27 +13,61 @@ import { getWork, formatPeriod } from "@/content/work";
  * panel holds one link per page (no nested interactive elements). Touch and
  * narrow screens get stacked cards with everything visible (CSS).
  *
- * Panel colours are portfolio colours, not official brand tokens. Logos are
- * the supplied files (handoff/assets/logos → public/logos, transparent
- * margins trimmed only); Buzzworks and TMU sit on an ivory inset so their own
- * colours read, Crackd's white/yellow mark sits on the dark violet, GVI's
- * black mark on yellow.
+ * Panels are flat coloured paper: muted, distinct hues (Crackd's yellow,
+ * sampled from its symbol, sets the softness), one charcoal ink throughout.
+ * These are portfolio colours, not official brand tokens.
+ *
+ * Every identifier uses the same three layers:
+ *   1. the muted panel surface;
+ *   2. a small square container whose BACKGROUND alone is translucent (light
+ *      paper, or charcoal behind Crackd's yellow symbol so it stays visible);
+ *   3. the logo artwork, fully opaque, on its own transparent background.
+ * Logos are the supplied files, unaltered (Crackd and Buzzworks use their
+ * compact `-minimal` symbols). Each is sized by its VISIBLE artwork: `art` is
+ * the share of the image height the artwork occupies and `size` the target
+ * visible height, so padded symbols and full-bleed marks match optically.
  */
 
 type Logo =
-  | { kind: "img"; src: string; w: number; h: number; chip?: boolean; height: number }
+  | {
+      kind: "img";
+      src: string;
+      w: number;
+      h: number;
+      /** visible artwork height as a share of the image height */
+      art: number;
+      /** target visible artwork height, px */
+      size: number;
+    }
   | { kind: "mark"; mark: "lens" | "pages" | "mentor" };
 
-type Look = { key: string; tone: string; ink: string; logo: Logo };
+type Look = { key: string; tone: string; logo: Logo; backing?: "dark" };
 
 const LOOKS: Record<string, Look> = {
-  "crackd-ai": { key: "crackd", tone: "#47216b", ink: "#fbf9f5", logo: { kind: "img", src: "/logos/crackd.png", w: 202, h: 84, height: 46 } },
-  buzzworks: { key: "buzzworks", tone: "#ef7424", ink: "#1d1a17", logo: { kind: "img", src: "/logos/buzzworks.png", w: 362, h: 96, chip: true, height: 30 } },
-  "tmu-citation-tooling": { key: "tmu", tone: "#14549a", ink: "#fbf9f5", logo: { kind: "img", src: "/logos/tmu.png", w: 256, h: 140, chip: true, height: 42 } },
-  "inteli-lens": { key: "inteli", tone: "#434bd5", ink: "#fbf9f5", logo: { kind: "mark", mark: "lens" } },
-  "gvi-conservation": { key: "gvi", tone: "#f3cb35", ink: "#1d1a17", logo: { kind: "img", src: "/logos/gvi.webp", w: 300, h: 237, height: 40 } },
-  "pmmy-research": { key: "pubs", tone: "#af3158", ink: "#fbf9f5", logo: { kind: "mark", mark: "pages" } },
-  "esp-teaching": { key: "teaching", tone: "#07757a", ink: "#fbf9f5", logo: { kind: "mark", mark: "mentor" } },
+  "crackd-ai": {
+    key: "crackd",
+    tone: "#f8d74d",
+    backing: "dark",
+    logo: { kind: "img", src: "/logos/crackd-minimal.png", w: 148, h: 178, art: 156 / 178, size: 32 },
+  },
+  buzzworks: {
+    key: "buzzworks",
+    tone: "#e8b28d",
+    logo: { kind: "img", src: "/logos/buzzworks-minimal.png", w: 162, h: 152, art: 124 / 152, size: 33 },
+  },
+  "tmu-citation-tooling": {
+    key: "tmu",
+    tone: "#a9c1d9",
+    logo: { kind: "img", src: "/logos/tmu.png", w: 256, h: 140, art: 138 / 140, size: 28 },
+  },
+  "inteli-lens": { key: "inteli", tone: "#b9a4be", logo: { kind: "mark", mark: "lens" } },
+  "gvi-conservation": {
+    key: "gvi",
+    tone: "#a5bdb0",
+    logo: { kind: "img", src: "/logos/gvi.webp", w: 300, h: 237, art: 1, size: 27 },
+  },
+  "pmmy-research": { key: "pubs", tone: "#d3a1ad", logo: { kind: "mark", mark: "pages" } },
+  "esp-teaching": { key: "teaching", tone: "#b0b9da", logo: { kind: "mark", mark: "mentor" } },
 };
 
 const MARKS = {
@@ -77,29 +111,26 @@ function dateFor(row: SelectedRow): string | null {
   return `${start}–${end}`;
 }
 
-function LogoBlock({ logo }: { logo: Logo }) {
-  if (logo.kind === "mark") {
-    return (
-      <span className="panel__logo panel__logo--mark" aria-hidden="true">
+function LogoBlock({ logo, backing }: { logo: Logo; backing?: "dark" }) {
+  return (
+    <span className={`panel__logo${backing ? ` panel__logo--${backing}` : ""}`} aria-hidden="true">
+      {logo.kind === "mark" ? (
         <svg viewBox="0 0 40 40" focusable="false">
           <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
             {MARKS[logo.mark]}
           </g>
         </svg>
-      </span>
-    );
-  }
-  return (
-    <span className={`panel__logo${logo.chip ? " panel__logo--chip" : ""}`} aria-hidden="true">
-      <Image
-        src={logo.src}
-        alt=""
-        width={logo.w}
-        height={logo.h}
-        unoptimized
-        loading="eager"
-        style={{ height: logo.height, width: "auto" }}
-      />
+      ) : (
+        <Image
+          src={logo.src}
+          alt=""
+          width={logo.w}
+          height={logo.h}
+          unoptimized
+          loading="eager"
+          style={{ height: Math.round(logo.size / logo.art), width: "auto" }}
+        />
+      )}
     </span>
   );
 }
@@ -111,37 +142,33 @@ function Panel({ row }: { row: SelectedRow }) {
   const showFull = short !== row.title;
   const date = dateFor(row);
 
+  // one visible name per panel: the short name; the full title (e.g. with the
+  // university or country the logo already shows) stays in the heading for AT
   const id = (
     <span className="panel__id">
-      <LogoBlock logo={look.logo} />
+      <LogoBlock logo={look.logo} backing={look.backing} />
       <span className="panel__label">
-        {showFull ? (
-          <span className="panel__name" aria-hidden="true">
-            {short}
-          </span>
-        ) : (
-          <span className="panel__name" role="heading" aria-level={3}>
-            {row.title}
-          </span>
-        )}
-        {date ? <span className="panel__date">{date}</span> : null}
+        <span className="panel__name" role="heading" aria-level={3}>
+          <span aria-hidden={showFull || undefined}>{short}</span>
+          {showFull ? <span className="visually-hidden">{row.title}</span> : null}
+        </span>
+        <span className="panel__meta">
+          {date ? <span className="panel__date">{date}</span> : null}
+          {/* the category only where the title doesn't already say it */}
+          {row.title.toLowerCase().includes(row.category.toLowerCase()) ? null : (
+            <span className="panel__cat">
+              {date ? <span className="visually-hidden">, </span> : null}
+              {row.category}
+            </span>
+          )}
+        </span>
       </span>
     </span>
   );
-  const more = (
-    <>
-      <span className="panel__cat">{row.category}</span>
-      {showFull ? (
-        <span className="panel__title" role="heading" aria-level={3}>
-          {row.title}
-        </span>
-      ) : null}
-      <span className="panel__desc">{row.description}</span>
-    </>
-  );
+  const more = <span className="panel__desc">{row.description}</span>;
 
   return (
-    <li className={`panel panel--${look.key}`} style={{ "--tone": look.tone, "--ink": look.ink } as React.CSSProperties}>
+    <li className={`panel panel--${look.key}`} style={{ "--tone": look.tone } as React.CSSProperties}>
       {single ? (
         <Link href={`/work/${row.links[0].slug}`} className="panel__inner panel__link">
           {id}

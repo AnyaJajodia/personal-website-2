@@ -1,5 +1,179 @@
 # Visual & functional review
 
+## Iteration 6 — Selected work polish (21 Oct 2026)
+
+**Method:**
+- Ran the Impeccable polish playbook on the incumbent system, with the craft floor.
+- Ran the design detector on the changed files: **0 findings**.
+- Inspected in Google Chrome driven by Playwright: the Claude in Chrome extension was still not connected ("Browser extension is not connected").
+- Took before and after viewport captures of the work section inside the surrounding page, and of the trajectory while scrolling, at 1440, 768 and 390, and viewed them.
+
+**Before (`qa/sheet-it6-before-work.png`, `qa/sheet-it6-before-traj.png`):**
+- **Panels:** saturated panels (orange, deep blue, aubergine, teal, raspberry, cornflower) each with a corner light gradient, a large tone-on-tone watermark drawing and mixed identifier treatments (discs for some logos, loose TMU and GVI logos, a yellow corner bracket on TMU). They read as a patchwork against the cream page.
+- **Trajectory:** on the way in, its labels and ticks sat alone until the line arrived.
+
+### Changes
+1. **Palette.**
+   - Muted coloured paper: Buzzworks `#E8B28D`, TMU `#A9C1D9` (the starting `#AABFD1`, nudged slightly bluer because it read grey beside the others), Inteli-lens `#B9A4BE`, GVI `#A5BDB0`, Publications `#D3A1AD`, Teaching `#B0B9DA`. Crackd keeps `#F8D74D`.
+   - One charcoal ink everywhere: names and summaries `#242321`; dates and categories `#3a3733`, not a faded mix.
+   - Measured contrast: 6.82–11.08 for names and summaries, 5.14–8.35 for the small date and category text.
+2. **Logo layers.**
+   - The same three layers on every panel: the muted surface; one 60×60 container (6 px corners) whose *background colour only* is translucent (`rgba(255,252,245,.5)`, or charcoal `.86` behind Crackd's yellow symbol); and the artwork itself.
+   - Checked in the browser: computed opacity 1 through every ancestor, `filter: none`, supplied files unaltered.
+   - Crackd and Buzzworks use their compact symbols (`crackd-minimal.png`, `buzzworks-minimal.png`; both already transparent, so no derived assets). The generic marks (Inteli-lens, Publications, Teaching) use the same container.
+   - Artwork is sized by visible area.
+3. **Coherence.**
+   - Removed: the corner gradients, the watermark motifs (from code and CSS) and the TMU corner bracket.
+   - Corners went from 6 px to 2 px, with a 1 px edge in a darker shade of each panel's colour, matching the Currently plates and More cards. Hover and focus darken the edge.
+   - Gaps went from 10 px to 12 px. Desktop rows stay at 240 px, so the section is about 2 px taller at 1440; on tablet and phone it is 51 px and 91 px taller, from the larger identifier containers.
+   - Interiors are unchanged in structure: identifier top-left; name, then dates and category, at the bottom of a fixed-width left column; summary and link revealed in a right column already laid out at its final width, so nothing re-wraps or jumps. Colour does not change on expansion.
+4. **Trajectory underdrawing.**
+   - The *same* path is pre-drawn very faintly (1.25 px, opacity 0.2) along the trajectory span only, beneath the scroll-drawn ink. The labels never sit stranded, and the ink traces over it, forward and back.
+   - It is hidden in reduced motion, where the full line is drawn anyway.
+   - It is one logical line: no new decoration and no new route.
+
+### Critique of the result
+- **Section:** now reads as part of the page: paper swatches pinned into the same editorial world as the Currently plates and More cards. The hue differences still separate projects at a glance.
+- **Crackd's yellow:** the brief kept it, and it remains the brightest swatch. It works as the open-by-default lead panel, but it is noticeably more saturated than the rest. A slightly softer yellow (for example around `#F2D66B`) would sit more evenly if you want it later.
+- **TMU logo:** its small lettering is legible on high-density screens but tiny at 1×. The blue tile and yellow bracket still identify it. That is the cost of identical containers.
+- **Trajectory underdrawing:** quiet enough that it reads as pencil under ink, not as a second line.
+
+## Iteration 5 — refinement pass (21 Oct 2026)
+
+**Method:**
+- Ran the Impeccable skill: context loader, refinement on the incumbent system (no PRODUCT.md or DESIGN.md exists) and the craft floor.
+- Ran the design detector once on the changed files: **0 findings**.
+- Inspected in Google Chrome driven by Playwright: the Claude in Chrome extension was not connected (two attempts: "Browser extension is not connected").
+- Captured every screenshot listed below and viewed it.
+- No fresh-context finish reviewer this round; that is noted in the limitations.
+
+### Diagnosis before changes (measured, not eyeballed)
+`qa/visible.mjs` scrolled the iteration-4 build in 40 px steps and measured the drawn line inside the viewport. **0 px was visible** over these stretches:
+
+| Width | Scroll range with 0 px visible | Cause |
+|---|---|---|
+| 1440 | 2120–3720 | the route parked the line at `vw + 70` (off-stage) from Currently to Contact |
+| 768 | 2280–4280 | same cause |
+| 390 | 2360–6040, and a gap at 1600 | the narrow route also left the page after the hero |
+
+- **Clipping and stacking were not the cause.** The SVG is absolute over the document, not clipped. It sits behind content (z 0 < main z 1), and the only element painted over it is the settled header, which is intended.
+- **Section gaps were not the cause either:** the route itself left the page.
+
+### Prioritised defects and fixes
+1. **Line disappears for most of the page (P1). Fixed.**
+   - The route never leaves the page now. It keeps to the right margin (`contentRight + gutter/2`) with a gentle, uneven meander wherever content runs full width. It steps into the page only where there is open space: a frame over the empty hero slot, the loop by About, the trajectory, a knot beside "Two threads I’m following.", one stitch through each empty band before Selected work and More, and the loop and underline at "Say hello.".
+   - After the audit flagged a 6.6% jump at 768, the narrow trajectory → margin crossing got its own stretch of scroll.
+   - After viewing captures, the margin meander was calmed (amplitude ≤ 9 px, wavelength 220 px) and the hero descent was given a slight hand sway, so neither reads as a ruled border.
+2. **Hero dragonfly to be removed (P1, brief). Done.**
+   - `Specimen.tsx` was deleted and not replaced.
+   - An empty, invisible `.hero__slot` holds the space for a future avatar, and the line is routed around it (a check confirms 0 path points inside it at four widths).
+   - No avatar or substitute illustration was added.
+3. **AMNH workstreams not distinguished (P1, brief). Done.**
+   - Homepage card: two labelled workstreams inside the existing card (Collections digitization with the existing copy; Mantis behavioral research with "Joined a mantis behavioral research project. Details to come."). There are still exactly two Currently cards.
+   - Detail page: an index, then two separate sections. Digitization keeps all its existing copy and Plates 1–2. Mantis gets Plate 3 (placeholder), one sentence ("I’ve joined a mantis behavioral research project at the museum.") and an italic note that the question, methods, responsibilities and outcomes will be added once confirmed.
+   - "What I’m exploring" stays as a shared closing section.
+   - The 01/02 numbering was removed (a craft-floor rule: the order carries no information).
+4. **Logos and panel palette (P2, brief). Done.**
+   - Collapsed panels use `crackd-minimal.png` and `buzzworks-minimal.png`. Both files are transparent (alpha checked; no baked-in white), so no derived assets were needed.
+   - Each symbol sits on a soft translucent disc: dark for Crackd's yellow, light for Buzzworks' orange. No white rectangular badges remain anywhere.
+   - Logos are sized by visible artwork (`art` share × target), not file box. The TMU logo was enlarged (48 px) after its wording read too small in captures.
+   - Palette: Crackd `#F8D74D` (sampled from the symbol) with dark text; GVI teal `#07757a`; Inteli-lens `#59305f`; Teaching cornflower `#6f86dc` with dark text. The starting `#627BD8` gives 3.7:1 with ivory and 4.4:1 with ink, so it was lightened.
+   - All seven panels measure ≥ 4.5:1 (5.05–12.22).
+   - Full wordmarks are not shown when expanded: the name is already set as text, and Crackd's white lettering would fail on yellow.
+5. **Panel motif under text (P3, found in captures). Fixed.** On grouped panels (Publications, Teaching) the subject motif sat under the links when expanded. It is now hidden there.
+6. **Experiments implies scientific work (P2, brief). Fixed.**
+   - The wing and magnifier drawing (`ExperimentsDiagram.tsx`) was deleted.
+   - The card is now an empty plate with a dashed reserved frame and "Later": no graphic, no link, no invented entry.
+
+### Critique of the result
+- **Line, works:** the line now reads as one thread that accompanies the reader. The margin is its quiet register beside the panels and cards, the gestures sit in open space, and the stitches mark section boundaries without crossing text.
+- **Line, the trade-off:** the margin passages are long by design. On a 390 px phone the gutter is only 20 px, so the line runs close to the screen edge (≥ 6 px) and the card edges. It is visible and clear of text, but tight.
+- **Hero:** the open right side is intentionally empty. The line frames it, which leaves an obvious place for the avatar. On tablet the open space sits above the name and is large; that is the reserved slot, not an omission.
+- **Detail page:** the AMNH page now says plainly what is known and what is not; the mantis section is honestly thin.
+
+### Not changed (out of scope or preserved)
+- Copy outside the AMNH additions, routes, typography, the cream foundation and the dot field.
+- Two copy items you may want to revisit:
+  - the AMNH subtitle and eyebrow, which describe digitization and Invertebrate Zoology only;
+  - "What I’m exploring", which says the anthropology/zoology direction is "not an established research project".
+- Both are listed in EDITING_CHECKLIST.md.
+
+## Iteration 4 — Impeccable design pass (12 Oct 2026)
+
+**Method:**
+- Used the Impeccable skill: its context loader, the extension playbook (`new-work.md`, extend-an-established-world) and the craft floor.
+- No question round: you asked for directions to be decided autonomously.
+- No PRODUCT.md or DESIGN.md exists, and none was invented (see Limitations).
+- Code-led: no comps.
+- The design detector ran once on the changed files.
+- A fresh-context **finish reviewer** (Impeccable's degraded reviewer brief in a general-purpose subagent; the dedicated reviewer agent isn't installed in this harness) reviewed the captures in `.impeccable/review/`. Its verdicts are quoted as returned.
+
+**Diagnosis (before):**
+- **Empty hero:** the hero's right half was empty.
+- **Currently:** logo-above-text cards.
+- **Line:** it ruled the right margin and repeated loops beside every heading.
+- **More:** demo-like tiles (Magic UI marquee, node graph, prints).
+- **Eyebrow labels:** "01 / About" above every heading (a craft-floor ban).
+- **Ending:** Contact and the footer ended weakly.
+
+**Direction (internal; three considered).** I picked the "naturalist's working plate":
+- **One ink thread** is drawn from the name through the person's interests, and the drawings are fine ink plates.
+- **Rejected:** a field-notebook collage (too busy for the name) and a specimen-drawer grid (generic cards again).
+
+### What changed
+- **Hero:**
+  - A procedurally drawn dragonfly specimen plate, with venation, pterostigmata in plum, a pin, a scale bar and *fig. 1*. It fills the open side, sitting below the line's flourish and left of its descent.
+  - On tablet and phone it sits above the name.
+  - It is an illustration, not documentation.
+- **Section eyebrows removed:** hairline rules open each section, the headings carry the sections, and the nav keeps the names.
+- **Currently:** two hairline-framed plates.
+  - **Lynxster:** a real product crop, the Disclosure funnel card from your own reference screenshot (`public/work/lynxster-funnel.webp`). The browser chrome, firm and user names, DEV hash and ledger footer are all removed.
+  - **AMNH:** a ruled archive index card with a line drawing of a digitization rig, titled with the "Invertebrate Zoology" department from the content.
+  - **Caption row:** the organisation's mark is the heading, inline with role and date, so there's no second name.
+- **Selected Work:**
+  - Category kickers removed. The category now appears in the metadata line only when the title doesn't already say it.
+  - One visible name per panel; the full titles stay in the headings for assistive technology.
+  - Every logo sits on the same chip (deep for Crackd's light mark), and logos are sized by visual area.
+  - Tone-on-tone subject motifs (speech marks, a chat, footnotes, detection boxes, rosettes, a journal page, a board) appear as a panel opens.
+- **Line:**
+  - Composed around content: it leaves the "a", flows over the plate, turns down beside it and drifts inward to the About heading.
+  - It sweeps into the trajectory, which now has two gestures only (a small tangle at 01, a knot at 05) with quiet crests at 02–04.
+  - It leaves the page beside the full-width About text, returns for one knot by "Two threads I'm following.", and stays off-stage through the cards, panels and More.
+  - It ends as a loop and an underline beneath "Say hello."
+  - On mobile the flourish slips off the edge instead of ruling it.
+- **More:** three flat drawn plates (no icon tiles):
+  - **Writing:** a nib that has just written the site's line across the plate.
+  - **Wildlife photography:** a drawn bushveld contact sheet with "Photographs to come" printed on its border.
+  - **Experiments:** a lens over a dragonfly wing that magnifies the venation in plum and follows the pointer.
+- **Throughout:**
+  - Link blue is reserved for links; the trajectory numerals and "Still following the thread." are now ink and plum.
+  - Section padding is down to 54 px or less.
+  - Labels are 0.78 rem at weight 600.
+  - Contact heading is 8.5 rem with a large serif email, and the footer gains "Back to top".
+
+### Review rounds (finish reviewer)
+
+| Round | Disposition | Findings |
+|-------|-------------|----------|
+| 1 (full review) | **fix** | (1) panel kickers (floor ban); (2) line ruling the right margin on desktop and mobile; (3) five repetitive trajectory loops; (4) Currently still logo-above-text cards and the funnel sliced at the edge; (5) More still icon cards plus a generic node graph; (6) blue used on non-links; (7) about 150 px dead bands; (8) duplicate titles and uneven logo treatment |
+| 2 (verdict) | **fix** | 1, 2, 3, 4, 6 and 7 resolved. 5 and 8 partial (the Experiments graph was only reframed, the Writing and Photography interiors were dead, and the Lynxster mark was light). Two regressions: category labels echoing titles, and the *fig. 1* bar floating. |
+| 3 (verdict) | **fix** | All four items resolved. One regression: the "Photographs to come" caption was too faint or crowding the title. |
+| 4 (verdict) | **ship** (scoped) | Caption resolved and no regression. Per the reviewer, this ship "covers only the scored fixes and regressions from the review rounds, not a fresh review of the whole surface." |
+
+Earlier in this pass, issues found by my own inspection and fixed:
+- The specimen's rotated box pushed the hero descent onto the window edge.
+- Horizontal overflow at 390 and 768 from the plate (now clipped at the hero).
+- The More nib was clipped.
+- Two detector findings: a TMU corner accent built as a side border, and a decorative grid on the Lynxster plate.
+- In your Chrome, a missing a11y separator meant the date and category read as "2027Engineering".
+
+### Remaining observations (not material)
+- **No PRODUCT.md / DESIGN.md.** The reviewer's persistence check fails on PRODUCT.md. I didn't invent product truth; `/impeccable init` and `/impeccable document` can record both with you.
+- **Plain grounds.** The cream ground and the Cormorant/Inter faces are retained because the brief asked for them. Impeccable flags cream with a serif as a common default, but here it's pinned.
+- **Illustrations, not documentation.** The specimen, rig, nib, contact sheet and lens are authored illustrations; the only real image is the Lynxster product crop. Replace the contact sheet once real photographs exist.
+
+---
+
 ## Iteration 3 — logos, bolder panels, Currently, composition, dot field (12 Oct 2026)
 
 Scope: real supplied logos, compact bold Selected-work panels with dates, larger Currently logos, tighter composition with an active trajectory milestone, stronger More scenes and a graphic photo placeholder, and a faint interactive dot field. Wording, facts, routes, detail pages, the hero and the line route are unchanged.

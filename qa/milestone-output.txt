@@ -1,4 +1,2 @@
-active milestone by scroll: 332→none  692→1  772→2  852→3  932→4  1012→5
-layout unchanged by emphasis: true
-active milestone by scroll: 285→none  525→1  605→2  685→3  765→4  845→5
+active milestone by scroll: 288→none  688→1  808→2  848→3  888→4  928→5
 layout unchanged by emphasis: true

@@ -5,3 +5,6 @@ next-env.d.ts
 *.tsbuildinfo
 qa/screenshots/
 .DS_Store
+
+# Impeccable review captures (local)
+.impeccable/

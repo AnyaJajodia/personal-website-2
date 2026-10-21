@@ -1,7 +1,7 @@
 import type { Figure } from "@/content/work";
 import { LynxsterMark } from "./Logo";
 
-export function WorkFigure({ figure }: { figure: Figure }) {
+export function WorkFigure({ figure, startAt = 1 }: { figure: Figure; startAt?: number }) {
   if (figure.kind === "flow") {
     const compact = figure.steps.every((s) => !s.note);
     return (
@@ -32,7 +32,7 @@ export function WorkFigure({ figure }: { figure: Figure }) {
               <span className="plate__placeholder">Original photograph to come</span>
             </div>
             <p className="caption plate__caption">
-              <span className="label">Plate {i + 1}</span> {p.caption}
+              <span className="label">Plate {startAt + i}</span> {p.caption}
             </p>
           </div>
         ))}

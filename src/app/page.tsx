@@ -4,6 +4,8 @@ import HomeScribble from "@/components/HomeScribble";
 import SiteFooter from "@/components/SiteFooter";
 import SmoothAnchors from "@/components/SmoothAnchors";
 import Image from "next/image";
+import RigDrawing from "@/components/RigDrawing";
+import { LynxsterLockup } from "@/components/Logo";
 import { ContactList } from "@/components/ContactList";
 import WorkPanels from "@/components/WorkPanels";
 import MoreBento from "@/components/MoreBento";
@@ -11,14 +13,10 @@ import DotField from "@/components/DotField";
 import { hero, about, trajectory, currently, selectedWork, more, contact, person } from "@/content/site";
 import { getWork, formatPeriod } from "@/content/work";
 
-function SectionLabel({ n, children, line }: { n: string; children: React.ReactNode; line: string }) {
-  return (
-    <p className="label section-label" data-line={line}>
-      <span className="section-label__n">{n}</span>
-      <span aria-hidden="true"> / </span>
-      {children}
-    </p>
-  );
+/** A hairline opening each section. The headings carry the sections on their
+ * own (the header nav names them); the rule gives the line a landmark. */
+function SectionRule({ line }: { line: string }) {
+  return <div className="section-rule" data-line={line} aria-hidden="true" />;
 }
 
 export default function Home() {
@@ -50,6 +48,8 @@ export default function Home() {
               <p>{hero.intro}</p>
               <p className="label hero__location">{hero.location}</p>
             </div>
+            {/* held open for a future avatar: empty and invisible; the line keeps clear of it */}
+            <div className="hero__slot" data-line="hero-slot" aria-hidden="true" />
           </div>
           <div className="container hero__cue-wrap">
             <a className="hero__cue label" href="#about" data-line="hero-cue">
@@ -61,9 +61,7 @@ export default function Home() {
         {/* --------------------------------------------------------- About */}
         <section id="about" className="section about" data-line="about" aria-labelledby="about-heading">
           <div className="container" data-line="content">
-            <SectionLabel n="01" line="about-label">
-              {about.label}
-            </SectionLabel>
+            <SectionRule line="about-label" />
             <h2 className="section-heading about__heading" id="about-heading">
               <span data-line="about-heading">{about.heading}</span>
             </h2>
@@ -108,45 +106,80 @@ export default function Home() {
         <section id="work" className="work" aria-label="Work">
           <div className="section currently" data-line="current">
             <div className="container">
-              <SectionLabel n="02" line="current-label">
-                {currently.label}
-              </SectionLabel>
+            <SectionRule line="current-label" />
               <h2 className="section-heading">
                 <span data-line="current-heading">{currently.heading}</span>
               </h2>
               <div className="features">
-                {currently.features.map((f, i) => {
+                {currently.features.map((f) => {
                   const entry = getWork(f.slug);
                   const period = entry?.period ? formatPeriod(entry.period) : null;
                   return (
                     <article key={f.slug} className={`feature feature--${f.slug}`} data-line="feature">
-                      <div className="feature__logo-zone">
+                      <div className="feature__visual">
                         {f.slug === "lynxster" ? (
-                          // supplied lockup (grey artwork) used as a mask, shown in Lynxster's own dark ink
-                          <span className="logo-mask feature__lockup" role="img" aria-label="Lynxster" />
-                        ) : (
                           <Image
-                            className="feature__wordmark"
-                            src="/logos/amnh.png"
-                            alt="American Museum of Natural History"
-                            width={960}
-                            height={209}
+                            className="feature__shot"
+                            src="/work/lynxster-funnel.webp"
+                            alt="The disclosure funnel in the Lynxster application"
+                            width={1096}
+                            height={532}
                             unoptimized
                             loading="eager"
                           />
+                        ) : (
+                          <div className="archive-card" aria-hidden="true">
+                            <span className="archive-card__dept">Invertebrate Zoology</span>
+                            <RigDrawing className="archive-card__rig" />
+                          </div>
                         )}
                       </div>
-                      <p className="label feature__role">
-                        {String(i + 1).padStart(2, "0")} · {entry?.role?.value}
-                      </p>
-                      <h3 className="feature__title">{f.name}</h3>
-                      <p className="feature__desc">{f.description}</p>
-                      <p className="feature__meta">{period}</p>
-                      <p className="feature__foot">
-                        <Link href={`/work/${f.slug}`} className="text-link feature__cta">
-                          {f.cta} <span aria-hidden="true">↗</span>
-                        </Link>
-                      </p>
+                      <div className="feature__body">
+                        {/* caption line: the organisation's own mark is the heading, set
+                            inline with role and dates — no second name treatment */}
+                        <div className="feature__caption">
+                        <h3 className="feature__title">
+                          {f.slug === "lynxster" ? (
+                            <LynxsterLockup className="feature__lockup" />
+                          ) : (
+                            <Image
+                              className="feature__wordmark"
+                              src="/logos/amnh.png"
+                              alt={f.name}
+                              width={960}
+                              height={209}
+                              unoptimized
+                              loading="eager"
+                            />
+                          )}
+                        </h3>
+                        <p className="feature__meta">
+                          {entry?.role?.value}
+                          {period ? <span className="feature__period">{period}</span> : null}
+                        </p>
+                        </div>
+                        {"streams" in f && f.streams ? (
+                          // two workstreams inside the one commitment, each with its own line
+                          <ul className="feature__streams">
+                            {f.streams.map((st) => (
+                              <li key={st.name} className="feature__stream">
+                                <span className="feature__stream-name">{st.name}</span>
+                                <span className="feature__stream-text">{st.text}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="feature__desc">{f.description}</p>
+                        )}
+                        <p className="feature__foot">
+                          <Link href={`/work/${f.slug}`} className="feature__cta">
+                            {f.cta}
+                            <span className="feature__arrow" aria-hidden="true">
+                              →
+                            </span>
+                          </Link>
+                        </p>
+                      </div>
                     </article>
                   );
                 })}
@@ -157,9 +190,7 @@ export default function Home() {
           {/* ------------------------------------------ Work: Selected */}
           <div className="section selected" data-line="selected">
             <div className="container">
-              <SectionLabel n="03" line="selected-label">
-                {selectedWork.label}
-              </SectionLabel>
+            <SectionRule line="selected-label" />
               <h2 className="section-heading">
                 <span data-line="selected-heading">{selectedWork.heading}</span>
               </h2>
@@ -171,9 +202,7 @@ export default function Home() {
         {/* ---------------------------------------------------------- More */}
         <section id="more" className="section more" data-line="more" aria-labelledby="more-heading">
           <div className="container">
-            <SectionLabel n="04" line="more-label">
-              {more.label}
-            </SectionLabel>
+            <SectionRule line="more-label" />
             <div className="more__head">
               <h2 className="section-heading" id="more-heading">
                 <span data-line="more-heading">{more.heading}</span>
@@ -188,9 +217,7 @@ export default function Home() {
         {/* ------------------------------------------------------- Contact */}
         <section id="contact" className="section contact" data-line="contact" aria-labelledby="contact-heading">
           <div className="container">
-            <SectionLabel n="05" line="contact-label">
-              {contact.label}
-            </SectionLabel>
+            <SectionRule line="contact-label" />
             <h2 className="section-heading contact__heading" id="contact-heading">
               <span data-line="contact-heading">{contact.heading}</span>
             </h2>
@@ -206,7 +233,7 @@ export default function Home() {
           </div>
         </section>
       </main>
-      <SiteFooter />
+      <SiteFooter toTop />
     </div>
   );
 }

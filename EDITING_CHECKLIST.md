@@ -23,6 +23,12 @@ Per your request, uncertain end dates show **2027** in the preview. Replace with
 
 Confirmed and unchanged: ESP Jan 2024–Dec 2024; both publications 2022.
 
+### AMNH mantis research (added 21 Oct 2026)
+The research is described only as joining. The homepage reads "Joined a mantis behavioral research project. Details to come."; the detail page reads "I’ve joined a mantis behavioral research project at the museum." followed by a note that the details will be added once confirmed. All of this is in `src/content/work.ts` → `amnh.streams` and `src/content/site.ts` → `currently.features[1].streams`.
+- [ ] The research question, methods, your responsibilities and any outcomes (then delete the `pending` note)
+- [ ] Whether it sits in Invertebrate Zoology: the page eyebrow currently names only that department
+- [ ] Whether the AMNH subtitle ("Digitizing dragonfly records…") and "What I’m exploring" ("not an established research project") still read correctly next to the new workstream
+
 ## 2. Missing URLs
 
 | Item | Where | Status |
@@ -42,8 +48,11 @@ Confirmed and unchanged: ESP Jan 2024–Dec 2024; both publications 2022.
 | Lynxster application screenshot | `/work/lynxster` (dark frame "Application screenshot · To be selected") | Pick a screenshot, crop the browser chrome, and replace or redact identifying demo data (e.g. "Smoke Test Law Firm", hashes, the DEV bar in the supplied references). The reference screenshots were deliberately **not** copied into `public/`. Implement in `ScreenshotFrame` (`src/components/Figures.tsx`) |
 | AMNH Plate 1 — archival dragonfly record | `/work/amnh` | Original photograph |
 | AMNH Plate 2 — 3D-printed digitization rig | `/work/amnh` | Original photograph |
+| AMNH Plate 3 — mantis behavioral research | `/work/amnh` (Mantis behavioral research section) | Original photograph |
 | GVI fieldwork photograph | `/work/gvi-conservation` | Original photograph |
 | Logos (supplied) | `public/logos/` ← `handoff/assets/logos/` | AMNH, Crackd, Buzzworks, TMU and GVI are now used. Runtime copies have transparent margins trimmed (some downscaled); the originals are untouched. Check each organisation's brand guidelines (clear space, approved backgrounds) before publishing |
+| Lynxster product crop | `public/work/lynxster-funnel.webp` (Currently) | Cropped from your reference `lynxster-light-dashboard.png`: the Disclosure funnel card only, with no browser chrome, names or hashes. It shows demo data from that screenshot; swap it for an approved product image before publishing |
+| Illustrations | `Specimen.tsx`, `RigDrawing.tsx`, More drawings | Authored drawings (dragonfly plate *fig. 1*, digitization rig, nib, bushveld contact sheet, wing under a lens). They illustrate interests, not your actual work; replace or keep as you prefer |
 | Inteli-lens / Publications / Teaching marks | `MARKS` in `src/components/WorkPanels.tsx` | No logos exist, so small drawn marks are used (lens, papers, linked nodes). Swap in real logos if any exist |
 | More tiles | `src/components/MoreBento.tsx` | Abstract scenes only (paper slips, blank prints, node diagram). When Writing / Photography / Experiments have content, swap the scenes for real material and add links |
 | Portrait | — | Optional; the layout doesn't need one |
@@ -56,7 +65,8 @@ Confirmed and unchanged: ESP Jan 2024–Dec 2024; both publications 2022.
 - The More section items (Writing / Wildlife photography / Experiments) are non-clickable placeholders with no routes. Add pages when ready.
 - Selected-work panel colours (`LOOKS` in `src/components/WorkPanels.tsx`) are portfolio colours, not official brand tokens. Teaching was deepened to #07757A for text contrast. Keep text at ≥ 4.5:1 if you change them.
 - Panel dates come from `period` in `src/content/work.ts`. GVI and Inteli-lens show **no date** until a start date is added there. Teaching shows the ESP + ADI span (Jan 2024–2027).
-- The photo tile in More shows a graphic placeholder ("Photographs to come"). Replace it with real photographs only.
+- The photo plate in More is a drawn contact sheet printed "Photographs to come". Replace it with real photographs only.
+- Section labels ("About", "Currently", …) are no longer shown above headings; they remain in the header nav. The labels are still in `src/content/site.ts` if you want them back.
 - The homepage line's tail calibration (`A_TAIL` in `src/lib/home-route.ts`) is specific to Cormorant Garamond 500. If the hero font or weight changes, re-run `node qa/measure-tail.mjs` and update it.
 
 ## 5. Before going public

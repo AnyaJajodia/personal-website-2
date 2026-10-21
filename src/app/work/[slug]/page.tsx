@@ -6,7 +6,7 @@ import SiteFooter from "@/components/SiteFooter";
 import DetailLine from "@/components/DetailLine";
 import { LynxsterLockup } from "@/components/Logo";
 import { WorkFigure, ScreenshotFrame } from "@/components/Figures";
-import { work, getWork, getNeighbours, formatPeriod, type WorkEntry } from "@/content/work";
+import { work, getWork, getNeighbours, formatPeriod, type WorkEntry, type Section } from "@/content/work";
 
 export const dynamicParams = false;
 
@@ -38,6 +38,24 @@ function MetaRow({ entry }: { entry: WorkEntry }) {
         </div>
       ))}
     </dl>
+  );
+}
+
+function DetailSection({ s, level = 2, idPrefix = "s", pending }: { s: Section; level?: 2 | 3; idPrefix?: string; pending?: string }) {
+  const id = `${idPrefix}-${slugify(s.heading)}`;
+  const H = level === 2 ? "h2" : "h3";
+  return (
+    <section className="detail-section" aria-labelledby={id}>
+      <H className="detail-section__heading" id={id}>
+        {s.heading}
+      </H>
+      <div className="prose detail-section__body">
+        {s.paragraphs.map((p) => (
+          <p key={p}>{p}</p>
+        ))}
+        {pending ? <p className="stream__pending">{pending}</p> : null}
+      </div>
+    </section>
   );
 }
 
@@ -100,18 +118,54 @@ export default async function WorkPage({ params }: Params) {
           </div>
         ) : null}
 
+        {entry.streams?.length ? (
+          <>
+            {/* two clearly separate workstreams, indexed up front */}
+            <nav className="container streams-index" aria-label="Workstreams">
+              <ol className="streams-index__list">
+                {entry.streams.map((st) => (
+                  <li key={st.id}>
+                    <a href={`#${st.id}`} className="streams-index__link">
+                      {st.heading}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+            {entry.streams.map((st, i) => {
+              const before = entry.streams!.slice(0, i).reduce((n, x) => n + (x.figure?.kind === "plates" ? x.figure.plates.length : 0), 0);
+              return (
+                <section key={st.id} id={st.id} className="stream" aria-labelledby={`${st.id}-title`}>
+                  <div className="container stream__head">
+                    <h2 className="stream__title" id={`${st.id}-title`}>
+                      {st.heading}
+                    </h2>
+                  </div>
+                  {st.figure ? (
+                    <div className="container detail-figure stream__figure">
+                      <WorkFigure figure={st.figure} startAt={before + 1} />
+                    </div>
+                  ) : null}
+                  <div className="container detail-sections stream__sections">
+                    {st.sections.map((sec, j) => (
+                      <DetailSection
+                        key={sec.heading}
+                        s={sec}
+                        level={3}
+                        idPrefix={st.id}
+                        pending={j === st.sections.length - 1 ? st.pending : undefined}
+                      />
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </>
+        ) : null}
+
         <div className="container detail-sections">
           {entry.sections.map((s) => (
-            <section key={s.heading} className="detail-section" aria-labelledby={`s-${slugify(s.heading)}`}>
-              <h2 className="detail-section__heading" id={`s-${slugify(s.heading)}`}>
-                {s.heading}
-              </h2>
-              <div className="prose detail-section__body">
-                {s.paragraphs.map((p) => (
-                  <p key={p}>{p}</p>
-                ))}
-              </div>
-            </section>
+            <DetailSection key={s.heading} s={s} />
           ))}
 
           {entry.links?.length ? (

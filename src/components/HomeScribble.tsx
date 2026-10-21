@@ -6,8 +6,9 @@ import { splineIndexed, toPath, clamp, type Pt } from "@/lib/line-geometry";
 
 /**
  * ONE continuous line for the homepage. It grows out of the final "a" of the
- * name, turns down the right side, sweeps left into the career trajectory and
- * runs on down the page (see lib/home-route.ts for the route).
+ * name, turns down into the right margin, sweeps left into the career
+ * trajectory and runs on down the page without ever leaving it (see
+ * lib/home-route.ts for the route).
  *
  * The SVG is laid over the whole document (absolute, behind the content,
  * pointer-events: none), so the line scrolls natively with the text and its
@@ -50,6 +51,10 @@ function measure(root: HTMLElement): HomeLayout {
     nameSize: nameEl ? parseFloat(getComputedStyle(nameEl).fontSize) : 160,
     nameEnd: { x: end.left, y: end.bottom },
     hero: docRect(q("hero")),
+    heroSlot: (() => {
+      const el = q("hero-slot");
+      return el && getComputedStyle(el).display !== "none" ? docRect(el) : docRect(null);
+    })(),
     heroIntro: docRect(q("hero-intro")),
     heroCue: docRect(q("hero-cue")),
     aboutHeading: docRect(q("about-heading")),
@@ -59,10 +64,14 @@ function measure(root: HTMLElement): HomeLayout {
     currentLabel: docRect(q("current-label")),
     currentHeading: docRect(q("current-heading")),
     features: qa("feature"),
+    featureRow: docRect(root.querySelector(".features")),
+    aboutBody: docRect(root.querySelector(".about__body")),
     selectedLabel: docRect(q("selected-label")),
     selectedHeading: docRect(q("selected-heading")),
     panels: docRect(q("panels")),
     moreLabel: docRect(q("more-label")),
+    moreIntro: docRect(root.querySelector(".more__intro")),
+    bento: docRect(root.querySelector(".bento")),
     contact: docRect(q("contact")),
     contactHeading: docRect(q("contact-heading")),
   };
@@ -112,6 +121,7 @@ export function drawnAt(sched: { s: number; len: number }[], s: number): number 
 export default function HomeScribble() {
   const svgRef = useRef<SVGSVGElement>(null);
   const lineRef = useRef<SVGPathElement>(null);
+  const guideRef = useRef<SVGPathElement>(null);
   const bridgeRef = useRef<SVGPathElement>(null);
   const gradRef = useRef<SVGLinearGradientElement>(null);
 
@@ -120,8 +130,9 @@ export default function HomeScribble() {
     const line = lineRef.current;
     const bridge = bridgeRef.current;
     const grad = gradRef.current;
+    const guide = guideRef.current;
     const root = svg?.closest<HTMLElement>("[data-line-root]");
-    if (!svg || !line || !bridge || !grad || !root) return;
+    if (!svg || !line || !bridge || !grad || !guide || !root) return;
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     let sched: { s: number; len: number }[] = [];
     let total = 1;
@@ -161,8 +172,19 @@ export default function HomeScribble() {
       for (let i = 1; i < dense.length; i++) cum.push(cum[i - 1] + Math.hypot(dense[i].x - dense[i - 1].x, dense[i].y - dense[i - 1].y));
       total = cum[cum.length - 1] || 1;
       svg.style.height = `${document.documentElement.scrollHeight}px`;
-      line.setAttribute("d", toPath(dense));
+      const d = toPath(dense);
+      line.setAttribute("d", d);
       svgLen = line.getTotalLength() || total;
+
+      // the same path, pre-drawn very faintly along the trajectory only, so
+      // its labels never sit stranded before the ink reaches them
+      if (route.guide && route.guide[1] > route.guide[0]) {
+        const k = svgLen / total;
+        const a = cum[at[route.guide[0]]] * k;
+        const b = cum[at[route.guide[1]]] * k;
+        guide.setAttribute("d", d);
+        guide.style.strokeDasharray = `0 ${a} ${b - a} ${svgLen}`;
+      } else guide.setAttribute("d", "");
 
       // ink → plum bridge out of the letter
       const f = L.nameSize;
@@ -247,6 +269,7 @@ export default function HomeScribble() {
           <stop offset="1" className="scribble__ink-end" />
         </linearGradient>
       </defs>
+      <path ref={guideRef} className="scribble__guide" d="" />
       <path ref={lineRef} className="scribble__path" d="" />
       <path ref={bridgeRef} className="scribble__bridge" d="" fill="url(#scribble-ink)" />
     </svg>
