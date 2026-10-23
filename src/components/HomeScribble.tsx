@@ -27,6 +27,13 @@ function docRect(el: Element | null): Rect {
   return { left: r.left, right: r.right, width: r.width, height: r.height, top: r.top + y, bottom: r.bottom + y };
 }
 
+/** a probe's point, or null when it (or its figure) is not displayed */
+function probe(el: Element | null): Pt | null {
+  if (!el || !(el as HTMLElement).offsetParent) return null;
+  const r = docRect(el);
+  return { x: r.left, y: r.top };
+}
+
 function measure(root: HTMLElement): HomeLayout {
   const q = (name: string) => root.querySelector(`[data-line="${name}"]`);
   const qa = (name: string) => Array.from(root.querySelectorAll(`[data-line="${name}"]`)).map(docRect);
@@ -55,16 +62,31 @@ function measure(root: HTMLElement): HomeLayout {
       const el = q("hero-slot");
       return el && getComputedStyle(el).display !== "none" ? docRect(el) : docRect(null);
     })(),
+    perch: (() => {
+      const l = probe(q("perch-l"));
+      const r = probe(q("perch-r"));
+      return l && r ? { l, r } : null;
+    })(),
     heroIntro: docRect(q("hero-intro")),
     heroCue: docRect(q("hero-cue")),
     aboutHeading: docRect(q("about-heading")),
     trajBand: docRect(q("traj-band")),
     trajPoints: qa("traj-point"),
     trajEnd: docRect(q("traj-end")),
+    endFigure: (() => {
+      const el = root.querySelector<HTMLElement>('[data-avatar="ahead"]');
+      return el?.offsetParent ? docRect(el) : null;
+    })(),
     currentLabel: docRect(q("current-label")),
     currentHeading: docRect(q("current-heading")),
     features: qa("feature"),
     featureRow: docRect(root.querySelector(".features")),
+    thread: (() => {
+      const fist = probe(q("untangle-fist"));
+      const foot = probe(q("untangle-foot"));
+      const el = root.querySelector('[data-avatar="untangling"]');
+      return fist && foot && el ? { fist, foot, figure: docRect(el) } : null;
+    })(),
     aboutBody: docRect(root.querySelector(".about__body")),
     selectedLabel: docRect(q("selected-label")),
     selectedHeading: docRect(q("selected-heading")),
@@ -74,6 +96,10 @@ function measure(root: HTMLElement): HomeLayout {
     bento: docRect(root.querySelector(".bento")),
     contact: docRect(q("contact")),
     contactHeading: docRect(q("contact-heading")),
+    greeter: (() => {
+      const el = root.querySelector<HTMLElement>('[data-avatar="greeting"]');
+      return el?.offsetParent ? docRect(el) : null;
+    })(),
   };
 }
 
@@ -121,7 +147,6 @@ export function drawnAt(sched: { s: number; len: number }[], s: number): number 
 export default function HomeScribble() {
   const svgRef = useRef<SVGSVGElement>(null);
   const lineRef = useRef<SVGPathElement>(null);
-  const guideRef = useRef<SVGPathElement>(null);
   const bridgeRef = useRef<SVGPathElement>(null);
   const gradRef = useRef<SVGLinearGradientElement>(null);
 
@@ -130,9 +155,8 @@ export default function HomeScribble() {
     const line = lineRef.current;
     const bridge = bridgeRef.current;
     const grad = gradRef.current;
-    const guide = guideRef.current;
     const root = svg?.closest<HTMLElement>("[data-line-root]");
-    if (!svg || !line || !bridge || !grad || !guide || !root) return;
+    if (!svg || !line || !bridge || !grad || !root) return;
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     let sched: { s: number; len: number }[] = [];
     let total = 1;
@@ -142,6 +166,8 @@ export default function HomeScribble() {
     // trajectory milestones: emphasise the one the pen has most recently reached
     const points = Array.from(root.querySelectorAll<HTMLElement>('[data-line="traj-point"]'));
     let mileLens: number[] = [];
+    // figures that appear when the pen reaches them (once; never taken back)
+    let cueLens: [HTMLElement, number][] = [];
     let active = -2;
     const setActive = (i: number) => {
       if (i === active) return;
@@ -159,6 +185,7 @@ export default function HomeScribble() {
       const len = clamp(drawnAt(sched, s), 0, total);
       line.style.strokeDashoffset = String(svgLen * (1 - len / total));
       svg.dataset.drawn = (len / total).toFixed(4);
+      for (const [el, at] of cueLens) if (len >= at && !el.dataset.lineReached) el.dataset.lineReached = "true";
       let reached = -1;
       while (reached + 1 < mileLens.length && mileLens[reached + 1] <= len) reached++;
       setActive(reached);
@@ -176,16 +203,6 @@ export default function HomeScribble() {
       line.setAttribute("d", d);
       svgLen = line.getTotalLength() || total;
 
-      // the same path, pre-drawn very faintly along the trajectory only, so
-      // its labels never sit stranded before the ink reaches them
-      if (route.guide && route.guide[1] > route.guide[0]) {
-        const k = svgLen / total;
-        const a = cum[at[route.guide[0]]] * k;
-        const b = cum[at[route.guide[1]]] * k;
-        guide.setAttribute("d", d);
-        guide.style.strokeDasharray = `0 ${a} ${b - a} ${svgLen}`;
-      } else guide.setAttribute("d", "");
-
       // ink → plum bridge out of the letter
       const f = L.nameSize;
       let j = 1;
@@ -199,6 +216,10 @@ export default function HomeScribble() {
       grad.setAttribute("y2", String(head[head.length - 1].y));
 
       mileLens = route.milestones.map((k) => cum[at[k]] + 1);
+      cueLens = Object.entries(route.cues ?? {}).flatMap(([role, k]) => {
+        const el = root.querySelector<HTMLElement>(`[data-avatar="${role}"]`);
+        return el ? [[el, cum[at[k]]] as [HTMLElement, number]] : [];
+      });
       svg.dataset.layout = L.narrow ? "narrow" : "wide";
       if (fontsReady) svg.dataset.ready = "true";
       if (mq.matches) {
@@ -269,7 +290,6 @@ export default function HomeScribble() {
           <stop offset="1" className="scribble__ink-end" />
         </linearGradient>
       </defs>
-      <path ref={guideRef} className="scribble__guide" d="" />
       <path ref={lineRef} className="scribble__path" d="" />
       <path ref={bridgeRef} className="scribble__bridge" d="" fill="url(#scribble-ink)" />
     </svg>

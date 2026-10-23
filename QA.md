@@ -1,4 +1,105 @@
-# QA report — private preview, iteration 6 (21 Oct 2026)
+# QA report — iteration 8: avatar refinement (23 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build).
+**Browser:** Google Chrome driven by Playwright. The Claude in Chrome extension again reported "Browser extension is not connected". Motion was watched as Chrome's own screencast (every painted frame, through the DevTools protocol) and measured per animation frame, not judged from stills alone.
+
+## Commands and results (production build)
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `npm run lint` / `npm run build` | 0 / 0 / 0. The first `build` exited 1 after compiling all 15 pages, on Next.js's security-vulnerability notice; the retry passed. |
+| `node qa/check.mjs` | **172/172 PASS** → `qa/check-output.txt` |
+| `node qa/visible.mjs` 1440/1024/768/390 | pass forward and back; minimum in-view line 597 / 498 / 687 / 456 px; monotonic, reversible, no rebuild mid-run → `qa/visible-output.txt` |
+| `node qa/av-timing.mjs` 1440, 768 | Every entrance is a settle of 8–14px over 533–535ms with no overshoot. The peeker rises 53–70px over 549–567ms, from behind the grid's edge only. |
+| `node qa/av-film.mjs final 1440x900` (+ `f2 768x1024`) | See the per-area results below. |
+| `node qa/av-density.mjs` 1920 → 390 | at most 2 figures in view |
+| `node qa/av-detail.mjs d2 1440x900 390x844` | 11 project pages: figures entered, clear of text, 0 console errors |
+
+**`av-film.mjs` results:**
+- **Hero:** loaded, opaque and untransformed from the first animation frame (69ms at 1440; 102ms at 768), on every frame after.
+- **Peeker:** across 90 + 416 + 363 frames (reveal, rapid pointer switching, keyboard tabbing), her clip line was never closer than 1px above the grid's top edge. The lean returns to neutral after leaving the grid.
+- **Fast scrolling down and back up:** no stuck or replayed entrance.
+- **Resize:** figures follow the reflow.
+
+**New checks in `qa/check.mjs`:**
+- **Hero:** visible and still from the first frame, and preloaded.
+- **Pre-trace:** gone at 4 widths and with reduced motion.
+- **Entrances:** short, non-bouncing settles.
+- **Peeker clipping:** clip line never below the grid edge in any frame of rapid switching. A pixel-identical strip under the edge with and without her (from the first whole pixel row; the fractional border row is covered by the geometry check).
+- **Lean:** toward the active card by pointer and keyboard, neutral after leaving.
+- **Line placement:** the figure at the trajectory's end and the greeter stand on the line, at every width where they show.
+
+## Screenshots (captured and viewed)
+- **Production, settled:** `qa/screenshots/avatar/final2-sheet-1440.png`.
+- **Dev-build composition sheets:** `b2-sheet-1440.png`, `b2-sheet-1280-misc.png` (with the resize and reduced-motion frames), `b2-sheet-768.png`, `b2-sheet-390.png` (with reduced motion).
+- **Close-ups:** `c-sheet.png`.
+- **Frame strips:**
+  - `fs-reload.png`: the hero on the first painted frame.
+  - `fs-peek.png`: the reveal.
+  - `fs-cards-zoom.png`: the lean while panels expand and collapse beneath her.
+  - `ah-strip.png`: the map figure appearing as the line reaches her feet.
+  - `es-e1.png`: entrances.
+- **Raw screencasts:** `film-final-1440/`, `film-f1-1440/`, `film-f2-768/`.
+
+## Limitations
+- **Browsers:** Chrome only, through Playwright. Touch was checked as layout and behaviour; figures never take taps.
+- **Photographer:** shown only at ≥ 1360px. Below that the contact sheet fills her corner and a smaller figure looked stranded, so the reader takes More's slot (640–1359px). Phones have no More figure.
+- **Map figure:** only with the horizontal trajectory (≥ 860px).
+- **Reverse scrolling:** figures stay once entered. If you scroll back above the trajectory, the line retracts while the map figure stays in place.
+- **Next.js:** the installed version prints a security-vulnerability notice (see REVIEW). It has not been upgraded.
+- **Public assets:** `public/assets/avatar/` now also holds the full source pack you copied there (about 196 MB, including the contact-sheet previews). It would be published with the site if deployed, although the pages reference only the derived WebPs.
+- **Not done:** nothing committed or pushed.
+
+---
+
+# QA report — private preview, iteration 7: avatars (21 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build, `npm run start`).
+
+Iteration 7 places a small selection of the approved avatar poses on the homepage and the 11 project pages. Copy, routes, the line's behaviour, panels, More plates and dots are otherwise unchanged; Experiments stays empty.
+
+**Browser:** Google Chrome driven by Playwright. The Claude in Chrome extension reported "Browser extension is not connected" again, so no extension-driven inspection was possible. Every visual claim below rests on screenshots that were captured and viewed.
+
+## Commands and results (production build)
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `npm run lint` / `npm run build` | exit 0 / exit 0 / exit 0 (15 static pages) |
+| `node qa/check.mjs` | **164/164 PASS** → `qa/check-output.txt` (36/36 route × width: 200, 0 overflow, 0 console errors, 0 failed requests) |
+| `node qa/visible.mjs` 1440/1024/768/390 | pass at every 40 px position forward and back (minimum 597 / 498 / 687 / 456 px drawn line in view), monotonic, reversible, no mid-run rebuild; the only contacts are the intended ones with avatar boxes, no text crossings → `qa/visible-output.txt` |
+| `node qa/av-density.mjs` 1440/1366/1280/1150/1024/768/390 | at most **2** figures in view at any scroll position |
+| `node qa/av-shots.mjs final …` / `final-rm … --reduced` | every figure entered and settled; hidden figures never load; **0 console errors** |
+| `node qa/av-detail.mjs` 1440/768/390 | all 11 project pages: figures entered, **no text overlap**, 0 console errors |
+| `node qa/av-motion.mjs` | entrance and reaction frame strips; idle duck observed |
+| Impeccable detector on changed files | **0 findings** |
+
+### New checks in `qa/check.mjs` (164)
+- **Hero:** one avatar, loaded; across her seat the line runs at seat height (±9 px) and never through her upper body (1440/1024/768/390).
+- **Decorative:** every figure is aria-hidden, has `alt=""`, `pointer-events: none` and reserved width and height. Only the hero is eager. The ARIA snapshot holds only the three real images (1440/1024/768/390).
+- **Loading:** only displayed figures load, as WebP. No contact sheets or source PNGs are requested (7 / 7 / 5 / 3 files).
+- **Breakpoints:** 6 figures at ≥ 860, ≤ 5 on tablet, 3 on phones, with the right More visitor per width. Never more than 2 in view.
+- **Motion:** each figure entered once and settled, with no running animation left. With reduced motion, every figure is in place and unanimated, on the homepage and on project pages.
+- **Line:** runs into the untangler's fist (1.8–1.9 px). The walker rests on it (2.1 px). The narrow greeter stands on its last stretch (2.5–2.8 px).
+- **Nothing covered:** no text sits under a figure, and every work and contact link is the topmost element at its centre.
+- **Project pages:** 1–2 figures each (2 for Lynxster and AMNH), each standing on the rule under its section.
+
+## Screenshots (captured and viewed)
+- Homepage in context, settled: `qa/screenshots/avatar/final-1440-*.png`, `final-1280-*.png`, `final-768-*.png`, `final-390-*.png`; sheets `final-sheet-1440.png`, `final-sheet-1280-rm.png` (with reduced motion), `final-sheet-390.png`.
+- Project pages: `d1-1440-*.png`, `d1-390-*.png`, `dfinal-768-*.png`; sheets `d1-sheet-1440.png`, `d1-sheet-390.png`, `final-sheet-768-detail.png`.
+- Motion: `ms-hero.png` (drops onto the line and settles), `ms-walk.png`, `ms-peek.png`, `ms-wave.png`, `ms-react.png` (peek rest / panel hover / keyboard focus / idle duck / photo plate hover). The shutter was confirmed numerically: lens flash opacity peaks at 0.86–0.97 and the contact sheet at 0.40–0.42, on settle and on hover.
+- Iteration views kept for comparison: `a1`–`a5`, `p-sheet.png`, `p2-sheet.png`.
+
+## Limitations
+- Chrome only (Playwright-driven). Touch was checked as layout and behaviour: hover reactions do nothing harmful, and figures never take taps (`pointer-events: none`). It was not tested on a physical phone.
+- The Wildlife photography figure appears only at ≥ 1150 px. On narrower plates the contact sheet leaves no clear corner, so the reader on Writing takes its place (640–1149 px). On phones More has no figure.
+- From 1150 to 1359 px the photographer is small (62 px wide) to stay clear of the contact sheet (2–5 px at 1150–1280).
+- The walker is shown only with the horizontal trajectory (≥ 860 px).
+- Entrances are time-based once cued; they are not scrubbed by scroll. Scrolling back up does not replay them, by design.
+- Nothing has been committed or pushed.
+
+---
+
+# QA report — iteration 6 (21 Oct 2026)
 
 **Preview:** http://localhost:3100 (production build, `npm run start`).
 

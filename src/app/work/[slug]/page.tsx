@@ -7,6 +7,9 @@ import DetailLine from "@/components/DetailLine";
 import { LynxsterLockup } from "@/components/Logo";
 import { WorkFigure, ScreenshotFrame } from "@/components/Figures";
 import { work, getWork, getNeighbours, formatPeriod, type WorkEntry, type Section } from "@/content/work";
+import Avatar from "@/components/Avatar";
+import AvatarStage from "@/components/AvatarStage";
+import { detailAvatars, type PoseName } from "@/content/avatars";
 
 export const dynamicParams = false;
 
@@ -41,11 +44,26 @@ function MetaRow({ entry }: { entry: WorkEntry }) {
   );
 }
 
-function DetailSection({ s, level = 2, idPrefix = "s", pending }: { s: Section; level?: 2 | 3; idPrefix?: string; pending?: string }) {
+type Figure = { pose: PoseName; nth: number };
+
+function DetailSection({
+  s,
+  level = 2,
+  idPrefix = "s",
+  pending,
+  figure,
+}: {
+  s: Section;
+  level?: 2 | 3;
+  idPrefix?: string;
+  pending?: string;
+  /** a contextual avatar standing on the rule under this section */
+  figure?: Figure;
+}) {
   const id = `${idPrefix}-${slugify(s.heading)}`;
   const H = level === 2 ? "h2" : "h3";
   return (
-    <section className="detail-section" aria-labelledby={id}>
+    <section className={`detail-section${figure ? " detail-section--avatar" : ""}`} aria-labelledby={id}>
       <H className="detail-section__heading" id={id}>
         {s.heading}
       </H>
@@ -55,6 +73,7 @@ function DetailSection({ s, level = 2, idPrefix = "s", pending }: { s: Section; 
         ))}
         {pending ? <p className="stream__pending">{pending}</p> : null}
       </div>
+      {figure ? <Avatar pose={figure.pose} role="detail" className={`avatar--detail-${figure.nth}`} /> : null}
     </section>
   );
 }
@@ -66,6 +85,8 @@ export default async function WorkPage({ params }: Params) {
   const { prev, next } = getNeighbours(slug);
   const theme = entry.theme;
   const eyebrow = entry.eyebrow ?? (theme === "default" ? [entry.name] : []);
+  // contextual figures, keyed by section heading ("stream-id/heading" in a stream)
+  const figures = new Map<string, Figure>((detailAvatars[slug] ?? []).map((a, i) => [a.section, { pose: a.pose, nth: i + 1 }]));
 
   return (
     <div className={`detail theme-${theme}`} data-line-root>
@@ -154,6 +175,7 @@ export default async function WorkPage({ params }: Params) {
                         level={3}
                         idPrefix={st.id}
                         pending={j === st.sections.length - 1 ? st.pending : undefined}
+                        figure={figures.get(`${st.id}/${sec.heading}`)}
                       />
                     ))}
                   </div>
@@ -165,7 +187,7 @@ export default async function WorkPage({ params }: Params) {
 
         <div className="container detail-sections">
           {entry.sections.map((s) => (
-            <DetailSection key={s.heading} s={s} />
+            <DetailSection key={s.heading} s={s} figure={figures.get(s.heading)} />
           ))}
 
           {entry.links?.length ? (
@@ -218,6 +240,7 @@ export default async function WorkPage({ params }: Params) {
         </nav>
       </main>
       <SiteFooter />
+      <AvatarStage />
     </div>
   );
 }

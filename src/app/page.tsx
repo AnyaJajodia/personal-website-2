@@ -10,6 +10,8 @@ import { ContactList } from "@/components/ContactList";
 import WorkPanels from "@/components/WorkPanels";
 import MoreBento from "@/components/MoreBento";
 import DotField from "@/components/DotField";
+import Avatar from "@/components/Avatar";
+import AvatarStage from "@/components/AvatarStage";
 import { hero, about, trajectory, currently, selectedWork, more, contact, person } from "@/content/site";
 import { getWork, formatPeriod } from "@/content/work";
 
@@ -48,8 +50,10 @@ export default function Home() {
               <p>{hero.intro}</p>
               <p className="label hero__location">{hero.location}</p>
             </div>
-            {/* held open for a future avatar: empty and invisible; the line keeps clear of it */}
-            <div className="hero__slot" data-line="hero-slot" aria-hidden="true" />
+            {/* she sits on the line: its run is routed through her seat (perch-l → perch-r) */}
+            <div className="hero__perch" data-line="hero-slot" aria-hidden="true">
+              <Avatar pose="perched" role="perched" eager probes={{ seatL: "perch-l", seatR: "perch-r" }} />
+            </div>
           </div>
           <div className="container hero__cue-wrap">
             <a className="hero__cue label" href="#about" data-line="hero-cue">
@@ -84,6 +88,8 @@ export default function Home() {
               <p className="trajectory__end" data-line="traj-end">
                 {trajectory.continuing}
               </p>
+              {/* stands on the line's last stretch, map in hand, looking on ahead */}
+              <Avatar pose="lookingAhead" role="ahead" enterAt="line" />
             </figure>
 
             <div className="about__body">
@@ -111,6 +117,8 @@ export default function Home() {
                 <span data-line="current-heading">{currently.heading}</span>
               </h2>
               <div className="features">
+                {/* stands on the AMNH card holding the thread up: the line runs into her fist */}
+                <Avatar pose="untangling" role="untangling" enterAt={0.97} probes={{ fist: "untangle-fist", foot: "untangle-foot" }} />
                 {currently.features.map((f) => {
                   const entry = getWork(f.slug);
                   const period = entry?.period ? formatPeriod(entry.period) : null;
@@ -194,7 +202,10 @@ export default function Home() {
               <h2 className="section-heading">
                 <span data-line="selected-heading">{selectedWork.heading}</span>
               </h2>
-              <WorkPanels rows={selectedWork.rows} />
+              <div className="panels-stage">
+                <Avatar pose="peeking" role="peeking" enterAt={0.8} />
+                <WorkPanels rows={selectedWork.rows} />
+              </div>
             </div>
           </div>
         </section>
@@ -220,6 +231,8 @@ export default function Home() {
             <SectionRule line="contact-label" />
             <h2 className="section-heading contact__heading" id="contact-heading">
               <span data-line="contact-heading">{contact.heading}</span>
+              {/* she stands on the line's last stretch, beside the words, waving */}
+              <Avatar pose="waving" role="greeting" enterAt={0.9} />
             </h2>
             <div className="contact__grid">
               <div>
@@ -234,6 +247,7 @@ export default function Home() {
         </section>
       </main>
       <SiteFooter toTop />
+      <AvatarStage />
     </div>
   );
 }

@@ -1,0 +1,856 @@
+{
+  "count": 85,
+  "format": "transparent RGBA PNG",
+  "assets": [
+    {
+      "id": "01.1",
+      "file": "01-typing/typing-01.png",
+      "description": "Cross-legged laptop",
+      "width": 1214,
+      "height": 1295,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.457,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "01.2",
+      "file": "01-typing/typing-02.png",
+      "description": "Laptop on lap, feet dangling",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.479,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "01.3",
+      "file": "01-typing/typing-03.png",
+      "description": "Typing at desk",
+      "width": 1160,
+      "height": 1356,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.476,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "01.4",
+      "file": "01-typing/typing-04.png",
+      "description": "Kneeling at low surface",
+      "width": 1296,
+      "height": 1213,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.463,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "01.5",
+      "file": "01-typing/typing-05.png",
+      "description": "Sideways on stool",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.503,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "02.1",
+      "file": "02-matcha/matcha-01.png",
+      "description": "Standing, sipping matcha",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.522,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "02.2",
+      "file": "02-matcha/matcha-02.png",
+      "description": "Seated with matcha",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.363,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "02.3",
+      "file": "02-matcha/matcha-03.png",
+      "description": "Walking with matcha",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.557,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "02.4",
+      "file": "02-matcha/matcha-04.png",
+      "description": "Matcha cheers",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.489,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "02.5",
+      "file": "02-matcha/matcha-05.png",
+      "description": "Leaning and sipping",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.498,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "03.1",
+      "file": "03-thinking/thinking-01.png",
+      "description": "Seated, chin on fist",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.36,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "03.2",
+      "file": "03-thinking/thinking-02.png",
+      "description": "Standing, looking up",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.503,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "03.3",
+      "file": "03-thinking/thinking-03.png",
+      "description": "Cross-legged, hand at temple",
+      "width": 1223,
+      "height": 1286,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.433,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "03.4",
+      "file": "03-thinking/thinking-04.png",
+      "description": "Leaning and pondering",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.388,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "03.5",
+      "file": "03-thinking/thinking-05.png",
+      "description": "Crouched, elbows on knees",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.374,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "04.1",
+      "file": "04-walking/walking-01.png",
+      "description": "Relaxed stride",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.501,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "04.2",
+      "file": "04-walking/walking-02.png",
+      "description": "Brisk stride",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.47,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "04.3",
+      "file": "04-walking/walking-03.png",
+      "description": "Walking with tote and matcha",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.45,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "04.4",
+      "file": "04-walking/walking-04.png",
+      "description": "Hands in pockets",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.523,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "04.5",
+      "file": "04-walking/walking-05.png",
+      "description": "Looking back while walking",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.514,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "05.1",
+      "file": "05-idea/idea-01.png",
+      "description": "Raised finger, idea",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.482,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "05.2",
+      "file": "05-idea/idea-02.png",
+      "description": "Sudden realization",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.495,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "05.3",
+      "file": "05-idea/idea-03.png",
+      "description": "Seated, looking up",
+      "width": 1141,
+      "height": 1379,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.345,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "05.4",
+      "file": "05-idea/idea-04.png",
+      "description": "Snapping fingers",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.484,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "05.5",
+      "file": "05-idea/idea-05.png",
+      "description": "Notebook inspiration",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.477,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "06.1",
+      "file": "06-untangling/untangling-01.png",
+      "description": "Standing, separating knot",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.417,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "06.2",
+      "file": "06-untangling/untangling-02.png",
+      "description": "Seated, examining thread",
+      "width": 1312,
+      "height": 1199,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.449,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "06.3",
+      "file": "06-untangling/untangling-03.png",
+      "description": "Crouched, pulling loose end",
+      "width": 1216,
+      "height": 1293,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.397,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "06.4",
+      "file": "06-untangling/untangling-04.png",
+      "description": "Sorting loops on forearm",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.49,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "06.5",
+      "file": "06-untangling/untangling-05.png",
+      "description": "Holding knot aloft",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.424,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "07.1",
+      "file": "07-reading/reading-01.png",
+      "description": "Cross-legged reading",
+      "width": 1177,
+      "height": 1337,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.452,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "07.2",
+      "file": "07-reading/reading-02.png",
+      "description": "Reading with feet dangling",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.446,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "07.3",
+      "file": "07-reading/reading-03.png",
+      "description": "Standing with book",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.534,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "07.4",
+      "file": "07-reading/reading-04.png",
+      "description": "Reclining with book",
+      "width": 1536,
+      "height": 1024,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.428,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "07.5",
+      "file": "07-reading/reading-05.png",
+      "description": "Leaning and turning a page",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.574,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "08.1",
+      "file": "08-photography/photography-01.png",
+      "description": "Standing DSLR shot",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.419,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "08.2",
+      "file": "08-photography/photography-02.png",
+      "description": "Kneeling DSLR shot",
+      "width": 1204,
+      "height": 1306,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.408,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "08.3",
+      "file": "08-photography/photography-03.png",
+      "description": "Crouched DSLR shot",
+      "width": 1214,
+      "height": 1295,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.455,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "08.4",
+      "file": "08-photography/photography-04.png",
+      "description": "Reviewing camera images",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.493,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "08.5",
+      "file": "08-photography/photography-05.png",
+      "description": "Side-on DSLR shot",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.414,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "09.1",
+      "file": "09-peeking/peeking-01.png",
+      "description": "Peeking from left edge",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.573,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "09.2",
+      "file": "09-peeking/peeking-02.png",
+      "description": "Peeking from right edge",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.617,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "09.3",
+      "file": "09-peeking/peeking-03.png",
+      "description": "Peeking over horizontal edge",
+      "width": 1536,
+      "height": 1024,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.604,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "09.4",
+      "file": "09-peeking/peeking-04.png",
+      "description": "Crouched at low corner",
+      "width": 1184,
+      "height": 1328,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.584,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "09.5",
+      "file": "09-peeking/peeking-05.png",
+      "description": "Peeking sideways",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.574,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "10.1",
+      "file": "10-waving/waving-01.png",
+      "description": "Standing wave",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.486,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "10.2",
+      "file": "10-waving/waving-02.png",
+      "description": "Seated wave",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.303,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "10.3",
+      "file": "10-waving/waving-03.png",
+      "description": "Leaning forward, waving",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.516,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "10.4",
+      "file": "10-waving/waving-04.png",
+      "description": "Walking away and waving",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.5,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "10.5",
+      "file": "10-waving/waving-05.png",
+      "description": "Small wave near face",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.498,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "11.1",
+      "file": "11-break/break-01.png",
+      "description": "Seated with matcha beside her",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.426,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "11.2",
+      "file": "11-break/break-02.png",
+      "description": "Reclining against edge",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.434,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "11.3",
+      "file": "11-break/break-03.png",
+      "description": "Stretching overhead",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.541,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "11.4",
+      "file": "11-break/break-04.png",
+      "description": "Knees drawn up, resting",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.407,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "11.5",
+      "file": "11-break/break-05.png",
+      "description": "Leaning back on hands",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.482,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "12.1",
+      "file": "12-sleeping/sleeping-01.png",
+      "description": "Curled on side",
+      "width": 1145,
+      "height": 1374,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.329,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "12.2",
+      "file": "12-sleeping/sleeping-02.png",
+      "description": "Sleeping at desk",
+      "width": 1055,
+      "height": 1491,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.382,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "12.3",
+      "file": "12-sleeping/sleeping-03.png",
+      "description": "Sleeping in seat",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.331,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "12.4",
+      "file": "12-sleeping/sleeping-04.png",
+      "description": "Cross-legged dozing",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.359,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "12.5",
+      "file": "12-sleeping/sleeping-05.png",
+      "description": "Backpack as pillow",
+      "width": 1378,
+      "height": 1142,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.466,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "13.1",
+      "file": "13-fieldwork/fieldwork-01.png",
+      "description": "Recording observations",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.362,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "13.2",
+      "file": "13-fieldwork/fieldwork-02.png",
+      "description": "Using binoculars",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.434,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "13.3",
+      "file": "13-fieldwork/fieldwork-03.png",
+      "description": "Inspecting ground",
+      "width": 1176,
+      "height": 1337,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.391,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "13.4",
+      "file": "13-fieldwork/fieldwork-04.png",
+      "description": "Hiking with notebook",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.495,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "13.5",
+      "file": "13-fieldwork/fieldwork-05.png",
+      "description": "Checking GPS",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.473,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "14.1",
+      "file": "14-digitization/digitization-01.png",
+      "description": "Cataloging records",
+      "width": 1295,
+      "height": 1215,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.55,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "14.2",
+      "file": "14-digitization/digitization-02.png",
+      "description": "Adjusting copy stand camera",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.429,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "14.3",
+      "file": "14-digitization/digitization-03.png",
+      "description": "Handling archival paper",
+      "width": 1192,
+      "height": 1319,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.482,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "14.4",
+      "file": "14-digitization/digitization-04.png",
+      "description": "Checking capture quality",
+      "width": 1300,
+      "height": 1209,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.433,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "14.5",
+      "file": "14-digitization/digitization-05.png",
+      "description": "Clipboard beside digitization rig",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.415,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "15.1",
+      "file": "15-map/map-01.png",
+      "description": "Unfolding map",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.503,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "15.2",
+      "file": "15-map/map-02.png",
+      "description": "Tracing route on map",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.297,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "15.3",
+      "file": "15-map/map-03.png",
+      "description": "Crouched over map",
+      "width": 1145,
+      "height": 1374,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.376,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "15.4",
+      "file": "15-map/map-04.png",
+      "description": "Map and distance",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.514,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "15.5",
+      "file": "15-map/map-05.png",
+      "description": "Holding folded map",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.544,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "16.1",
+      "file": "16-airplane/airplane-01.png",
+      "description": "Window seat",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.332,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "16.2",
+      "file": "16-airplane/airplane-02.png",
+      "description": "Laptop on tray",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.33,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "16.3",
+      "file": "16-airplane/airplane-03.png",
+      "description": "Reading on airplane",
+      "width": 1145,
+      "height": 1374,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.331,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "16.4",
+      "file": "16-airplane/airplane-04.png",
+      "description": "Checking map on airplane",
+      "width": 1146,
+      "height": 1372,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.302,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "16.5",
+      "file": "16-airplane/airplane-05.png",
+      "description": "Sleeping with neck pillow",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.31,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "17.1",
+      "file": "17-painting/painting-01.png",
+      "description": "Painting at easel",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.365,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "17.2",
+      "file": "17-painting/painting-02.png",
+      "description": "Painting at tabletop",
+      "width": 1189,
+      "height": 1323,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.396,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "17.3",
+      "file": "17-painting/painting-03.png",
+      "description": "Painting low canvas",
+      "width": 1225,
+      "height": 1284,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.445,
+      "eyewear": "sunglasses"
+    },
+    {
+      "id": "17.4",
+      "file": "17-painting/painting-04.png",
+      "description": "Inspecting artwork",
+      "width": 1024,
+      "height": 1536,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.331,
+      "eyewear": "prescription glasses"
+    },
+    {
+      "id": "17.5",
+      "file": "17-painting/painting-05.png",
+      "description": "Painting in sketchbook",
+      "width": 1221,
+      "height": 1288,
+      "transparent": true,
+      "transparent_pixel_fraction": 0.447,
+      "eyewear": "prescription glasses"
+    }
+  ]
+}

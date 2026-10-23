@@ -122,3 +122,31 @@ Milestones:
 - QA:
   - `qa/context-shots.mjs` (in-context captures); `qa/visible.mjs` now reports reversal diffs and mid-run rebuilds.
   - `check.mjs` 116/116 on production. Preview on :3100. Nothing committed.
+
+## Iteration 7 — avatar integration (21 Oct 2026)
+Decisions (keep through compaction):
+- Source pack `handoff/assets/avatar/` (85 PNGs) is untouched. `scripts/build-avatars.mjs` (sharp, alpha > 8 bbox + 6 px pad, WebP q90 / alpha 100) derives only the 20 poses used into `public/assets/avatar/` (1.9 MB total; 50–240 KB each). Registry with dimensions + anchor points: `src/content/avatars.ts`.
+- `Avatar.tsx`: `.avatar` (placed, never animated, carries zero-size `data-line` probes the line route measures) › `.avatar__body` (entrance) › `.avatar__img` (reactions). aria-hidden, `alt=""`, pointer-events none, width/height reserved; only the hero is eager.
+- `AvatarStage.tsx`: entrance once per figure (IntersectionObserver at `data-enter-at`), waits only for figures still moving on screen (≤ 900 ms), `data-in` queued → true → done after 2.4 s; one idle motion (peeker ducks every ~7.4 s, only on screen, tab visible, nothing else moving). Reduced motion: `data-in="still"`. CSS hides figures pre-cue only under `@media (scripting: enabled)`.
+- Homepage moments: hero `break-01` sits on the line (route passes seat-L → seat-R probes, sags 3.5 px); trajectory `walking-02` walks the level last stretch (route flat at her feet) toward "Still following the thread." (≥ 860 px); "Two threads" `untangling-05` on the AMNH card top edge, line runs into her fist probe, down behind her, out past her heels (replaces the knot when she is shown); Selected work `peeking-03` over the grid top (clip at the edge, rises on panel hover/focus, idle duck); More: `photography-03` in the photo plate's empty lower corner, shutter flash + contact-sheet exposure on settle and on hover (≥ 1150 px), else `reading-04` on Writing's top edge (640–1149 px); Contact `waving-01` on the links' top rule (≥ 860), or `waving-near` standing on the line's last stretch beside "Say hello." (narrow; the route runs under her feet into the underline).
+- Phones keep hero, untangler, wave. Never more than two figures in view (qa/av-density.mjs). Experiments stays empty.
+- Detail pages: `detailAvatars` in `src/content/avatars.ts` — 1 per page, 2 for Lynxster (typing at desk; notebook) and AMNH (archival paper; copy stand, digitization stream only — nothing illustrates the mantis research). Standing on the rule under the section (left column; after the text, right-aligned, ≤ 899 px; the second hidden on narrow).
+- Verified on the production build: check.mjs 164/164; visible.mjs pass at 1440/1024/768/390; detector 0 findings.
+
+## Iteration 8 — avatar refinement (23 Oct 2026)
+Decisions (keep through compaction):
+- **Hero:** `data-static` + `eager`. The image is preloaded (`<link rel=preload>` from next/image `preload`), `decoding="sync"`, with no entrance and no JS gating. The homepage page-load fade skips `.hero` (`.home__main > :not(.hero)`).
+- **Faint trajectory pre-trace:** removed (path element, route `guide`, CSS).
+- **Walker:** replaced by `map-04` (role `ahead`), standing on the level last stretch. It is cued by the line itself: HomeScribble sets `data-line-reached` when the pen reaches `Route.cues.ahead`, and AvatarStage enters it on that (`enterAt="line"`).
+- **Entrances:** CSS transitions, not keyframes, so they are interruptible.
+  - Wrappers: `.avatar` (anchor and clip) › `.avatar__body` (entrance) › `.avatar__react` (reaction).
+  - Each figure has a `--from` of 8–14px (`translateX(-12px)` for `ahead`, `translateX(14px)` for `greeting`, `translateY(-8px)` otherwise); 0.42s opacity / 0.52s transform with `cubic-bezier(.22,1,.36,1)`.
+  - No idle motion. `data-in`: queued → true → done.
+- **Peeker:**
+  - Anchor `clip-path: inset(-80% -40% calc(var(--sink) + 1px) -40%)`, so nothing below 1px above the grid's top edge ever paints.
+  - Hidden state is `translateY(66%)`: only the top of her hair shows. The reveal is 0.55s.
+  - Lean via `--lean` / `--lean-x` (≤ 2.4°, ≤ 7px). It is set from the active card (pointerover / focusin) by AvatarStage, eased by a transition and reset on pointerleave / focusout.
+- **Contact:** a single greeter at all widths (`greeting`), standing on the line's last stretch just past "Say hello." (`.contact__heading { width: fit-content }`, avatar `left: calc(100% + .6em)`). The wide route runs under her feet, makes a small loop in the gap, then draws the underline. The links-rule waver was removed.
+- **More visitor:** the photographer from 1360px (larger, 84–100px). Below that the contact sheet comes down into her corner, so the reader takes the slot (640–1359px).
+- **Public assets:** you copied the full pack into `public/assets/avatar/` (PNG folders, previews, `index.html`, manifest). It is left untouched; the site references only the derived WebPs.
+- **Next.js notice:** `next dev` / `next build` print a Next.js security-vulnerability notice and stop once; a retry continues. No upgrade has been run.

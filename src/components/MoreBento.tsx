@@ -6,7 +6,15 @@
  * Experiments is deliberately empty — a reserved plate with nothing in it, so
  * it claims no experiment. None of these have pages yet, so nothing here is a
  * link; the drawings are aria-hidden and claim no work.
+ *
+ * One plate at a time has a visitor: a photographer crouched in the empty
+ * lower corner of Wildlife photography, whose shutter lights the contact
+ * sheet above her (once on arrival, and again on hover) — or, below 1360px,
+ * where the sheet comes down into that corner, a reader stretched out on
+ * Writing's top edge.
+ * Experiments stays empty.
  */
+import Avatar from "@/components/Avatar";
 
 /** Writing: a nib that has just written a flourish in the site's own line. */
 function WritingScene() {
@@ -70,6 +78,15 @@ const SCENES: Record<string, React.ReactNode> = {
   Experiments: <div className="bento__scene scene-empty" aria-hidden="true" />,
 };
 
+const VISITORS: Record<string, React.ReactNode> = {
+  Writing: <Avatar pose="reading" role="reading" />,
+  "Wildlife photography": (
+    <Avatar pose="photographing" role="photographing">
+      <span className="avatar__flash" />
+    </Avatar>
+  ),
+};
+
 const KEYS: Record<string, string> = {
   Writing: "writing",
   "Wildlife photography": "photo",
@@ -82,6 +99,7 @@ export default function MoreBento({ items }: { items: string[] }) {
       {items.map((item) => (
         <li key={item} className={`bento__card bento__card--${KEYS[item] ?? "other"}`}>
           {SCENES[item] ?? null}
+          {VISITORS[item] ?? null}
           <div className="bento__content">
             <h3 className="bento__name">{item}</h3>
             <span className="label bento__soon">Later</span>

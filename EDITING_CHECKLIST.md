@@ -69,6 +69,10 @@ The research is described only as joining. The homepage reads "Joined a mantis b
 - Section labels ("About", "Currently", …) are no longer shown above headings; they remain in the header nav. The labels are still in `src/content/site.ts` if you want them back.
 - The homepage line's tail calibration (`A_TAIL` in `src/lib/home-route.ts`) is specific to Cormorant Garamond 500. If the hero font or weight changes, re-run `node qa/measure-tail.mjs` and update it.
 
+## 4b. Avatars (optional review)
+- [ ] Poses chosen per moment and per project page are in `src/content/avatars.ts` (`poses`, `detailAvatars`). To swap one: add it to `POSES` in `scripts/build-avatars.mjs`, run `node scripts/build-avatars.mjs`, copy the printed size into `avatars.ts`, and re-read its anchor points (seat, fist) if the line is routed through it.
+- [ ] Nothing illustrates the mantis research; add a figure there only once the research details are confirmed.
+
 ## 5. Before going public
 
 - Remove `robots: { index: false, follow: false }` from `src/app/layout.tsx` (set for the private preview).

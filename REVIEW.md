@@ -1,5 +1,70 @@
 # Visual & functional review
 
+## Iteration 8 — avatar refinement (23 Oct 2026)
+
+**Critique of iteration 7, all fixed:**
+1. **Hero:** she faded and dropped in after the line. She is now present, opaque and still from the first frame (preloaded, no entrance), and the page-load fade skips the hero.
+2. **Timeline pre-trace:** the faint grey pre-trace is removed.
+3. **Walker:** a frozen walking PNG slid along the line. It is replaced by a stationary pose (15.4, standing with a map, looking on ahead) on the line's level last stretch. She appears only when the line has been drawn under her feet.
+4. **Entrances:** they had large travel, a bounce on the hero, a hop on the wave, and a repeating idle duck. Now every entrance is a 8–14px decelerating settle over about 0.53s, as an interruptible transition. There is no idle motion.
+5. **Peeker crossing the panels:**
+   - Problem: her fingers sat over the panels, and her rise started from inside the panel strip.
+   - Fix: she is now clipped 1px above the grid's top edge, with a hint of hair waiting there. She rises into the cream margin and leans a little toward the active card (pointer or keyboard), returning to neutral when the grid is left. The reveal does not replay.
+   - Proven per frame through rapid switching, and by an identical pixel strip with and without her.
+6. **Detached figures:**
+   - Contact: the wave now stands on the line's last stretch beside "Say hello." at every width, with the line under her feet.
+   - Photographer: larger in the photo plate's corner (≥ 1360px).
+   - Map figure: larger, and the trajectory's band no longer stretches for her.
+7. **Found while verifying:**
+   - A CSS specificity bug made the peeker's hair hint invisible.
+   - Chrome's IntersectionObserver counts the target's own `clip-path`, so the peeker never reached a 0.9 threshold (now 0.6).
+   - One antialiased row of her clip met the panel's fractional top border; the clip moved 1px higher.
+
+**Blocker noted, not acted on:** `next dev` and `next build` print "Your version of Next.js is affected by a known security vulnerability", stop once, and ask the agent to offer `next upgrade --agent=security …`. A retry continues. The upgrade is left for you to decide.
+
+## Iteration 7 — avatar integration (21 Oct 2026)
+
+**Method:**
+- Read the pack's README and manifest and viewed all three preview sheets. The sheets were used only to choose poses and are never served.
+- Derived 20 poses and placed them.
+- Inspected the live page in Google Chrome via Playwright at 1440, 1366, 1280, 1150, 1024, 768 and 390. The Claude in Chrome extension was not connected.
+- Critiqued the result, fixed what failed and re-captured.
+
+**Defects found while iterating, and fixes (in priority order):**
+1. **Text under figures.**
+   - Problem: on phones, the contact wave stood over the intro and email. At 1024–1280 the photographer's lens sat over the More intro; even at 1440 it was only 34 px from the text.
+   - Fix: on narrow screens the greeter stands on the line's last stretch beside "Say hello.", and the route now runs under her feet into the underline. The photographer moved inside the photo plate's empty lower corner and is sized per width. A check now fails if any text sits under a figure, at 4 widths.
+2. **Crowding.**
+   - Problem: three figures were in view at once in the Selected work → More band (peeker, reader, photographer).
+   - Fix: More has one visitor per width (photographer ≥ 1150, reader below). Checked: never more than 2 in view.
+3. **Walker floating above the line.**
+   - Problem: as an explicitly placed grid item she pushed the trajectory band into row 2.
+   - Fix: the band is pinned to row 1. A route kink where the level stretch began was also removed.
+4. **Entrances queued behind figures already scrolled away.**
+   - Problem: after a fast scroll the photographer waited about 2.4 s.
+   - Fix: a figure now waits only for others still moving on screen, at most 0.9 s.
+5. **Hero on phones.**
+   - Problem: her feet were about 15 px from "Jajodia.".
+   - Fix: she is a little smaller and higher on phones.
+6. **Stitch.**
+   - Problem: the stitch before More passed close to the photographer's head.
+   - Fix: it closes 44 px above the plates.
+
+**Result:**
+- **Hero:** the largest figure sits on the line itself, which runs under her hands and her cup. She drops onto it after the line appears and settles.
+- **Trajectory:** a walker crosses the level last stretch, then rests above "Still following the thread."
+- **Two threads:** an untangler stands on the AMNH card and holds the thread up: the line runs into her fist, down behind her and away past her heels.
+- **Selected work:** a peeker's hands grip the grid's top edge. She rises from behind it, comes up a little when a panel opens (hover or keyboard focus) and ducks now and then.
+- **Wildlife photography:** a crouched photographer in the plate's corner; her shutter lights the contact sheet.
+- **Contact:** a wave, from the contact links' top rule on wide screens, or standing on the line's last stretch on narrow ones.
+- **Project pages:** contextual figures stand on section rules. AMNH's stay with digitization.
+- **Motion and access:** each figure enters once and settles. Reduced motion shows everything in place; decorative figures are absent from the accessibility tree.
+
+**Remaining (see QA limitations):**
+- The photography moment needs ≥ 1150 px.
+- The photographer is small at 1150–1359.
+- Testing was Chrome only.
+
 ## Iteration 6 — Selected work polish (21 Oct 2026)
 
 **Method:**

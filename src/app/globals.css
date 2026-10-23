@@ -272,19 +272,6 @@ ol {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-/* the trajectory's pencil underdrawing: the same path, barely there, which
-   the ink traces over as you scroll (hidden when the line is drawn statically) */
-.scribble__guide {
-  fill: none;
-  stroke: var(--line);
-  stroke-width: 1.25px;
-  stroke-linecap: butt; /* a zero-length leading dash must not leave a dot */
-  stroke-linejoin: round;
-  opacity: 0.2;
-}
-.scribble[data-mode="static"] .scribble__guide {
-  display: none;
-}
 .scribble__ink-start {
   stop-color: var(--text);
 }
@@ -317,8 +304,10 @@ ol {
   position: relative;
   z-index: 1;
 }
+/* the page fades in on load — except the hero, which (with its seated
+   avatar) is simply there from the first frame */
 @media (prefers-reduced-motion: no-preference) {
-  .home__main,
+  .home__main > :not(.hero),
   .detail__main {
     animation: page-in 0.55s var(--ease) both;
   }
@@ -379,27 +368,27 @@ ol {
 .hero__inner {
   position: relative;
 }
-.hero__slot {
+/* the hero avatar's box: her seat (62% down) on the block's vertical middle;
+   the line is routed under her from the seat probes */
+.hero__perch {
   position: absolute;
-  right: clamp(3rem, 9vw, 9rem);
+  right: clamp(2rem, 8vw, 8.5rem);
   top: 50%;
-  width: clamp(16rem, 30vw, 28rem);
-  aspect-ratio: 1;
-  transform: translateY(-46%);
+  width: clamp(14rem, 20vw, 18.5rem);
+  aspect-ratio: 620 / 968;
+  transform: translateY(-62%);
   pointer-events: none;
-  visibility: hidden;
 }
 @media (max-width: 859.98px) {
   .hero {
     justify-content: flex-end;
     padding-bottom: 7rem;
   }
-  .hero__slot {
-    top: auto;
-    bottom: calc(100% + 1.5rem);
+  /* beside the first line of the name, on the line where it leaves the "a" */
+  .hero__perch {
+    top: calc(0.42 * clamp(4.6rem, 15vw, 13rem));
     right: var(--gutter);
-    width: min(56vw, 20rem);
-    transform: none;
+    width: min(33vw, 15rem);
   }
 }
 .hero__cue-wrap {
@@ -446,11 +435,14 @@ section[id] {
   margin: clamp(0.5rem, 1.5vw, 1.25rem) 0 0;
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 0.9fr);
+  /* the band's own height: the figure at the end may rise above it, not stretch it */
+  grid-template-rows: 184px auto;
   column-gap: 1.25rem;
 }
 /* the line sweeps left across the top of the band, the trajectory sits below */
 .trajectory__band {
   grid-column: 1 / -1;
+  grid-row: 1; /* the figure at the end shares this row; keep the band in it */
   height: 184px;
 }
 .trajectory__list {
@@ -1958,5 +1950,286 @@ a.contact-list__row:hover {
   .logo-mask {
     forced-color-adjust: none;
     background-color: CanvasText;
+  }
+}
+
+/* -------------------------------------------------------------- avatars */
+
+/* Decorative figures from the approved avatar set (components/Avatar.tsx).
+     .avatar         placed (and clipped) by its context; never animated, so
+                     the probes the line is routed through stay still
+     .avatar__body   the entrance
+     .avatar__react  reactions (the peeker's lean)
+   Everything moves by transition, never keyframes, so a new state redirects
+   the motion from where it is. Entrances are short settles (8–14px, about
+   half a second, decelerating), once; the hero has none. */
+.avatar {
+  --settle: cubic-bezier(0.22, 1, 0.36, 1);
+  --from: translateY(-8px); /* default: settles down onto its edge */
+  position: absolute;
+  z-index: 2;
+  display: block;
+  aspect-ratio: var(--ar);
+  pointer-events: none;
+  /* stand on the edge below: the artwork's base line sits on it */
+  --sink: calc((1 - var(--base)) * 100%);
+}
+.avatar__body,
+.avatar__react,
+.avatar__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.avatar__react {
+  position: relative;
+}
+.avatar__img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.avatar__probe {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+.avatar__body {
+  transition:
+    opacity 0.42s var(--settle),
+    transform 0.52s var(--settle);
+}
+/* before its cue (only when a script will give it, and never the hero) */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .avatar:not([data-static]):not([data-in]) .avatar__body,
+  .avatar[data-in="queued"] .avatar__body {
+    opacity: 0;
+    transform: var(--from);
+  }
+}
+
+/* 1. hero — sitting on the line, the largest figure, present from the first frame */
+.hero__perch .avatar {
+  inset: 0;
+  width: 100%;
+}
+
+/* 2. trajectory — standing on the line's level last stretch, map in hand,
+   looking on ahead above "Still following the thread." (a grid item over the
+   band's last column) */
+.avatar--ahead {
+  --from: translateX(-12px);
+  position: relative;
+  grid-row: 1;
+  grid-column: 2;
+  align-self: end;
+  justify-self: center;
+  width: clamp(5.5rem, 7.6vw, 7.25rem);
+  margin-bottom: 22px; /* feet on the trajectory's line, 24px above the band's foot */
+}
+
+/* 3. Two threads — on the AMNH card's top edge, the line running into her fist */
+.features {
+  position: relative;
+}
+.avatar--untangling {
+  bottom: 100%;
+  right: 12%;
+  width: clamp(5.25rem, 8vw, 7.25rem);
+  transform: translateY(var(--sink));
+}
+
+/* 4. Selected work — peeking over the grid. Her own box is clipped at the
+   grid's top edge (the artwork's flat cut sits on it), so nothing of her ever
+   crosses a panel: she waits below that edge with only the top of her hair
+   showing, rises a short way into the cream margin, and leans a little
+   toward whichever card is active (AvatarStage sets --lean / --lean-x). */
+.panels-stage {
+  position: relative;
+}
+.avatar--peeking {
+  --from: translateY(66%);
+  bottom: 100%;
+  left: 63%;
+  width: clamp(7.5rem, 11vw, 10rem);
+  transform: translate(-50%, var(--sink));
+  /* 1px above the edge, so not even an antialiased row of her touches a panel */
+  clip-path: inset(-80% -40% calc(var(--sink) + 1px) -40%);
+}
+.avatar--peeking .avatar__body {
+  transition: transform 0.55s var(--settle);
+}
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  /* the hint of hair stays; only the reveal is held back */
+  .avatar.avatar--peeking:not([data-static]):not([data-in]) .avatar__body,
+  .avatar.avatar--peeking[data-in="queued"] .avatar__body {
+    opacity: 1;
+  }
+}
+.avatar--peeking .avatar__react {
+  transform-origin: 50% 88%;
+  transform: translateX(var(--lean-x, 0px)) rotate(var(--lean, 0deg));
+  transition: transform 0.45s var(--settle);
+}
+
+/* 5. More — one visitor: a photographer crouched in the photo plate's empty
+   lower corner, on its floor, under the contact sheet; or, where that plate
+   is too narrow, a reader stretched out on Writing's top edge. The plates
+   clip only their drawings, so a visitor can sit on an edge. */
+.bento__card {
+  overflow: visible;
+}
+.bento__scene {
+  overflow: hidden;
+  border-radius: inherit;
+}
+.avatar--reading {
+  bottom: 100%;
+  left: 44%;
+  width: clamp(8rem, 12vw, 10.5rem);
+  transform: translateY(var(--sink));
+}
+.avatar--photographing {
+  bottom: 0;
+  right: 0.75rem;
+  width: clamp(5.25rem, 6.2vw, 6.25rem);
+  transform: translateY(calc(var(--sink) - 1px));
+}
+/* the shutter: a brief light at the lens, and the contact sheet catches it —
+   once as she settles, and again whenever the plate is hovered */
+.avatar__flash {
+  position: absolute;
+  left: 4%;
+  top: 22%;
+  width: 46%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(closest-side, rgba(255, 253, 246, 0.95), rgba(255, 249, 230, 0.5) 45%, rgba(255, 249, 230, 0) 100%);
+  opacity: 0;
+}
+.avatar--photographing[data-in="true"] .avatar__flash {
+  animation: av-flash 0.5s ease-out 0.6s both;
+}
+.bento__card--photo:hover .avatar--photographing[data-in="done"] .avatar__flash {
+  animation: av-flash 0.5s ease-out both;
+}
+@keyframes av-flash {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  14% {
+    opacity: 1;
+  }
+}
+.contact-sheet {
+  position: relative;
+}
+.contact-sheet::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #fffdf6;
+  opacity: 0;
+  pointer-events: none;
+}
+.bento__card--photo:has(.avatar[data-in="true"]) .contact-sheet::after {
+  animation: av-exposure 0.6s ease-out 0.65s both;
+}
+.bento__card--photo:hover:has(.avatar[data-in="done"]) .contact-sheet::after {
+  animation: av-exposure 0.6s ease-out 0.05s both;
+}
+@keyframes av-exposure {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.4;
+  }
+}
+
+/* 6. Say hello — standing on the line's last stretch, just past the words,
+   waving; the line runs under her feet and on into the underline */
+.contact__heading {
+  position: relative;
+  width: fit-content;
+}
+.avatar--greeting {
+  --from: translateX(14px);
+  left: calc(100% + 0.6em);
+  bottom: -0.12em;
+  width: clamp(4.5rem, 7.4vw, 7rem);
+  transform: translateY(var(--sink));
+}
+
+/* project pages — one or two figures, each standing on the rule under the
+   section they belong to (left column; after the text when single-column) */
+.detail-section--avatar .detail-section__body {
+  grid-row: 1 / span 2;
+}
+.avatar--detail {
+  position: relative;
+  grid-column: 1;
+  grid-row: 2;
+  align-self: end;
+  justify-self: start;
+  width: clamp(6.5rem, 10vw, 8.5rem);
+  margin-left: 0.25rem;
+  margin-bottom: calc(-1 * clamp(2.5rem, 5vw, 3.75rem));
+  transform: translateY(var(--sink));
+}
+
+/* never more than two figures in view, fewer as the page narrows:
+   the photographer from 1360px (below that the contact sheet comes down into
+   her corner, and a smaller figure would only look stranded), the reader
+   below that; the figure at the trajectory's end only with the
+   horizontal trajectory; phones keep the hero, the untangler and the wave */
+@media (min-width: 1360px) {
+  .avatar--reading {
+    display: none;
+  }
+}
+@media (max-width: 1359.98px) {
+  .avatar--photographing {
+    display: none;
+  }
+}
+@media (max-width: 899.98px) {
+  .avatar--reading {
+    left: 26%;
+  }
+  .avatar--detail {
+    grid-row: 3;
+    grid-column: 1;
+    justify-self: end;
+    width: clamp(6rem, 18vw, 7.5rem);
+  }
+  .detail-section--avatar .detail-section__body {
+    grid-row: auto;
+  }
+  .avatar--detail-2 {
+    display: none;
+  }
+}
+@media (max-width: 859.98px) {
+  .avatar--ahead {
+    display: none;
+  }
+  .avatar--untangling {
+    right: 7%;
+    width: clamp(4.75rem, 13vw, 6rem);
+  }
+}
+@media (max-width: 639.98px) {
+  .avatar--peeking,
+  .avatar--reading {
+    display: none;
+  }
+  /* a little smaller and higher, so her feet keep clear of "Jajodia." */
+  .hero__perch {
+    top: calc(0.36 * clamp(4.6rem, 15vw, 13rem));
+    width: min(30vw, 15rem);
   }
 }
