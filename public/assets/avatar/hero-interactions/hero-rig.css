@@ -1,0 +1,8 @@
+.hero-rig{position:relative;width:100%;aspect-ratio:1300/1600;isolation:isolate;overflow:visible}
+.hero-rig__layer{position:absolute;inset:0;pointer-events:none;will-change:transform}
+.hero-rig__layer img{position:absolute;display:block;max-width:none;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.hero-rig__target{position:absolute;z-index:10;appearance:none;border:0;background:transparent;padding:0;cursor:pointer;border-radius:14px}
+.hero-rig__target:focus-visible{outline:2px dashed currentColor;outline-offset:4px}
+.hero-rig__target--legs{left:23%;top:62%;width:55%;height:30%}
+.hero-rig__target--cup{left:79%;top:31%;width:13%;height:17%;z-index:11}
+@media(prefers-reduced-motion:reduce){.hero-rig__layer{will-change:auto}}

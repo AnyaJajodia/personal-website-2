@@ -150,3 +150,106 @@ Decisions (keep through compaction):
 - **More visitor:** the photographer from 1360px (larger, 84–100px). Below that the contact sheet comes down into her corner, so the reader takes the slot (640–1359px).
 - **Public assets:** you copied the full pack into `public/assets/avatar/` (PNG folders, previews, `index.html`, manifest). It is left untouched; the site references only the derived WebPs.
 - **Next.js notice:** `next dev` / `next build` print a Next.js security-vulnerability notice and stop once; a retry continues. No upgrade has been run.
+
+## Iteration 9 — bold avatar pass (23 Oct 2026)
+Decisions (keep through compaction):
+- **Assets:** served as AVIF (alpha kept), about half the size of WebP. Hero `break-01` is 940px wide at 165 KB; the whole served set is about 1.0 MB for 17 poses. Each page loads only the poses it displays: 4 on the homepage at desktop, 3 on narrow screens.
+- **Hero:**
+  - **Avatar:** about 1.46–1.47× larger (422px wide at 1440, from 288), hung from just below the header in the right-hand third. Sized to the hero height (`--hero-h: clamp(38rem, 86svh, 60rem)`) so her feet stay inside it; the hero is no longer 100vh, so the trajectory heading starts at the foot of the first desktop screen. `.hero__inner` is `static` at ≥ 860px so the perch is placed against the hero.
+  - **Below 860px:** she sits above the name, right-aligned, on the line rising out of the "a". The hero's padding-top reserves her height (`--pw * 1.545`), so short and landscape phones never put her under the header.
+  - **Loading:** preloaded, sync decoding, no entrance.
+- **Matcha (`MatchaCup.tsx`):** a labelled button over the cup (centred at 9.5% / 51% of the artwork, ≥ 44px). Mouse hover, keyboard focus (`:focus-visible`) and tap trigger it; each new trigger restarts a hand-drawn SVG plume (three bubbles, three fizz marks) drifting up and to the left. It defines its own `--settle`; with reduced motion the marks appear without motion.
+- **Removed:** the trajectory traveller (`map-04`, the line cue), the More visitors (photographer and reader) and the small grid peeker (`peeking-03`). The faint pre-trace was already gone.
+- **Edge peeker (`EdgePeeker.tsx`, `peeking-05`):**
+  - **Lane:** at ≥ 1100px the grid gives up `--lane-in` on the right. The lane runs from the grid's edge plus 2.25rem to the screen edge (`.selected` is an inline-size container, so 100cqw is the screen width) and clips there, so there is no overflow.
+  - **Entrance:** she is cued when `.selected` enters the viewport (`enterOn`) and never waits for other figures (`solo`); she slides out from behind the edge in 0.65s.
+  - **Lean:** layered transforms (body: entrance; act: peekaboo; react: lean). The lean toward the active card's centre pivots on her hand (≤ 3.2°, 4–20px outward). `--gaze-x` / `--gaze-y` are published for a future gaze layer.
+  - **Peekaboo:** the lane-sized button triggers duck → check → out.
+  - **Line:** it runs down the gutter between the cards and her.
+- **Kept:** the untangler (slightly larger) and the greeter, which now appears when the line reaches her feet (`enterAt="line"`).
+
+## Iteration 10 — personality pass (23 Oct 2026)
+- **Edge peeker fixes:**
+  - The lane clips on x only (`overflow-x: clip; overflow-y: visible`), so her hair is no longer cut.
+  - She is sized `min(lane/0.955, clamp(9rem, 16vw, 17rem))` and shifted `translate(4.5%)`, so the drawn wall edge sits on the screen edge.
+  - The slide is scroll-linked (`--in`, set in EdgePeeker; the figure is `data-driven`, so AvatarStage skips it). She is out from the moment her top enters until the grid's top reaches 86% of the viewport, and slides back behind the edge as the grid's foot rises from 40% to 14%. It reverses on scroll up and holds when scrolling stops.
+- **Heading marks (`Mark.tsx`, `MarkStage.tsx`):** a strike through "straightforward", a circle around "threads", an underline under "worked on" and a highlighter behind "other". Copy is unchanged (`Marked` splits the heading's own text). Each mark is drawn once when it scrolls into view; with reduced motion or without JS it is simply drawn.
+- **Surface:**
+  - fine paper grain (fixed `body::before`, SVG noise, own layer);
+  - highlighter text selection;
+  - a soft shadow under the settled header;
+  - wavy pen underlines on the nav and the email.
+- **Depth:**
+  - washi tape on the Currently plates, which lift on hover;
+  - panels and More cards on paper shadows, lifting on hover;
+  - sticker shadows on the logo tiles;
+  - drop shadows on the figures, with ground shadows under those that stand;
+  - a glow on the matcha while it fizzes;
+  - paper shadows on the project-page plates.
+- **Details:** a highlighter swipe on the reached trajectory milestone; the scroll cue nudges three times.
+- **QA:** `visible.mjs` now waits for two rendered frames, not 30ms. This Chrome renders at 30fps here even when idle, so a fixed 30ms delay read stale frames. New scripts: `qa/av-edge-scroll.mjs` and `qa/av-perf.mjs`.
+
+## Iteration 11 — interaction & finish pass (23 Oct 2026)
+- **Thread (`src/lib/thread-tug.ts`, wired in HomeScribble):** `Route.knots` records the hero loop, the first and "now" trajectory knots and the "Say hello" loop (`Pen.knot`). Each knot gets a ≥ 44px button.
+  - **Mouse/pen:** drag deforms only the dense points within `max(70, 3r)` px (smooth falloff), with resistance (tanh, ≤ 34px), then springs back (k 170, c 9) to the exact original path.
+  - **Hover / tap / Enter / Space:** a pluck. Arrow keys tug.
+  - **Touch:** never drags (`touch-action: manipulation`), so it doesn't block scrolling.
+  - **Reduced motion:** no handles.
+- **Trajectory (`TrajectoryPicker.tsx`):** milestones are buttons (`aria-pressed`). Picking one moves the highlighter to it and shows its aside in the reserved `.trajectory__aside` (min-height, no reflow). Asides are verbatim About fragments (`trajectory.points[].aside`, validated by `quoted()`). With nothing picked, the aside follows the reached milestone.
+- **Taped previews:** a corner lift (`perspective` rotateX/Y, origin at the taped corner) with a matching shadow; the tape stays put; a pencilled arrow draws toward the link on hover or focus.
+- **Panels (`PanelFocus.tsx`):** the open panel is tracked per row (`data-open` / `data-engaged`), so crossing gaps never flashes the default. Sequence: widen → summary (0.22s delay) → arrow (0.46s). Closing is immediate. The CSS `:hover` fallback applies without JS.
+- **Edge peeker:** face-and-hands pose `peeking-02`, exported trimmed at its drawn wall edge (`{ width: 480, right: 713 }` in `build-avatars.mjs`).
+  - **Lane:** shown from 1200px (hover devices only), sized so the whole figure fits; a paper "wall" strip (`.edge-lane::after`) at the screen edge.
+  - **Moods:** shy on pointer hover (act layer +18%); peekaboo hide → pause → check → out (0 / 950 / 2100ms), interruptible.
+  - **Lean:** ≤ 2.6°, mostly rotation about the hand at the wall.
+- **Supporting interactions:**
+  - **Photography:** viewfinder corners (hidden at rest) close in on hover or focus.
+  - **Writing:** the pen rests short of the end and finishes the stroke on hover or focus.
+  - The Writing and Photography plates are focusable groups.
+  - **Contact:** a separate copy-email control (clipboard with an execCommand fallback, a "Copied" label, a drawn check and a status message); the greeter is cued as `.contact` arrives.
+- **Surfaces:**
+  - **Corners:** panels 7px, logo tiles 9px, More plates 6px, previews and plates stay crisp at 2px.
+  - **Depth:** restrained panel shadows; a lifted shadow on the previews; avatars get a soft contact shadow and a light drop shadow.
+- **QA:** `qa/interact.mjs` (33 checks), `qa/interact-shots.mjs` (frames) and `qa/sections.mjs`.
+
+## Iteration 12 — layered hero rig + light/dark theme (23 Oct 2026)
+- **Hero rig:**
+  - **Source:** the pack lives at `public/assets/avatar/hero-interactions/` (you placed it there, not under handoff/; originals untouched; a copy is also in ~/Downloads).
+  - **Layers:** `scripts/build-avatars.mjs` exports the 4 layers as AVIF to `public/assets/avatar/rig/`, uniformly scaled and never trimmed (≈221 KB in total).
+  - **Geometry:** `src/content/hero-rig.ts` holds the rig.json geometry (stage 1300×1600, per-layer display scale, pivots, z), the seat probes (205,1000)/(985,975), the straw and the motion keys (legs ±2.5°, cheers −9°).
+  - **Component:** `HeroRig.tsx` server-renders all layers (preload, sync decode, reserved stage). Handlers attach after hydration; WAAPI gestures, with guards against repeats.
+  - **Entry:** HomeScribble now grows the line from the name to the seat over 1s on a fresh top-of-page load, and the `perched` cue fires the one settling swing.
+  - **Stopping:** gestures stop offscreen (IntersectionObserver), on a hidden tab and with reduced motion.
+  - **Placement:** the perch is sized from the old figure width (`--fig-w`), so the stage is 1.4258× wide and offset, keeping the figure's scale.
+  - **Replaced:** `MatchaCup.tsx` (removed); the hero's cup is now the rig's forearm.
+- **Theme:**
+  - **Pre-paint:** a script in `layout.tsx` sets `data-theme` / `data-theme-pref` on <html> before first paint (localStorage "theme"; System by default), with `suppressHydrationWarning` on <html>.
+  - **Control:** `ThemeToggle.tsx` is in SiteHeader after the nav: a radio menu with arrows, Home/End, Enter/Space and Escape. It follows the OS live while on System. Switching changes attributes only, with a short colour transition (`data-theme-changing`, none with reduced motion).
+  - **Tokens:** `--ink-2/3/4`, `--rule-strong`, `--shade` (all shadows are `rgb(var(--shade) / a)`), `--hl` / `--hl-k` / `--hl-blend`, `--selection`, `--dot` (DotField reads it, re-read on theme change), `--grain`, `--panel-dim`, `--tape-blend`, `--vf`, `--sheet-edge`, `--logo-ink`, plus dark values for the AMNH page tokens.
+  - **Dark palette:** bg #211e1c, surface #2c2724, text #f2ebdd, muted #beb3a5, rule #463e37, accent #a3c1ea, line #d6c5ae, highlight #d8b85a.
+  - **Objects:** coloured panels settle 10% into the page; paper previews and the contact sheet stay light objects; the AMNH wordmark sits on a small paper label; the Lynxster line mark uses `--logo-ink`.
+- **Phone header:** it now fits the name, four links and the toggle on one row down to 320px.
+- **QA:** `qa/hero-rig.mjs` (16), `qa/theme.mjs` (19), `qa/theme-shots.mjs`; check.mjs updated for the rig and for color(srgb) parsing.
+
+## Iteration 13 — corrected matcha hand, motion easing, dark polish (23 Oct 2026)
+- **Corrected forearm:** you replaced `public/assets/avatar/hero-interactions/layers/forearm-matcha.png` (17:30). It has the same 1226×1283 canvas; its cup (straw tip within 3px), sleeve and elbow match rig.json, so it is a drop-in.
+  - The served `rig/forearm-matcha.avif` was re-exported from it.
+  - Rig URLs carry `?v=2` (REV in hero-rig.ts), so no cached old hand is used.
+- **Motion:** per-keyframe easing. The swing is a sine pendulum losing energy (legs −2.2/+1.6/−0.6°, 1.5s); the cheers is a 7° raise, hold and soft settle (pack limit 9°, not used).
+- **Dark theme:**
+  - **Panels:** per-panel dark tones (`--tone-d`; Light unchanged): Crackd #d4b852, Buzzworks #dea47c, TMU #97b2cf, Inteli-lens #b59fba, GVI #94b1a1, Publications #cd95a2, Teaching #a0aad2. Panel metadata #2f2c28.
+  - **Text and links:** muted #cbc1b2; one warm link accent #e6b98f; normal font smoothing in dark.
+  - **More cards:** #302a26 fill, a fine light border, restrained shadow.
+  - **Link states:** `.feature__cta` and pager links underline on hover/focus, and arrows nudge on focus too.
+- **Currently:** a shared caption height ≥ 700px, so rules, text and links align (within 1px). AMNH's activities are separated by a full rule with even spacing; `text-wrap: pretty` on the summaries.
+- **Edge peeker:** quieter at rest (act layer 14% further behind the wall until a card is active; lean 1.8°).
+- **QA:** `qa/contrast-audit.mjs` measures every text run against its real (blended) background.
+
+## Iteration 14 — homepage copy from the revised home.md (25 Oct 2026)
+- **Source:** all homepage copy follows the revised `handoff/content/home.md`.
+- **Roles and dates:** homepage-only fields in `site.ts` (`currently.features[].role/period`, `selectedWork.rows[].date`). `work.ts` and the detail pages are untouched; the mismatches are listed in EDITING_CHECKLIST.md §1.
+- **Hero tagline:** breaks only between sentences (`.hero__tagline-part`, max 21em), clear of the figure.
+- **Panels (≥1000px with hover):** rows size to their tallest summary (min 220–240px); the three-panel row opens 2.6 shares.
+- **Trajectory:** the note band reserves three lines; notes are re-quoted from the new About text.
+- **LinkedIn:** now linked; Résumé is still a placeholder.
+- **QA:** new `qa/copy.mjs` (93 checks plus screenshots in `qa/screenshots/copy/`).

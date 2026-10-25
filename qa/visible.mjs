@@ -66,13 +66,15 @@ const schedStart = await schedOf();
 const fwd = [];
 for (let s = 0; s <= max + step; s += step) {
   await page.evaluate((y) => window.scrollTo(0, y), Math.min(s, max));
-  await page.waitForTimeout(30);
+  // wait for two rendered frames (not a fixed delay: the frame rate varies)
+  await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
   fwd.push({ s: Math.min(s, max), ...(await read()) });
 }
 const back = [];
 for (let i = fwd.length - 1; i >= 0; i--) {
   await page.evaluate((y) => window.scrollTo(0, y), fwd[i].s);
-  await page.waitForTimeout(30);
+  // wait for two rendered frames (not a fixed delay: the frame rate varies)
+  await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
   back.push({ s: fwd[i].s, ...(await read()) });
 }
 back.reverse();

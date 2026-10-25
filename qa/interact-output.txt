@@ -1,0 +1,35 @@
+PASS  thread: labelled, ≥44px handles over the knots (hero, first, now, hello)  — hero:72 first:59 now:44 hello:44
+PASS  thread: a drag deforms the line near the knot, with bounded travel (≤34px)  — knot centre now 15.0px from the path
+PASS  thread: only the line near the knot changes (one continuous path)  — 302 of 3174 segments, all within 82px of the knot
+PASS  thread: surrounding content does not move
+PASS  thread: on release it springs back and settles exactly
+PASS  thread: keyboard pluck (Enter) and tug (arrows), then rest
+PASS  thread: no console errors
+PASS  thread (touch): a tap plucks; the handle never blocks scrolling  — touch-action manipulation
+PASS  thread: no handles with reduced motion
+PASS  trajectory: picking a milestone moves the highlight to it (only it)  — {"show":"1","pressed":"falsetruefalsefalsefalse","hl":"99.8287% 100%","others":0,"visible":["I like making complicated things easier to work with…"]}
+PASS  trajectory: one aside at a time, quoted from the About text  — I like making complicated things easier to work with…
+PASS  trajectory: switching notes causes no layout shift  — 438.03125 → 438.03125
+PASS  trajectory: picking again lets go
+PASS  trajectory: keyboard focus picks a milestone
+PASS  taped preview: the free corner lifts (origin at the taped corner); the shadow follows  — matrix3d(0.99863, -0.0021916, 0.05229, -
+PASS  taped preview: the tape stays put  — matrix(0.996195, -0.0871557, 0.0871557, 0.996195, 0, 0) → matrix(0.996195, -0.0871557, 0.0871557, 0.996195, 0, 0)
+PASS  taped preview: a pencilled arrow draws toward the link  — 0px
+PASS  taped preview: keyboard focus on the link does the same
+PASS  panels: open in order — widen, then the summary, then the arrow  — [{"t":120,"w":288,"more":0,"go":0},{"t":330,"w":454,"more":0.56,"go":0},{"t":520,"w":493,"more":0.99,"go":0.35},{"t":900,"w":496,"more":1,"go":1}]
+PASS  panels: rapid switching never flashes the default panel  — 96 frames
+PASS  panels: open summaries are not clipped  — 2 open
+PASS  panels: leaving returns the row to its default
+PASS  edge peeker: a pointer over her makes her ease back; leaving, she returns to her quieter rest  — 37px → 29px (rest 29px)
+PASS  edge peeker: activating her: hide → pause → cautious peek → out  — hide→check→out
+PASS  edge peeker: pressing again mid-peek restarts cleanly
+PASS  edge peeker: keyboard activation works
+PASS  edge peeker: whole figure inside her lane (only the screen edge crops her), clear of the cards  — {"leftInLane":true,"gap":144,"laneOverflowY":"visible"}
+PASS  photography: viewfinder corners close in on hover  — none → matrix(1, 0, 0, 1, 8.8, 8.8)
+PASS  photography: and on keyboard focus; still a placeholder
+PASS  writing: the pen finishes its stroke on hover, then rests  — {"pen":"matrix(1, 0, 0, 1, -58, 3)","ink":"0.12px"} → {"pen":"none","ink":"0px"}
+PASS  experiments: still empty
+PASS  contact: copy control copies the address, says “Copied”, draws a check; the email link is unchanged  — {"label":"Copied","check":"0px","status":"Email address copied","clip":"anya@jajodia.org","link":"mailto:anya@jajodia.org"}
+PASS  contact: the greeting figure has settled by the time the section is in view  — {"in":"true","visible":true,"op":"1"}
+
+33/33 interaction checks passed

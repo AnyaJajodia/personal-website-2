@@ -1,3 +1,230 @@
+# QA report — iteration 14: homepage copy from the revised home.md (25 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build). Chrome was driven by Playwright; the Claude in Chrome extension is still "not connected".
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 |
+| `node qa/copy.mjs` (new) | **93/93**. Covers: all 53 home.md strings present; no retired copy in page, title or description; roles/dates in their metadata positions; panel dates; contact links. Then, at 1920 / 1440 / 1280 / 1024 / 768 / 390 / 360 in Light and Dark: no horizontal overflow; hero text clear of the figure; every trajectory note inside its band; Currently cards stack cleanly; every work panel's summary fits when opened (hover on desktop, stacked on touch) |
+| `node qa/check.mjs` | **184/184**. The panel-row check is now "≥ 220px, sized to the longest summary, ≤ 300px"; the AMNH stream names were updated |
+| `node qa/interact.mjs` | **33/33** |
+| `node qa/hero-rig.mjs` | **16/16**. The first run right after a cold server start failed the two keyboard-focus checks; two reruns passed 16/16, and the tagline change adds nothing focusable |
+| `node qa/theme.mjs` | **19/19** |
+| `node qa/contrast-audit.mjs` | 0 text runs below AA; smallest homepage text 5.57:1 in dark |
+| `node qa/visible.mjs` | pass (monotonic, reversible, no jumps) |
+
+**Screenshots viewed** (`qa/screenshots/copy/`):
+- `hero-{1440,1280,1024,768,390}-*`
+- `traj-{0–4}-{1440,390}-*`, `about-full-{1440,390}-*`
+- `currently-1440-{light,dark}`
+- `panel-{0–6}-{1440,1024}-*`
+- `selected-{768,390}-light`
+- `contact-{1440-dark,390-light}`, `footer-390-dark`
+
+The dev overlay pill seen in the early captures is absent from the production run.
+
+**Remaining discrepancies (content):** the homepage and detail pages now disagree on several roles and dates; see EDITING_CHECKLIST.md §1 "Homepage dates and roles now differ". The detail-page pass will reconcile them.
+
+---
+
+# QA report — iteration 13: corrected matcha hand, motion, dark polish (23 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build). Chrome was driven by Playwright; the Claude in Chrome extension is still "not connected".
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 (the build retried once on Next.js's security notice) |
+| `node qa/check.mjs` | **184/184** |
+| `node qa/interact.mjs` | **33/33** |
+| `node qa/hero-rig.mjs` | **16/16**: first-frame visible; entry swing after the line reaches the seat (560 → 677ms); no stacking; offscreen stop; touch; reduced motion |
+| `node qa/theme.mjs` | **19/19**: System default and live OS changes, no first-frame flash, persistence, keyboard menu, scroll and interaction state kept |
+| `node qa/contrast-audit.mjs dark` | every text run ≥ AA on 5 pages; smallest text ≥ 5.57:1 (was 4.37) → `qa/contrast-dark-output.txt` |
+| `node qa/contrast-audit.mjs light` | every text run ≥ AA; smallest ≥ 5.14:1 (unchanged) |
+| `node qa/visible.mjs` 1440 / 1024 / 768 / 390 | pass forward and back, reversible |
+| `node qa/av-detail.mjs` 1440 / 390 | project pages clear, 0 console errors |
+| Impeccable detector | 0 findings |
+
+**Corrected hand:**
+- **Served copy:** the site requests `/assets/avatar/rig/forearm-matcha.avif?v=2`, re-exported from your new PNG.
+- **Geometry:** it matches the old canvas (straw tip within 3px, sleeve unchanged).
+- **Poses:** rest, the 7° cheers and the 9° limit were captured in both themes: `qa/screenshots/avatar/rig-cheers-light.png` and `rig-cheers-dark.png`. The wrist stays inside the cuff and the cup stays upright.
+
+**Screenshots, viewed:** `ud-sheet.png` / `ul-sheet.png` (dark / light, 1440), `um-sheet.png` (dark, 390), `cur-dark.png` (Currently alignment).
+
+**Limitations:**
+- **Testing:** Chrome only; touch and OS colour scheme emulated.
+- **Hair scribbles:** the burgundy scribbles in the artwork read softer on the dark page. They are still visible, so they're left as drawn, with no filter.
+- **Unused files:** the hero pack's preview and doc files in `public/` are unreferenced but would be published if deployed.
+- **Next.js:** the security notice is unchanged.
+- **Not done:** nothing committed.
+
+---
+
+# QA report — iteration 12: layered hero rig + light/dark theme (23 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build). Chrome was driven by Playwright; the Claude in Chrome extension is still "not connected".
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 (the build retried once on Next.js's security notice) |
+| `node qa/check.mjs` | **184/184** |
+| `node qa/interact.mjs` | **33/33** |
+| `node qa/hero-rig.mjs` | **16/16** |
+| `node qa/theme.mjs` | **19/19** |
+| `node qa/visible.mjs` 1440 / 1024 / 768 / 390 | pass forward and back (minimum in-view line 597 / 498 / 687 / 501 px), monotonic, reversible |
+| `node qa/av-detail.mjs` 1440 / 390 | project pages: figures clear of text, 0 console errors |
+| Impeccable detector | 0 findings |
+
+**`qa/hero-rig.mjs` results:**
+- **First frame:** all four layers painted, decoded and opaque on the first frame (76ms); the box is reserved, with no shift.
+- **Entry:** the line reaches the seat at ≈570ms, then exactly one swing (≈690ms); no idle loop afterwards.
+- **Hover:** swings the two lower legs only; repeated hovers and clicks while it plays don't stack; it settles to `transform: none`.
+- **Cup:** raises only the forearm, and repeats are ignored; the target is ≥ 44px and labelled.
+- **Keyboard:** focus on her swings the feet with a visible dashed ring; focus on the cup cheers.
+- **Offscreen:** scrolling away stops a gesture.
+- **Touch:** a tap on her swings; a tap on the cup cheers.
+- **Reduced motion:** resting pose, working targets, nothing moves.
+- **Joints at maximum rotation** (legs −2.5° / +2°, forearm −9°) were captured in both themes: `qa/screenshots/avatar/rig-sheet-light.png` and `rig-sheet-dark.png`. No exposed joints or detached feet.
+
+**`qa/theme.mjs` results:**
+- **System:** the default, following live OS changes (light → dark → light); no hydration warnings.
+- **No flash:** the first frame already has the saved or system theme in all three cases (saved dark on a light OS, saved light on a dark OS, system dark).
+- **Toggle:** it sits after Contact and is labelled. Enter opens System / Light / Dark with the current one checked and focused; arrows + Enter choose; the choice is stored and focus returns to the button; Escape closes.
+- **Switching:** keeps the scroll position and an open trajectory note. A running cheers keeps going through a switch (verified: one keyframe animation, plus the colour transition).
+- **Persistence:** the choice persists across pages and reloads, and ignores later OS changes; choosing System clears it.
+- **Dark contrast:** text ≥ 5.79:1 and headings ≥ 12.4:1 on /, /work/amnh, /work/lynxster and /work/crackd-ai. No `invert` filter anywhere.
+
+**Screenshots, viewed:**
+- **Light / dark at 1440:** `tl-sheet.png`, `td-sheet.png`.
+- **Project pages, dark:** `td-sheet-work.png`.
+- **Dark at 390:** `tdm-sheet.png`.
+- **System-dark at 768, and the menus:** `tdt-sheet.png`.
+- **Narrow rig heroes:** `rig-hero-narrow.png`.
+
+**Limitations:**
+- **Testing:** Chrome only. Touch and the OS colour scheme were emulated.
+- **Rig source:** the pack was found in `public/assets/avatar/hero-interactions/`, not `handoff/assets/avatar/`. Its preview JPG/GIF and docs stay there, unreferenced; they would be published if deployed.
+- **Hair outline in dark:** the maroon scribble outline in the avatar artwork is lower-contrast on the dark page. It is left as drawn, not recoloured.
+- **Next.js:** the security notice is unchanged.
+- **Not done:** nothing committed.
+
+---
+
+# QA report — iteration 11: interaction & finish pass (23 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build). Chrome was driven by Playwright; the Claude in Chrome extension still reports "Browser extension is not connected".
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 (the build retried once on Next.js's security notice) |
+| `node qa/check.mjs` | **184/184 PASS** → `qa/check-output.txt` |
+| `node qa/interact.mjs` | **33/33 PASS** → `qa/interact-output.txt` |
+| `node qa/visible.mjs` 1440 / 1280 / 1024 / 768 / 390 | pass forward and back (minimum in-view line 597 / 522 / 498 / 687 / 501 px), monotonic, reversible, no text crossings |
+| `node qa/av-edge-scroll.mjs` 1440, 1920 | the peeker's slide is reversible sample-for-sample and holds when scrolling stops |
+| knot handles across a resize (1440 → 1100 → 768 → 390 → 1440) | handles stay on the line (2–10px from the path); overflow 0 |
+| `node qa/av-detail.mjs` 1440 / 390 | project pages: figures clear of text, 0 console errors |
+| Impeccable detector | 0 findings |
+
+**What `qa/interact.mjs` covers:**
+- **Thread:** a drag changes only segments within 82px of the knot (one continuous path); the knot's travel is bounded; surrounding content doesn't move; release settles to the identical path; Enter plucks and arrows tug; a touch tap plucks; no handles with reduced motion.
+- **Trajectory:** picking moves the highlight only to that milestone; one aside at a time, quoted from the About text; zero layout shift when switching; picking again releases; keyboard focus picks.
+- **Taped previews:** the corner lifts from the taped corner; the shadow follows; the tape doesn't move; the arrow draws; the same on keyboard focus.
+- **Panels:** the order is widen → summary → arrow (measured at 120 / 330 / 520 / 900ms); 0 default-panel flashes across rapid switching; open summaries aren't clipped; leaving restores the default.
+- **Edge peeker:** shy on hover and back on leave; hide → check → out; mid-sequence re-press restarts cleanly; keyboard activation works; the whole figure stays inside her lane, 150px clear of the cards.
+- **More and Contact:**
+  - viewfinder corners close in on hover and focus;
+  - the pen finishes its stroke;
+  - Experiments stays empty;
+  - copy-email copies the address (clipboard verified) and shows "Copied" with a drawn check;
+  - the greeter has settled as Contact comes into view.
+
+**Screenshots, viewed:**
+- in-section captures: `qa/screenshots/avatar/r1-sheet.png` (1440), `r2-sheet-768.png`, `r2-sheet-390.png`, `r3-aside.png`, `r4-hero-zoom.png`, `r4rm-1440-*` (reduced motion);
+- interaction frames: `ix-sheet-thread.png` (pull and elastic return), `ix-sheet-panels.png` (open sequence), `ix-sheet-peek.png` (lean, shy, peekaboo), `ix-preview-lift.png`, `ix-traj-pick.png`, `ix-photo.png`, `ix-writing.png`, `ix-copy.png`.
+
+**Limitations:**
+- **Testing:** Chrome only; touch is emulated.
+- **Edge peeker:** shown only on hover-capable screens ≥ 1200px.
+- **Thread:** the tuggable knots exist where the route draws them (the hero loop only where there is room beside the name; the "Say hello" loop only at ≥ 860px).
+- **Next.js:** the security notice is unchanged.
+- **Not done:** nothing committed.
+
+---
+
+# QA report — iteration 10: personality pass (23 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build). Chrome was driven by Playwright; the Claude in Chrome extension was still "not connected".
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 (the build retried once on Next.js's security notice) |
+| `node qa/check.mjs` | **184/184 PASS** |
+| `node qa/visible.mjs` 1440 / 1728 / 1100 / 768 / 390 | pass forward and back; minimum in-view line 597 / 765 / 522 / 687 / 504 px; monotonic, reversible, no text crossings |
+| `node qa/av-edge-scroll.mjs` 1440 / 1100 / 1728 | the slide is reversible sample-for-sample and holds when scrolling stops; she is fully out before the cards are readable (1440: out by scroll 2258, readable at 2274) |
+| `node qa/av-detail.mjs` | project pages clear of text, 0 console errors |
+| `node qa/av-perf.mjs` | 33.3ms frames with the effects on and with them stripped: this machine's Chrome is capped at 30fps even when idle, so the effects add no measurable frame cost |
+| Impeccable detector | 0 findings |
+
+**Screenshots, viewed:**
+- `qa/screenshots/avatar/p1-sheet.png` (1440, every section);
+- `p2-sel.png` and `p2-cur.png` (1728);
+- `p3-sheet-390.png` (phone);
+- `es-strip.png` (scroll-linked slide);
+- `nav-hover.png` and `amnh-plates.png`.
+
+**Limitations:** Chrome only. The edge peeker shows only at ≥ 1100px. The Next.js security notice is unchanged. The source pack in `public/assets/avatar/` would be published if deployed. Nothing is committed.
+
+---
+
+# QA report — iteration 9: bold avatar pass (23 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build).
+**Browser:** Google Chrome through Playwright. The Claude in Chrome extension again reported "Browser extension is not connected". Motion was checked per animation frame, plus frozen-frame captures of the matcha plume and frame strips of the edge peeker.
+
+## Commands and results (production build)
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 (the first build stopped on Next.js's security notice; the retry passed) |
+| `node qa/check.mjs` | **184/184 PASS** → `qa/check-output.txt` |
+| `node qa/visible.mjs` 1440/1100/1024/768/390 | pass forward and back, minimum in-view line 597 / 522 / 498 / 687 / 504 px, monotonic, reversible, no rebuild → `qa/visible-output.txt` |
+| `node qa/av-edge.mjs` 1440, 1100 | see the edge-peeker details below |
+| `node qa/av-hero.mjs` (1024 → 1920, 768, 600, 390, 375×667, 667×375) | her head clears the header at every size (≥ 18px); her feet stay inside the hero; the about heading starts 737–1026px down, right at the foot of each desktop screen |
+| `node qa/av-matcha.mjs` 1440 / 390 touch | hover, keyboard focus, Enter and tap all fizz; the figure never moves |
+| `node qa/av-density.mjs` 1920 → 390 | at most 2 figures in view |
+| `node qa/av-detail.mjs d4` 1440 / 390 | 11 project pages: figures clear of text, 0 console errors |
+| Impeccable detector (changed files) | 0 findings |
+
+**Edge peeker (`av-edge.mjs`):**
+- **Timing:** enters at scroll 1852, settled by 1978; the cards become readable at 2274 (1440).
+- **Clearance:** never closer than 36px to a card in any frame, through her entrance and rapid switching.
+- **Lean:** further cards draw her further out; keyboard focus leans her too; leaving returns her to neutral.
+- **Peekaboo:** hide → check → out, by click and by keyboard.
+- **Leaving:** she scrolls away with the section; horizontal overflow is 0.
+
+**New and changed checks:**
+- **Figure sets:** hero, untangler, edge peeker (≥ 1100px) and greeter. No figure in the trajectory or in More.
+- **Edge peeker:** settled before the cards are readable (1440, 1100); ≥ 24px from the cards in every frame; lean by pointer and keyboard, neutral after leaving; peekaboo by click and keyboard; labelled, focusable button; leaves with the section, no overflow; hidden at 1024.
+- **Matcha:** a labelled ≥ 44px button over the cup. It fizzes on hover and keyboard focus (1440) and on tap (390); every bubble and mark animates; the figure stays put.
+- **Assets:** AVIF only, and only displayed figures load.
+
+## Screenshots (captured and viewed)
+- **Settled composition:** `qa/screenshots/avatar/d3-sheet-wide.png` (1440 and 1100) and `d3-sheet-narrow.png` (768, 390, reduced motion).
+- **Hero heights:** `c3-narrow-hero.png`.
+- **Matcha plume:** `mt-strip.png`, frozen at 150 / 350 / 550 / 800 / 1050ms.
+- **Edge peeker:** `edge-enter.png` (entrance) and `edge-lean-peek.png` (lean across card switches, then peekaboo); raw frames in `edge-1440/`.
+
+## Limitations
+- **Browsers:** Chrome only, through Playwright. Touch was emulated (tap, coarse pointer), not tried on a physical phone.
+- **Edge peeker width:** she needs ≥ 1100px. Below that there is no room for her lane without covering cards, so she isn't shown, and tablets and phones have no figure in Selected work.
+- **Grid width:** on wide screens the grid is about 144px narrower (at 1440) to make room for her lane, so some card names wrap onto two lines ("Research tooling").
+- **Peeker gaze:** her eyes are baked into the artwork, so the response is posture only. `--gaze-x` / `--gaze-y` are ready for a future gaze layer.
+- **Public assets:** `public/assets/avatar/` still holds the full source pack you copied there (about 196 MB). It is untouched and unreferenced, but it would be published if deployed.
+- **Next.js:** still prints a security-vulnerability notice. No upgrade has been run.
+- **Not done:** nothing committed or pushed.
+
+---
+
 # QA report — iteration 8: avatar refinement (23 Oct 2026)
 
 **Preview:** http://localhost:3100 (production build).

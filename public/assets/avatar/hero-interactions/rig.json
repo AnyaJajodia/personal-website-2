@@ -1,0 +1,74 @@
+{
+  "canvas": {
+    "width": 1300,
+    "height": 1600
+  },
+  "seatAnchor": [
+    720,
+    970
+  ],
+  "layers": [
+    {
+      "key": "leg-viewer-left",
+      "file": "layers/leg-viewer-left.png",
+      "scaleX": 0.62,
+      "scaleY": 0.42,
+      "left": 172.56,
+      "top": 811.86,
+      "pivot": [
+        470,
+        1030
+      ],
+      "z": 1,
+      "motion": "leg-left",
+      "width": 1024,
+      "height": 1536
+    },
+    {
+      "key": "leg-viewer-right",
+      "file": "layers/leg-viewer-right.png",
+      "scaleX": 0.62,
+      "scaleY": 0.42,
+      "left": 489.42,
+      "top": 820.26,
+      "pivot": [
+        795,
+        1030
+      ],
+      "z": 2,
+      "motion": "leg-right",
+      "width": 1024,
+      "height": 1536
+    },
+    {
+      "key": "forearm-matcha",
+      "file": "layers/forearm-matcha.png",
+      "scale": 0.4,
+      "left": 700,
+      "top": 476,
+      "pivot": [
+        885,
+        780
+      ],
+      "z": 2.5,
+      "motion": "cheers",
+      "width": 1226,
+      "height": 1283
+    },
+    {
+      "key": "body",
+      "file": "layers/body.png",
+      "scale": 1,
+      "left": 80,
+      "top": 0,
+      "pivot": [
+        0,
+        0
+      ],
+      "z": 3,
+      "motion": null,
+      "width": 1024,
+      "height": 1536
+    }
+  ]
+}

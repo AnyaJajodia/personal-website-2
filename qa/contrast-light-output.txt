@@ -1,0 +1,21 @@
+light /: 90 text runs, 0 below AA; smallest text min 5.14
+light /work/amnh: 55 text runs, 0 below AA; smallest text min 5.43
+light /work/lynxster: 36 text runs, 0 below AA; smallest text min 5.8
+light /work/crackd-ai: 44 text runs, 0 below AA; smallest text min 5.8
+light /work/esp-teaching: 27 text runs, 0 below AA; smallest text min 5.8
+lowest small text:
+   5.14  13px .panel__cat "Prototype" (/)
+   5.34  13px .panel__date "2022" (/)
+   5.43  12.48px span "AMNH" (/work/amnh)
+   5.43  14px .caption "Archival dragonfly record, Inver" (/work/amnh)
+   5.43  12.48px .label "Previous" (/work/amnh)
+   5.8  12.48px .hero__cue "Scroll to follow the thread" (/)
+   5.8  14.4px .trajectory__caption "The original plan." (/)
+   5.8  14px .feature__period "2026–2027" (/)
+   5.8  14px .contact-list__meta "Link to come" (/)
+   5.97  14px .flow__note "Randomized examples and cultural" (/work/crackd-ai)
+   7.07  15px .is-current "Work" (/work/amnh)
+   7.07  12.48px a "Work" (/work/amnh)
+   7.07  12.48px .pager__back "Back to work" (/work/amnh)
+   7.43  14px p "Anya Jajodia · New York" (/work/amnh)
+   7.5  15.2px .feature__cta "Explore Lynxster" (/)

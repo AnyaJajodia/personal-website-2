@@ -1,5 +1,126 @@
 # Visual & functional review
 
+## Iteration 14 — homepage copy from the revised home.md (25 Oct 2026)
+
+**Source:** `handoff/content/home.md` (revised) is the authority for every homepage string. All 53 approved strings are on the page and none of the retired copy remains (`qa/copy.mjs`).
+
+**Updated (`src/content/site.ts` unless noted):**
+- **Hero:** new tagline and intro. The page `<title>` and meta description are built from the same strings verbatim (`layout.tsx`).
+- **About:** both rewritten paragraphs.
+  - The trajectory margin notes are re-quoted from the new About text, still verbatim.
+  - The old fragments would have silently left the notes empty.
+- **Currently:**
+  - Lynxster: "Chief Technology Officer · 2026–now", plus the new FERPA / US & Canadian frameworks description.
+  - AMNH: "Volunteer · 2026–now", with the streams "DIODE · Collections digitization" (now naming Jessica Ware's lab) and "Mantis behavioral trials & research — Details to come."
+  - Roles and dates are homepage fields, so the detail pages keep theirs.
+- **Selected work:** all seven new descriptions, and each panel's date taken from home.md (a `date` field replaces the dates derived from `work.ts`).
+- **Contact:**
+  - new intro;
+  - LinkedIn now links to the supplied URL;
+  - Résumé stays "Updated PDF to come" (home.md: "to come").
+
+**Layout defects found and fixed:**
+1. **Hero tagline under the figure** (1024–1440px): the longer tagline ran under her hand. It now breaks only between sentences (each sentence is an inline block, line capped at 21em): two lines on desktop, a three-line triad on phones.
+2. **Work panels clipped their summaries.** Rows were a fixed `clamp(220px, 17vw, 240px)` high with bottom-aligned content, so text spilled off the top.
+   - At 1024/1280px Crackd, Buzzworks, Publications and Teaching were affected; Publications was affected at every width.
+   - Fix: the panel content is no longer absolutely positioned, so each row takes the height of its tallest summary. Every summary is already laid out at its open width, so the row height is fixed whichever panel is open, and expansion still changes width only. The old height remains the minimum.
+   - The open panel in the three-panel row is a little wider (2.6 vs 2.2 shares).
+3. **Trajectory notes overflowed** their reserved band (three lines vs two). The band now reserves three lines (6.7rem), and the People + natural world note is a shorter verbatim fragment, so it also fits on phones.
+4. **(Pre-existing)** The undrawn pencil arrow beside "Explore Lynxster/AMNH" could leave a round-cap dot at rest. It is now hidden until it draws.
+
+**Not changed:** visual direction, avatars, scribble, motion, colours, theme system, More section copy (identical in home.md), detail pages.
+
+## Iteration 13 — corrected matcha hand, motion easing, dark polish (23 Oct 2026)
+
+**Changes:**
+- **Hand:** the corrected matcha hand is wired in and versioned.
+- **Gestures:** easing refined; the cheers is gentler (7°).
+- **Dark mode:**
+  - text lifted to AA everywhere (smallest 5.57:1);
+  - balanced panel tones, Crackd no longer dominating;
+  - lifted More cards;
+  - one warm link accent with clear hover/focus.
+- **Currently:** Lynxster/AMNH captions, text and links align; AMNH's activities clearly spaced.
+- **Peeker:** quieter at rest.
+
+**Fixed while verifying:**
+1. The quieter-rest offset first went on the scroll-linked layer, adding lag. It moved to the action layer.
+2. Its leaning rule then beat the shy state by source order; fixed with `:not([data-shy]):not([data-peek])`.
+3. The interaction test now expects her quieter rest position.
+
+## Iteration 12 — layered hero rig + light/dark theme (23 Oct 2026)
+
+**Hero rig:**
+- The supplied rig is ported as calibrated: whole-canvas layers, display scales and pivots on the 1300×1600 stage, scaled uniformly. Her figure keeps the previous on-page scale.
+- On a fresh load the line now grows from the name to her seat, and one settling swing follows.
+- Hover, focus or tap: a short leg swing, or a small cheers with fizz. The torso never moves, and nothing loops.
+
+**Theme:**
+- A pre-paint System / Light / Dark system built on shared tokens.
+- Dark is a warm night notebook: warm charcoal page, raised umber surfaces, cream ink, sand-coloured line, a muted gold highlighter, and pale blue links.
+- Coloured panels stay coloured paper, settled slightly; paper previews stay light objects.
+- Dark-only fixes for logos:
+  - the Lynxster line mark takes the light ink, as on its own dark page;
+  - the AMNH wordmark keeps its black on a small paper label rather than being inverted.
+
+**Defects found while verifying, all fixed:**
+1. **Phone header:** the theme button was pushed off-screen at every phone width (header content was about 37px too wide). Type and gaps are now tightened, with a further step below 360px; it fits down to 320px.
+2. **Logos in dark:** the Lynxster lockup and AMNH wordmark nearly vanished.
+3. **Narrow hero:** the stage's box grazed the empty ascent space above "Anya". Lifted 10px, with headroom reserved.
+4. **Contrast tests:** the parsers misread color-mix's `color(srgb …)`. Fixed with canvas conversion, which proved the panels unchanged in light (exact original colours).
+5. **Stale checks:** checks written for the old single-image hero (assets count, decorative flag, seat line, preload name) were updated to the rig. The seat check now samples the body layer's alpha, so it proves the line never crosses her artwork above the seat.
+
+## Iteration 11 — interaction & finish pass (23 Oct 2026)
+
+**Built:**
+- **Signature moments:** a tuggable thread at four knots; a face-and-hands edge peeker round a paper wall, with shy, peekaboo and lean responses; taped previews with a corner lift and a pencilled arrow.
+- **Supporting interactions:** a trajectory picker with margin notes quoted from the About text; a staged panel opening with flash-free switching; viewfinder corners, the pen finishing its stroke, and copy-email with a drawn check; the greeter now settles as Contact arrives.
+- **Surfaces:** a refined corner and shadow hierarchy.
+
+**Defects found while verifying, all fixed:**
+1. **Duplicated knot handles:** a stale font-ready callback from React's double-mounted effect recreated them after cleanup. `ThreadTug` now ignores calls after it's destroyed.
+2. **Peeker edge stripe:** the artwork's drawn wall edge slid into view when she leaned. The export is now trimmed at the stripe, and a paper wall strip makes the edge deliberate.
+3. **Narrow trajectory:** the aside read as a continuation of "Still following the thread." It now has spacing and its own arrow.
+4. **Viewfinder corners:** visible at rest and crowding the plate label at tablet width. They are hidden until hover or focus, with a tighter inset on narrow screens.
+5. **Stale port:** an old production server was still holding port 3100 and served the old pose. I stopped only that process (pid 19194); the separate app on port 3000 was left alone.
+
+## Iteration 9 — bold avatar pass (23 Oct 2026)
+
+**Critique going in:**
+- The page felt sparse.
+- The figures were small stickers.
+- The hero left an empty band below the copy.
+- The timeline traveller appeared late.
+- The small grid peeker and the More visitors were detached decorations.
+
+**Decisions:**
+- **Hero:**
+  - **Scale and placement:** she is now about 1.5× larger and fills the right-hand third, sitting on the line, which passes behind the cup and under her hands. She is present from the first frame.
+  - **Height:** the hero is no longer a full screen, so "A fairly straightforward career trajectory." starts at the foot of the first desktop screen.
+  - **Narrow screens:** she sits above the name on the line rising out of the "a", and the hero reserves her height.
+  - **Matcha:** the cup is a small accessible toy, with a hand-drawn plume of bubbles and fizz marks in the line's ink.
+- **Removed:** the timeline traveller, the grid peeker, the photographer and the reader.
+- **Signature edge peeker:**
+  - A larger figure (`peeking-05`) peeks in from behind the screen's right edge, beside the work grid, in a lane the grid gives up for her. The line runs down the gutter between the cards and her.
+  - She slides out as the section arrives and is settled before the cards are read.
+  - She leans toward the active card (pointer, keyboard or open), returns to neutral when the grid is left, and ducks away and peeks back on tap or keyboard.
+- **Kept:** the untangler (slightly larger) and the greeter, who now appears when the line reaches her feet.
+
+**Defects found while verifying, all fixed:**
+1. **Hero head:** at 1280–1920 her head ran into the header nav. She is now hung from the header and sized to the hero's height.
+2. **Narrow screens:**
+   - Tablet: the cup crowded the intro text.
+   - Phone: her legs hid the "a." of "Jajodia.".
+   - Short phones: her head went under the header.
+   - She is now above the name, with headroom reserved.
+3. **Matcha plume:**
+   - The plume was clamped by the global `svg { max-width: 100% }`.
+   - The fizz marks never animated: they used `var(--settle)`, which was undefined outside `.avatar`, so the animation declaration was dropped. Their non-scaling stroke also broke the path-length dash.
+   - The plume drifted into her hair; it now goes to the clear side.
+4. **Edge peeker timing:** she arrived after the cards were readable. She was cued from her own tall box, then held behind the untangler's entrance. She is now cued by the section and never queued.
+
+**Blockers:** none in the work itself. The Next.js security notice is unchanged and still awaits your decision on upgrading.
+
 ## Iteration 8 — avatar refinement (23 Oct 2026)
 
 **Critique of iteration 7, all fixed:**

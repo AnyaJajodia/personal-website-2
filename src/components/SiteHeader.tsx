@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { nav, person } from "@/content/site";
+import ThemeToggle from "@/components/ThemeToggle";
 
 type Props = {
   /** home: anchors scroll in-page and the name appears once the hero name recedes */
@@ -78,6 +79,7 @@ export default function SiteHeader({ variant, darkUntilSelector }: Props) {
             )}
           </ul>
         </nav>
+        <ThemeToggle />
       </div>
     </header>
   );

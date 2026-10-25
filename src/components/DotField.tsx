@@ -35,9 +35,13 @@ export default function DotField({ target }: { target: string }) {
     let visible = true;
     const isStatic = () => reduced.matches || coarse.matches;
 
+    // the dots' colour is a theme token (--dot), re-read when the theme changes
+    let colour = "";
+    const readColour = () => (colour = getComputedStyle(document.documentElement).getPropertyValue("--dot").trim() || "rgba(98, 95, 89, 0.19)");
+    readColour();
     const draw = () => {
       ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = "rgba(98, 95, 89, 0.19)"; // warm grey, quieter than the plum line
+      ctx.fillStyle = colour; // warm grey (light) / warm sand (dark), quieter than the line
       const r = w < 640 ? 0.95 : 1.1;
       for (const d of dots) {
         ctx.beginPath();
@@ -120,6 +124,11 @@ export default function DotField({ target }: { target: string }) {
     io.observe(host);
     const ro = new ResizeObserver(() => layout());
     ro.observe(host);
+    const themeMo = new MutationObserver(() => {
+      readColour();
+      draw();
+    });
+    themeMo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
     const setMode = () => {
       window.removeEventListener("pointermove", onMove);
@@ -145,6 +154,7 @@ export default function DotField({ target }: { target: string }) {
       cancelAnimationFrame(raf);
       io.disconnect();
       ro.disconnect();
+      themeMo.disconnect();
       window.removeEventListener("pointermove", onMove);
       document.documentElement.removeEventListener("pointerleave", onLeave);
       reduced.removeEventListener("change", setMode);

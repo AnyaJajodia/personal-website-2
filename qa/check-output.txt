@@ -40,32 +40,32 @@ PASS  nav anchor #work  — section top 67px, url #work
 PASS  nav anchor #more  — section top 67px, url #more
 PASS  nav anchor #contact  — section top 259px, url #contact
 PASS  sticky header settles (name appears, stays at top)  — opacity 0 → 1, header top 0
-PASS  direct load /#contact scrolls to Contact  — scrollY 4278
+PASS  direct load /#contact scrolls to Contact  — scrollY 4250
 PASS  homepage links every detail route  — 11 unique detail links
 PASS  selected-work panel opens detail page
-PASS  browser Back restores homepage scroll  — before 2790, after 2790
+PASS  browser Back restores homepage scroll  — before 2762, after 2762
 PASS  Back to work returns to /#work  — #work top 67
 PASS  detail header About → /#about  — #about top 67
 PASS  next-project link
 PASS  line shown once fonts are ready, in scroll mode
-PASS  line extends as you scroll forward  — drawn 0.1171 → 0.2257 → 0.5303 → 0.8128
+PASS  line extends as you scroll forward  — drawn 0.1275 → 0.2877 → 0.5387 → 0.8278
 PASS  route itself never moves (no drifting attachment)
 PASS  line holds when scrolling stops
 PASS  reverse scroll retracts exactly
 PASS  line starts inside the final "a" at every scroll position  — 0.05px, 0.05px, 0.05px
-PASS  line never intercepts pointer input  — pointer-events none, z 0, hits h1/h1/h1
-PASS  reduced motion: complete line drawn statically  — {"mode":"static","paths":[77438,470],"dash":"none","behavior":"auto","labels":5,"marquee":"none"}
+PASS  line never intercepts pointer input  — pointer-events none, z 0, hits h1/button/h1
+PASS  reduced motion: complete line drawn statically  — {"mode":"static","paths":[82236,468],"dash":"none","behavior":"auto","labels":5,"marquee":"none"}
 PASS  reduced motion: More writing flourish not animated  — none
 PASS  reduced motion: no trajectory underdrawing (only the line itself)
 PASS  reduced motion: no CSS smooth scrolling
 PASS  trajectory labels are real DOM text
 PASS  reduced motion: detail line fully drawn  — dashoffset 0
 PASS  first Tab focuses skip link (visible)  — Skip to content
-PASS  keyboard order: nav then content, focus outline visible  — About|outline · Work|outline · More|outline · Contact|outline · Scroll to follow the thread |outline · Explore Lynxster→|card-outline · Explore AMNH→|card-outline · Crackd.aiSep 2025–2027, Engi|outline
+PASS  keyboard order: nav then content, focus outline visible  — About|outline · Work|outline · More|outline · Contact|outline · |outline · |outline · |outline · |outline
 PASS  detail page: brand reachable by keyboard  — Anya Jajodia.
 PASS  real Lynxster logo asset loads; role=img elements labelled  — logo 200
 PASS  no empty/placeholder hrefs anywhere
-PASS  panels: first panel open by default, names legible collapsed  — crackd 600px, buzzworks 201px
+PASS  panels: first panel open by default, names legible collapsed  — crackd 496px, buzzworks 167px
 PASS  panels: two compact rows (220–250px)  — 240 / 240px
 PASS  panels: collapsed panels show logo/mark, readable name, dates from content  — Sep 2025–2027 · May 2025–2027 · May 2025–2027 · — · — · 2022 · Jan 2024–2027
 PASS  panels: hover expands a panel and reveals its summary
@@ -79,9 +79,9 @@ PASS  mobile/touch: stacked cards with summaries and dates visible  — {"more":
 PASS  mobile: Currently features stack  — 20,20
 PASS  supplied logos load undistorted (rendered ratio = file ratio)  — amnh.png 4.59/4.59, crackd-minimal.png 0.83/0.83, buzzworks-minimal.png 1.07/1.07, tmu.png 1.83/1.83, gvi.webp 1.27/1.27
 PASS  Currently: Lynxster lockup sizeable and labelled  — {"w":125,"h":78,"label":"Lynxster"}
-PASS  panels: one identifier container (same size/shape) with a translucent background, opaque unfiltered artwork  — 60x606px · crackd bg0.86 art1, buzzworks bg0.5 art1, tmu bg0.5 art1, inteli bg0.5 art1, gvi bg0.5 art1, pubs bg0.5 art1, teaching bg0.5 art1
+PASS  panels: one identifier container (same size/shape) with a translucent background, opaque unfiltered artwork  — 60x609px · crackd bg0.86 art1, buzzworks bg0.5 art1, tmu bg0.5 art1, inteli bg0.5 art1, gvi bg0.5 art1, pubs bg0.5 art1, teaching bg0.5 art1
 PASS  panels: compact Crackd/Buzzworks symbols; Crackd's yellow on a dark backing
-PASS  panels: flat paper surfaces (no gradients, no watermark motifs, 2px corners)  — {"motifs":0,"gradients":0,"radius":"2px"}
+PASS  panels: flat paper surfaces (no gradients, no watermark motifs), subtly rounded (≤ 8px)  — {"motifs":0,"gradients":0,"radius":"7px"}
 PASS  panels: muted coloured-paper palette (Crackd yellow kept)  — crackd rgb(248, 215, 77); buzzworks rgb(232, 178, 141); tmu rgb(169, 193, 217); inteli rgb(185, 164, 190); gvi rgb(165, 189, 176); pubs rgb(211, 161, 173); teaching rgb(176, 185, 218)
 PASS  panels: charcoal text, contrast ≥ 4.5:1 on every panel colour  — crackd 11.08, buzzworks 8.36, tmu 8.46, inteli 6.82, gvi 7.86, pubs 7.08, teaching 8.07
 PASS  panels: dates/categories (small text) ≥ 4.5:1 too  — 8.35, 6.3, 6.38, 5.14, 5.92, 5.34, 6.09
@@ -94,81 +94,93 @@ PASS  dot field: static with reduced motion
 PASS  line runs under the hero avatar's seat, not through her @1440  — 0 stray points
 PASS  line never leaves the page horizontally @1440  — 0 points outside the viewport
 PASS  line stays partly in view at every scroll position, forward and back @1440  — 98 positions
-PASS  line comes to rest under "Say hello." @1440  — end 96,4783, heading left/bottom 100,4779
+PASS  line comes to rest under "Say hello." @1440  — end 96,4755, heading left/bottom 100,4751
 PASS  no faint pre-trace under the trajectory — the line is the only stroke @1440  — scribble__path,scribble__bridge
 PASS  line runs under the hero avatar's seat, not through her @1024  — 0 stray points
 PASS  line never leaves the page horizontally @1024  — 0 points outside the viewport
 PASS  line stays partly in view at every scroll position, forward and back @1024  — 88 positions
-PASS  line comes to rest under "Say hello." @1024  — end 49,4247, heading left/bottom 53,4247
+PASS  line comes to rest under "Say hello." @1024  — end 49,4237, heading left/bottom 53,4237
 PASS  no faint pre-trace under the trajectory — the line is the only stroke @1024  — scribble__path,scribble__bridge
 PASS  line runs under the hero avatar's seat, not through her @768  — 0 stray points
 PASS  line never leaves the page horizontally @768  — 0 points outside the viewport
-PASS  line stays partly in view at every scroll position, forward and back @768  — 104 positions
-PASS  line comes to rest under "Say hello." @768  — end 38,5241, heading left/bottom 40,5242
+PASS  line stays partly in view at every scroll position, forward and back @768  — 108 positions
+PASS  line comes to rest under "Say hello." @768  — end 38,5380, heading left/bottom 40,5381
 PASS  no faint pre-trace under the trajectory — the line is the only stroke @768  — scribble__path,scribble__bridge
 PASS  line runs under the hero avatar's seat, not through her @390  — 0 stray points
 PASS  line never leaves the page horizontally @390  — 0 points outside the viewport
-PASS  line stays partly in view at every scroll position, forward and back @390  — 150 positions
-PASS  line comes to rest under "Say hello." @390  — end 18,6947, heading left/bottom 20,6950
+PASS  line stays partly in view at every scroll position, forward and back @390  — 154 positions
+PASS  line comes to rest under "Say hello." @390  — end 18,7070, heading left/bottom 20,7073
 PASS  no faint pre-trace under the trajectory — the line is the only stroke @390  — scribble__path,scribble__bridge
 PASS  AMNH detail: Collections digitization and Mantis behavioral research as separate sections  — Collections digitization | Mantis behavioral research
 PASS  AMNH detail: digitization content preserved; research described only as joining
 PASS  AMNH detail: honest photo placeholders for both workstreams  — 3 placeholders
-PASS  avatars: decorative (aria-hidden, empty alt, no pointer events), sized boxes @1440  — 7 figures
+PASS  avatars: decorative (aria-hidden, empty alt, no pointer events), sized boxes @1440  — 4 figures
 PASS  avatars: only the hero loads eagerly @1440
 PASS  avatars: none in the accessibility tree @1440  — - img "The disclosure funnel in the Lynxster application" | - img "Lynxster" | - img "American Museum of Natural History"
-PASS  avatars: only displayed figures load, no contact sheets or source PNGs @1440  — 6 files for 6 shown: perched, ahead, untangling, peeking, photographing, greeting
-PASS  avatars: fewer figures as the page narrows @1440  — perched, ahead, untangling, peeking, photographing, greeting
-PASS  avatars: never more than two figures in view @1440  — max 2
+PASS  avatars: only displayed figures load, no contact sheets or source PNGs @1440  — 7 files for 4 shown: perched, untangling, edge, greeting
+PASS  avatars: fewer figures as the page narrows @1440  — perched, untangling, edge, greeting
+PASS  avatars: never more than two figures in view @1440  — max 1
 PASS  avatars: each entered once and has settled (no running animation) @1440
-PASS  avatars: the line runs into the untangler's fist @1440  — 1.8px
-PASS  avatars: the figure at the trajectory's end stands on the line @1440  — 1.50732421875px
-PASS  avatars: the greeter stands on the line's last stretch @1440  — 1.901641845703125px
+PASS  avatars: the line runs into the untangler's fist @1440  — 2px
+PASS  avatars: the greeter stands on the line's last stretch @1440  — 1.980712890625px
 PASS  avatars: no text sits under a figure @1440
 PASS  avatars: every work and contact link stays clickable @1440
-PASS  avatars: decorative (aria-hidden, empty alt, no pointer events), sized boxes @1024  — 7 figures
+PASS  avatars: decorative (aria-hidden, empty alt, no pointer events), sized boxes @1024  — 4 figures
 PASS  avatars: only the hero loads eagerly @1024
 PASS  avatars: none in the accessibility tree @1024  — - img "The disclosure funnel in the Lynxster application" | - img "Lynxster" | - img "American Museum of Natural History"
-PASS  avatars: only displayed figures load, no contact sheets or source PNGs @1024  — 6 files for 6 shown: perched, ahead, untangling, peeking, reading, greeting
-PASS  avatars: fewer figures as the page narrows @1024  — perched, ahead, untangling, peeking, reading, greeting
-PASS  avatars: never more than two figures in view @1024  — max 2
+PASS  avatars: only displayed figures load, no contact sheets or source PNGs @1024  — 6 files for 3 shown: perched, untangling, greeting
+PASS  avatars: fewer figures as the page narrows @1024  — perched, untangling, greeting
+PASS  avatars: never more than two figures in view @1024  — max 1
 PASS  avatars: each entered once and has settled (no running animation) @1024
-PASS  avatars: the line runs into the untangler's fist @1024  — 1.9px
-PASS  avatars: the figure at the trajectory's end stands on the line @1024  — 1.5482177734375px
-PASS  avatars: the greeter stands on the line's last stretch @1024  — 1.48907470703125px
+PASS  avatars: the line runs into the untangler's fist @1024  — 2px
+PASS  avatars: the greeter stands on the line's last stretch @1024  — 1.46881103515625px
 PASS  avatars: no text sits under a figure @1024
 PASS  avatars: every work and contact link stays clickable @1024
-PASS  avatars: decorative (aria-hidden, empty alt, no pointer events), sized boxes @768  — 7 figures
+PASS  avatars: decorative (aria-hidden, empty alt, no pointer events), sized boxes @768  — 4 figures
 PASS  avatars: only the hero loads eagerly @768
 PASS  avatars: none in the accessibility tree @768  — - img "The disclosure funnel in the Lynxster application" | - img "Lynxster" | - img "American Museum of Natural History"
-PASS  avatars: only displayed figures load, no contact sheets or source PNGs @768  — 5 files for 5 shown: perched, untangling, peeking, reading, greeting
-PASS  avatars: fewer figures as the page narrows @768  — perched, untangling, peeking, reading, greeting
-PASS  avatars: never more than two figures in view @768  — max 2
+PASS  avatars: only displayed figures load, no contact sheets or source PNGs @768  — 6 files for 3 shown: perched, untangling, greeting
+PASS  avatars: fewer figures as the page narrows @768  — perched, untangling, greeting
+PASS  avatars: never more than two figures in view @768  — max 1
 PASS  avatars: each entered once and has settled (no running animation) @768
-PASS  avatars: the line runs into the untangler's fist @768  — 1.9px
-PASS  avatars: the greeter stands on the line's last stretch @768  — 1.7359619140625px
+PASS  avatars: the line runs into the untangler's fist @768  — 2.1px
+PASS  avatars: the greeter stands on the line's last stretch @768  — 1.70977783203125px
 PASS  avatars: no text sits under a figure @768
 PASS  avatars: every work and contact link stays clickable @768
-PASS  avatars: decorative (aria-hidden, empty alt, no pointer events), sized boxes @390  — 7 figures
+PASS  avatars: decorative (aria-hidden, empty alt, no pointer events), sized boxes @390  — 4 figures
 PASS  avatars: only the hero loads eagerly @390
 PASS  avatars: none in the accessibility tree @390  — - img "The disclosure funnel in the Lynxster application" | - img "Lynxster" | - img "American Museum of Natural History"
-PASS  avatars: only displayed figures load, no contact sheets or source PNGs @390  — 3 files for 3 shown: perched, untangling, greeting
+PASS  avatars: only displayed figures load, no contact sheets or source PNGs @390  — 6 files for 3 shown: perched, untangling, greeting
 PASS  avatars: fewer figures as the page narrows @390  — perched, untangling, greeting
 PASS  avatars: never more than two figures in view @390  — max 1
 PASS  avatars: each entered once and has settled (no running animation) @390
 PASS  avatars: the line runs into the untangler's fist @390  — 1.9px
-PASS  avatars: the greeter stands on the line's last stretch @390  — 2.3111572265625px
+PASS  avatars: the greeter stands on the line's last stretch @390  — 2.5891799926757812px
 PASS  avatars: no text sits under a figure @390
 PASS  avatars: every work and contact link stays clickable @390
 PASS  avatars: reduced motion shows every figure in place, unanimated  — {"in":"still","op":"1","anim":0}
 PASS  avatars: reduced motion on project pages too  — still,still
 PASS  project pages: 1–2 figures each, standing on the rule under their section  — lynxster:2:true amnh:2:true crackd-ai:1:true buzzworks:1:true tmu-citation-tooling:1:true inteli-lens:1:true gvi-conservation:1:true pmmy-research:1:true teenage-pregnancy-research:1:true esp-teaching:1:true adi-mentorship:1:true
 PASS  project pages: two for Lynxster and AMNH
-PASS  hero avatar: fully visible and still from the first frame (no entrance), preloaded  — first {"complete":true,"op":1,"anims":0,"transform":"none"}, preload /assets/avatar/break-01.webp /work/lynxster-funnel.webp /logos/amnh.png /logos/crackd-minimal.png /logos/buzzworks-minimal.png /logos/tmu.png /logos/gvi.webp
-PASS  avatars: entrances are short settles (8–16px, 350–650ms), never bouncing  — ahead 12px/533ms, untangling 8px/533ms, peeking 70px/567ms, photographing 8px/533ms, greeting 14px/533ms
-PASS  avatars: the peeker's reveal rises only from behind the grid's edge  — ahead 12px/533ms, untangling 8px/533ms, peeking 70px/567ms, photographing 8px/533ms, greeting 14px/533ms
-PASS  peeker: her clip line never drops below the grid's top edge, in any frame of rapid card switching  — 294 frames, worst -1.00px
-PASS  peeker: no pixel of her lands on a panel (strip under the edge identical with and without her)
-PASS  peeker: leans toward the active card (pointer and keyboard), neutral after leaving  — matrix(0.999777, 0.0211169, -0.0211169, 0.999777, 3.5, 0) → matrix(1, 0, 0, 1, 0, 0); keyboard matrix(0.999309, -0.037167, 0.037167, 0.999309, -6.2, 0)
+PASS  hero avatar: fully visible and still from the first frame (no entrance), preloaded  — first {"complete":true,"op":1,"anims":0,"transform":"none"}, preload /assets/avatar/rig/leg-viewer-left.avif?v=2 /assets/avatar/rig/leg-viewer-right.avif?v=2 /assets/avatar/rig/forearm-matcha.avif?v=2 /assets/avatar/rig/body.avif?v=2 /work/lynxster-funnel.webp /logos/amnh.png /logos/crackd-minimal.png /logos/buzzworks-minimal.png /logos/tmu.png /logos/gvi.webp
+PASS  avatars: entrances are short settles (8–18px, 350–650ms), never bouncing; the edge peeker's slide is scroll-linked (checked below)  — untangling 8px/533ms, edge 0px/1217ms, greeting 18px/534ms
+PASS  avatars: no traveller on the trajectory, no figures in More
+PASS  edge peeker: scroll-linked slide is complete when the cards are readable @1440  — out at 2314, due by 2372 (cards readable at 2372)
+PASS  edge peeker: never within 24px of a card, in any frame (entrance, rapid switching) @1440  — 90.4px
+PASS  edge peeker: leans to the active card (further for further cards), by pointer and keyboard; neutral after leaving @1440  — matrix(0.999999, -0.00139626, 0.00139626, 0.999999, -5, 0) | matrix(0.999999, -0.00139626, 0.00139626, 0.999999, -2.2, 0) | matrix(1, 0, 0, 1, 0, 0) | matrix(0.999848, -0.0174524, 0.0174524, 0.999848, -3.4, 0)
+PASS  edge peeker: peekaboo by tap/click and keyboard (ducks, checks, comes out) @1440  — hide→check→out; key hide
+PASS  edge peeker: her button is labelled and reachable @1440  — Peekaboo — she ducks behind the edge, then peeks back out
+PASS  edge peeker: leaves with the section; no horizontal overflow @1440
+PASS  edge peeker: scroll-linked slide is complete when the cards are readable @1280  — out at 2292, due by 2342 (cards readable at 2342)
+PASS  edge peeker: never within 24px of a card, in any frame (entrance, rapid switching) @1280  — 57.9px
+PASS  edge peeker: leans to the active card (further for further cards), by pointer and keyboard; neutral after leaving @1280  — matrix(0.999999, -0.00139626, 0.00139626, 0.999999, -4.9, 0) | matrix(0.999999, -0.00139626, 0.00139626, 0.999999, -2.1, 0) | matrix(1, 0, 0, 1, 0, 0) | matrix(0.999848, -0.0174524, 0.0174524, 0.999848, -3.3, 0)
+PASS  edge peeker: peekaboo by tap/click and keyboard (ducks, checks, comes out) @1280  — hide→check→out; key hide
+PASS  edge peeker: her button is labelled and reachable @1280  — Peekaboo — she ducks behind the edge, then peeks back out
+PASS  edge peeker: leaves with the section; no horizontal overflow @1280
+PASS  edge peeker: not shown where there is no room for her lane (1024)
+PASS  matcha: a labelled button over the cup itself, ≥ 44px @1440  — {"w":84.15625,"h":125.765625,"onCup":true,"label":"Raise the matcha — cheers"}
+PASS  matcha: hover raises the cup (a small cheers, with fizz); the body stays still @1440  — {"arm":1,"body":0,"fizz":true}
+PASS  matcha: a labelled button over the cup itself, ≥ 44px @390  — {"w":44,"h":46.53125,"onCup":true,"label":"Raise the matcha — cheers"}
+PASS  matcha: a tap raises the cup (a small cheers, with fizz); the body stays still @390  — {"arm":1,"body":0,"fizz":true}
 
-172/172 checks passed
+184/184 checks passed

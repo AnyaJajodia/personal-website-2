@@ -6,10 +6,12 @@
  *   final "a" of Anya → one loop, then down to the seated avatar and under
  *   her (she sits on it) → rounded turn into the right margin → in beside
  *   the About heading → sweeps left above the career trajectory → through
- *   the five trajectory points → a level last stretch she stands on → back
- *   to the margin → into the raised fist of the avatar on the AMNH card (or a
- *   knot when she is hidden) → the margin past the work, stitching in at
- *   each section boundary → loop and underline at "Say hello."
+ *   the five trajectory points → back to the margin → into the raised fist of
+ *   the avatar on the AMNH card (or a knot when she is hidden) → in above the
+ *   work grid and down the gutter between the cards and the figure peeking
+ *   in from the screen edge (or the margin when she is hidden) → stitching in
+ *   above More → under the greeter's feet and the loop and underline at
+ *   "Say hello."
  *
  * The line never leaves the page: wherever content runs full width it keeps
  * to the margin (quiet, gently uneven), and it only steps into the page where
@@ -49,8 +51,9 @@ export type HomeLayout = {
   trajBand: Rect;
   trajPoints: Rect[];
   trajEnd: Rect;
-  /** the figure standing on the trajectory's last stretch (null when hidden) */
-  endFigure: Rect | null;
+  /** the edge peeker's lane beside the work grid (null when hidden): the line
+   * runs down the gutter between the cards and her */
+  lane: Rect | null;
   currentLabel: Rect;
   currentHeading: Rect;
   features: Rect[];
@@ -76,7 +79,9 @@ export type HomeLayout = {
 export type Mark = { k: number; s: number };
 /** milestones: waypoint index where each trajectory point's shape begins;
  * cues: avatar role → waypoint index; that figure appears once the pen gets there */
-export type Route = { points: Pt[]; marks: Mark[]; milestones: number[]; cues?: Record<string, number> };
+export type Route = { points: Pt[]; marks: Mark[]; milestones: number[]; cues?: Record<string, number>; knots?: Knot[] };
+/** a loop or knot on the line that can be tugged (HomeScribble): its centre and reach */
+export type Knot = { id: string; x: number; y: number; r: number };
 
 /**
  * Exit stroke of Cormorant Garamond 500 "a", relative to the end of the
@@ -110,6 +115,15 @@ class Pen {
   marks: Mark[] = [];
   miles: number[] = [];
   cues: Record<string, number> = {};
+  knots: Knot[] = [];
+  /** add a loop/knot shape and remember it as a tuggable knot */
+  knot(id: string, shape: Pt[]) {
+    const x = shape.reduce((a, p) => a + p.x, 0) / shape.length;
+    const y = shape.reduce((a, p) => a + p.y, 0) / shape.length;
+    const r = Math.max(...shape.map((p) => Math.hypot(p.x - x, p.y - y)));
+    this.knots.push({ id, x, y, r });
+    return this.to(...shape);
+  }
   /** the figure `role` appears once the pen reaches the last waypoint */
   cue(role: string) {
     this.cues[role] = this.pts.length - 1;
@@ -214,17 +228,18 @@ function wideRoute(L: HomeLayout): Route {
     const sy = (perch.l.y + perch.r.y) / 2;
     const lx = A.x + (perch.l.x - A.x) * 0.36;
     P.to(pt(A.x + 0.4 * f, A.y - 0.2 * f), pt(lx - ry * 1.6, yc + ry * 0.55));
-    P.to(...slant(loop(lx, yc - ry * 0.25, ry * 0.55, ry, { drift: ry * 0.7 }), yc + ry * 0.75));
+    P.knot("hero", slant(loop(lx, yc - ry * 0.25, ry * 0.55, ry, { drift: ry * 0.7 }), yc + ry * 0.75));
     P.to(pt(lx + ry * 2.4, yc + ry * 0.35), pt((lx + perch.l.x) / 2 + ry, (yc + sy) / 2 + ry * 0.4));
     const sw = perch.r.x - perch.l.x;
-    P.to(pt(perch.l.x - ry * 1.4, sy + 1), pt(perch.l.x + sw * 0.08, sy + 1.5), pt(perch.l.x + sw * 0.5, sy + 3.5), pt(perch.r.x - sw * 0.04, sy + 1.5));
+    P.to(pt(perch.l.x - ry * 1.4, sy + 1), pt(perch.l.x + sw * 0.08, sy + 1.5)).cue("perched");
+    P.to(pt(perch.l.x + sw * 0.5, sy + 3.5), pt(perch.r.x - sw * 0.04, sy + 1.5));
     // 3. on past her, a rounded turn down into the margin
     P.to(pt(Math.max(perch.r.x + 14, gx - R * 0.55), sy + R * 0.12), pt(gx - R * 0.04, sy + R * 0.62), pt(gx, sy + R * 1.15));
     y0 = sy + R * 1.15;
   } else {
     const lx = A.x + (gx - A.x) * 0.3;
     P.to(pt(A.x + 0.4 * f, A.y - 0.2 * f), pt(lx - ry * 1.6, yc + ry * 0.55));
-    P.to(...slant(loop(lx, yc - ry * 0.25, ry * 0.55, ry, { drift: ry * 0.7 }), yc + ry * 0.75));
+    P.knot("hero", slant(loop(lx, yc - ry * 0.25, ry * 0.55, ry, { drift: ry * 0.7 }), yc + ry * 0.75));
     P.to(pt(lx + ry * 2.4, yc + ry * 0.35), pt(A.x + (gx - A.x) * 0.7, yc - 0.03 * f));
     // 3. a rounded turn down into the margin
     P.to(pt(gx - R * 0.9, yc - 0.02 * f), pt(gx - R * 0.14, yc + R * 0.4), pt(gx, yc + R * 1.15));
@@ -260,7 +275,7 @@ function wideRoute(L: HomeLayout): Route {
     const gap = xs[1] - xs[0];
     P.to(pt(xs[0] - 42, ly - 14));
     // 01 — the original plan: a small tangle
-    P.mile().to(...knotShape(xs[0], ly - 24, 19, { turns: 2.6, phase: Math.PI * 0.9 }));
+    P.mile().knot("first", knotShape(xs[0], ly - 24, 19, { turns: 2.6, phase: Math.PI * 0.9 }));
     P.to(pt(xs[0] + gap * 0.5, ly + 4));
     // 02–04 — stops on one line: a quiet crest over each point, nothing more
     for (const i of [1, 2, 3]) {
@@ -268,22 +283,12 @@ function wideRoute(L: HomeLayout): Route {
       P.to(pt(xs[i] + gap * 0.5, ly + 3));
     }
     // 05 — Lynxster + AMNH: two threads wound together
-    P.mile().to(...knotShape(xs[4], ly - 20, 14, { turns: 2, phase: Math.PI * 1.1 }));
-    if (!L.endFigure) P.to(pt(xs[4] + gap * 0.45, ly + 6));
+    P.mile().knot("now", knotShape(xs[4], ly - 20, 14, { turns: 2, phase: Math.PI * 1.1 }));
+    P.to(pt(xs[4] + gap * 0.45, ly + 6));
   }
   // still following the thread: on past the last point and back to the margin
-  const Wk = L.endFigure;
-  if (Wk) {
-    // a level last stretch: the ground she stands on, map in hand
-    const wy = Wk.bottom - 2;
-    const from = Math.max(c.length >= 5 ? cx(c[4]) + 60 : 0, Wk.left - 40);
-    P.to(pt(from, wy + 2), pt(Wk.left + Wk.width * 0.3, wy + 1.5)).cue("ahead").to(pt(Wk.left + Wk.width * 0.55, wy + 1.5));
-    P.to(pt(Wk.right + 14, wy)).at(band.top + band.height * 0.5 - 0.32 * vh);
-    P.to(pt(Math.max(Wk.right + 40, L.contentRight + gw * 0.2), wy + 18), pt(gx, ly + 80)).at(yAt(ly + 80));
-  } else {
-    P.to(pt(cx(L.trajEnd), ly - 18)).at(band.top + band.height * 0.5 - 0.32 * vh);
-    P.to(pt(L.contentRight + gw * 0.2, ly + 16), pt(gx, ly + 80)).at(yAt(ly + 80));
-  }
+  P.to(pt(cx(L.trajEnd), ly - 18)).at(band.top + band.height * 0.5 - 0.32 * vh);
+  P.to(pt(L.contentRight + gw * 0.2, ly + 16), pt(gx, ly + 80)).at(yAt(ly + 80));
 
   // 5. down the margin beside the About text, then a knot beside
   //    "Two threads I'm following." — the one gesture in Currently
@@ -306,15 +311,32 @@ function wideRoute(L: HomeLayout): Route {
   //    stepping in only through the empty band between sections
   M.run(F.top + 4, F.bottom + 10);
   const W = L.panels;
-  M.stitch(F.bottom + 10, W.top - 12, L.contentRight - clamp(vw * 0.1, 70, 150));
-  M.run(W.top - 12, W.bottom + 10);
+  let afterWork = W.bottom + 10;
+  if (L.lane) {
+    // in through the band above the cards, then down the gutter between the
+    // cards and the figure peeking in from the edge, and back out to the margin
+    const y0 = F.bottom + 10;
+    const y1 = W.top - 8;
+    const ym = (y0 + y1) / 2;
+    const lx = (W.right + L.lane.left) / 2;
+    const toX = lx - clamp(vw * 0.1, 90, 170);
+    P.to(pt(gx - (gx - toX) * 0.2, y0 + (y1 - y0) * 0.14), pt(toX + 12, ym - (y1 - y0) * 0.1));
+    P.to(pt(toX, ym + (y1 - y0) * 0.06)).at(yAt(ym));
+    P.to(pt(lx - 10, y1 - (y1 - y0) * 0.14), pt(lx, y1)).at(yAt(y1));
+    P.meander(lx, y1, W.bottom + 4, clamp(gw * 0.06, 2, 5), 220, yAt);
+    afterWork = W.bottom + 64;
+    P.to(pt((lx + gx) / 2 + 6, W.bottom + 30), pt(gx, afterWork)).at(yAt(afterWork));
+  } else {
+    M.stitch(F.bottom + 10, W.top - 12, L.contentRight - clamp(vw * 0.1, 70, 150));
+    M.run(W.top - 12, afterWork);
+  }
   // More: the intro sits on the right at wide widths, so the stitch stays above it
   const mi = L.moreIntro;
   const B = L.bento;
   const introRight = mi.width > 0 && mi.left > vw * 0.4;
   // (it closes well above the plates: a visitor crouches on the corner of one)
   const moreTop = (introRight ? mi.top : B.top) - 44;
-  M.stitch(W.bottom + 10, moreTop, L.contentRight - clamp(vw * 0.08, 60, 120));
+  M.stitch(afterWork, moreTop, L.contentRight - clamp(vw * 0.08, 60, 120));
   M.run(moreTop, B.bottom + 10);
 
   // 7. the ending: in for "Say hello.", one loop past the full stop, and it
@@ -328,26 +350,27 @@ function wideRoute(L: HomeLayout): Route {
     const fy = G.bottom - 2;
     const uy = K.top + K.height * 1.1;
     P.to(pt(gx - 20, K.top - 50)).at(yAt(K.top - 50));
-    P.to(pt(gx - 4, Math.min(fy - 60, K.top + K.height * 0.4)), pt(gx - 30, fy - 4), pt(G.right + 10, fy + 1), pt(G.left + G.width * 0.5, fy + 1.5), pt(G.left - 6, fy));
+    P.to(pt(gx - 4, Math.min(fy - 60, K.top + K.height * 0.4)), pt(gx - 30, fy - 4), pt(G.right + 10, fy + 1), pt(G.left + G.width * 0.5, fy + 1.5));
+    P.cue("greeting").to(pt(G.left - 6, fy));
     const gap = G.left - K.right;
     if (gap > 60) {
       const lr = clamp(gap * 0.2, 12, 22);
       const lp = K.right + gap * 0.45;
       P.to(pt(lp + lr * 1.6, fy - lr * 0.6));
-      P.to(...slant(loop(lp, fy - lr * 2.1, lr * 0.55, lr, { dir: -1, drift: lr * 0.8 }), fy - lr * 1.2));
+      P.knot("hello", slant(loop(lp, fy - lr * 2.1, lr * 0.55, lr, { dir: -1, drift: lr * 0.8 }), fy - lr * 1.2));
     }
     P.to(pt(K.right - 6, uy - 1), pt(K.left + K.width * 0.55, uy + 5), pt(K.left + 18, uy + 1), pt(K.left - 4, uy - 12)).at(Number.POSITIVE_INFINITY);
-    return { points: P.pts, marks: P.marks, milestones: P.miles, cues: P.cues };
+    return { points: P.pts, marks: P.marks, milestones: P.miles, cues: P.cues, knots: P.knots };
   }
   const kr = clamp(K.height * 0.2, 16, 30);
   const lp = K.right + Math.min(90, (vw - K.right) * 0.18);
   const uy = K.top + K.height * 1.1;
   P.to(pt(gx - 20, K.top - 50), pt(K.right + Math.min(320, (vw - K.right) * 0.6), K.top - 20)).at(yAt(K.top - 20));
   P.to(pt(lp + kr * 2.4, K.top + K.height * 0.3));
-  P.to(...slant(loop(lp, K.top + K.height * 0.62 - kr, kr * 0.55, kr, { dir: -1, drift: kr * 0.8 }), K.top + K.height * 0.62));
+  P.knot("hello", slant(loop(lp, K.top + K.height * 0.62 - kr, kr * 0.55, kr, { dir: -1, drift: kr * 0.8 }), K.top + K.height * 0.62));
   P.to(pt(lp - kr * 1.4, K.top + K.height * 0.8), pt(K.right - 6, uy - 2));
   P.to(pt(K.left + K.width * 0.55, uy + 5), pt(K.left + 18, uy + 1), pt(K.left - 4, uy - 12)).at(Number.POSITIVE_INFINITY);
-  return { points: P.pts, marks: P.marks, milestones: P.miles, cues: P.cues };
+  return { points: P.pts, marks: P.marks, milestones: P.miles, cues: P.cues, knots: P.knots };
 }
 
 /* -------------------------------------------------------------- narrow */
@@ -372,14 +395,15 @@ function narrowRoute(L: HomeLayout): Route {
     const ry = clamp(f * 0.15, 10, 18);
     const lx = A.x + W0 * (perch ? 0.4 : 0.42);
     P.to(pt(lx - ry * 1.6, yc + ry * 0.6));
-    P.to(...slant(loop(lx, yc - ry * 0.25, ry * 0.55, ry, { drift: ry * 0.7 }), yc + ry * 0.75));
+    P.knot("hero", slant(loop(lx, yc - ry * 0.25, ry * 0.55, ry, { drift: ry * 0.7 }), yc + ry * 0.75));
     P.to(pt(lx + ry * 2.2, yc + ry * 0.3));
   } else if (!perch) {
     P.to(pt(A.x + W0 * 0.5, yc + 4));
   }
   if (perch) {
     const sw = perch.r.x - perch.l.x;
-    P.to(pt(perch.l.x - 14, yc + 1), pt(perch.l.x + sw * 0.5, yc + 2.5), pt(perch.r.x - sw * 0.04, yc + 1));
+    P.to(pt(perch.l.x - 14, yc + 1)).cue("perched");
+    P.to(pt(perch.l.x + sw * 0.5, yc + 2.5), pt(perch.r.x - sw * 0.04, yc + 1));
   }
   // the flourish turns down into the margin …
   const H = L.aboutHeading;
@@ -394,13 +418,13 @@ function narrowRoute(L: HomeLayout): Route {
     const ys = c.map((r) => r.top + 16);
     const step = ys[1] - ys[0];
     P.to(pt(lx + 40, ys[0] - 34));
-    P.mile().to(...knotShape(lx + 4, ys[0], 11, { turns: 2.6, phase: -Math.PI / 2 }));
+    P.mile().knot("first", knotShape(lx + 4, ys[0], 11, { turns: 2.6, phase: -Math.PI / 2 }));
     P.to(pt(lx - 2, ys[0] + step * 0.5)).at(yAt(ys[0] + step * 0.5));
     for (const i of [1, 2, 3]) {
       P.mile().to(pt(lx - 1, ys[i] - 14), pt(lx + 9, ys[i]), pt(lx - 1, ys[i] + 14));
       P.to(pt(lx, ys[i] + step * 0.5)).at(yAt(ys[i] + step * 0.5));
     }
-    P.mile().to(...knotShape(lx + 3, ys[4], 10, { turns: 2, phase: -Math.PI / 2 }));
+    P.mile().knot("now", knotShape(lx + 3, ys[4], 10, { turns: 2, phase: -Math.PI / 2 }));
     P.to(pt(lx, ys[4] + step * 0.5));
   }
   // across under the last point, back to the margin beside the About text
@@ -445,20 +469,21 @@ function narrowRoute(L: HomeLayout): Route {
   if (G) {
     // down beside her, under her feet, and on as the underline beneath the words
     const fy = G.bottom - 2;
-    P.to(pt(gx - 2, fy - 34), pt(G.right + 6, fy + 1), pt(G.left + G.width * 0.5, fy + 1.5), pt(G.left - 8, fy));
+    P.to(pt(gx - 2, fy - 34), pt(G.right + 6, fy + 1), pt(G.left + G.width * 0.5, fy + 1.5));
+    P.cue("greeting").to(pt(G.left - 8, fy));
     P.to(pt(K.right + (G.left - K.right) * 0.4, (fy + uy) / 2), pt(K.right - 4, uy - 1), pt(K.left + K.width * 0.5, uy + 4), pt(K.left + 12, uy), pt(K.left - 2, uy - 10)).at(
       Number.POSITIVE_INFINITY,
     );
-    return { points: P.pts, marks: P.marks, milestones: P.miles, cues: P.cues };
+    return { points: P.pts, marks: P.marks, milestones: P.miles, cues: P.cues, knots: P.knots };
   }
   if (Wk > 80) {
     const lr = clamp(K.height * 0.2, 10, 16);
     const lp = K.right + Math.min(38, Wk * 0.42);
     P.to(pt(lp + lr * 2, K.top + K.height * 0.35));
-    P.to(...slant(loop(lp, K.top + K.height * 0.62 - lr, lr * 0.55, lr, { dir: -1, drift: lr * 0.8 }), K.top + K.height * 0.62));
+    P.knot("hello", slant(loop(lp, K.top + K.height * 0.62 - lr, lr * 0.55, lr, { dir: -1, drift: lr * 0.8 }), K.top + K.height * 0.62));
   }
   P.to(pt(K.right - 4, uy - 2), pt(K.left + K.width * 0.5, uy + 4), pt(K.left + 12, uy), pt(K.left - 2, uy - 10)).at(Number.POSITIVE_INFINITY);
-  return { points: P.pts, marks: P.marks, milestones: P.miles, cues: P.cues };
+  return { points: P.pts, marks: P.marks, milestones: P.miles, cues: P.cues, knots: P.knots };
 }
 
 /* ---------------------------------------------------------- composition */

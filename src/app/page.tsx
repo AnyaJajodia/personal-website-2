@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import HomeScribble from "@/components/HomeScribble";
@@ -12,8 +13,14 @@ import MoreBento from "@/components/MoreBento";
 import DotField from "@/components/DotField";
 import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
+import HeroRig from "@/components/HeroRig";
+import EdgePeeker from "@/components/EdgePeeker";
+import { Marked } from "@/components/Mark";
+import MarkStage from "@/components/MarkStage";
+import PanelFocus from "@/components/PanelFocus";
+import TrajectoryPicker from "@/components/TrajectoryPicker";
+import CopyEmail from "@/components/CopyEmail";
 import { hero, about, trajectory, currently, selectedWork, more, contact, person } from "@/content/site";
-import { getWork, formatPeriod } from "@/content/work";
 
 /** A hairline opening each section. The headings carry the sections on their
  * own (the header nav names them); the rule gives the line a landmark. */
@@ -45,14 +52,23 @@ export default function Home() {
               </span>{" "}
               <span className="hero__line">{hero.nameLines[1]}</span>
             </h1>
-            <p className="hero__tagline">{hero.tagline}</p>
+            {/* three sentences; a line only ever breaks between them */}
+            <p className="hero__tagline">
+              {hero.tagline.split(/(?<=\.)\s+/).map((part, i, all) => (
+                <Fragment key={part}>
+                  <span className="hero__tagline-part">{part}</span>
+                  {i < all.length - 1 ? " " : null}
+                </Fragment>
+              ))}
+            </p>
             <div className="hero__intro" data-line="hero-intro">
               <p>{hero.intro}</p>
               <p className="label hero__location">{hero.location}</p>
             </div>
-            {/* she sits on the line: its run is routed through her seat (perch-l → perch-r) */}
-            <div className="hero__perch" data-line="hero-slot" aria-hidden="true">
-              <Avatar pose="perched" role="perched" eager probes={{ seatL: "perch-l", seatR: "perch-r" }} />
+            {/* she sits on the line: its run is routed through her seat (perch-l → perch-r);
+                a layered rig, so her feet and her matcha can move (HeroRig) */}
+            <div className="hero__perch" data-line="hero-slot">
+              <HeroRig />
             </div>
           </div>
           <div className="container hero__cue-wrap">
@@ -67,7 +83,9 @@ export default function Home() {
           <div className="container" data-line="content">
             <SectionRule line="about-label" />
             <h2 className="section-heading about__heading" id="about-heading">
-              <span data-line="about-heading">{about.heading}</span>
+              <span data-line="about-heading">
+                <Marked text={about.heading} word="straightforward" kind="strike" />
+              </span>
             </h2>
 
             <figure className="trajectory" data-line="traj" aria-labelledby="trajectory-title">
@@ -77,19 +95,37 @@ export default function Home() {
               <div className="trajectory__band" data-line="traj-band" aria-hidden="true" />
               <ol className="trajectory__list">
                 {trajectory.points.map((p, i) => (
-                  <li key={p.title} className="trajectory__point" data-line="traj-point">
-                    <span className="trajectory__tick" aria-hidden="true" />
-                    <span className="label trajectory__n">{String(i + 1).padStart(2, "0")}</span>
-                    <span className="trajectory__title">{p.title}</span>
-                    <span className="trajectory__caption">{p.caption}</span>
+                  <li key={p.title} className="trajectory__item">
+                    {/* pick a milestone: the highlight moves to it, its aside appears below */}
+                    <button type="button" className="trajectory__point" data-line="traj-point" data-i={i} aria-pressed="false">
+                      <span className="trajectory__tick" aria-hidden="true" />
+                      <span className="label trajectory__n">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="trajectory__title">{p.title}</span>
+                      <span className="trajectory__caption">{p.caption}</span>
+                    </button>
                   </li>
                 ))}
               </ol>
               <p className="trajectory__end" data-line="traj-end">
                 {trajectory.continuing}
               </p>
-              {/* stands on the line's last stretch, map in hand, looking on ahead */}
-              <Avatar pose="lookingAhead" role="ahead" enterAt="line" />
+              {/* a margin note for the picked (or the reached) milestone, in space
+                  reserved for it: lines quoted from the About text below */}
+              <div className="trajectory__aside" aria-hidden="true">
+                <svg className="trajectory__aside-arrow" viewBox="0 0 40 46" focusable="false">
+                  <path d="M22 44c-6-10-9-22-6-34M10 16c3-4 5-8 6-12 2 4 5 7 9 9" />
+                </svg>
+                {trajectory.points.map((p, i) =>
+                  p.aside ? (
+                    <span key={p.title} className="trajectory__aside-text" data-i={i}>
+                      {/^[A-Z]/.test(p.aside) ? "" : "…"}
+                      {p.aside}
+                      {/[.!?]$/.test(p.aside) ? "" : "…"}
+                    </span>
+                  ) : null,
+                )}
+              </div>
+              <TrajectoryPicker />
             </figure>
 
             <div className="about__body">
@@ -114,14 +150,14 @@ export default function Home() {
             <div className="container">
             <SectionRule line="current-label" />
               <h2 className="section-heading">
-                <span data-line="current-heading">{currently.heading}</span>
+                <span data-line="current-heading">
+                  <Marked text={currently.heading} word="threads" kind="circle" />
+                </span>
               </h2>
               <div className="features">
                 {/* stands on the AMNH card holding the thread up: the line runs into her fist */}
                 <Avatar pose="untangling" role="untangling" enterAt={0.97} probes={{ fist: "untangle-fist", foot: "untangle-foot" }} />
                 {currently.features.map((f) => {
-                  const entry = getWork(f.slug);
-                  const period = entry?.period ? formatPeriod(entry.period) : null;
                   return (
                     <article key={f.slug} className={`feature feature--${f.slug}`} data-line="feature">
                       <div className="feature__visual">
@@ -162,8 +198,9 @@ export default function Home() {
                           )}
                         </h3>
                         <p className="feature__meta">
-                          {entry?.role?.value}
-                          {period ? <span className="feature__period">{period}</span> : null}
+                          {f.role}
+                          <span className="visually-hidden">, </span>
+                          <span className="feature__period">{f.period}</span>
                         </p>
                         </div>
                         {"streams" in f && f.streams ? (
@@ -176,9 +213,9 @@ export default function Home() {
                               </li>
                             ))}
                           </ul>
-                        ) : (
+                        ) : "description" in f ? (
                           <p className="feature__desc">{f.description}</p>
-                        )}
+                        ) : null}
                         <p className="feature__foot">
                           <Link href={`/work/${f.slug}`} className="feature__cta">
                             {f.cta}
@@ -186,6 +223,11 @@ export default function Home() {
                               →
                             </span>
                           </Link>
+                          {/* a pencilled arrow back at the link, on hover / focus */}
+                          <svg className="feature__nudge" viewBox="0 0 64 30" aria-hidden="true" focusable="false">
+                            <path d="M60 20c-12 6-28 7-40 0-5-3-8-7-9-11" pathLength={1} />
+                            <path d="M4 14l7-6 5 8" pathLength={1} />
+                          </svg>
                         </p>
                       </div>
                     </article>
@@ -200,11 +242,14 @@ export default function Home() {
             <div className="container">
             <SectionRule line="selected-label" />
               <h2 className="section-heading">
-                <span data-line="selected-heading">{selectedWork.heading}</span>
+                <span data-line="selected-heading">
+                  <Marked text={selectedWork.heading} word="worked on" kind="underline" />
+                </span>
               </h2>
               <div className="panels-stage">
-                <Avatar pose="peeking" role="peeking" enterAt={0.8} />
                 <WorkPanels rows={selectedWork.rows} />
+                {/* peeking in from the right edge of the screen, in her own lane */}
+                <EdgePeeker />
               </div>
             </div>
           </div>
@@ -216,7 +261,9 @@ export default function Home() {
             <SectionRule line="more-label" />
             <div className="more__head">
               <h2 className="section-heading" id="more-heading">
-                <span data-line="more-heading">{more.heading}</span>
+                <span data-line="more-heading">
+                  <Marked text={more.heading} word="other" kind="highlight" />
+                </span>
               </h2>
               <p className="more__intro">{more.intro}</p>
             </div>
@@ -231,15 +278,19 @@ export default function Home() {
             <SectionRule line="contact-label" />
             <h2 className="section-heading contact__heading" id="contact-heading">
               <span data-line="contact-heading">{contact.heading}</span>
-              {/* she stands on the line's last stretch, beside the words, waving */}
-              <Avatar pose="waving" role="greeting" enterAt={0.9} />
+              {/* she stands on the line's last stretch, beside the words, waving —
+                  settled as the section arrives, before the line reaches her */}
+              <Avatar pose="waving" role="greeting" enterAt={1} enterOn=".contact" />
             </h2>
             <div className="contact__grid">
               <div>
                 <p className="contact__intro">{contact.intro}</p>
-                <a className="contact__email" href={`mailto:${person.email}`}>
-                  {person.email} <span aria-hidden="true">↗</span>
-                </a>
+                <p className="contact__address">
+                  <a className="contact__email" href={`mailto:${person.email}`}>
+                    {person.email} <span aria-hidden="true">↗</span>
+                  </a>
+                  <CopyEmail email={person.email} />
+                </p>
               </div>
               <ContactList links={contact.links} />
             </div>
@@ -248,6 +299,8 @@ export default function Home() {
       </main>
       <SiteFooter toTop />
       <AvatarStage />
+      <MarkStage />
+      <PanelFocus />
     </div>
   );
 }

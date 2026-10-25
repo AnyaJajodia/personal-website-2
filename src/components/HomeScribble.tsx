@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { buildRoute, schedule, type HomeLayout, type Rect } from "@/lib/home-route";
 import { splineIndexed, toPath, clamp, type Pt } from "@/lib/line-geometry";
+import { ThreadTug } from "@/lib/thread-tug";
 
 /**
  * ONE continuous line for the homepage. It grows out of the final "a" of the
@@ -73,9 +74,9 @@ function measure(root: HTMLElement): HomeLayout {
     trajBand: docRect(q("traj-band")),
     trajPoints: qa("traj-point"),
     trajEnd: docRect(q("traj-end")),
-    endFigure: (() => {
-      const el = root.querySelector<HTMLElement>('[data-avatar="ahead"]');
-      return el?.offsetParent ? docRect(el) : null;
+    lane: (() => {
+      const el = root.querySelector<HTMLElement>(".edge-lane");
+      return el && getComputedStyle(el).display !== "none" ? docRect(el) : null;
     })(),
     currentLabel: docRect(q("current-label")),
     currentHeading: docRect(q("current-heading")),
@@ -149,6 +150,7 @@ export default function HomeScribble() {
   const lineRef = useRef<SVGPathElement>(null);
   const bridgeRef = useRef<SVGPathElement>(null);
   const gradRef = useRef<SVGLinearGradientElement>(null);
+  const knotsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const svg = svgRef.current;
@@ -156,19 +158,28 @@ export default function HomeScribble() {
     const bridge = bridgeRef.current;
     const grad = gradRef.current;
     const root = svg?.closest<HTMLElement>("[data-line-root]");
-    if (!svg || !line || !bridge || !grad || !root) return;
+    const knotLayer = knotsRef.current;
+    if (!svg || !line || !bridge || !grad || !root || !knotLayer) return;
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     let sched: { s: number; len: number }[] = [];
     let total = 1;
     let svgLen = 1;
     let raf = 0;
     let fontsReady = document.fonts?.status === "loaded";
+    // the knots you can tug (thread-tug.ts); they own the path's d while one is moving
+    const tug = new ThreadTug(knotLayer, line, mq);
     // trajectory milestones: emphasise the one the pen has most recently reached
     const points = Array.from(root.querySelectorAll<HTMLElement>('[data-line="traj-point"]'));
     let mileLens: number[] = [];
     // figures that appear when the pen reaches them (once; never taken back)
     let cueLens: [HTMLElement, number][] = [];
     let active = -2;
+    // the entry: on a fresh load at the top, the line grows from the end of
+    // the name to the seat (≈1s) instead of appearing already drawn; reaching
+    // the seat cues the hero's one settling swing (data-line-reached)
+    const ENTRY_MS = 1000;
+    let entry: { t0: number } | null = null;
+    let entered = false;
     const setActive = (i: number) => {
       if (i === active) return;
       active = i;
@@ -182,7 +193,15 @@ export default function HomeScribble() {
       raf = 0;
       if (!sched.length) return;
       const s = window.scrollY;
-      const len = clamp(drawnAt(sched, s), 0, total);
+      let len = clamp(drawnAt(sched, s), 0, total);
+      if (entry) {
+        const t = (performance.now() - entry.t0) / ENTRY_MS;
+        if (t >= 1) entry = null;
+        else {
+          len *= 1 - Math.pow(1 - t, 3);
+          raf = requestAnimationFrame(render);
+        }
+      }
       line.style.strokeDashoffset = String(svgLen * (1 - len / total));
       svg.dataset.drawn = (len / total).toFixed(4);
       for (const [el, at] of cueLens) if (len >= at && !el.dataset.lineReached) el.dataset.lineReached = "true";
@@ -202,6 +221,7 @@ export default function HomeScribble() {
       const d = toPath(dense);
       line.setAttribute("d", d);
       svgLen = line.getTotalLength() || total;
+      tug.setPath(dense, fontsReady ? (route.knots ?? []) : []);
 
       // ink → plum bridge out of the letter
       const f = L.nameSize;
@@ -222,6 +242,10 @@ export default function HomeScribble() {
       });
       svg.dataset.layout = L.narrow ? "narrow" : "wide";
       if (fontsReady) svg.dataset.ready = "true";
+      if (fontsReady && !entered) {
+        entered = true;
+        if (!mq.matches && window.scrollY < 40) entry = { t0: performance.now() };
+      }
       if (mq.matches) {
         sched = [];
         svg.dataset.mode = "static";
@@ -279,19 +303,24 @@ export default function HomeScribble() {
       window.removeEventListener("resize", scheduleRebuild);
       window.removeEventListener("load", rebuild);
       mq.removeEventListener("change", rebuild);
+      tug.destroy();
     };
   }, []);
 
   return (
-    <svg ref={svgRef} className="scribble" aria-hidden="true" focusable="false" data-testid="scribble" data-ready="false">
-      <defs>
-        <linearGradient ref={gradRef} id="scribble-ink" gradientUnits="userSpaceOnUse">
-          <stop offset="0.3" className="scribble__ink-start" />
-          <stop offset="1" className="scribble__ink-end" />
-        </linearGradient>
-      </defs>
-      <path ref={lineRef} className="scribble__path" d="" />
-      <path ref={bridgeRef} className="scribble__bridge" d="" fill="url(#scribble-ink)" />
-    </svg>
+    <>
+      <svg ref={svgRef} className="scribble" aria-hidden="true" focusable="false" data-testid="scribble" data-ready="false">
+        <defs>
+          <linearGradient ref={gradRef} id="scribble-ink" gradientUnits="userSpaceOnUse">
+            <stop offset="0.3" className="scribble__ink-start" />
+            <stop offset="1" className="scribble__ink-end" />
+          </linearGradient>
+        </defs>
+        <path ref={lineRef} className="scribble__path" d="" />
+        <path ref={bridgeRef} className="scribble__bridge" d="" fill="url(#scribble-ink)" />
+      </svg>
+      {/* handles over the knots you can tug (filled by ThreadTug) */}
+      <div ref={knotsRef} className="thread-knots" />
+    </>
   );
 }

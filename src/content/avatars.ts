@@ -21,7 +21,7 @@ export type Pose = {
 };
 
 const p = (name: string, width: number, height: number, base: number, anchors?: Pose["anchors"]): Pose => ({
-  src: `/assets/avatar/${name}.webp`,
+  src: `/assets/avatar/${name}.avif`,
   width,
   height,
   base,
@@ -30,20 +30,17 @@ const p = (name: string, width: number, height: number, base: number, anchors?: 
 
 export const poses = {
   // homepage
-  /** 11.1 seated, matcha set down beside her; hands rest flat at seat level */
-  perched: p("break-01", 620, 968, 0.62, { seatL: { x: 0.02, y: 0.625 }, seatR: { x: 0.97, y: 0.625 } }),
-  /** 15.4 standing with a map, looking on ahead (to the right) */
-  lookingAhead: p("map-04", 280, 502, 0.985),
+  /** 11.1 seated, matcha set down beside her; hands rest flat at seat level;
+   * the cup stands at 2–18% across, its straw tip at 41% down */
+  perched: p("break-01", 940, 1467, 0.62, { seatL: { x: 0.02, y: 0.625 }, seatR: { x: 0.97, y: 0.625 } }),
   /** 06.5 holding the knot aloft; the thread hangs from her raised fist */
-  untangling: p("untangling-05", 340, 528, 0.985, { fist: { x: 0.14, y: 0.035 }, foot: { x: 0.2, y: 0.95 } }),
-  /** 09.3 peeking over a horizontal edge — the flat cut at 88% is the edge line */
-  peeking: p("peeking-03", 400, 266, 0.88),
-  /** 08.3 crouched DSLR shot, lens to the left */
-  photographing: p("photography-03", 300, 377, 0.985, { lens: { x: 0.05, y: 0.22 } }),
+  untangling: p("untangling-05", 420, 653, 0.985, { fist: { x: 0.14, y: 0.035 }, foot: { x: 0.2, y: 0.95 } }),
+  /** 09.2 a face-and-hands peek from behind a right-hand edge, trimmed at
+   * the drawn edge (the screen's edge stands in for it); her fingers curl
+   * round it ~40% down; no legs or shoes — the figure ends in hair and jacket */
+  edgePeek: p("peeking-02", 480, 1296, 1),
   /** 10.1 standing wave */
-  waving: p("waving-01", 300, 582, 0.985),
-  /** 07.4 lying on her front with a book */
-  reading: p("reading-04", 400, 242, 0.93),
+  waving: p("waving-01", 400, 776, 0.985),
 
   // detail pages
   typingDesk: p("typing-03", 380, 541, 0.985),

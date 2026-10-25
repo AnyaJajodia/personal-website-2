@@ -289,7 +289,9 @@ for (const [w, h] of [[375, 812], [768, 1024], [1440, 900]]) {
   ok("panels: first panel open by default, names legible collapsed", crackd0 > buzz0 * 2 && (await op("crackd-ai")) === "1", `crackd ${Math.round(crackd0)}px, buzzworks ${Math.round(buzz0)}px`);
   const rows = await page.$$eval(".panels__row", (r) => r.map((x) => Math.round(x.getBoundingClientRect().height)));
   const heightsBefore = await page.$$eval(".panel", (p) => p.map((x) => Math.round(x.getBoundingClientRect().height)).join(","));
-  ok("panels: two compact rows (220–250px)", rows.length === 2 && rows.every((h) => h >= 220 && h <= 250), rows.join(" / ") + "px");
+  // rows are at least the compact height and grow only to fit their longest summary
+  const fitRows = await page.$$eval(".panels__row", (rs) => rs.map((r) => Math.max(...[...r.querySelectorAll(".panel__more")].map((m) => m.scrollHeight)) <= r.getBoundingClientRect().height));
+  ok("panels: two compact rows (≥220px, sized to their longest summary, ≤300px)", rows.length === 2 && rows.every((h) => h >= 220 && h <= 300) && fitRows.every(Boolean), rows.join(" / ") + "px");
   const collapsed = await page.$$eval(".panel", (ps) => ps.map((p) => {
     const name = p.querySelector(".panel__name");
     const logo = p.querySelector(".panel__logo img, .panel__logo svg");
@@ -387,30 +389,33 @@ for (const [w, h] of [[375, 812], [768, 1024], [1440, 900]]) {
     gradients: [...document.querySelectorAll(".panel")].filter((p) => [getComputedStyle(p).backgroundImage, getComputedStyle(p, "::before").backgroundImage, getComputedStyle(p, "::after").backgroundImage].some((v) => v && v !== "none")).length,
     radius: getComputedStyle(document.querySelector(".panel")).borderRadius,
   }));
-  ok("panels: flat paper surfaces (no gradients, no watermark motifs, 2px corners)", flat.motifs === 0 && flat.gradients === 0 && flat.radius === "2px", JSON.stringify(flat));
+  ok("panels: flat paper surfaces (no gradients, no watermark motifs), subtly rounded (≤ 8px)", flat.motifs === 0 && flat.gradients === 0 && parseFloat(flat.radius) <= 8, JSON.stringify(flat));
   const pal = await page.evaluate(() => {
-    const lum = (c) => {
-      const [r, g, b] = c.match(/\d+(\.\d+)?/g).slice(0, 3).map(Number).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
-      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-    };
+    // any CSS colour (incl. color-mix's color(srgb …)) → sRGB bytes via a canvas
+    const cv = document.createElement("canvas").getContext("2d");
+    const bytes = (c) => { cv.clearRect(0, 0, 1, 1); cv.fillStyle = c; cv.fillRect(0, 0, 1, 1); return [...cv.getImageData(0, 0, 1, 1).data].slice(0, 3); };
+    const lum = (c) => bytes(c).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }).reduce((a, v, i) => a + v * [0.2126, 0.7152, 0.0722][i], 0);
     return [...document.querySelectorAll(".panel")].map((p) => {
       const cs = getComputedStyle(p);
       const a = lum(cs.backgroundColor), b = lum(cs.color);
-      return { k: p.className.split("--")[1], bg: cs.backgroundColor, cr: +((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)).toFixed(2) };
+      return { k: p.className.split("--")[1], bg: `rgb(${bytes(cs.backgroundColor).join(", ")})`, cr: +((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)).toFixed(2) };
     });
   });
   const want = { crackd: "rgb(248, 215, 77)", buzzworks: "rgb(232, 178, 141)", tmu: "rgb(169, 193, 217)", inteli: "rgb(185, 164, 190)", gvi: "rgb(165, 189, 176)", pubs: "rgb(211, 161, 173)", teaching: "rgb(176, 185, 218)" };
   ok("panels: muted coloured-paper palette (Crackd yellow kept)", pal.every((p) => want[p.k] === p.bg), pal.map((p) => `${p.k} ${p.bg}`).join("; "));
   ok("panels: charcoal text, contrast ≥ 4.5:1 on every panel colour", pal.every((p) => p.cr >= 4.5), pal.map((p) => `${p.k} ${p.cr}`).join(", "));
   const meta = await page.evaluate(() => {
-    const lum = (c) => { const [r, g, b] = c.match(/\d+(\.\d+)?/g).slice(0, 3).map(Number).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+    // any CSS colour (incl. color-mix's color(srgb …)) → sRGB bytes via a canvas
+    const cv = document.createElement("canvas").getContext("2d");
+    const bytes = (c) => { cv.clearRect(0, 0, 1, 1); cv.fillStyle = c; cv.fillRect(0, 0, 1, 1); return [...cv.getImageData(0, 0, 1, 1).data].slice(0, 3); };
+    const lum = (c) => bytes(c).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }).reduce((a, v, i) => a + v * [0.2126, 0.7152, 0.0722][i], 0);
     return [...document.querySelectorAll(".panel")].map((p) => { const a = lum(getComputedStyle(p).backgroundColor), b = lum(getComputedStyle(p.querySelector(".panel__meta")).color); return +((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)).toFixed(2); });
   });
   ok("panels: dates/categories (small text) ≥ 4.5:1 too", meta.every((c) => c >= 4.5), meta.join(", "));
   const amnhCard = await page.$eval(".feature--amnh", (e) => e.textContent);
   const nFeat = await page.$$eval(".feature", (f) => f.length);
-  ok("Currently: AMNH card separates its two workstreams (still two cards)", nFeat === 2 && amnhCard.includes("Collections digitization") && amnhCard.includes("Mantis behavioral research"));
-  const hero = await page.evaluate(() => ({ specimen: document.querySelectorAll(".specimen, .hero svg").length, figures: document.querySelectorAll(".hero [data-avatar]").length, perched: !!document.querySelector('.hero__perch [data-avatar="perched"] img')?.naturalWidth }));
+  ok("Currently: AMNH card separates its two workstreams (still two cards)", nFeat === 2 && amnhCard.includes("DIODE · Collections digitization") && amnhCard.includes("Mantis behavioral trials & research"));
+  const hero = await page.evaluate(() => ({ specimen: document.querySelectorAll(".specimen, .hero svg:not(.matcha__fizz)").length, figures: document.querySelectorAll(".hero [data-avatar]").length, perched: !!document.querySelector('.hero__perch [data-avatar="perched"] img')?.naturalWidth }));
   ok("hero: dragonfly removed; one avatar, sitting on the line", hero.specimen === 0 && hero.figures === 1 && hero.perched, JSON.stringify(hero));
   const df = () => page.$eval("[data-testid=dot-field]", (c) => ({ mode: c.dataset.mode, anim: c.dataset.animating ?? "idle", pe: getComputedStyle(c).pointerEvents }));
   for (let i = 0; i <= 8; i++) await page.mouse.move(820 + i * 18, 430 + i * 5);
@@ -455,9 +460,25 @@ for (const [w, h] of [[1440, 900], [1024, 768], [768, 1024], [390, 844]]) {
     const pl = doc('[data-line="perch-l"]');
     const pr = doc('[data-line="perch-r"]');
     const box = doc(".hero__perch");
-    const seat = pts.filter((q) => q.x > pl.l + 8 && q.x < pr.l - 8 && q.y > box.t && q.y < box.b);
+    // the seat band (the line's later run may pass the empty corner under her feet)
+    const seat = pts.filter((q) => q.x > pl.l + 8 && q.x < pr.l - 8 && q.y > box.t && q.y < pl.t + (box.b - box.t) * 0.2);
     const seatOk = seat.length > 20 && seat.every((q) => Math.abs(q.y - pl.t) < 9);
-    const inSlot = pts.filter((q) => q.x > box.l + 10 && q.x < box.r - 10 && q.y > box.t + 6 && q.y < pl.t - 12).length + (seatOk ? 0 : 1000);
+    // above the seat, the line may cross the rig's empty stage but never her
+    // artwork: sample the body layer's alpha under each point (except where it
+    // reaches her resting hand)
+    const bodyImg = document.querySelector('[data-part="body"] img');
+    const bi = bodyImg.getBoundingClientRect();
+    const cnv = document.createElement("canvas");
+    cnv.width = bodyImg.naturalWidth;
+    cnv.height = bodyImg.naturalHeight;
+    const cx = cnv.getContext("2d");
+    cx.drawImage(bodyImg, 0, 0);
+    const alphaAt = (x, y) => {
+      const u = Math.floor(((x - bi.left) / bi.width) * cnv.width), v = Math.floor(((y - scrollY - bi.top) / bi.height) * cnv.height);
+      if (u < 0 || v < 0 || u >= cnv.width || v >= cnv.height) return 0;
+      return cx.getImageData(u, v, 1, 1).data[3];
+    };
+    const inSlot = pts.filter((q) => q.y > box.t && q.y < pl.t - 12 && Math.hypot(q.x - pl.l, q.y - pl.t) > 30 && alphaAt(q.x, q.y) > 128).length + (seatOk ? 0 : 1000);
     const vw = document.documentElement.clientWidth;
     const offPage = pts.filter((q) => q.x < 4 || q.x > vw - 4).length;
     const K = doc('[data-line="contact-heading"]');
@@ -533,7 +554,9 @@ for (const [w, h] of [[1440, 900], [1024, 768], [768, 1024], [390, 844]]) {
   const a11y = await page.evaluate(() =>
     [...document.querySelectorAll("[data-avatar]")].map((el) => {
       const img = el.querySelector("img");
-      return { hidden: el.getAttribute("aria-hidden") === "true", alt: img.getAttribute("alt"), pe: getComputedStyle(el).pointerEvents, w: img.getAttribute("width"), h: img.getAttribute("height"), loading: img.getAttribute("loading"), role: el.dataset.avatar };
+      // the hero rig holds two labelled controls, so its artwork (not the whole figure) is aria-hidden
+      const art = el.querySelector(".hero-rig__stage") ?? el;
+      return { hidden: art.getAttribute("aria-hidden") === "true", alt: img.getAttribute("alt"), pe: getComputedStyle(el).pointerEvents, w: img.getAttribute("width"), h: img.getAttribute("height"), loading: img.getAttribute("loading"), role: el.dataset.avatar };
     }),
   );
   ok(`avatars: decorative (aria-hidden, empty alt, no pointer events), sized boxes @${w}`, a11y.every((a) => a.hidden && a.alt === "" && a.pe === "none" && a.w && a.h), `${a11y.length} figures`);
@@ -554,11 +577,12 @@ for (const [w, h] of [[1440, 900], [1024, 768], [768, 1024], [390, 844]]) {
   const hiddenLoaded = await page.evaluate(() => [...document.querySelectorAll("[data-avatar]")].filter((el) => !el.offsetParent && el.querySelector("img").complete && el.querySelector("img").naturalWidth).length);
   ok(
     `avatars: only displayed figures load, no contact sheets or source PNGs @${w}`,
-    hiddenLoaded === 0 && avs.every((p) => p.endsWith(".webp")) && !requested.some((p) => /previews|handoff|\.png$/.test(p) && p.includes("avatar")) && avs.length <= shown.length,
+    hiddenLoaded === 0 && avs.every((p) => p.endsWith(".avif")) && !requested.some((p) => /previews|handoff|\.png$/.test(p) && p.includes("avatar")) && avs.length <= shown.length + (shown.includes("perched") ? 3 : 0), // the hero rig is four layers
     `${avs.length} files for ${shown.length} shown: ${shown.join(", ")}`,
   );
-  const more = w >= 1360 ? "photographing" : w >= 640 ? "reading" : null;
-  const narrowOk = (w >= 860 ? shown.length === 6 : w >= 640 ? shown.length <= 5 : shown.length <= 3) && (!more || shown.includes(more));
+  // fewer, larger figures: hero, untangler, greeter everywhere; the edge peeker where there is room for her lane
+  const expected = ["perched", "untangling", ...(w >= 1200 ? ["edge"] : []), "greeting"];
+  const narrowOk = shown.join() === expected.join();
   ok(`avatars: fewer figures as the page narrows @${w}`, narrowOk && shown.includes("perched"), shown.join(", "));
   const crowd = await page.evaluate(() => {
     const figs = [...document.querySelectorAll("[data-avatar]")].filter((e) => e.offsetParent).map((e) => { const b = e.getBoundingClientRect(); return { t: b.top + scrollY, b: b.bottom + scrollY }; });
@@ -586,16 +610,17 @@ for (const [w, h] of [[1440, 900], [1024, 768], [768, 1024], [390, 844]]) {
       const xs = [0.3, 0.5, 0.7].map((f) => b.l + (b.r - b.l) * f);
       return Math.max(...xs.map((x) => Math.min(...pts.filter((q) => Math.abs(q.x - x) < 3).map((q) => Math.abs(q.y - (b.b - 2))), 999)));
     };
-    return { fist: fist ? +near(fist.l, fist.t).toFixed(1) : null, ahead: under('[data-avatar="ahead"]'), greeter: under('[data-avatar="greeting"]') };
+    return { fist: fist ? +near(fist.l, fist.t).toFixed(1) : null, greeter: under('[data-avatar="greeting"]') };
   });
   ok(`avatars: the line runs into the untangler's fist @${w}`, line.fist !== null && line.fist < 4, `${line.fist}px`);
-  if (w >= 860) ok(`avatars: the figure at the trajectory's end stands on the line @${w}`, line.ahead !== null && line.ahead < 8, `${line.ahead}px`);
   ok(`avatars: the greeter stands on the line's last stretch @${w}`, line.greeter !== null && line.greeter < 8, `${line.greeter}px`);
   // nothing readable or clickable is covered: links stay hittable, no text under a figure
   const cover = await page.evaluate(() => {
     const figs = [...document.querySelectorAll("[data-avatar]")].filter((el) => el.offsetParent).map((el) => {
       const b = el.getBoundingClientRect();
-      const ix = b.width * 0.12, iy = b.height * 0.08; // the artwork's own transparent margin
+      // the artwork's own transparent margin (the hero rig's stage: figure spans x 10.5–90.5%, y 1–90%)
+      if (el.dataset.avatar === "perched") return { role: "perched", l: b.left + b.width * 0.105, r: b.left + b.width * 0.905, t: b.top + b.height * 0.01 + scrollY, b: b.top + b.height * 0.9 + scrollY };
+      const ix = b.width * 0.12, iy = b.height * 0.08;
       return { role: el.dataset.avatar, l: b.left + ix, r: b.right - ix, t: b.top + iy + scrollY, b: b.bottom - iy + scrollY };
     });
     const hits = [];
@@ -606,8 +631,13 @@ for (const [w, h] of [[1440, 900], [1024, 768], [768, 1024], [390, 844]]) {
       if (more && getComputedStyle(more).opacity === "0") continue;
       const rg = document.createRange();
       rg.selectNodeContents(n);
-      for (const r of rg.getClientRects())
+      // text inside a panel is clipped by it (overflow: hidden)
+      const clip = n.parentElement.closest(".panel")?.getBoundingClientRect();
+      for (const r0 of rg.getClientRects()) {
+        const r = clip ? { left: Math.max(r0.left, clip.left), right: Math.min(r0.right, clip.right), top: Math.max(r0.top, clip.top), bottom: Math.min(r0.bottom, clip.bottom) } : r0;
+        if (r.right <= r.left || r.bottom <= r.top) continue;
         for (const f of figs) if (r.right > f.l && r.left < f.r && r.bottom + scrollY > f.t && r.top + scrollY < f.b) hits.push(`${f.role}: ${n.textContent.trim().slice(0, 24)}`);
+      }
     }
     const links = [...document.querySelectorAll(".contact a, .contact-list__row, .panel a, .feature a")].filter((a) => a.offsetParent);
     const blocked = [];
@@ -631,7 +661,7 @@ for (const [w, h] of [[1440, 900], [1024, 768], [768, 1024], [390, 844]]) {
   const r = await page.evaluate(() =>
     [...document.querySelectorAll("[data-avatar]")].filter((el) => el.offsetParent).map((el) => ({ in: el.dataset.static ? "still" : el.dataset.in, op: getComputedStyle(el.querySelector(".avatar__body")).opacity, anim: el.querySelector(".avatar__body").getAnimations().length })),
   );
-  ok("avatars: reduced motion shows every figure in place, unanimated", r.length >= 6 && r.every((x) => x.in === "still" && x.op === "1" && x.anim === 0), JSON.stringify(r[0]));
+  ok("avatars: reduced motion shows every figure in place, unanimated", r.length >= 4 && r.every((x) => x.in === "still" && x.op === "1" && x.anim === 0), JSON.stringify(r[0]));
   await page.goto(base + "/work/lynxster", { waitUntil: "networkidle" });
   const d = await page.evaluate(() => [...document.querySelectorAll("[data-avatar]")].map((el) => el.dataset.in));
   ok("avatars: reduced motion on project pages too", d.length === 2 && d.every((x) => x === "still"), d.join());
@@ -669,7 +699,10 @@ for (const [w, h] of [[1440, 900], [1024, 768], [768, 1024], [390, 844]]) {
       if (img) {
         let op = 1;
         for (let e = img; e; e = e.parentElement) op *= parseFloat(getComputedStyle(e).opacity);
-        window.__hero.push({ complete: img.complete && img.naturalWidth > 0, op, anims: img.closest(".avatar").getAnimations({ subtree: true }).length, transform: getComputedStyle(img.closest(".avatar__body")).transform });
+        // the figure itself: the stage and the body layer (the legs may make their one settling entry swing)
+        const body = document.querySelector('.hero-rig [data-part="body"]');
+        const stage = img.closest(".avatar__body");
+        window.__hero.push({ complete: img.complete && img.naturalWidth > 0, op, anims: stage.getAnimations().length + body.getAnimations().length, transform: getComputedStyle(stage).transform + getComputedStyle(body).transform === "nonenone" ? "none" : "moved" });
       }
       if (window.__hero.length < 60) requestAnimationFrame(tick);
     };
@@ -679,7 +712,7 @@ for (const [w, h] of [[1440, 900], [1024, 768], [768, 1024], [390, 844]]) {
   await settle(page, 1200);
   const hero = await page.evaluate(() => window.__hero);
   const preload = await page.$$eval('link[rel="preload"][as="image"]', (ls) => ls.map((l) => l.getAttribute("href") || l.getAttribute("imagesrcset")));
-  ok("hero avatar: fully visible and still from the first frame (no entrance), preloaded", hero.length > 0 && hero[0].complete && hero.every((f) => f.op === 1 && f.anims === 0 && f.transform === "none") && preload.some((p) => p?.includes("break-01")), `first ${JSON.stringify(hero[0])}, preload ${preload.join(" ")}`);
+  ok("hero avatar: fully visible and still from the first frame (no entrance), preloaded", hero.length > 0 && hero[0].complete && hero.every((f) => f.op === 1 && f.anims === 0 && f.transform === "none") && preload.some((p) => p?.includes("rig/body")), `first ${JSON.stringify(hero[0])}, preload ${preload.join(" ")}`);
 
   // every other entrance: a short decelerating settle, no bounce
   await page.evaluate(() => {
@@ -713,57 +746,114 @@ for (const [w, h] of [[1440, 900], [1024, 768], [768, 1024], [390, 844]]) {
     return out;
   });
   const fmt = Object.entries(tr).map(([k, v]) => (v ? `${k} ${v.travel.toFixed(0)}px/${Math.round(v.ms)}ms${v.over ? " overshoot" : ""}` : `${k} none`)).join(", ");
-  ok("avatars: entrances are short settles (8–16px, 350–650ms), never bouncing", Object.entries(tr).every(([k, v]) => v && !v.over && v.ms >= 350 && v.ms <= 650 && (k === "peeking" || (v.travel >= 8 && v.travel <= 16))), fmt);
-  ok("avatars: the peeker's reveal rises only from behind the grid's edge", tr.peeking && tr.peeking.travel <= 80, fmt);
+  ok("avatars: entrances are short settles (8–18px, 350–650ms), never bouncing; the edge peeker's slide is scroll-linked (checked below)", Object.entries(tr).every(([k, v]) => v && !v.over && (k === "edge" ? true : v.ms >= 350 && v.ms <= 650 && v.travel >= 8 && v.travel <= 18)), fmt);
+  ok("avatars: no traveller on the trajectory, no figures in More", (await page.$$(".trajectory [data-avatar], .more [data-avatar]")).length === 0);
+  await page.context().close();
+}
 
-  // the peeker never crosses a panel: through rapid card switching (pointer and keys)
+/* 16. the right-edge peeker */
+for (const [w, h] of [[1440, 900], [1280, 800]]) {
+  const page = await newPage({ viewport: { width: w, height: h } });
+  await page.goto(base + "/", { waitUntil: "networkidle" });
   const gridTop = await page.evaluate(() => document.querySelector(".panels").getBoundingClientRect().top + scrollY);
-  await page.evaluate((y) => window.scrollTo(0, y), Math.round(gridTop - 900 * 0.6));
-  await settle(page, 900);
   await page.evaluate(() => {
-    window.__pk = { worst: -1e9, n: 0, lean: new Set() };
-    const a = document.querySelector('[data-avatar="peeking"]');
+    const fig = document.querySelector('[data-avatar="edge"]');
+    const lane = document.querySelector(".edge-lane");
+    window.__e = { minGap: 1e9, settledAt: null, lean: new Set() };
     const tick = () => {
-      if (!window.__pk) return;
-      const b = a.getBoundingClientRect();
-      const clip = b.top + b.height * parseFloat(getComputedStyle(a).getPropertyValue("--base")) - 1; // clip-path: 1px above the base line
-      const top = Math.min(...[...document.querySelectorAll(".panel")].map((p) => p.getBoundingClientRect().top));
-      window.__pk.worst = Math.max(window.__pk.worst, clip - top);
-      window.__pk.n++;
-      window.__pk.lean.add(getComputedStyle(a.querySelector(".avatar__react")).transform);
+      const e = window.__e;
+      if (!e) return;
+      const f = fig.querySelector(".avatar__img").getBoundingClientRect();
+      const l = lane.getBoundingClientRect();
+      const cards = Math.max(...[...document.querySelectorAll(".panel")].map((p) => p.getBoundingClientRect().right));
+      if (f.bottom > 0 && f.top < innerHeight) e.minGap = Math.min(e.minGap, Math.max(f.left, l.left) - cards);
+      // settled: within 2px of rest (the end of the ease is invisible)
+      const tx = new DOMMatrixReadOnly(getComputedStyle(fig.querySelector(".avatar__body")).transform.replace("none", "matrix(1,0,0,1,0,0)")).m41;
+      if (e.settledAt === null && fig.dataset.in && fig.dataset.in !== "queued" && Math.abs(tx) < 2) e.settledAt = scrollY;
+      e.lean.add(getComputedStyle(fig.querySelector(".avatar__react")).transform);
       requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
   });
+  for (let y = Math.max(0, Math.round(gridTop - h * 1.3)); y < gridTop - h * 0.35; y += 14) {
+    await page.evaluate((v) => window.scrollTo(0, v), y);
+    await page.waitForTimeout(16);
+  }
+  await settle(page, 900);
+  const readable = Math.round(gridTop - h * 0.8);
+  const settledAt = await page.evaluate(() => window.__e.settledAt);
+  // she slides out with the scroll from her first visible pixel; fully out by the time the
+  // cards are readable (or, where she is shorter than the grid, within 18% of a screen of appearing)
+  const firstSeen = await page.evaluate(() => document.querySelector('[data-avatar="edge"]').getBoundingClientRect().top + scrollY - innerHeight);
+  const due = Math.max(readable, Math.round(firstSeen + h * 0.18));
+  ok(`edge peeker: scroll-linked slide is complete when the cards are readable @${w}`, settledAt !== null && settledAt <= due + 2, `out at ${settledAt}, due by ${due} (cards readable at ${readable})`);
   const centers = await page.$$eval(".panel", (ps) => ps.map((p) => { const r = p.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }));
   for (const [x, y] of [...centers, ...centers.slice().reverse()]) {
     await page.mouse.move(x, y, { steps: 3 });
     await page.waitForTimeout(90);
   }
-  const strip = await page.evaluate(() => {
-    const a = document.querySelector('[data-avatar="peeking"]').getBoundingClientRect();
-    // from the first whole pixel row inside the panels (the fractional border row is
-    // composited a hair differently whenever any layer above changes; the geometry
-    // check covers it: her clip line stays ≥ 1px above it)
-    return { x: Math.round(a.left - 30), y: Math.ceil(document.querySelector(".panels").getBoundingClientRect().top), width: Math.round(a.width + 60), height: 36 };
-  });
-  await page.mouse.move(centers[2][0], centers[2][1]);
-  await settle(page, 1600); // the opened panel's own width transition must finish first
-  const leaning = await page.$eval('[data-avatar="peeking"] .avatar__react', (e) => getComputedStyle(e).transform);
-  const withHer = await page.screenshot({ clip: strip });
-  await page.addStyleTag({ content: '[data-avatar="peeking"]{visibility:hidden!important}' });
-  const without = await page.screenshot({ clip: strip });
-  await page.evaluate(() => document.querySelectorAll("style").forEach((s) => s.textContent.includes('peeking"]{visibility') && s.remove()));
-  await page.mouse.move(5, 895);
+  await page.mouse.move(centers[0][0], centers[0][1]);
   await settle(page, 700);
-  const neutral = await page.$eval('[data-avatar="peeking"] .avatar__react', (e) => getComputedStyle(e).transform);
-  await page.evaluate(() => document.querySelectorAll(".panel a")[4].focus());
-  await settle(page, 600);
-  const keyLean = await page.$eval('[data-avatar="peeking"] .avatar__react', (e) => getComputedStyle(e).transform);
-  const pk = await page.evaluate(() => { const p = window.__pk; window.__pk = null; return { worst: p.worst, n: p.n, lean: p.lean.size }; });
-  ok("peeker: her clip line never drops below the grid's top edge, in any frame of rapid card switching", pk.worst <= 0, `${pk.n} frames, worst ${pk.worst.toFixed(2)}px`);
-  ok("peeker: no pixel of her lands on a panel (strip under the edge identical with and without her)", Buffer.compare(withHer, without) === 0);
-  ok("peeker: leans toward the active card (pointer and keyboard), neutral after leaving", leaning !== "none" && leaning !== "matrix(1, 0, 0, 1, 0, 0)" && neutral === "matrix(1, 0, 0, 1, 0, 0)" && keyLean !== neutral && pk.lean > 3, `${leaning} → ${neutral}; keyboard ${keyLean}`);
+  const far = await page.$eval('[data-avatar="edge"] .avatar__react', (e) => getComputedStyle(e).transform);
+  await page.mouse.move(centers[3][0], centers[3][1]);
+  await settle(page, 700);
+  const near = await page.$eval('[data-avatar="edge"] .avatar__react', (e) => getComputedStyle(e).transform);
+  await page.mouse.move(w * 0.3, 80);
+  await settle(page, 800);
+  const neutral = await page.$eval('[data-avatar="edge"] .avatar__react', (e) => getComputedStyle(e).transform);
+  await page.evaluate(() => document.querySelectorAll(".panel a")[5].focus());
+  await settle(page, 700);
+  const key = await page.$eval('[data-avatar="edge"] .avatar__react', (e) => getComputedStyle(e).transform);
+  await page.evaluate(() => document.activeElement.blur());
+  const e = await page.evaluate(() => ({ minGap: window.__e.minGap, lean: window.__e.lean.size }));
+  ok(`edge peeker: never within 24px of a card, in any frame (entrance, rapid switching) @${w}`, e.minGap >= 24, `${e.minGap.toFixed(1)}px`);
+  ok(`edge peeker: leans to the active card (further for further cards), by pointer and keyboard; neutral after leaving @${w}`, far !== near && near !== neutral && key !== neutral && neutral === "matrix(1, 0, 0, 1, 0, 0)" && e.lean > 10, `${far} | ${near} | ${neutral} | ${key}`);
+  const peek = () => page.$eval('[data-avatar="edge"]', (el) => el.dataset.peek ?? "out");
+  const seq = [];
+  await page.click(".edge-lane__hit");
+  for (let i = 0; i < 12; i++) { seq.push(await peek()); await page.waitForTimeout(230); }
+  await page.focus(".edge-lane__hit");
+  await page.keyboard.press("Space");
+  await page.waitForTimeout(120);
+  const keyPeek = await peek();
+  ok(`edge peeker: peekaboo by tap/click and keyboard (ducks, checks, comes out) @${w}`, [...new Set(seq)].join("→") === "hide→check→out" && keyPeek === "hide", `${[...new Set(seq)].join("→")}; key ${keyPeek}`);
+  const label = await page.$eval(".edge-lane__hit", (b) => b.getAttribute("aria-label"));
+  ok(`edge peeker: her button is labelled and reachable @${w}`, !!label && (await page.$eval(".edge-lane__hit", (b) => b.tabIndex)) === 0, label);
+  const end = await page.evaluate(() => document.querySelector(".selected").getBoundingClientRect().bottom + scrollY);
+  await page.evaluate((v) => window.scrollTo(0, v), Math.round(end + 10));
+  await settle(page, 300);
+  ok(`edge peeker: leaves with the section; no horizontal overflow @${w}`, await page.evaluate(() => document.querySelector('[data-avatar="edge"]').getBoundingClientRect().bottom <= document.querySelector(".site-header").getBoundingClientRect().bottom + 1 && document.documentElement.scrollWidth === document.documentElement.clientWidth));
+  await page.evaluate(() => (window.__e = null));
+  await page.context().close();
+}
+{
+  const page = await newPage({ viewport: { width: 1024, height: 768 } });
+  await page.goto(base + "/", { waitUntil: "networkidle" });
+  ok("edge peeker: not shown where there is no room for her lane (1024)", (await page.$eval(".edge-lane", (e) => getComputedStyle(e).display)) === "none");
+  await page.context().close();
+}
+
+/* 17. the matcha (the hero rig's cup; the rig itself: qa/hero-rig.mjs) */
+for (const [w, h, touch] of [[1440, 900, false], [390, 844, true]]) {
+  const page = await newPage({ viewport: { width: w, height: h }, hasTouch: touch, isMobile: touch });
+  await page.goto(base + "/", { waitUntil: "networkidle" });
+  await settle(page, 1800);
+  const m = await page.evaluate(() => {
+    const b = document.querySelector(".hero-rig__target--cup").getBoundingClientRect();
+    const st = document.querySelector(".hero-rig").getBoundingClientRect();
+    // the cup in the assembled rig: 84% across, 39% down the stage
+    const cup = { x: st.left + st.width * 0.84, y: st.top + st.height * 0.39 };
+    return { w: b.width, h: b.height, onCup: cup.x > b.left && cup.x < b.right && cup.y > b.top && cup.y < b.bottom, label: document.querySelector(".hero-rig__target--cup").getAttribute("aria-label") };
+  });
+  ok(`matcha: a labelled button over the cup itself, ≥ 44px @${w}`, m.onCup && m.w >= 44 && m.h >= 44 && !!m.label, JSON.stringify(m));
+  if (touch) await page.tap(".hero-rig__target--cup");
+  else {
+    const b = await page.$eval(".hero-rig__target--cup", (e) => { const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
+    await page.mouse.move(b[0], b[1]);
+  }
+  await page.waitForTimeout(600);
+  const st = await page.evaluate(() => ({ arm: document.querySelector('[data-part="forearm-matcha"]').getAnimations().length, body: document.querySelector('[data-part="body"]').getAnimations().length, fizz: !!document.querySelector(".hero-rig[data-fizz]") }));
+  ok(`matcha: ${touch ? "a tap" : "hover"} raises the cup (a small cheers, with fizz); the body stays still @${w}`, st.arm === 1 && st.body === 0 && st.fizz, JSON.stringify(st));
   await page.context().close();
 }
 

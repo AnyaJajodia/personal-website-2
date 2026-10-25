@@ -24,16 +24,35 @@ Per your request, uncertain end dates show **2027** in the preview. Replace with
 Confirmed and unchanged: ESP Jan 2024–Dec 2024; both publications 2022.
 
 ### AMNH mantis research (added 21 Oct 2026)
-The research is described only as joining. The homepage reads "Joined a mantis behavioral research project. Details to come."; the detail page reads "I’ve joined a mantis behavioral research project at the museum." followed by a note that the details will be added once confirmed. All of this is in `src/content/work.ts` → `amnh.streams` and `src/content/site.ts` → `currently.features[1].streams`.
+The research is described only as joining. The homepage now reads "Mantis behavioral trials & research — Details to come." (home.md, 25 Oct 2026); the detail page reads "I’ve joined a mantis behavioral research project at the museum." followed by a note that the details will be added once confirmed. All of this is in `src/content/work.ts` → `amnh.streams` and `src/content/site.ts` → `currently.features[1].streams`.
 - [ ] The research question, methods, your responsibilities and any outcomes (then delete the `pending` note)
 - [ ] Whether it sits in Invertebrate Zoology: the page eyebrow currently names only that department
 - [ ] Whether the AMNH subtitle ("Digitizing dragonfly records…") and "What I’m exploring" ("not an established research project") still read correctly next to the new workstream
+
+### Homepage dates and roles now differ from the detail pages (25 Oct 2026)
+The homepage takes its roles and dates from the revised `handoff/content/home.md` (`site.ts` → `currently.features[].role/period`, `selectedWork.rows[].date`). The detail pages were deliberately not rewritten in this pass, so `work.ts` still shows the older values. Reconcile them in the detail-page pass:
+
+| Entry | Homepage (home.md) | Detail page (`work.ts`) |
+|-------|--------------------|-------------------------|
+| Lynxster | Chief Technology Officer · 2026–now | "Engineering & technical leadership" · 2026–2027 |
+| AMNH | Volunteer · 2026–now | Volunteer · 2026–2027 |
+| Crackd.ai | 2025 | Sep 2025–2027 |
+| Buzzworks | 2025–2026 | May 2025–2027 |
+| TMU research tooling | 2025 | May 2025–2027 |
+| Inteli-lens | 2023 | period hidden (no start date) |
+| Conservation fieldwork · South Africa | 2024 | period hidden (no start date) |
+| Research publications | 2022–2024 | both papers 2022 |
+| Teaching & mentorship | 2024–2026 | ESP Jan–Dec 2024; ADI Jan 2024–2027 |
+
+- [ ] Confirm the publications range: home.md says 2022–2024, but both papers are dated 2022 on their pages
+- [ ] Confirm Crackd.ai ended in 2025 (home.md shows one year; the detail page shows it as ongoing)
+- home.md writes ranges with hyphens ("2025-2026"); the site sets them with en dashes, as in "2026–now"
 
 ## 2. Missing URLs
 
 | Item | Where | Status |
 |------|-------|--------|
-| LinkedIn profile | `contact.links` in `site.ts` | `url: null` → shows "Link to come" |
+| LinkedIn profile | `contact.links` in `site.ts` | **Supplied (home.md, 25 Oct 2026):** https://www.linkedin.com/in/anya-jajodia/ |
 | Résumé PDF | `contact.links` in `site.ts` | `url: null` → shows "Updated PDF to come". Add the PDF to `public/` and set `url` |
 | PMMY paper | `pmmy-research` → `links` | `url: null` → "Paper link to come" |
 | Teenage pregnancy paper | `teenage-pregnancy-research` → `links` | `url: null` → "Paper link to come" |

@@ -1,0 +1,21 @@
+PASS  theme: defaults to System and follows the OS, live  — light → dark → light
+PASS  theme: no hydration mismatch warnings
+PASS  theme: first frame already dark (OS light, saved dark) — no flash  — {"theme":"dark","bg":"rgb(33, 30, 28)"}
+PASS  theme: first frame already light (OS dark, saved light) — no flash  — {"theme":"light","bg":"rgb(247, 244, 238)"}
+PASS  theme: first frame already dark (OS dark, saved none) — no flash  — {"theme":"dark","bg":"rgb(33, 30, 28)"}
+PASS  toggle: in the header, after Contact, labelled, ≥36px with a 44px hit area  — Colour theme 36px
+PASS  toggle: Enter opens a menu of System / Light / Dark, current one checked and focused  — {"open":true,"items":["System:true","Light:false","Dark:false"],"focused":"System","expanded":"true"}
+PASS  toggle: arrows + Enter choose Dark; the choice is stored; focus returns to the button  — {"theme":"dark","pref":"dark","bg":"rgb(33, 30, 28)","stored":"dark"}
+PASS  toggle: switching keeps the scroll position and open interaction state  — 831 → 831, note 2
+PASS  toggle: Escape closes the menu
+PASS  theme: the choice persists across pages and reloads
+PASS  theme: an explicit choice ignores later OS changes
+PASS  theme: choosing System clears the stored choice and follows the OS again  — {"theme":"light","pref":"system","bg":"rgb(247, 244, 238)","stored":null}
+PASS  dark /: text ≥ 4.5:1, headings ≥ 3:1  — text min 6.29 (54), headings min 11.92
+PASS  dark /work/amnh: text ≥ 4.5:1, headings ≥ 3:1  — text min 9.02 (33), headings min 13.64
+PASS  dark /work/lynxster: text ≥ 4.5:1, headings ≥ 3:1  — text min 6.76 (23), headings min 13.97
+PASS  dark /work/crackd-ai: text ≥ 4.5:1, headings ≥ 3:1  — text min 8.3 (28), headings min 13.97
+PASS  dark: nothing is inverted (avatar, logos and photos keep their colours)
+PASS  dark: coloured panels kept as coloured paper, slightly settled into the page  — rgb(212, 184, 82) rgb(222, 164, 124) rgb(151, 178, 207)
+
+19/19 theme checks passed

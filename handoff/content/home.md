@@ -1,40 +1,51 @@
 # Homepage — approved draft
 ## Hero
 Anya Jajodia.
-Engineering, research, and other things.
-I build software, ask questions, and follow the occasional question into a museum.
+Building ideas. Exploring possibilities. Asking better questions.
+I build end-to-end software, explore what technology could do differently, and follow the threads that pique my curiosity—occasionally into the backrooms of a museum.
 Based in New York.
 Scroll to follow the thread ↓
 ## About
 A fairly straightforward career trajectory.
-I’m a senior at Barnard College studying computer science, with minors in anthropology and English. I started out with QMSS and economics in mind. Then I discovered programming, got interested in AI, started building cryptographic systems, and found myself working with dragonfly archives.
+I’m a senior at Barnard College studying computer science, with minors in anthropology and English. I arrived with QMSS and economics in mind, discovered programming, and kept finding more things I wanted to do with it. Since then, I’ve worked across full-stack development, AI, and cryptographic systems—and somehow found my way into dragonfly archives and mantis behavioral research.
 Naturally, this was all part of the plan.
-I like making complicated things easier to work with—whether that means building software, untangling a research workflow, or figuring out how to digitize a century-old record. I’m interested in the technical problem, but also in the people using the tools and the things worth preserving.
+I like taking an idea far enough to find out whether it works: building the software, figuring out the details, and asking what could make it more useful. Conservation and animal behavior give me another set of questions to follow, while anthropology often changes how I look at them. Sometimes those interests overlap; sometimes I’m happy pursuing them alongside each other.
 Outside of that: wildlife photography, writing, and squash. Some interests have remained reassuringly consistent.
 ## Currently
 Two threads I’m following.
-### Lynxster
-Building software for independently verifiable records, from cryptographic implementation to the product around it.
+### Lynxster 
+Chief Technology Officer · 2026–now
+Building software that gives customers independently verifiable records, designed for FERPA requirements and US and Canadian legal frameworks.
 Explore Lynxster ↗
 ### American Museum of Natural History
-Digitizing archival dragonfly records, helping set up 3D-printed digitization rigs, and improving the workflows around them.
+Volunteer · 2026–now
+DIODE · Collections digitization
+Digitizing archival dragonfly records with Jessica Ware’s lab, helping set up 3D-printed digitization rigs, and improving the workflows around them.
+Mantis behavioral trials & research
+Details to come.
 Explore AMNH ↗
 ## Selected work
 Other things I’ve worked on.
-- Crackd.ai — LLM chains, cultural context, and the surprisingly complicated problem of making a model funny.
-- Buzzworks — A WhatsApp-based HR system that turns multi-step onboarding into a conversation.
-- Research tooling · Toronto Metropolitan University — A Python pipeline for tracing, replacing, and validating legal citations.
-- Inteli-lens — A computer-vision prototype for identifying potentially intoxicated behavior in CCTV footage.
-- Conservation fieldwork · South Africa — Wildlife monitoring, cheetah data, and learning to pay closer attention.
-- Research publications — Earlier work on women’s financial empowerment and the socioeconomic factors surrounding teenage pregnancy.
-- Teaching & mentorship — Peer teaching and technical mentorship through Columbia’s ESP and ADI communities.
+- Crackd.ai (2025) — Building a complete AI humor platform: user-facing apps, admin tools, and an internal LLM chaining matrix for developing humor styles and emulating different voices, supported by prompt research and data workflows.
+- Buzzworks (2025-2026) — Designing and developing a WhatsApp-based HR onboarding platform that Buzzworks uses internally and offers to client companies, turning multi-step employee onboarding into a conversation.
+- Research tooling · Toronto Metropolitan University (2025) — Building citation-conversion pipelines that turn footnotes and other reference formats into publication-ready in-text citations, including the final pipeline used for a book.
+- Inteli-lens (2023) — A computer-vision prototype exploring walking patterns and body language for signs of intoxication, with the goal of helping reduce drunk-driving incidents in the US.
+- Conservation fieldwork · South Africa (2024) — Monitoring wildlife, processing data from camera traps, heat maps, GIS, and bird surveys, and learning to notice connections across disciplines.
+- Research publications (2022-2024) — Published research examining the effectiveness of women’s financial empowerment initiatives and relationships between socioeconomic factors, teenage pregnancy, and fertility rates.
+- Teaching & mentorship (2024-2026) — Teaching computer science concepts through ESP and mentoring through ADI—from developing ideas and navigating classes to recruiting and figuring out a career path.
 ## More
 There are other things.
 Writing, wildlife photography, and a few experiments that don’t fit neatly under “work.”
 This part is still taking shape.
 ## Contact
 Say hello.
-For a project, a research question, or a conversation that might become either.
+Have something worth building, a question worth exploring, or an opportunity you think I’d be curious about? I’d love to hear.
 anya@jajodia.org ↗
 LinkedIn ↗ / GitHub ↗ / Résumé ↓
 Anya Jajodia · New York
+
+
+## Links 
+LinkedIn - https://www.linkedin.com/in/anya-jajodia/
+GitHub - https://github.com/AnyaJajodia
+Resume - to come 

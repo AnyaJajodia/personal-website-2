@@ -8,8 +8,10 @@ import { poses, type Pose, type PoseName } from "@/content/avatars";
  *                   never animated, so the points the line is routed
  *                   through stay put
  *   .avatar__body   the entrance (a transition, so it can be interrupted)
- *   .avatar__react  reactions to the page (the peeker's lean), composed on
- *                   top of the entrance instead of overwriting it
+ *   .avatar__act    deliberate actions (the edge peeker ducking out of sight)
+ *   .avatar__react  reactions to the page (the peeker's lean toward a card)
+ * Each layer owns one transform, so entrance, action and reaction compose
+ * instead of overwriting one another.
  *
  * Points the line needs (a seat, a fist) are rendered as zero-size probes
  * with `data-line` names, measured exactly like the rest of the homepage.
@@ -22,6 +24,9 @@ export default function Avatar({
   probes,
   className = "",
   enterAt,
+  enterOn,
+  solo = false,
+  driven = false,
   children,
 }: {
   pose: PoseName;
@@ -36,6 +41,12 @@ export default function Avatar({
   /** see AvatarStage: how far up the viewport before it enters (0–1), or
    * "line": once the homepage line has been drawn under it */
   enterAt?: number | "line";
+  /** a selector: enter when that element reaches the entry line, not the figure */
+  enterOn?: string;
+  /** enters on its cue without waiting for other figures (one apart from the content) */
+  solo?: boolean;
+  /** its own component moves it (scroll-linked); AvatarStage leaves it alone */
+  driven?: boolean;
   /** extra decorative layers that move with the figure (a lens flash) */
   children?: React.ReactNode;
 }) {
@@ -47,25 +58,30 @@ export default function Avatar({
       data-avatar={role}
       data-static={eager ? "true" : undefined}
       data-enter-at={enterAt}
+      data-enter-on={enterOn}
+      data-solo={solo ? "true" : undefined}
+      data-driven={driven ? "true" : undefined}
       aria-hidden="true"
       style={{ "--ar": `${p.width} / ${p.height}`, "--base": p.base } as React.CSSProperties}
     >
       <span className="avatar__body">
-        <span className="avatar__react">
-          <Image
-            className="avatar__img"
-            src={p.src}
-            alt=""
-            width={p.width}
-            height={p.height}
-            unoptimized
-            draggable={false}
-            preload={eager}
-            loading={eager ? "eager" : "lazy"}
-            fetchPriority={eager ? "high" : "low"}
-            decoding={eager ? "sync" : "async"}
-          />
-          {children}
+        <span className="avatar__act">
+          <span className="avatar__react">
+            <Image
+              className="avatar__img"
+              src={p.src}
+              alt=""
+              width={p.width}
+              height={p.height}
+              unoptimized
+              draggable={false}
+              preload={eager}
+              loading={eager ? "eager" : "lazy"}
+              fetchPriority={eager ? "high" : "low"}
+              decoding={eager ? "sync" : "async"}
+            />
+            {children}
+          </span>
         </span>
       </span>
       {probes && anchors

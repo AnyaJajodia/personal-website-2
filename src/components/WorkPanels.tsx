@@ -1,13 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { SelectedRow } from "@/content/site";
-import { getWork, formatPeriod } from "@/content/work";
 
 /**
  * Selected work as compact expanding panels in two rows.
  *
  * Every panel keeps a stable left column — logo (or a small drawn mark where
- * no logo was supplied), name and dates — and opening it (hover or keyboard
+ * no logo was supplied), name and the homepage date — and opening it (hover or keyboard
  * focus) reveals a right column with the existing summary and the way in.
  * Expansion changes width only. A single-project panel is one link; a grouped
  * panel holds one link per page (no nested interactive elements). Touch and
@@ -97,20 +96,6 @@ const MARKS = {
   ),
 };
 
-/** Dates from existing content only; a group spans its entries. Missing start dates stay missing. */
-function dateFor(row: SelectedRow): string | null {
-  const periods = row.links.map((l) => getWork(l.slug)?.period);
-  if (periods.some((p) => !p?.start)) return null; // never invent a start
-  const shown = periods.map((p) => formatPeriod(p));
-  if (shown.every((d) => d === shown[0])) return shown[0];
-  // e.g. "Jan 2024–Dec 2024" + "Jan 2024–2027" → "Jan 2024–2027"
-  const year = (v: string) => Number(v.match(/\d{4}/)?.[0] ?? 0);
-  const start = periods[0]!.start!;
-  if (!periods.every((p) => p!.start === start)) return null;
-  const end = periods.map((p) => p!.end ?? p!.start!).reduce((a, e) => (year(e) > year(a) ? e : a));
-  return `${start}–${end}`;
-}
-
 function LogoBlock({ logo, backing }: { logo: Logo; backing?: "dark" }) {
   return (
     <span className={`panel__logo${backing ? ` panel__logo--${backing}` : ""}`} aria-hidden="true">
@@ -140,7 +125,7 @@ function Panel({ row }: { row: SelectedRow }) {
   const look = LOOKS[row.links[0].slug];
   const short = single ? row.links[0].label : row.title;
   const showFull = short !== row.title;
-  const date = dateFor(row);
+  const date = row.date;
 
   // one visible name per panel: the short name; the full title (e.g. with the
   // university or country the logo already shows) stays in the heading for AT

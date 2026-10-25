@@ -1,0 +1,21 @@
+dark /: 90 text runs, 0 below AA; smallest text min 5.57
+dark /work/amnh: 55 text runs, 0 below AA; smallest text min 9.02
+dark /work/lynxster: 36 text runs, 0 below AA; smallest text min 6.76
+dark /work/crackd-ai: 44 text runs, 0 below AA; smallest text min 8.58
+dark /work/esp-teaching: 27 text runs, 0 below AA; smallest text min 9.23
+lowest small text:
+   5.57  13px .panel__date "2022" (/)
+   5.71  13px .panel__cat "Prototype" (/)
+   6.76  12.48px .label "To be selected" (/work/lynxster)
+   6.78  15.6px .panel__desc "Wildlife monitoring, cheetah dat" (/)
+   7.27  12.48px span "Lynxster" (/work/lynxster)
+   7.62  12.48px a "Work" (/work/lynxster)
+   8.43  14px .copy-email__label "Copy email" (/)
+   8.66  14px .flow__note "Randomized examples and cultural" (/work/crackd-ai)
+   9.02  15px .is-current "Work" (/work/amnh)
+   9.02  12.48px .pager__back "Back to work" (/work/amnh)
+   9.1  14px .caption "Archival dragonfly record, Inver" (/work/amnh)
+   9.23  15.2px .feature__cta "Explore Lynxster" (/)
+   9.32  12.48px .hero__cue "Scroll to follow the thread" (/)
+   9.32  14.4px .trajectory__caption "The original plan." (/)
+   9.32  14px .feature__period "2026–2027" (/)
