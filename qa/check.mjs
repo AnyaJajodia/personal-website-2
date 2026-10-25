@@ -349,7 +349,7 @@ for (const [w, h] of [[375, 812], [768, 1024], [1440, 900]]) {
   await page.goto(base + "/", { waitUntil: "networkidle" });
   await settle(page, 600);
   const logos = await page.$$eval("img[src*='/logos/']", (imgs) => imgs.map((i) => ({ src: i.getAttribute("src"), ok: i.complete && i.naturalWidth > 0, ratio: +(i.getBoundingClientRect().width / i.getBoundingClientRect().height).toFixed(2), natural: +(i.naturalWidth / i.naturalHeight).toFixed(2) })));
-  ok("supplied logos load undistorted (rendered ratio = file ratio)", logos.length === 5 && logos.every((l) => l.ok && Math.abs(l.ratio - l.natural) < 0.05), logos.map((l) => `${l.src.split("/").pop()} ${l.ratio}/${l.natural}`).join(", "));
+  ok("supplied logos load undistorted (rendered ratio = file ratio)", logos.length === 6 && logos.every((l) => l.ok && Math.abs(l.ratio - l.natural) < 0.05), logos.map((l) => `${l.src.split("/").pop()} ${l.ratio}/${l.natural}`).join(", "));
   const lynx = await page.$eval(".feature__lockup", (e) => { const r = e.getBoundingClientRect(); return { w: Math.round(r.width), h: Math.round(r.height), label: e.getAttribute("aria-label") }; });
   ok("Currently: Lynxster lockup sizeable and labelled", lynx.h >= 64 && lynx.label === "Lynxster", JSON.stringify(lynx));
   // three logo layers: muted panel → container with a translucent BACKGROUND only → opaque artwork
@@ -374,9 +374,13 @@ for (const [w, h] of [[375, 812], [768, 1024], [1440, 900]]) {
     }),
   );
   const sizes = new Set(layers.map((l) => l.size + l.radius));
+  // every identifier sits in the same slot; all but Teaching on a translucent tile —
+  // Teaching's Columbia crown stands alone on the card (no tile), by design
+  const tiled = layers.filter((l) => l.k !== "teaching");
+  const crown = layers.find((l) => l.k === "teaching");
   ok(
-    "panels: one identifier container (same size/shape) with a translucent background, opaque unfiltered artwork",
-    sizes.size === 1 && layers.every((l) => l.bgAlpha > 0 && l.bgAlpha < 1 && l.artOpacity === 1 && l.filter === "none"),
+    "panels: one identifier slot (same size/shape); translucent tiles, opaque unfiltered artwork; Teaching's crown untiled",
+    sizes.size === 1 && tiled.every((l) => l.bgAlpha > 0 && l.bgAlpha < 1) && layers.every((l) => l.artOpacity === 1 && l.filter === "none") && crown.bgAlpha === 0 && crown.src.endsWith("columbia-crown-light.png"),
     [...sizes].join() + " · " + layers.map((l) => `${l.k} bg${l.bgAlpha} art${l.artOpacity}`).join(", "),
   );
   ok(
@@ -671,7 +675,8 @@ for (const [w, h] of [[1440, 900], [1024, 768], [768, 1024], [390, 844]]) {
   // project pages: one or two contextual figures, standing on a section rule, clear of text
   const page = await newPage();
   const res = [];
-  for (const slug of slugs) {
+  // (the bespoke pages have their own layouts; their figures are checked separately below)
+  for (const slug of slugs.filter((s) => !["crackd-ai", "buzzworks", "tmu-citation-tooling", "gvi-conservation", "pmmy-research", "teenage-pregnancy-research", "esp-teaching", "adi-mentorship"].includes(s))) {
     await page.goto(`${base}/work/${slug}`, { waitUntil: "networkidle" });
     const r = await page.evaluate(() =>
       [...document.querySelectorAll("[data-avatar]")].map((el) => {
@@ -685,6 +690,50 @@ for (const [w, h] of [[1440, 900], [1024, 768], [768, 1024], [390, 844]]) {
   }
   ok("project pages: 1–2 figures each, standing on the rule under their section", res.every((x) => /:(1|2):true$/.test(x)), res.join(" "));
   ok("project pages: two for Lynxster and AMNH", res.some((x) => x === "lynxster:2:true") && res.some((x) => x === "amnh:2:true"));
+  // Crackd: one sits on the phase-02 sheet's top edge, one stands on the last question's rule
+  await page.goto(`${base}/work/crackd-ai`, { waitUntil: "networkidle" });
+  const ck = await page.evaluate(() => {
+    const foot = (el) => { const b = el.getBoundingClientRect(); return b.bottom - b.height * (1 - parseFloat(getComputedStyle(el).getPropertyValue("--base"))); };
+    const build = document.querySelector(".avatar--ck-build"), think = document.querySelector(".avatar--ck-think");
+    const sheet = document.querySelector(".ck-sheet").getBoundingClientRect();
+    const lastQ = [...document.querySelectorAll(".ck-questions__list li")].pop().getBoundingClientRect();
+    return { n: document.querySelectorAll("[data-avatar]").length, build: Math.round(foot(build) - sheet.top), think: Math.round(foot(think) - lastQ.bottom) };
+  });
+  ok("Crackd: two figures, seated on the phase-02 sheet and standing on the last question's rule", ck.n === 2 && Math.abs(ck.build) < 3 && Math.abs(ck.think) < 3, JSON.stringify(ck));
+  // Buzzworks: one, standing on the rule under "What I owned"
+  await page.goto(`${base}/work/buzzworks`, { waitUntil: "networkidle" });
+  const bz = await page.evaluate(() => {
+    const el = document.querySelector(".avatar--bz-desk"), b = el.getBoundingClientRect();
+    const foot = b.bottom - b.height * (1 - parseFloat(getComputedStyle(el).getPropertyValue("--base")));
+    return { n: document.querySelectorAll("[data-avatar]").length, gap: Math.round(foot - document.getElementById("what-i-owned").getBoundingClientRect().bottom) };
+  });
+  ok("Buzzworks: one figure, standing on the rule under its section", bz.n === 1 && Math.abs(bz.gap) < 3, JSON.stringify(bz));
+  // TMU: one, the reader, standing on the rule under "Beyond the code"
+  await page.goto(`${base}/work/tmu-citation-tooling`, { waitUntil: "networkidle" });
+  const tm = await page.evaluate(() => {
+    const el = document.querySelector(".avatar--tmu-reader"), b = el.getBoundingClientRect();
+    const foot = b.bottom - b.height * (1 - parseFloat(getComputedStyle(el).getPropertyValue("--base")));
+    return { n: document.querySelectorAll("[data-avatar]").length, gap: Math.round(foot - document.getElementById("beyond-the-code").getBoundingClientRect().bottom) };
+  });
+  ok("TMU: one figure, standing on the rule under its section", tm.n === 1 && Math.abs(tm.gap) < 3, JSON.stringify(tm));
+  // GVI: one, watching with binoculars, standing on the rule under "In the field"
+  await page.goto(`${base}/work/gvi-conservation`, { waitUntil: "networkidle" });
+  const gv = await page.evaluate(() => {
+    const el = document.querySelector(".avatar--gvi-watch"), b = el.getBoundingClientRect();
+    const foot = b.bottom - b.height * (1 - parseFloat(getComputedStyle(el).getPropertyValue("--base")));
+    return { n: document.querySelectorAll("[data-avatar]").length, gap: Math.round(foot - document.getElementById("in-the-field").getBoundingClientRect().bottom) };
+  });
+  ok("GVI: one figure, standing on the rule under its section", gv.n === 1 && Math.abs(gv.gap) < 3, JSON.stringify(gv));
+  // the research pages: one reader each, on the rule under "My contribution"
+  for (const slug of ["pmmy-research", "teenage-pregnancy-research"]) {
+    await page.goto(`${base}/work/${slug}`, { waitUntil: "networkidle" });
+    const rs = await page.evaluate(() => {
+      const el = document.querySelector(".avatar--rs-reader"), b = el.getBoundingClientRect();
+      const foot = b.bottom - b.height * (1 - parseFloat(getComputedStyle(el).getPropertyValue("--base")));
+      return { n: document.querySelectorAll("[data-avatar]").length, gap: Math.round(foot - document.getElementById("my-contribution").getBoundingClientRect().bottom) };
+    });
+    ok(`${slug}: one figure, standing on the rule under its section`, rs.n === 1 && Math.abs(rs.gap) < 3, JSON.stringify(rs));
+  }
   await page.context().close();
 }
 

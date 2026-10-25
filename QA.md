@@ -1,3 +1,176 @@
+# QA report — iteration 21: navigation and accent refinement (25 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build). Chrome was driven by Playwright; the Claude in Chrome extension is not connected.
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 |
+| `node qa/refine.mjs` (new) | **30/30**. Detail Work is a button with chevron and dialog attributes, accent-coloured with a matching underline per page in Light, Dark and System. No "Browse work" pill. The drawer opens from Work; "Back to work overview" comes first and links to `/#work`. The homepage Work link scrolls to `#work`, with a hover underline in the hover colour. Buzzworks symbol and serif name, no tile. Chat ≈32% wider; notes below exchanges on mobile; no overflow. Crackd Light uses stone surfaces with no near-black panel; Dark unchanged. GVI logo swaps by theme with no tile; the close has no card |
+| `node qa/crackd.mjs` / `buzzworks.mjs` / `gvi.mjs` (trigger and brand checks updated) | **72/72** / **36/36** / **32/32** |
+| `node qa/tmu.mjs` / `research.mjs` / `columbia.mjs` | **33/33** / **56/56** / **53/53** |
+| `node qa/check.mjs` / `theme.mjs` / `interact.mjs` / `hero-rig.mjs` / `copy.mjs` / `consistency.mjs` | **190/190** / **19/19** / **33/33** / **16/16** / **93/93** / **18/18** |
+| `node qa/contrast-audit.mjs light,dark` (Crackd, Buzzworks, GVI, Lynxster) | 0 runs below AA |
+| `node qa/unchanged.mjs compare --skip=<8 bespoke pages> --mask-header` | Lynxster, AMNH and Inteli-lens are unchanged. Homepage markup differs only by the iteration-20 crown; the underline is invisible at rest |
+| impeccable detector (changed files) | 0 findings |
+
+**Screenshots viewed:**
+- Nav: `qa/screenshots/nav-buzz-light.png`, `nav-esp-dark.png`, `nav-gvi-390.png`, `nav-home-hover.png`
+- Buzzworks: header and conversation (1440 light), conversation (390)
+- Crackd: apps and matrix (1440 light); `crackd-ai/1440-dark-ck-apps.png`
+- GVI: header and close (1440 dark); `gvi-conservation/1440-light-what-stayed-with-me.png`
+- TMU: drawer at 390 dark; Lynxster nav
+
+**Follow-up (drawer motion and hover):**
+- `qa/drawer-motion.mjs` (new) samples the panel's transform every frame on open and close.
+- `crackd.mjs` timing bounds are updated to 420–560ms in and 280–360ms out.
+- Rerun after the change: refine 30/30, crackd 72/72, buzzworks 36/36, gvi 32/32, tmu 33/33, research 56/56, columbia 53/53, interact 33/33, theme 19/19, check 190/190, consistency 18/18. Build, lint and typecheck all pass.
+- Hover lift measured at exactly 2px in Light and Dark, on single entries and on grouped projects; no lift under reduced motion.
+- Screenshots viewed: `qa/screenshots/drawer-midslide.png`, `drawer-hover-light.png`, `drawer-hover-dark.png`.
+
+---
+
+# QA report — iteration 20: ESP and ADI, Columbia/ADI logos (25 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build). Chrome was driven by Playwright; the Claude in Chrome extension is not connected.
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 |
+| `node qa/columbia.mjs` (new) | **53/53**. Content and stale claims for both pages. Wordmark: one labelled image, unfiltered, deep blue in Light and pale in Dark with an identical box; System dark and light right from the first frame. ADI pill: overflow-hidden, fully rounded, undistorted, no inner rectangle, letters clear of the rounded ends, original preserved. ESP progression and separations; ADI cohorts and themes. Headings; no placeholders or buttons; anchors and focus; drawer (current page, untiled crown, ADI pill). No overflow at 4 widths × 2 themes. Homepage card in both themes, with pixels changed only in its logo slot. Reduced motion |
+| `node qa/unchanged.mjs compare --skip=<8 bespoke pages> --mask-header` | Lynxster, AMNH and Inteli-lens unchanged. The homepage differs only by the Teaching logo (markup diff = that element; pixels 0.111%, all inside the slot per `columbia.mjs`) |
+| `node qa/check.mjs` | **190/190** (panel-logo tests updated for the deliberate untiled crown; 6 supplied logos) |
+| `node qa/crackd.mjs` / `buzzworks.mjs` / `tmu.mjs` / `gvi.mjs` / `research.mjs` | **72/72** / **36/36** / **33/33** / **32/32** / **56/56** |
+| `node qa/theme.mjs` / `interact.mjs` / `hero-rig.mjs` / `copy.mjs` / `consistency.mjs` | **19/19** / **33/33** / **16/16** / **93/93** / **18/18** |
+| `node qa/contrast-audit.mjs light,dark` (ESP, ADI) | 0 runs below AA. Smallest: 5.8 light, 8.53 / 8.3 dark |
+| impeccable detector (new files) | 0 findings |
+
+**Screenshots viewed:**
+- `qa/screenshots/esp-teaching/`: `1440-light-*`, `390-dark-*`, `1440-dark-*`, `390-light-*`, `home-card-{light,dark}`, `drawer-{light,dark}`
+- `qa/screenshots/adi-mentorship/`: `1440-light-*`, `390-dark-*`, `1440-dark-*`
+
+---
+
+# QA report — iteration 19: research publications + consistency (25 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build). Chrome was driven by Playwright; the Claude in Chrome extension is not connected.
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 |
+| `node qa/research.mjs` (new) | **56/56**, both pages. Content: every approved line; no notes, retired claims, metrics as accuracy, DOIs or adoption claims; exact title, both authors, roles near the top. Links: only the verified ones, opening safely; companion-paper links to real routes. Heading outline; one figure; no buttons or downloads. PMMY: bars drawn to 78/12/10; accessible table; sample-not-population caption; two-strand methods with training material apart; no trend chart. Teen: 5 rounds 1992–2021 not to scale; the workflow; the three parts; the hospital wording; 200+, four roles, one photo slot; findings without a chart. TOC landing and focus; focus rings; drawer; no overflow at 5 widths × 2 themes; Dark carries across the cross-link; reduced motion |
+| `node qa/consistency.mjs` (new) | **18/18** across TMU, GVI, PMMY, teen, Crackd and Buzzworks at 1440 and 390, light and dark |
+| `node qa/unchanged.mjs compare --skip=<6 bespoke pages> --mask-header` | **6/6**. Homepage identical whole (markup, 0.000% pixels); the other five detail pages unchanged apart from the shared header |
+| `node qa/check.mjs` | **190/190** (adds both research figures' placement) |
+| `node qa/tmu.mjs` / `gvi.mjs` / `crackd.mjs` / `buzzworks.mjs` | **33/33** / **32/32** / **72/72** / **36/36** |
+| `node qa/theme.mjs` / `interact.mjs` / `hero-rig.mjs` / `copy.mjs` | **19/19** / **33/33** / **16/16** / **93/93** |
+| `node qa/contrast-audit.mjs light,dark` (PMMY, teen, TMU, GVI) | 0 runs below AA. Smallest text: PMMY 5.8 / 8.3, teen 5.45 / 8.01, TMU 5.36 / 4.92, GVI 5.12 / 6.91 |
+| impeccable detector (research files) | 0 findings, after replacing the flagged card border |
+
+**Screenshots viewed:**
+- `qa/screenshots/pmmy-research/`: `1440-light-*` (hero, publication, methods, chart, limits, reference), `390-dark-*`, `1440-dark-*` (hero, chart), `390-light-*` (hero, methods)
+- `qa/screenshots/teenage-pregnancy-research/`: `1440-light-*` (study, hospital, Ārogya), `390-dark-*` (study, publication), `1440-dark-*` (Ārogya, reference)
+
+**Outstanding:** the PMMY paper link, a check of the financial figures, and the optional Ārogya photo; see EDITING_CHECKLIST.md.
+
+---
+
+# QA report — iteration 18: GVI conservation case study (25 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build). Chrome was driven by Playwright; the Claude in Chrome extension is not connected.
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 |
+| `node qa/gvi.mjs` (new) | **32/32**. Content: every approved line; no notes or embellished model, relocation, run, fundraising or aerial claims; certificate as text, no file. Photographs: exactly three slots (opening, fieldwork, teaching), captioned, at their proportions (desktop 2.3–2.6:1 / 0.8 / 1.5; phone 4:3 / 4:3 / 3:2), placeholders only, no video or autoplay. Structure: heading outline; logo; one figure, clear of photographs. Thread clear of the opening's text and photograph. TOC: all 10 links land 24px under the header and move focus. Header controls keyboard-reachable with visible focus. Drawer marks GVI and restores focus. No overflow at 6 widths × 2 themes. Dark persists across reload. Reduced motion |
+| `node qa/unchanged.mjs compare --skip=crackd-ai,buzzworks,tmu-citation-tooling,gvi-conservation --mask-header` | **8/8**. Homepage identical whole (markup, 0.000% pixels); the other seven detail pages unchanged apart from the shared header |
+| `node qa/check.mjs` | **188/188** (adds GVI's figure placement) |
+| `node qa/tmu.mjs` / `crackd.mjs` / `buzzworks.mjs` | **33/33** / **72/72** / **36/36** |
+| `node qa/theme.mjs` / `interact.mjs` / `hero-rig.mjs` / `copy.mjs` | **19/19** / **33/33** / **16/16** / **93/93** |
+| `node qa/contrast-audit.mjs light,dark /work/gvi-conservation` | 0 of 131 text runs below AA. Smallest: 5.12 light, 6.91 dark |
+| impeccable detector (GVI files) | 0 findings, after replacing the flagged side stripe |
+
+**Screenshots viewed** (`qa/screenshots/gvi-conservation/`):
+- `1440-light-*` (hero, opening photo, threads, field, decisions, AI, beyond, stayed)
+- `390-dark-*` (hero, field, training, stayed)
+- `1440-dark-*` (threads, field), `1024-light-hero`, `390-light-beyond-the-reserve`
+
+**Still needed:** three photographs; see EDITING_CHECKLIST.md, "GVI page — three photographs to supply".
+
+---
+
+# QA report — iteration 17: TMU citation-tooling case study (25 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build). Chrome was driven by Playwright; the Claude in Chrome extension is not connected.
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 |
+| `node qa/tmu.mjs` (new) | **33/33**. Content: every approved line; no notes, notebook/download links or 2027; metrics and "2025"; illustrative labels on the walkthrough, bibliographies and review rows. Structure: the six review columns in order; heading outline; logo unchanged; one figure; no console errors. Walkthrough: click, keyboard (↓/Home/End/Enter, focus ring), touch, ≥44px targets, and the no-JS rendering (all stages and explanations, 0 buttons). Phone review rows as records. TOC: all 10 links land 24px under the header. Drawer marks TMU and restores focus. No overflow at 6 widths × 2 themes. Dark lifts the blue. Reduced motion |
+| `node qa/unchanged.mjs compare --skip=crackd-ai,buzzworks,tmu-citation-tooling --mask-header` | **9/9**. Homepage identical whole (markup, 0.000% pixels); the other eight detail pages unchanged apart from the shared header |
+| `node qa/check.mjs` | **187/187** (adds TMU's figure placement) |
+| `node qa/crackd.mjs` / `buzzworks.mjs` | **72/72** / **36/36**. Shared navigation intact, including the header trigger on all 11 detail pages |
+| `node qa/theme.mjs` / `interact.mjs` / `hero-rig.mjs` / `copy.mjs` | **19/19** / **33/33** / **16/16** / **93/93** |
+| `node qa/contrast-audit.mjs light,dark /work/tmu-citation-tooling` | 0 of 266 text runs below AA. Smallest: 5.36 light, 4.92 dark |
+| impeccable detector (TMU files) | 0 findings |
+
+**Screenshots viewed** (`qa/screenshots/tmu-citation-tooling/`):
+- `1440-light-*`, `390-dark-*` (hero, problem, results, walkthrough, stages 02/05/06, review matrix, editorial, engineering, outputs)
+- `1440-dark-*`, `1024-light-*` (hero, review matrix, walkthrough)
+- `walk-source-match`
+
+**Remaining:** the TMU end month (September or October 2025) is still to be settled; see EDITING_CHECKLIST.md.
+
+---
+
+# QA report — iteration 16: Crackd refined, Buzzworks, shared detail navigation (25 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build). Chrome was driven by Playwright; the Claude in Chrome extension is not connected, and no shadcn MCP is connected.
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 |
+| `node qa/buzzworks.mjs` (new) | **36/36**. Content: every buzzworks.md line, nothing from the notes or unconfirmed claims. Conversation: caption, fictional label, speakers, notes → flows. Diagram: labelled conceptual. No external links, embeds or buttons; heading outline; logo; one figure; WhatsApp green contained. Navigation: TOC lands 24px under the header; note → `:target` flow; drawer marks Buzzworks; header trigger on all 11 detail pages (marks itself, row fits at 1440/390/360) and absent from the homepage. Layout: no overflow at 6 widths × 2 themes. Theme: Dark persists across reload and drawer navigation. Reduced motion |
+| `node qa/crackd.mjs` | **72/72**. New: one header trigger beside the name; ≥44px hit area; phone "Work" label with the nav moved into the sheet; open slide 280ms (translate only), close 200ms; page behind doesn't move; footer homepage links; hero date above logo and question, shown once; logo on a black plate, unfiltered; table jumps labelled and valid |
+| `node qa/unchanged.mjs compare --skip=crackd-ai,buzzworks --mask-header` | **10/10**. Homepage identical whole (markup, 0.000% pixels); the other nine detail pages identical except the shared header |
+| `node qa/check.mjs` | **186/186** on two consecutive runs ("Back restores homepage scroll" was flaky until fix 8; now 2885 → 2885) |
+| `node qa/theme.mjs` / `interact.mjs` / `hero-rig.mjs` / `copy.mjs` | **19/19** / **33/33** / **16/16** / **93/93** |
+| `node qa/contrast-audit.mjs light,dark /work/crackd-ai /work/buzzworks` | 0 runs below AA. Smallest text: Crackd 6.29 light / 8.47 dark; Buzzworks 4.89 / 4.72 |
+| impeccable detector (changed files) | 0 findings |
+
+**Screenshots viewed:**
+- `qa/screenshots/buzzworks/`: `{1440-light,1440-dark,390-dark,390-light}-*` (hero, what-i-owned, conversation, capabilities, system, document-uploads, alignment, deployment, tools), `target-cap-kyc`
+- `qa/screenshots/crackd-ai/`: `{1440,390}-{light,dark}-*` (hero, phase-1, phase-2, ck-apps, ck-app--matrix)
+- `qa/screenshots/crackd/`: `drawer-{1440,390}`
+
+**Remaining:** see EDITING_CHECKLIST.md, under "Buzzworks page — still to confirm" and "Crackd.ai page — content and assets to come".
+
+---
+
+# QA report — iteration 15: Crackd.ai page + work drawer (25 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build). Chrome was driven by Playwright; the Claude in Chrome extension is still "not connected".
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 |
+| `node qa/crackd.mjs` (new) | **61/61**: content (82 approved lines, no notes or retired claims, three repo links each in its own app, heading outline, logo, ≤2 figures, no dialogs/videos/embeds, no console errors); drawer at 1440 and 390 (reachable while scrolled, ≥44px, labelled modal, focus on Crackd, scroll lock, panel from the right, 11 real routes all 200, arrows/Home/End, Tab and Shift+Tab trapped, Escape / overlay / close button, this-page closes, entry navigates and unlocks); On this page (7 links land 24px under the header, current marked); 1440/1280/1024/768/390/360 × light/dark with no overflow or clipped text, dark #1a1816; the theme control; reduced motion |
+| `node qa/unchanged.mjs compare --skip=crackd-ai` (new) | **11/11**: homepage + ten detail pages identical in normalised markup, and ≤0.003% pixel difference at 1440 and 390 (reduced motion), against snapshots taken before this pass |
+| `node qa/check.mjs` | **185/185** (the project-page avatar test now checks Crackd's own placement) |
+| `node qa/interact.mjs` / `theme.mjs` | **33/33** / **19/19** |
+| `node qa/hero-rig.mjs` / `copy.mjs` | **16/16** / **93/93** |
+| `node qa/contrast-audit.mjs` (dark, light) | 0 runs below AA. Crackd's smallest text: 9.19:1 dark, 5.3:1 light |
+| impeccable detector over the new files | 0 findings |
+
+**Screenshots viewed** (`qa/screenshots/crackd/`):
+- `draft-{1440,390}-{light,dark}-*` (full page, first round)
+- `drawer-{1440,390}`
+- `{1440,390}-{light,dark}-{ck-hero,ck-intro,phase-1,phase-2,ck-app--admin,ck-app--matrix,ck-matrix,ck-takeaways,ck-table-section,ck-colophon}`
+- `768-light-*`, `1024-light-*`
+
+**Remaining:** Crackd demo links, screenshots, pipeline examples, architecture map, specific tools and the longer credit are still to come (EDITING_CHECKLIST.md). The homepage says Crackd 2025, while the page says September 2025–May 2026.
+
+---
+
 # QA report — iteration 14: homepage copy from the revised home.md (25 Oct 2026)
 
 **Preview:** http://localhost:3100 (production build). Chrome was driven by Playwright; the Claude in Chrome extension is still "not connected".

@@ -14,12 +14,12 @@ Per your request, uncertain end dates show **2027** in the preview. Replace with
 |------|-----------|-----------------|
 | Lynxster | 2026–2027 | End date; start month (not verified); formal title (currently "Engineering & technical leadership") |
 | AMNH | 2026–2027 | End date; start month |
-| Crackd.ai | Sep 2025–2027 | End date |
-| Buzzworks | May 2025–2027 | End date |
-| TMU research tooling | May 2025–2027 | End date. The résumé versions disagree (Sep vs Oct 2025) |
-| ADI mentorship | Jan 2024–2027 | End date |
+| Crackd.ai | September 2025–May 2026 | Resolved by crackd-ai.md (25 Oct 2026) |
+| Buzzworks | May 2025–May 2026 | Resolved by buzzworks.md (25 Oct 2026) |
+| TMU research tooling | 2025 | Shown as "2025" (tmu-citation-tooling.md). The end month, September or October 2025, is still to be settled |
+| ADI mentorship | Spring–Fall 2026 | Resolved by adi-mentorship.md (25 Oct 2026) |
 | Inteli-lens | *(period hidden)* | Start date not supplied. `end: "2027"` is stored but the period is hidden until a start is added (no invented dates) |
-| GVI · South Africa | *(period hidden)* | Same as Inteli-lens |
+| GVI · South Africa | Summer 2024 · Four-week program | Resolved by gvi-conservation.md (25 Oct 2026); certificate issued July 2024, exact attendance dates not established |
 
 Confirmed and unchanged: ESP Jan 2024–Dec 2024; both publications 2022.
 
@@ -36,16 +36,16 @@ The homepage takes its roles and dates from the revised `handoff/content/home.md
 |-------|--------------------|-------------------------|
 | Lynxster | Chief Technology Officer · 2026–now | "Engineering & technical leadership" · 2026–2027 |
 | AMNH | Volunteer · 2026–now | Volunteer · 2026–2027 |
-| Crackd.ai | 2025 | Sep 2025–2027 |
-| Buzzworks | 2025–2026 | May 2025–2027 |
-| TMU research tooling | 2025 | May 2025–2027 |
+| Crackd.ai | 2025 | September 2025–May 2026 (crackd-ai.md) — update home.md to match? |
+| Buzzworks | 2025–2026 | May 2025–May 2026 (buzzworks.md) — consistent |
+| TMU research tooling | 2025 | 2025 (tmu-citation-tooling.md) — consistent |
 | Inteli-lens | 2023 | period hidden (no start date) |
-| Conservation fieldwork · South Africa | 2024 | period hidden (no start date) |
+| Conservation fieldwork · South Africa | 2024 | Summer 2024 (gvi-conservation.md) — consistent |
 | Research publications | 2022–2024 | both papers 2022 |
-| Teaching & mentorship | 2024–2026 | ESP Jan–Dec 2024; ADI Jan 2024–2027 |
+| Teaching & mentorship | 2024–2026 | ESP Fall 2024–Spring 2025 (taken Spring 2024); ADI Spring–Fall 2026 — consistent |
 
 - [ ] Confirm the publications range: home.md says 2022–2024, but both papers are dated 2022 on their pages
-- [ ] Confirm Crackd.ai ended in 2025 (home.md shows one year; the detail page shows it as ongoing)
+- [ ] Crackd.ai: the detail page now says September 2025–May 2026 (crackd-ai.md); the homepage still says 2025 (home.md). Update home.md if the homepage should match
 - home.md writes ranges with hyphens ("2025-2026"); the site sets them with en dashes, as in "2026–now"
 
 ## 2. Missing URLs
@@ -54,9 +54,9 @@ The homepage takes its roles and dates from the revised `handoff/content/home.md
 |------|-------|--------|
 | LinkedIn profile | `contact.links` in `site.ts` | **Supplied (home.md, 25 Oct 2026):** https://www.linkedin.com/in/anya-jajodia/ |
 | Résumé PDF | `contact.links` in `site.ts` | `url: null` → shows "Updated PDF to come". Add the PDF to `public/` and set `url` |
-| PMMY paper | `pmmy-research` → `links` | `url: null` → "Paper link to come" |
-| Teenage pregnancy paper | `teenage-pregnancy-research` → `links` | `url: null` → "Paper link to come" |
-| Crackd.ai repo | `crackd-ai` → `links` | Shown as "llm_chaining_matrix on GitHub" (`needsReview: true`). Confirm it belongs on this page; the label deliberately doesn't call it the full Crackd.ai codebase |
+| PMMY paper | `src/content/research.ts` → `pmmy.publication.paperLink` | No verified URL supplied, so none is shown (no placeholder). Add `paperLink: { label, url }` once a publisher URL or public PDF exists |
+| Teenage pregnancy paper | `src/content/research.ts` | **Linked** (supplied in the Markdown, checked live: IJSHRE PDF), with Project Ārogya’s page |
+| Crackd.ai repositories | `src/content/crackd.ts` → `apps[].repo` | One per application, each linked from its own application (all three checked public). Not shown: the demo URLs (crackdspring2026 / crackd-admin-panel / crackdmatrix on vercel.app) — crackd-ai.md says their status still needs confirmation. Add them to `apps[]` once confirmed |
 | GitHub profile | `site.ts` | Live: https://github.com/AnyaJajodia |
 | Other repo/demo URLs | `links` on any entry | Optional |
 
@@ -97,3 +97,60 @@ The homepage takes its roles and dates from the revised `handoff/content/home.md
 - Remove `robots: { index: false, follow: false }` from `src/app/layout.tsx` (set for the private preview).
 - Re-run `npm run check` and `node qa/check.mjs` (with `npm run start` running).
 - No deployment, push, or publishing has been done.
+
+## Crackd.ai page — content and assets to come (25 Oct 2026)
+The page follows `handoff/content/work/crackd-ai.md`; its implementation notes are not rendered. Everything below is deliberately absent, not shown as a placeholder:
+- [ ] Demo links for the three applications (status to confirm; see §2)
+- [ ] Application screenshots, for the planned screenshot walkthrough dialogs (not built yet, by design)
+- [ ] Pipeline / output examples
+- [ ] The system architecture map — its connections must come from the actual implementations
+- [ ] Precise frameworks, languages, model providers, hosting and MCP tools (the Tools section lists only confirmed capabilities)
+- [ ] Michael Roger's preferred name and affiliation before adding the longer biography (the short credit is used)
+- Drawer: "Browse work" (WorkDrawer) is mounted on Crackd only. Its entries come from `site.ts`; its tones and logos mirror the homepage panels (`src/content/work-index.ts` — keep in step if a panel's colour or logo changes). Dates are left out of the drawer until homepage and detail dates agree
+
+## Buzzworks page — still to confirm (25 Oct 2026)
+The page follows `handoff/content/work/buzzworks.md`; its internal notes are not rendered. Everything below is deliberately absent:
+- [ ] Final programming languages, frameworks, service names and Docker setup (FastAPI is not mentioned until confirmed)
+- [ ] The actual document storage destination and file lifecycle (no storage provider, retention, encryption or deletion is named)
+- [ ] Each Claude agent's responsibility, how it reaches policy documents, and how unanswered questions are handled (the page says only "two-agent Claude system")
+- [ ] Status of nominee and prior-employment forms, reminders, session recovery and advanced editing (not shown)
+- [ ] The earlier "sub-200ms at 10K+ sessions" claim — withheld pending what was timed, concurrent vs total sessions, workload and environment
+- [ ] ICICI: the page says the platform "was being prepared for integration"; update only if the rollout is confirmed
+- Screenshots: none, by design (confidential). The conversation on the page is a fictional reconstruction, captioned with the notes' wording
+- The detail-page header now carries "Browse work" on every project page (WorkDrawer); the homepage header is unchanged
+
+## TMU citation-tooling page — notes (25 Oct 2026)
+The page follows `handoff/content/work/tmu-citation-tooling.md`; its internal notes are not rendered.
+- [ ] Settle the end month (September or October 2025) if a range should replace "2025"
+- Confidential by design: no notebook, manuscript passages, source documents, review files or outputs are linked, embedded or offered for download. The development notebook is not presented as the final system
+- The walkthrough, review rows and bibliography lines are fictional (one invented reference, note 14 → note 13 → "Hale 2016") and are labelled illustrative wherever they appear (`src/content/tmu.ts`)
+- Metrics shown are only the confirmed 800+ footnotes, 92% accuracy and 30% fewer manual review cycles; no benchmark method or timing is stated
+
+## GVI page — three photographs to supply (25 Oct 2026)
+Set each one's `src`, `alt`, `width` and `height` in `src/content/gvi-photos.ts`, with the file in `public/work/gvi/`. The placeholders already hold the right proportions.
+- [ ] **Opening** (wide, 21:9 on desktop, 4:3 on phones): an animal within the wider bushveld, or a documentary fieldwork image
+- [ ] **Fieldwork** (portrait 4:5; 4:3 on phones): monitoring, surveys or camera traps
+- [ ] **Community teaching** (3:2): only with permission and with children's faces obscured
+- Your own photographs only (no stock or generated imagery); avoid sensitive wildlife locations or tracking details
+- The lion relocation video is deliberately not on the page; add it later, never as the hero and never autoplaying
+- Aerial-survey involvement is omitted until your exact participation is clarified
+- The certificate is shown as text; no certificate file is linked
+
+## Research pages — notes (25 Oct 2026)
+Both pages follow `handoff/content/work/pmmy-research.md` and `teenage-pregnancy-research.md`; their internal notes are not rendered.
+- [ ] **PMMY paper link:** none supplied. The page gives the full reference and journal details only
+- [ ] **PMMY financial figures:** some category values and totals in the published tables look inconsistent, so no financial trend chart is drawn until they're checked
+- [ ] **Teen regression metrics:** shown only as "correlation and error metrics" (public copy). The values in the notes are deliberately not displayed or headlined as accuracy
+- [ ] **Optional Project Ārogya photograph:** one small slot (`arogyaPhoto.src` in `src/content/research.ts`, file in `public/work/research/`). Only an image suitable for public sharing
+- Removed from the old records: "helping secure startup loans for 50+ women" and the "annual panel" at Chirayu Hospital (neither is in the approved copy)
+
+## ESP / ADI pages and Columbia logos — notes (25 Oct 2026)
+- Logos are served from `public/logos/` (not `public/assets/logos/`): `columbia-crown-light.png` / `-dark.png`, `columbia-wordmark-light.png` / `-dark.png` and `ADI.png`. `adi-mark.png` is a derived, tightly cropped copy of `ADI.png` used in the pills; the original is unchanged.
+- **Theme mapping (confirmed by inspecting the files):** `-light` is deep blue (light theme) and `-dark` is pale blue (dark theme); each pair has identical artwork bounds.
+- **Homepage Teaching card:** the deep-blue crown is used in both themes, because the card's lavender surface stays light in dark mode, where the pale-blue crown would nearly disappear (≈1.3:1). The same applies to the drawer's Teaching entry.
+- Stale claims removed with the old records: "10+ students", internships at Google, Meta and Duolingo, and the Jan 2024 / 2027 dates
+- Please confirm with Columbia and ADI that their logos may be used this way before publishing
+
+## Navigation / Buzzworks / GVI refinement — notes (25 Oct 2026)
+- The GVI white logo is served from `public/logos/gvi-white.png` (not `public/assets/logos/`). It is used only in Dark; Light keeps `gvi.webp`.
+- The Buzzworks header uses `public/logos/buzzworks-minimal.png` beside "Buzzworks" set in the site serif. This is page typography, not the official wordmark.

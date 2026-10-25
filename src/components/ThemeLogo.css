@@ -1,0 +1,31 @@
+/* ThemeLogo: two colourways in one box; the theme decides which shows */
+.theme-logo {
+  position: relative;
+  display: block;
+}
+.theme-logo__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  filter: none;
+}
+.theme-logo__img--dark {
+  visibility: hidden;
+}
+:root[data-theme="dark"] .theme-logo__img--light {
+  visibility: hidden;
+}
+:root[data-theme="dark"] .theme-logo__img--dark {
+  visibility: visible;
+}
+/* no script yet / disabled: follow the system preference */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .theme-logo__img--light {
+    visibility: hidden;
+  }
+  :root:not([data-theme]) .theme-logo__img--dark {
+    visibility: visible;
+  }
+}

@@ -201,148 +201,48 @@ export const work: WorkEntry[] = [
       "Volunteering in AMNH Invertebrate Zoology: digitizing archival dragonfly records and improving the tools around them.",
   },
   {
+    // The Crackd page has its own layout and full copy (content/crackd.ts, from
+    // handoff/content/work/crackd-ai.md). This record supplies its name, the
+    // page <title>/description and its place in the pager.
     slug: "crackd-ai",
     name: "Crackd.ai",
     theme: "default",
     title: "Can a model learn to be funny?",
-    subtitle: "LLM chaining, prompt experimentation, and product development for AI-generated humor.",
-    role: { label: "Role", value: "Software Engineer — Frontend & Admin Team, Prompt Engineering" },
-    period: { label: "Period", start: "Sep 2025", end: "2027", needsReview: true, reviewNote: "Placeholder end year." },
-    meta: [{ label: "Tools", value: "Supabase · TensorFlow · LLM workflows" }],
-    figure: {
-      kind: "flow",
-      caption: "How the caption experiments were structured.",
-      steps: [
-        { title: "Context", note: "Randomized examples and cultural context from Supabase" },
-        { title: "Chain", note: "Matrix functionality linking model outputs across steps" },
-        { title: "Critique", note: "The model scores multiple outputs and corrects errors" },
-      ],
-    },
-    sections: [
-      {
-        heading: "Overview",
-        paragraphs: [
-          "At Crackd.ai, I worked on frontend and admin features alongside prompt-engineering experiments. The work explored how cultural context, examples, and multiple model steps could influence generated captions.",
-        ],
-      },
-      {
-        heading: "My contribution",
-        paragraphs: [
-          "I added Matrix functionality for chaining LLM outputs across steps and pulling cultural context from Supabase. I built functions to randomize examples and context, reducing anchoring bias by 40%, and iterated on features using interviews and product walkthrough feedback, increasing relevant language use by 35%.",
-          "I added a self-critique step in which the model scored multiple outputs and corrected errors, and integrated TensorFlow image embeddings into prompt construction.",
-        ],
-      },
-      {
-        heading: "What I took from it",
-        paragraphs: [
-          "The model’s response is only one part of the product. The examples it sees, the context it receives, and the interface used to evaluate its output all shape the result.",
-          "Humor adds another complication: technically correct is a fairly low bar for a joke.",
-        ],
-      },
-    ],
-    links: [
-      {
-        label: "llm_chaining_matrix on GitHub",
-        url: "https://github.com/AnyaJajodia/llm_chaining_matrix",
-        needsReview: true,
-      },
-    ],
-    description: "Crackd.ai: LLM chaining, prompt experimentation, and product development for AI-generated humor.",
+    subtitle: "Three applications, a prompt experimentation platform, and the surprisingly complicated business of campus humor.",
+    role: { label: "Role", value: "Software development · UI implementation · Admin tooling · Prompt engineering" },
+    period: { label: "Period", start: "September 2025", end: "May 2026" },
+    sections: [],
+    description: "Crackd.ai: Three applications, a prompt experimentation platform, and the surprisingly complicated business of campus humor.",
   },
   {
+    // The Buzzworks page has its own layout and full copy (content/buzzworks.ts,
+    // from handoff/content/work/buzzworks.md). This record supplies its name,
+    // the page <title>/description and its place in the pager.
     slug: "buzzworks",
     name: "Buzzworks",
     theme: "default",
-    title: "Onboarding, one message at a time.",
-    subtitle: "A WhatsApp-based HR platform built around multi-step employee workflows.",
+    title: "There’s a workflow behind that message.",
+    subtitle: "Building a personalized WhatsApp HR platform, from account verification and onboarding to employee requests.",
     role: { label: "Role", value: "Full Stack Software Development Intern" },
-    period: { label: "Period", start: "May 2025", end: "2027", needsReview: true, reviewNote: "Placeholder end year." },
-    meta: [{ label: "Tools", value: "Docker · Redis · Meta’s Business API" }],
-    figure: {
-      kind: "flow",
-      caption: "Some of the multi-step workflows tracked by the Redis-backed state machine.",
-      steps: [
-        { title: "OTP login", note: "" },
-        { title: "Offer letter", note: "" },
-        { title: "Signature", note: "" },
-        { title: "KYC", note: "" },
-        { title: "Documents", note: "" },
-        { title: "Leave", note: "" },
-      ],
-    },
-    sections: [
-      {
-        heading: "Overview",
-        paragraphs: [
-          "At Buzzworks, I was the sole engineer building a WhatsApp HR onboarding system from scratch, working with product stakeholders to translate business requirements into conversational workflows.",
-        ],
-      },
-      {
-        heading: "My contribution",
-        paragraphs: [
-          "I used Docker, Redis, and Meta’s Business API to build the system, evaluating latency and concurrency tradeoffs and achieving sub-200ms responses at 10K+ sessions.",
-          "A Redis-backed state machine tracked multi-step workflows including OTP login, offer letters, signatures, KYC, document collection, and leave applications. I integrated OCR and media APIs for document fields and uploads, and enabled multilingual onboarding.",
-          "I led demos and technical walkthroughs for internal stakeholders. The system was being prepared for integration into ICICI Bank’s internal infrastructure.",
-        ],
-      },
-      {
-        heading: "What I took from it",
-        paragraphs: [
-          "A conversational interface still needs a carefully structured system underneath it. Each message has to arrive in the right context, and the application needs to know what has happened, what is missing, and what comes next.",
-        ],
-      },
-    ],
-    description: "Buzzworks: a WhatsApp-based HR platform built around multi-step employee workflows.",
+    period: { label: "Period", start: "May 2025", end: "May 2026" },
+    sections: [],
+    description: "Buzzworks: Building a personalized WhatsApp HR platform, from account verification and onboarding to employee requests.",
   },
   {
+    // The TMU page has its own layout and full copy (content/tmu.ts, from
+    // handoff/content/work/tmu-citation-tooling.md). This record supplies its
+    // name (kept, so neighbouring pages' pager labels are unchanged), the page
+    // <title>/description and its place in the pager.
     slug: "tmu-citation-tooling",
     name: "Research tooling · TMU",
     theme: "default",
-    eyebrow: ["Toronto Metropolitan University"],
     title: "Following the footnotes.",
-    subtitle: "Python research tooling for tracing and validating legal citations.",
+    subtitle: "Turning a manuscript’s tangled references into in-text citations, organized bibliographies, and reviewable results.",
     role: { label: "Role", value: "Research Assistant — Ted Rogers School of Management" },
-    period: {
-      label: "Period",
-      start: "May 2025",
-      end: "2027",
-      needsReview: true,
-      reviewNote: "Résumé versions disagree on the end month (Sep vs Oct 2025); 2027 placeholder per request.",
-    },
-    meta: [{ label: "Tools", value: "Python · Parsing · AI-assisted validation" }],
-    figure: {
-      kind: "flow",
-      caption: "From an ambiguous reference to a validated citation — or a flag for a person to check.",
-      steps: [
-        { title: "Trace", note: "Id., Ibid., and Supra, including nested references" },
-        { title: "Parse", note: "Multi-stage parsing and semantic matching" },
-        { title: "Validate", note: "AI-assisted validation with logging" },
-        { title: "Flag", note: "Ambiguous citations go to human review" },
-      ],
-    },
-    sections: [
-      {
-        heading: "Overview",
-        paragraphs: [
-          "As a research assistant at the Ted Rogers School of Management, I built a pipeline to replace and validate over 800 legal footnotes in a manuscript, with 92% accuracy.",
-        ],
-      },
-      {
-        heading: "My contribution",
-        paragraphs: [
-          "The pipeline used multi-stage parsing to resolve references such as Id., Ibid., and Supra, including nested references and semantic matching.",
-          "I added AI-assisted validation and logging to flag ambiguous citations for human review, alongside parallel processing and a modular, unit-tested architecture. The workflow reduced manual review cycles by 30%.",
-        ],
-      },
-      {
-        heading: "What I took from it",
-        paragraphs: [
-          "Useful research automation needs to show where uncertainty remains. Flagging an ambiguous reference can be more valuable than silently producing a confident answer.",
-        ],
-      },
-    ],
-    description:
-      "Research tooling at Toronto Metropolitan University: a Python pipeline for tracing, replacing, and validating legal citations.",
+    // 2025 publicly; the end month (September or October 2025) is still to be settled
+    period: { label: "Period", start: "2025", end: null },
+    sections: [],
+    description: "Toronto Metropolitan University: Turning a manuscript’s tangled references into in-text citations, organized bibliographies, and reviewable results.",
   },
   {
     slug: "inteli-lens",
@@ -394,151 +294,73 @@ export const work: WorkEntry[] = [
     description: "Inteli-lens: a computer-vision prototype for identifying potentially intoxicated behavior in CCTV footage.",
   },
   {
+    // The GVI page has its own layout and full copy (content/gvi.ts, from
+    // handoff/content/work/gvi-conservation.md). This record supplies its name
+    // (kept, so neighbouring pages' pager labels are unchanged), the page
+    // <title>/description and its place in the pager.
     slug: "gvi-conservation",
     name: "GVI · South Africa",
     theme: "default",
-    eyebrow: ["GVI · South Africa"],
     title: "Learning to look more closely.",
-    subtitle: "Conservation fieldwork in the South African bushveld.",
-    role: { label: "Type", value: "Conservation fieldwork" },
-    period: {
-      label: "Period",
-      start: null,
-      end: "2027",
-      needsReview: true,
-      reviewNote: "No start date supplied — period hidden until confirmed.",
-    },
-    figure: {
-      kind: "plates",
-      note: "Fieldwork photographs to come.",
-      plates: [{ caption: "Fieldwork in the South African bushveld.", pattern: "field" }],
-    },
-    sections: [
-      {
-        heading: "Overview",
-        paragraphs: [
-          "During fieldwork with GVI in South Africa, I helped collect cheetah data and took part in bird surveys.",
-        ],
-      },
-      {
-        heading: "What stayed with me",
-        paragraphs: [
-          "The experience strengthened my interest in conservation and the information that supports it. It also gave me a different perspective on research: collecting observations carefully comes before deciding what to do with them.",
-          "That interest continues to shape the technical and research work I’m drawn to.",
-        ],
-      },
-    ],
-    description: "Conservation fieldwork with GVI in the South African bushveld: cheetah data and bird surveys.",
+    subtitle: "Wildlife monitoring, conservation data, and four weeks in the bushveld that opened a new direction.",
+    role: { label: "Role", value: "Wildlife Research Intern" },
+    // Summer 2024 publicly; exact attendance dates are not established
+    period: { label: "Period", start: "Summer 2024", end: null },
+    sections: [],
+    description: "GVI · South Africa: Wildlife monitoring, conservation data, and four weeks in the bushveld that opened a new direction.",
   },
   {
+    // The two research pages have their own layout and full copy
+    // (content/research.ts, from handoff/content/work/pmmy-research.md and
+    // teenage-pregnancy-research.md). These records supply their names (kept,
+    // so neighbouring pages' pager labels are unchanged), the page
+    // <title>/description and their places in the pager.
     slug: "pmmy-research",
     name: "PMMY research",
     theme: "default",
-    eyebrow: ["Research publication"],
     title: "Policy, data, and lived consequences.",
-    subtitle: "PMMY & women’s financial empowerment",
+    subtitle: "Investigating women’s access to enterprise finance through PMMY lending data and public sentiment.",
     role: { label: "Role", value: "Lead Researcher" },
     period: { label: "Year", start: "2022", end: null },
-    meta: [
-      { label: "Paper", value: "Impact of the PMMY (Pradhan Mantri Mudra Yojana) In Empowering Women" },
-      { label: "Publication", value: "IJSHRE" },
-    ],
-    sections: [
-      {
-        heading: "Overview",
-        paragraphs: [
-          "This research used Python-based NLP sentiment analysis of public Twitter data to examine responses to PMMY. The work was published in IJSHRE and accompanied by financial-literacy outreach with an NGO, helping secure startup loans for 50+ women.",
-        ],
-      },
-      {
-        heading: "Focus",
-        paragraphs: [
-          "Connecting data analysis with questions about access, economic opportunity, and women’s experiences of public policy.",
-        ],
-      },
-    ],
-    links: [{ label: "Read the paper", url: null, pendingNote: "Paper link to come" }],
-    description: "Research on the impact of the PMMY (Pradhan Mantri Mudra Yojana) in empowering women, published in IJSHRE (2022).",
+    sections: [],
+    description: "PMMY & women’s financial empowerment: lending data, public sentiment, and community education (IJSHRE, 2022).",
   },
   {
     slug: "teenage-pregnancy-research",
     name: "Teenage pregnancy research",
     theme: "default",
-    eyebrow: ["Research publication"],
     title: "Looking beyond the numbers.",
-    subtitle: "Teenage pregnancy & fertility",
+    subtitle: "Studying adolescent pregnancy and fertility in Maharashtra, then taking the research into hospital discussions and community education.",
     role: { label: "Role", value: "Lead Researcher" },
     period: { label: "Year", start: "2022", end: null },
-    meta: [
-      { label: "Paper", value: "Projecting Teenage Pregnancy and Motherhood and Fertility Rates" },
-      { label: "Publication", value: "IJSHRE" },
-    ],
-    sections: [
-      {
-        heading: "Overview",
-        paragraphs: [
-          "This research used Python, NumPy, Pandas, and Matplotlib to examine socioeconomic drivers of teenage pregnancy in rural India. It was published in IJSHRE and accompanied by educational outreach with NGO Saksharta, reaching 200+ rural girls through targeted education initiatives.",
-          "I presented the paper at an annual panel at Chirayu Hospital.",
-        ],
-      },
-      {
-        heading: "Focus",
-        paragraphs: ["Using data to investigate a social question while keeping the surrounding context in view."],
-      },
-    ],
-    links: [{ label: "Read the paper", url: null, pendingNote: "Paper link to come" }],
-    description: "Research on socioeconomic drivers of teenage pregnancy in rural India, published in IJSHRE (2022).",
+    sections: [],
+    description: "Teenage pregnancy & fertility in Maharashtra: a study of NFHS data, a hospital discussion, and Project Ārogya (IJSHRE, 2022).",
   },
   {
+    // The two Columbia pages have their own layout and full copy
+    // (content/columbia.ts, from handoff/content/work/esp-teaching.md and
+    // adi-mentorship.md). These records supply their names, the page
+    // <title>/description and their places in the pager.
     slug: "esp-teaching",
     name: "Emerging Scholars Program",
     theme: "default",
-    eyebrow: ["Emerging Scholars Program · Columbia"],
-    title: "Making room for the next question.",
-    subtitle: "Peer teaching in computer science at Columbia.",
-    role: { label: "Role", value: "Teaching Assistant" },
-    period: { label: "Period", start: "Jan 2024", end: "Dec 2024" },
-    sections: [
-      {
-        heading: "My contribution",
-        paragraphs: [
-          "I helped lead weekly peer-taught computer science sessions covering UI/UX, algorithms, machine learning, and AI for Columbia and Barnard undergraduates.",
-          "I taught two cohorts across two semesters and supported students building foundations for research and technical projects.",
-        ],
-      },
-      {
-        heading: "What I value",
-        paragraphs: [
-          "Teaching means paying attention to how someone is thinking, then finding an explanation that gives them a useful next step.",
-        ],
-      },
-    ],
-    description: "Peer teaching in computer science at Columbia through the Emerging Scholars Program.",
+    title: "A different side of computer science.",
+    subtitle: "From exploring computer science to helping others find their way into it.",
+    role: { label: "Roles", value: "Teaching Assistant · Peer Instructor" },
+    period: { label: "Period", start: "Fall 2024", end: "Spring 2025" },
+    sections: [],
+    description: "Emerging Scholars Program at Columbia: from taking the course to teaching it.",
   },
   {
     slug: "adi-mentorship",
     name: "Application Development Initiative",
     theme: "default",
-    eyebrow: ["Application Development Initiative · Columbia"],
     title: "Working through it together.",
-    subtitle: "Technical mentorship through Columbia’s ADI community.",
+    subtitle: "Mentoring six students through classes, projects, recruiting, and finding their own direction in computer science.",
     role: { label: "Role", value: "Mentor" },
-    period: { label: "Period", start: "Jan 2024", end: "2027", needsReview: true, reviewNote: "Placeholder end year." },
-    sections: [
-      {
-        heading: "My contribution",
-        paragraphs: [
-          "I’ve mentored 10+ students on academic planning, technical projects, skill-building, and recruiting. I guided peers on recruiting strategy and technical development that contributed to internships at Google, Meta, and Duolingo.",
-        ],
-      },
-      {
-        heading: "What I value",
-        paragraphs: [
-          "I like helping someone reach the point where a problem starts to make sense—and where they can take the next step themselves.",
-        ],
-      },
-    ],
-    description: "Technical mentorship through Columbia’s Application Development Initiative community.",
+    period: { label: "Period", start: "Spring 2026", end: "Fall 2026" },
+    sections: [],
+    description: "Application Development Initiative at Columbia: individual mentorship across two cohorts.",
   },
 ];
 

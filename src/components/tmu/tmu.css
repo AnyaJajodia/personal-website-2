@@ -1,0 +1,1041 @@
+/* =====================================================================
+   TMU citation tooling — an annotated research notebook (TmuPage.tsx)
+   The portfolio's own background, serif and thread. TMU blue (#004C9B)
+   marks stages, borders, links and the selected state; gold (#FFDC00)
+   only annotates. Scoped to .theme-tmu; the site palette is unchanged.
+   ===================================================================== */
+
+.theme-tmu {
+  --tmu-blue: #004c9b; /* official */
+  --tmu-gold: #ffdc00; /* official */
+  --tmu-blue-ink: #004c9b; /* text and links on paper (AA) */
+  --tmu-blue-soft: rgba(0, 76, 155, 0.07);
+  --tmu-blue-line: rgba(0, 76, 155, 0.28);
+  --tmu-gold-soft: rgba(255, 220, 0, 0.42);
+  --tmu-cell: #fcfaf6; /* an output panel, a shade off the page */
+  --tmu-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --tmu-measure: 64ch;
+  --accent: #004c9b;
+  --selection: rgba(0, 76, 155, 0.16);
+}
+/* dark: the site's night; the blue lifted for contrast, the gold softened */
+:root[data-theme="dark"] .theme-tmu {
+  --tmu-blue: #5d9be3;
+  --tmu-blue-ink: #9cc3f2;
+  --tmu-blue-soft: rgba(93, 155, 227, 0.1);
+  --tmu-blue-line: rgba(156, 195, 242, 0.32);
+  --tmu-gold: #f2d34a;
+  --tmu-gold-soft: rgba(242, 211, 74, 0.22);
+  --tmu-cell: #29241f;
+  --accent: #9cc3f2;
+  --selection: rgba(156, 195, 242, 0.28);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .theme-tmu {
+    --tmu-blue: #5d9be3;
+    --tmu-blue-ink: #9cc3f2;
+    --tmu-blue-soft: rgba(93, 155, 227, 0.1);
+    --tmu-blue-line: rgba(156, 195, 242, 0.32);
+    --tmu-gold: #f2d34a;
+    --tmu-gold-soft: rgba(242, 211, 74, 0.22);
+    --tmu-cell: #29241f;
+    --accent: #9cc3f2;
+    --selection: rgba(156, 195, 242, 0.28);
+  }
+}
+.theme-tmu ::selection {
+  background: var(--selection);
+}
+.theme-tmu a:focus-visible,
+.theme-tmu button:focus-visible,
+.theme-tmu [tabindex="0"]:focus-visible {
+  outline: 2px solid var(--tmu-blue-ink);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ------------------------------------------------------------ opening */
+.theme-tmu .tmu-hero {
+  padding-bottom: clamp(2.5rem, 5vw, 3.75rem);
+}
+/* one column: the thread's flourish has the right of the title to itself,
+   and the facts sit beneath, clear of it */
+.tmu-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.75rem, 3.5vw, 2.5rem);
+}
+.tmu-hero__dates {
+  width: fit-content;
+  padding: 0.18rem 0.55rem;
+  border: 1.5px solid var(--tmu-blue-ink);
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--tmu-blue-ink);
+  font-variant-numeric: lining-nums;
+}
+.tmu-logo {
+  width: fit-content;
+  margin: clamp(1rem, 2vw, 1.4rem) 0 clamp(1.25rem, 2.4vw, 1.75rem);
+}
+.tmu-logo__img {
+  display: block;
+  width: clamp(7.5rem, 10vw, 9rem);
+  height: auto;
+}
+.theme-tmu .tmu-hero__title {
+  max-width: 11ch;
+  text-wrap: balance;
+}
+.theme-tmu .tmu-hero__subtitle {
+  max-width: 36ch;
+}
+.tmu-facts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr) minmax(0, 1.5fr);
+  gap: 0 clamp(1.25rem, 3vw, 2.25rem);
+  margin: 0;
+  padding: 0.35rem 1.35rem 0.6rem;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 14px 28px -24px rgb(var(--shade) / 0.5);
+}
+.tmu-facts__item {
+  padding-block: 0.85rem;
+}
+.tmu-facts__item + .tmu-facts__item {
+  padding-left: clamp(1.25rem, 3vw, 2.25rem);
+  border-left: 1px dashed var(--rule-strong);
+}
+.tmu-facts dt {
+  color: var(--tmu-blue-ink);
+}
+.tmu-facts dd {
+  margin: 0.35rem 0 0;
+  font-size: 0.9688rem;
+  line-height: 1.5;
+}
+.tmu-facts__tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0.15rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.tmu-facts__tools li {
+  padding: 0.12rem 0.5rem;
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  background: var(--bg);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+/* ------------------------------------------------------------ narrative */
+.tmu-section {
+  padding-block: clamp(3rem, 6vw, 4.75rem);
+  border-top: 1px solid var(--rule);
+}
+.tmu-h2 {
+  font-family: var(--serif);
+  font-size: clamp(2.1rem, 3.7vw, 3.05rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  max-width: 21ch;
+  text-wrap: balance;
+}
+.tmu-lead {
+  margin-top: clamp(1.2rem, 2.2vw, 1.6rem);
+  max-width: 34ch;
+  font-family: var(--serif);
+  font-size: clamp(1.45rem, 2.3vw, 1.85rem);
+  line-height: 1.22;
+  text-wrap: pretty;
+}
+.tmu-prose {
+  max-width: var(--tmu-measure);
+}
+.tmu-prose p {
+  text-wrap: pretty;
+}
+.tmu-prose p + p {
+  margin-top: 1.1em;
+}
+.tmu-h2 + .tmu-prose,
+.tmu-lead + .tmu-prose {
+  margin-top: 1.4rem;
+}
+.tmu-pull {
+  margin: clamp(1.5rem, 3vw, 2rem) 0;
+  max-width: 34ch;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1.45rem, 2.3vw, 1.85rem);
+  line-height: 1.25;
+  text-wrap: pretty;
+}
+/* Id., Ibid., Supra: the signals that send a reader backwards */
+.tmu-signal {
+  padding: 0 0.22em;
+  border-radius: 3px;
+  background: var(--tmu-blue-soft);
+  color: var(--tmu-blue-ink);
+  font-style: italic;
+  font-weight: 550;
+}
+
+/* the confirmed results: a single output panel */
+.tmu-results {
+  margin: clamp(1.75rem, 3.5vw, 2.5rem) 0 0;
+  padding: clamp(1.25rem, 2.6vw, 1.75rem);
+  border: 1px solid var(--tmu-blue-line);
+  border-radius: 12px;
+  background: var(--tmu-cell);
+  box-shadow: 0 18px 36px -30px rgb(var(--shade) / 0.55);
+}
+.tmu-results__figures {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tmu-results__figures li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.2rem 1.25rem 0.2rem 0;
+}
+.tmu-results__figures li + li {
+  padding-left: 1.25rem;
+  border-left: 1px solid var(--rule);
+}
+.tmu-results__value {
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 4.4vw, 3.4rem);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--tmu-blue-ink);
+  font-variant-numeric: lining-nums;
+}
+.tmu-results__label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.tmu-results__cap {
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  max-width: 62ch;
+  border-top: 1px dashed var(--rule-strong);
+  font-size: 0.9688rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+/* ------------------------------------------------- the walkthrough */
+.walk {
+  margin-top: clamp(1.4rem, 2.6vw, 1.9rem);
+}
+.walk__label,
+.tmu-out__cap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.7rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.walk__tag {
+  padding: 0.08rem 0.5rem;
+  border-radius: 999px;
+  background: var(--tmu-gold-soft);
+  color: var(--text);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.walk__list {
+  position: relative;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+/* the thread through the five stages */
+.walk__list::before {
+  content: "";
+  position: absolute;
+  left: 1rem;
+  top: 1.2rem;
+  bottom: 1.2rem;
+  border-left: 1.5px solid var(--tmu-blue-line);
+}
+.walk__step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2rem minmax(10rem, 13rem) minmax(0, 1fr);
+  column-gap: clamp(0.9rem, 2vw, 1.5rem);
+  padding-block: 0.75rem;
+}
+.walk__step + .walk__step {
+  border-top: 1px dashed var(--rule);
+}
+.walk__n {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1.5px solid var(--tmu-blue);
+  border-radius: 50%;
+  background: var(--bg);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--tmu-blue-ink);
+  transition:
+    background-color 0.2s var(--ease),
+    color 0.2s var(--ease);
+}
+.walk__name {
+  padding-top: 0.25rem;
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.15;
+}
+.walk__stage {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.6rem;
+  width: 100%;
+  min-height: 44px;
+  margin: -0.55rem 0 0 -0.5rem;
+  padding: 0.5rem 0.5rem;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+.walk__stage:hover {
+  background: var(--tmu-blue-soft);
+}
+.walk__chev {
+  flex: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-top: 0.45rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  rotate: 45deg;
+  transition: rotate 0.2s var(--ease);
+}
+.walk__stage[aria-expanded="true"] .walk__chev {
+  rotate: 225deg;
+  margin-top: 0.7rem;
+}
+.walk__step[data-current] .walk__n {
+  background: var(--tmu-blue);
+  color: #fff;
+}
+:root[data-theme="dark"] .walk__step[data-current] .walk__n {
+  color: #13212f;
+}
+.walk__step[data-current] .walk__stage {
+  color: var(--tmu-blue-ink);
+}
+.walk__body {
+  min-width: 0;
+}
+.walk__explain {
+  margin-top: 0.7rem;
+  max-width: 58ch;
+  font-size: 0.9688rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .walk[data-ready] .walk__step[data-open] .walk__explain {
+    animation: walk-reveal 0.22s ease-out;
+  }
+}
+@keyframes walk-reveal {
+  from {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+}
+
+/* each stage's example: a small output, the selected one outlined in blue */
+.walk-ex {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--tmu-cell);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+.walk__step[data-current] .walk-ex {
+  border-color: var(--tmu-blue);
+  box-shadow: 0 0 0 3px var(--tmu-blue-soft);
+}
+.walk-ex__k {
+  display: block;
+  margin-bottom: 0.15rem;
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.walk-ex--notes {
+  list-style: none;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+}
+.walk-ex--notes li {
+  display: grid;
+  grid-template-columns: 1.9rem minmax(0, 1fr);
+  padding: 0.15rem 0.3rem;
+  border-radius: 4px;
+}
+.walk-ex--notes li.is-focus {
+  background: var(--tmu-gold-soft);
+}
+.walk-ex__n {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding-top: 0.25rem;
+  color: var(--muted);
+}
+.walk-ex__trace {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+.walk-ex__chip {
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--tmu-blue-line);
+  border-radius: 6px;
+  background: var(--bg);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.walk-ex__chip--src {
+  border-color: var(--tmu-blue);
+  color: var(--tmu-blue-ink);
+}
+.walk-ex__arrow {
+  color: var(--tmu-blue-ink);
+}
+.walk-ex__fields {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, auto));
+  justify-content: start;
+  gap: 0.25rem 1.5rem;
+  margin: 0.75rem 0 0;
+}
+.walk-ex__fields dt,
+.walk-ex--row dt {
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.walk-ex__fields dd {
+  margin: 0;
+}
+.walk-ex__fields s {
+  color: var(--muted);
+  margin-right: 0.3rem;
+}
+.walk-ex__bib {
+  margin-top: 0.75rem;
+  padding-top: 0.65rem;
+  border-top: 1px dashed var(--rule);
+}
+.walk-ex--cite p + p {
+  margin-top: 0.6rem;
+}
+.walk-ex__before {
+  color: var(--muted);
+}
+.walk-ex__before sup {
+  font-size: 0.7em;
+  color: var(--tmu-blue-ink);
+  font-weight: 700;
+}
+.walk-ex__mark {
+  padding: 0 0.2em;
+  border-radius: 3px;
+  background: var(--tmu-gold-soft);
+  color: inherit;
+}
+.walk-ex--bib p + p {
+  margin-top: 0.6rem;
+}
+.walk-ex--row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem 1.25rem;
+}
+.walk-ex--row dd {
+  margin: 0.1rem 0 0;
+  overflow-wrap: anywhere;
+}
+
+/* -------------------------------------------------- the six stage cells */
+.tmu-stages {
+  border-top: 1px solid var(--rule);
+}
+.tmu-cell {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3.4rem minmax(0, 1fr) minmax(11rem, 13.5rem);
+  grid-template-areas:
+    "n main note"
+    "out out out";
+  column-gap: clamp(1rem, 2.5vw, 2rem);
+  padding-block: clamp(2.5rem, 5vw, 3.75rem);
+}
+.tmu-cell + .tmu-cell {
+  border-top: 1px dashed var(--rule-strong);
+}
+.tmu-cell__n {
+  grid-area: n;
+  padding-top: 0.55rem;
+  font-family: var(--tmu-mono);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--tmu-blue-ink);
+}
+.tmu-cell__main {
+  grid-area: main;
+  min-width: 0;
+}
+.tmu-cell__title {
+  font-size: clamp(1.85rem, 3vw, 2.5rem);
+}
+.tmu-cell .tmu-prose {
+  margin-top: 1.1rem;
+}
+.tmu-cell__out {
+  grid-area: out;
+  min-width: 0;
+  margin-top: clamp(1.25rem, 2.6vw, 1.75rem);
+}
+/* a margin note: a sentence from the stage, set beside it in the notebook's margin */
+.tmu-note {
+  grid-area: note;
+  align-self: start;
+  margin-top: 4.25rem;
+  padding: 0.7rem 0.85rem 0.75rem;
+  border-radius: 8px;
+  background: linear-gradient(var(--tmu-gold-soft), var(--tmu-gold-soft)) 0 0 / 3px 100% no-repeat, color-mix(in srgb, var(--tmu-gold-soft) 35%, transparent);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.08rem;
+  line-height: 1.35;
+  color: var(--text);
+}
+.tmu-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tmu-tags li {
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--tmu-blue-line);
+  border-radius: 999px;
+  background: var(--tmu-blue-soft);
+  font-size: 0.875rem;
+  font-weight: 550;
+  color: var(--tmu-blue-ink);
+}
+.tmu-tags li::first-letter {
+  text-transform: uppercase;
+}
+
+/* output panels */
+.tmu-out {
+  margin: 0;
+  padding: clamp(1.1rem, 2.4vw, 1.6rem);
+  border: 1px solid var(--tmu-blue-line);
+  border-radius: 12px;
+  background: var(--tmu-cell);
+  box-shadow: 0 18px 36px -30px rgb(var(--shade) / 0.55);
+}
+.tmu-out__title {
+  margin-bottom: 0.7rem;
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.tmu-out__cap {
+  margin-top: 1.1rem;
+  padding-top: 0.9rem;
+  border-top: 1px dashed var(--rule-strong);
+}
+.tmu-bibs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 clamp(1.5rem, 3vw, 2.5rem);
+}
+.tmu-bibs .tmu-out__cap {
+  grid-column: 1 / -1;
+}
+.tmu-bibs__col + .tmu-bibs__col {
+  padding-left: clamp(1.5rem, 3vw, 2.5rem);
+  border-left: 1px solid var(--rule);
+}
+.tmu-bibs__list {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tmu-bibs__list li {
+  padding-left: 1.25rem;
+  text-indent: -1.25rem; /* a bibliography's hanging indent */
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+.tmu-bibs__note {
+  display: block;
+  margin-top: 0.15rem;
+  text-indent: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--tmu-blue-ink);
+}
+.tmu-matrix {
+  margin-bottom: 1rem;
+}
+.tmu-matrix__lead {
+  font-weight: 600;
+}
+.tmu-matrix__cols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: col;
+}
+.tmu-matrix__cols li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.25rem 0.65rem 0.25rem 0.3rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 0.875rem;
+  counter-increment: col;
+}
+.tmu-matrix__cols li::before {
+  content: counter(col);
+  display: grid;
+  place-items: center;
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 50%;
+  background: var(--tmu-blue-soft);
+  color: var(--tmu-blue-ink);
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+/* the example review matrix: given real room */
+.tmu-review__scroll {
+  overflow-x: auto;
+  border-radius: 8px;
+}
+.tmu-review__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+.tmu-review__table thead th {
+  padding: 0 0.85rem 0.6rem 0;
+  border-bottom: 1.5px solid var(--tmu-blue);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-align: left;
+  text-transform: uppercase;
+  vertical-align: bottom;
+  color: var(--muted);
+}
+.tmu-review__table tbody th,
+.tmu-review__table td {
+  padding: 0.7rem 0.85rem 0.7rem 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+}
+.tmu-review__table tbody th {
+  font-family: var(--tmu-mono);
+  font-weight: 600;
+  color: var(--tmu-blue-ink);
+}
+.tmu-review__table td:nth-child(3) {
+  font-weight: 600;
+}
+.tmu-review__table tr[data-status] td {
+  color: var(--ink-2);
+}
+.tmu-review__status {
+  font-style: italic;
+}
+.tmu-review__table tr[data-status="flagged"] .tmu-review__status {
+  background: linear-gradient(var(--tmu-gold-soft), var(--tmu-gold-soft)) 0 0 / 3px 100% no-repeat;
+  padding-left: 0.65rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.tmu-cell__after {
+  margin-top: 1.25rem;
+}
+
+/* -------------------------------------------------- beyond the code */
+.tmu-editorial__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 19rem);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  margin-top: 1.4rem;
+}
+.tmu-proof {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+.tmu-proof__list {
+  display: grid;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--surface);
+  list-style: none;
+}
+.tmu-proof__list li {
+  display: grid;
+  grid-template-columns: 1.4rem minmax(0, 1fr);
+  gap: 0.6rem;
+  padding: 0.55rem 0;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+.tmu-proof__list li + li {
+  border-top: 1px dashed var(--rule);
+}
+.tmu-proof__list li::first-letter {
+  text-transform: uppercase;
+}
+.tmu-proof__list svg {
+  width: 1.3rem;
+  height: 1.3rem;
+  padding: 0.15rem;
+  border-radius: 4px;
+  background: var(--tmu-gold-soft);
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.avatar--tmu-reader {
+  position: relative;
+  align-self: flex-end;
+  width: clamp(6rem, 8.5vw, 7.5rem);
+  margin-bottom: calc(-1 * clamp(3rem, 6vw, 4.75rem));
+  transform: translateY(var(--sink));
+}
+
+/* ------------------------------------------------- engineering the workflow */
+.tmu-modules {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(0.6rem, 1.6vw, 1rem);
+  margin: clamp(1.5rem, 3vw, 2rem) 0;
+  padding: 0;
+  list-style: none;
+}
+.tmu-modules li {
+  position: relative;
+  padding: 0.7rem 0.75rem;
+  border: 1px solid var(--tmu-blue-line);
+  border-radius: 9px;
+  background: var(--tmu-cell);
+  font-family: var(--serif);
+  font-size: 1.12rem;
+  font-weight: 600;
+  line-height: 1.15;
+  text-align: center;
+}
+.tmu-modules li::first-letter {
+  text-transform: uppercase;
+}
+.tmu-modules li + li::before {
+  content: "";
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  width: clamp(0.6rem, 1.6vw, 1rem);
+  border-top: 1.5px solid var(--tmu-blue-line);
+}
+
+/* --------------------------------------------------------- tables */
+.tmu-table-wrap {
+  margin-top: clamp(1.5rem, 3vw, 2rem);
+  overflow-x: auto;
+}
+.tmu-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+.tmu-table thead th {
+  padding: 0 1rem 0.7rem 0;
+  border-bottom: 1.5px solid var(--tmu-blue);
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.tmu-table tbody th,
+.tmu-table td {
+  padding: 0.85rem 1rem 0.85rem 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: baseline;
+}
+.tmu-table tbody th {
+  width: 32%;
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.15;
+}
+.tmu-table td {
+  line-height: 1.55;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.tmu-table--outputs tbody th {
+  color: var(--tmu-blue-ink);
+}
+.tmu-punchline {
+  margin-top: clamp(2rem, 4vw, 2.75rem);
+  max-width: 28ch;
+  font-family: var(--serif);
+  font-size: clamp(1.75rem, 3.2vw, 2.6rem);
+  font-weight: 500;
+  line-height: 1.14;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+/* =================================================== narrower screens */
+@media (max-width: 1279.98px) {
+  /* the margin note moves under its stage */
+  .tmu-cell {
+    grid-template-columns: 3.4rem minmax(0, 1fr);
+    grid-template-areas:
+      "n main"
+      "n note"
+      "out out";
+  }
+  .tmu-note {
+    margin-top: 1.25rem;
+    max-width: 52ch;
+  }
+}
+/* tablets: the review matrix keeps a readable width and scrolls in its panel */
+@media (min-width: 760px) and (max-width: 1099.98px) {
+  .tmu-review__table {
+    min-width: 46rem;
+  }
+}
+@media (max-width: 899.98px) {
+  .tmu-facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tmu-facts__item + .tmu-facts__item {
+    padding-left: 0;
+    border-left: 0;
+    border-top: 1px dashed var(--rule-strong);
+  }
+  .tmu-modules {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 20rem;
+  }
+  .tmu-modules li {
+    text-align: left;
+  }
+  .tmu-modules li + li::before {
+    right: auto;
+    left: 1.25rem;
+    top: auto;
+    bottom: 100%;
+    width: 0;
+    height: clamp(0.6rem, 1.6vw, 1rem);
+    border-top: 0;
+    border-left: 1.5px solid var(--tmu-blue-line);
+  }
+  .tmu-editorial__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tmu-proof {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+  .tmu-proof__list {
+    flex: 1;
+  }
+}
+@media (max-width: 759.98px) {
+  .tmu-hero__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.75rem;
+  }
+  .tmu-results__figures {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tmu-results__figures li {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+  }
+  .tmu-results__figures li + li {
+    padding-left: 0;
+    border-left: 0;
+    border-top: 1px solid var(--rule);
+  }
+  /* the walkthrough: the number and name over the example */
+  .walk__step {
+    grid-template-columns: 2rem minmax(0, 1fr);
+    row-gap: 0.6rem;
+  }
+  .walk__body {
+    grid-column: 2;
+  }
+  .walk-ex__fields {
+    grid-template-columns: repeat(2, minmax(0, auto));
+  }
+  .walk-ex--row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tmu-cell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "n" "main" "note" "out";
+  }
+  .tmu-cell__n {
+    padding: 0 0 0.35rem;
+  }
+  .tmu-bibs {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tmu-bibs__col + .tmu-bibs__col {
+    margin-top: 1.25rem;
+    padding: 1.25rem 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--rule);
+  }
+  /* the review matrix: each row becomes a labelled record */
+  .tmu-review__table {
+    min-width: 0;
+  }
+  .tmu-review__table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .tmu-review__table,
+  .tmu-review__table tbody,
+  .tmu-review__table tr,
+  .tmu-review__table th,
+  .tmu-review__table td {
+    display: block;
+  }
+  .tmu-review__table tr {
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .tmu-review__table tbody th,
+  .tmu-review__table td {
+    padding: 0.2rem 0;
+    border: 0;
+  }
+  .tmu-review__table [data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-family: var(--sans);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .tmu-proof {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .avatar--tmu-reader {
+    align-self: flex-end;
+  }
+  .tmu-table tbody th {
+    width: 38%;
+    font-size: 1.1rem;
+  }
+  .tmu-table td {
+    font-size: 0.9375rem;
+  }
+}
+
+/* reduced motion: selection changes state, never position */
+@media (prefers-reduced-motion: reduce) {
+  .theme-tmu .walk__chev,
+  .theme-tmu .walk__stage,
+  .theme-tmu .walk__n,
+  .theme-tmu .walk-ex,
+  .theme-tmu .toc__link,
+  .theme-tmu .toc__link::before {
+    transition: none;
+  }
+}

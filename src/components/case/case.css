@@ -1,0 +1,48 @@
+/* =====================================================================
+   Case-study layout, shared by the bespoke detail pages (Crackd, Buzzworks):
+   a margin rail holding "On this page" beside the content column. Other
+   work lives in the header (WorkDrawer). Scoped to .case-*.
+   ===================================================================== */
+
+.case-layout {
+  display: grid;
+  grid-template-columns: 13.5rem minmax(0, 1fr);
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+  align-items: start;
+}
+.case-rail {
+  height: 100%;
+}
+.case-rail__inner {
+  position: sticky;
+  top: calc(var(--header-h) + 1.6rem);
+  padding-block: 1.6rem 2rem;
+}
+.case-content {
+  min-width: 0;
+}
+/* every section lands just under the fixed header */
+.case-content :is(section[id], article[id], div[id]) {
+  scroll-margin-top: calc(var(--header-h) + 1.5rem);
+}
+/* (no document-level smooth scrolling: it would also smooth the browser's own
+   scroll restoration on Back; "On this page" scrolls smoothly by itself) */
+
+/* no room for the rail: "On this page" opens the page as a compact index */
+@media (max-width: 1099.98px) {
+  .case-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .case-rail {
+    height: auto;
+  }
+  .case-rail__inner {
+    position: static;
+    padding: 0 0 clamp(1.5rem, 4vw, 2.25rem);
+  }
+}
+/* sections focused from "On this page" don't draw a ring around themselves */
+.case-content [tabindex="-1"]:focus {
+  outline: none;
+}

@@ -10,9 +10,11 @@ type Props = {
   variant: "home" | "detail";
   /** Start dark (Lynxster opening). Switches to light once the dark band has scrolled under the header. */
   darkUntilSelector?: string;
+  /** detail pages: the "Work" item opens this (the work drawer) instead of linking home */
+  workMenu?: React.ReactNode;
 };
 
-export default function SiteHeader({ variant, darkUntilSelector }: Props) {
+export default function SiteHeader({ variant, darkUntilSelector, workMenu }: Props) {
   const ref = useRef<HTMLElement>(null);
   const [settled, setSettled] = useState(variant === "detail");
   const [dark, setDark] = useState(Boolean(darkUntilSelector));
@@ -69,6 +71,8 @@ export default function SiteHeader({ variant, darkUntilSelector }: Props) {
                 <li key={item.hash}>
                   <a href={`#${item.hash}`}>{item.label}</a>
                 </li>
+              ) : item.hash === "work" && workMenu ? (
+                <li key={item.hash}>{workMenu}</li>
               ) : (
                 <li key={item.hash}>
                   <Link href={`/#${item.hash}`} className={item.hash === "work" ? "is-current" : undefined}>

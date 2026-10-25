@@ -1,5 +1,216 @@
 # Visual & functional review
 
+## Iteration 21 — navigation and accent refinement (25 Oct 2026)
+
+**Navigation:**
+- On detail pages, the right-side **Work** item is now the drawer's trigger: a real `<button>` with a small chevron, `aria-haspopup="dialog"`, `aria-expanded` and `aria-controls="work-sheet"`, a 2px focus ring and a hit area of at least 44px.
+- The separate "Browse work" pill beside the name is gone (`SiteHeader` takes `workMenu` in place of `lead`). On the homepage, Work stays a link to `#work`.
+- The drawer opens with **"← Back to work overview"** (`/#work`), then the experience list, with the current page still marked. The old footer of homepage section links was removed because it duplicated the header.
+- Focus trap and restore, Escape, scroll lock, close-on-navigate and the restrained slide/fade are unchanged.
+
+**Navbar accents:**
+- The hard-coded blue scribble background is replaced by a `::after` pen-stroke mask filled with `currentColor`.
+- On detail pages, the active Work text and its underline take each page's `--accent`, so they follow Light, Dark and System.
+- On the homepage, the underline appears on hover in the navbar's hover colour.
+
+**Buzzworks:**
+- **Header:** the full logo on a white tile is replaced by the minimal orange symbol (`/logos/buzzworks-minimal.png`, proportions kept) next to "Buzzworks" set in the portfolio serif.
+- **Conversation, desktop:** the window grew from about 23.5rem to 31rem (≈32%). Bubbles wrap at 72% of the window, the radius is calmer, and the annotation gap is rebalanced.
+- **Conversation, mobile:** each annotation now sits below its exchange.
+
+**Crackd (Light):**
+- The near-black applications panel is gone.
+- The user app reads as open page text, marked by a short yellow rule.
+- Admin and the matrix sit on warm pale-stone surfaces (#efe8da) with a fine rule and a soft shadow.
+- Yellow remains in the rules, markers, chain and matrix accent.
+- Dark keeps the previous panel exactly (re-scoped under `[data-theme="dark"]` and the System fallback).
+
+**GVI:**
+- **Logo:** `gvi-white.png` in Dark and the existing logo in Light, swapped through `ThemeLogo` in one shared box, with no cream tile.
+- **Closing section:** "What stayed with me" is now open: a small forest label, a green serif pull quote (21ch), normal-width paragraphs, and one fine rule with a short sage thread dropping from it. No card, border or gradient.
+
+**Found and fixed while verifying:**
+
+| # | Pri | Defect | Fix |
+|---|-----|--------|-----|
+| 1 | P1 | The Work button inherited body colour instead of the accent. | `.site-nav__work { color: var(--accent) }` |
+| 2 | P1 | The dialog rendered inside the nav `<li>`, so the drawer's links counted as part of the Primary navigation landmark. | Portaled the dialog to `document.body` after hydration. |
+| 3 | P2 | Work's text and underline sat 1.4–4px off the neighbouring links. | Baseline alignment on detail headers; underline drawn on the label span; label line-height matched. |
+| 4 | P2 | The Work hit area was under 44px. | `::before` inset `-0.7rem -0.4rem`. |
+
+**Remaining (not material):**
+- The drawer now takes the site's tokens rather than each page's, because it lives under `body`. Its current-page mark still uses the site accent.
+- On phones, the Work underline sits up to 0.8px from the other links' underline (exact on desktop).
+
+**Follow-up — drawer motion and hover:**
+- **Why the drawer felt like a pop:** frame sampling showed it covered half its 430px trip in the first ~50ms, then crept the rest. Closing sped up the whole way and was still at full speed when it vanished.
+- **Open:** now 500ms with a soft drawer curve, `cubic-bezier(0.32, 0.72, 0, 1)`. It builds to about 59px per frame by ~100ms, then settles.
+- **Close:** now 320ms, eased at both ends (`--sheet-out: 320`). The overlay fades on the same timings.
+- **Hover:** each entry lifts 2px with a deeper shadow, like the homepage cards, and a project with sub-pages lifts as one card. Pressing settles it back. The overview arrow nudges left. Dark gets a stronger black shadow so the lift reads. Under reduced motion, hover keeps only its border and shadow.
+
+## Iteration 20 — ESP and ADI pages, Columbia/ADI logos (25 Oct 2026)
+
+**Sources:** `handoff/content/work/esp-teaching.md` and `adi-mentorship.md` (found by title). Both already held the supplied replacement text exactly. Every approved line is on its page and nothing from the notes. "Peer Instructor" is shown as the copy has it, never as an appointment; participation (Spring 2024) is kept apart from the teaching dates; program-wide offerings are set apart. ADI shows six anonymous mentees across two cohorts, with no outcomes or placements.
+
+**Logos:** they live in `public/logos/` (the brief said `public/assets/logos/`).
+- **Colour mapping:** confirmed by pixel inspection, deep (light theme) and pale (dark theme), identical bounds.
+- **`ThemeLogo` component:** renders both variants in one box and swaps them with the pre-paint `data-theme`, so there's no wrong-colour first frame, no shift, and a single labelled image for screen readers.
+- **ADI:** `adi-mark.png` is a cropped copy of `ADI.png` with deliberate padding, shown in a fully rounded, overflow-hidden pill. Its blue and white are identical in both themes, and the original is kept.
+
+**Homepage (logo only):** the Teaching & mentorship card's generic icon and tile are replaced by the standalone Columbia crown, in the same 60px slot, 38px of visible artwork, centred. It's deep blue in both themes because the lavender card stays light. Markup differs only by that element, and pixels change only inside the slot (0 outside).
+
+**Drawer:** the Teaching entry shows the crown untiled, with ADI's pill beside its link.
+
+**Pages:** `content/columbia.ts` + `components/columbia/{ColumbiaParts,EspPage,AdiPage}.tsx` + `columbia.css`, with the Columbia wordmark in both headers (ADI adds its pill). Accents are the wordmark's own blue #1E4F91 in light and #a8d2f7 in dark.
+- **ESP:** the progression first (Spring 2024 student → Fall 2024 teaching assistant → Spring 2025 teaching, on one thread), then "What is ESP?", the week with one small algorithms example and "Across the program" set apart, and the reflection. One figure.
+- **ADI:** what ADI is, how matching worked (three steps, plus two cohorts of three anonymous dots), the four themes as a numbered editorial index with the closing line as a pull, continuity, and the reflection.
+
+**Found and fixed while verifying:** the QA flagged "2027" in hashed asset names on the dev build. The claim checks now read visible text only.
+
+## Iteration 19 — research publications (PMMY, teenage pregnancy) + consistency pass (25 Oct 2026)
+
+**Sources:** `handoff/content/work/pmmy-research.md` and `handoff/content/work/teenage-pregnancy-research.md` (found by title). Every approved line is on each page and nothing from their notes.
+- **Attribution kept:** exact published titles; both authors; Anya as lead researcher; Reetu Jain as mentor and co-author.
+- **Links:** only the two supplied in the teenage-pregnancy file (paper PDF, Project Ārogya), both checked live. No PMMY link was supplied, so none is shown.
+
+**Built:** `content/research.ts` + `components/research/{ResearchParts,PmmyPage,TeenPage}.tsx` + `research.css`.
+- **Shared parts:** hero, publication card (exact title, authors, journal, volume, issue, month, pages; paper access; a jump to the reference), question, numbered steps, tables, and a reference with the companion paper. Each page sets only its accent (PMMY burgundy/rose; teen teal/aqua/apricot), lifted in dark mode on the site's own night.
+- **Cross-links:** the companion-paper card, plus contextual links where Saksharta spans both projects.
+- **PMMY figures:**
+  - a methods diagram of the two strands, with the movie-review training material drawn apart (dashed) from the tweet flow;
+  - the sentiment chart as directly labelled HTML bars drawn to 78 / 12 / 10, with the data table beside it (the plot is hidden from assistive tech; the table carries the data) and the notes' caption plus the copy's own "not approval or accuracy" line;
+  - the barriers as chips;
+  - no financial trend chart.
+- **Teen figures and sections:**
+  - five NFHS rounds across 1992–2021, "in order, not to scale" (no invented round years), feeding preparation → exploratory analysis / linear regression → interpretation;
+  - findings in words, each with its association-not-causation note;
+  - the hospital as one 2022 event in three parts (presented, led the discussion, retained internally);
+  - Project Ārogya with the 200+ reach, the four roles in the copy's words, one small optional photo slot, the Ārogya link and the participation-not-outcomes line;
+  - no regression metric values.
+- **Consistency pass** (`qa/consistency.mjs`) across TMU, GVI, both research pages, Crackd and Buzzworks: identical header and drawer, On this page, h1/h2/body scale, line height, section rhythm, content column, measure, and light/dark backgrounds, plus a skip link, main landmark and one h1 on each. No regressions, so no changes were needed.
+
+**Found and fixed while verifying:**
+1. The hero repeated the page name under the breadcrumb. The approved "Publication" fact replaces it.
+2. A heading and its TOC label could start a line with an em dash. Word joiners keep the dash with the preceding word.
+3. Link arrows sat tight against their labels.
+4. The detector flagged a thick accent border on the rounded publication card. It's now a short running-head rule above the card's label.
+
+## Iteration 18 — GVI conservation case study (25 Oct 2026)
+
+**Source:** `handoff/content/work/gvi-conservation.md`. Every approved line is on the page and nothing from its internal notes.
+- **Boundaries kept:** an early working model, not a deployed system; the lion relocation observed, not performed; the 50 km event "helped organize and participated in", with no fundraising total or personal distance; aerial surveys omitted; the certificate as text.
+
+**Built:** `content/gvi.ts`, `content/gvi-photos.ts` (the replaceable photo configuration) and `components/gvi/{GviPage,PhotoSlot}.tsx` + `gvi.css`, routed in `[slug]`. It reuses the header drawer, theme control, "On this page" and `case.css`. The work.ts name "GVI · South Africa" is kept for the pager labels.
+
+**Design:** a personal field journal in the portfolio's own background, serif and thread. Proposed bushveld accents (forest, sage, earth, sand) mark and annotate only; dark mode keeps the site's night with a faint green tint on surfaces, and the forest accent is lifted to #b4cda2.
+- **The turn first and last:** the opening ends on "It opened a direction…" in large forest serif under a pencilled rule. "What stayed with me" closes the page on its one tinted panel.
+- **Four parts:** I · Fieldwork, II · Data, III · Practical and community work, IV · What followed, each a numbered marker with a fading sage rule.
+- **Field-note devices from the copy's own words:**
+  - a placement entry heading;
+  - survey and method logs;
+  - observed / attended entries for the decisions section;
+  - a formats log;
+  - the questions beyond a demonstration;
+  - an "After the internship" note keeping the later ideas apart from the model work;
+  - the certificate set as text in a double-ruled frame.
+- **Photographs:** three slots only — a wide opening (21:9, 4:3 on phones), a portrait fieldwork image beside "In the field", and community teaching (3:2). Each placeholder is quiet: a viewfinder, "Photograph to come", what belongs there, and a field-note caption. No stock images, video or autoplay.
+- **Figure:** the binocular figure stands on the rule beside the field logs, away from every photograph.
+
+**Found and fixed while verifying:**
+1. The breadcrumb didn't name the page; it now carries the approved name, "GVI · South Africa".
+2. The thread check flagged a full-width dates box. The line is now its own width; the thread never touched the text.
+3. The detector flagged a side-stripe accent on the turning-point line. It's now a short rule above the line.
+4. The field logs had uneven heights, and the opening photograph was capped to stay modest on short screens.
+
+## Iteration 17 — TMU citation-tooling case study (25 Oct 2026)
+
+**Source:** `handoff/content/work/tmu-citation-tooling.md`. Every approved line is on the page; nothing from its internal notes, and nothing confidential: no notebook, manuscript, sources or outputs, and no links or downloads. Date: "2025". Metrics: only the confirmed 800+ / 92% / 30%.
+
+**Built:** `content/tmu.ts` + `components/tmu/{TmuPage,Walkthrough}.tsx` + `tmu.css`, routed in `[slug]`. It reuses the header drawer, theme control, "On this page" and `case.css`. The work.ts name "Research tooling · TMU" is kept, so the neighbouring pages are unchanged.
+
+**Design:** an annotated research notebook in the portfolio's own background, serif and thread. TMU blue (#004C9B, lifted to #9cc3f2 in dark) marks stages, borders, links, the thread and selection; gold (#FFDC00) only annotates; the logo is unchanged.
+- **Problem first:** the intro and the problem, with Id., Ibid. and Supra set as signals and a pull line.
+- **Results:** "What I built", with one output panel for the confirmed results (the figures above the verbatim sentence).
+- **Walkthrough:** "One reference, followed through", one fictional reference across the five stages (original footnote → source match → in-text citation → bibliography entry → review row).
+  - Without JavaScript every stage, example and explanation is shown under plain headings, with no inert buttons.
+  - With JavaScript each stage is a button that reveals its explanation (one at a time); arrow keys and Home/End move between them, and touch works. Under reduced motion nothing moves.
+- **Six stages:** numbered cells ([01]–[06]) with a sentence from each set as a gold margin note. Stage 03 lists the source types. Stage 05 has a two-column bibliography output (a chapter list, and a master list where a doubly cited source appears once). Stage 06 lists the six documented columns, then an example review matrix with synthetic rows covering a shared source, an exception record and a retained explanatory note. On phones the matrix rows become labelled records.
+- **Editorial work:** "Beyond the code" as a proofreader's checklist (the paragraph's own phrases) beside the prose, with the reading figure standing on its rule.
+- **Closing:** "Engineering the workflow" as five connected modules; the Outputs and Tools tables; the lessons and the closing line.
+
+**Found and fixed while verifying:**
+1. The page thread's flourish looped through the hero's facts card. The facts became a full-width strip under the hero.
+2. The review matrix overflowed its panel at 1440px. Output panels now span the cell and the table fits; tablets scroll it in its own region.
+3. Under reduced motion the stage chevrons and the TOC marker still slid. They no longer transition.
+4. Lint rejected setting state in an effect for the "hydrated" flag. It now uses `useSyncExternalStore`.
+
+## Iteration 16 — Crackd refined, Buzzworks case study, shared detail navigation (25 Oct 2026)
+
+**Shared navigation (every detail page; homepage untouched):**
+- **Header:** "Browse work" now sits beside the name in the sticky header, through SiteHeader's new `lead` slot. The name stays a separate home link, and the sidebar trigger is gone.
+- **Phones:** the control reads "Work" (its accessible name is still "Browse work"). The four section links move into the sheet's footer, so the row fits at 360px.
+- **Motion:** a plain horizontal slide, 280ms in with gentle deceleration and 200ms out ease-in, with a backdrop fade. No blur, overshoot, scaling, stagger or hover movement, and the page behind never moves.
+- **Kept:** the native modal `<dialog>`, focus trap and restoration, Escape, scroll lock, current-page marking and real links. No shadcn MCP was connected.
+- **"On this page":** a shared `case.css` layout for both pages. Smooth scrolling now comes from the TOC itself, because document-level `scroll-behavior` was cutting short the browser's scroll restoration on Back (see 3 below).
+
+**Crackd (refined, not redesigned):**
+- **Light palette:** warm paper (#f5efe2), near-black ink, deliberate yellow.
+- **Hero:** September 2025–May 2026 sits above the title on a yellow label, then the real logo as the Crackd title on its own black plate (white lettering, never filtered), then the question and description. Role and Context are on an index card, and Period appears once.
+- **Chapter markers:** stronger, with black tabs and yellow numerals in light; dark mode keeps its yellow tabs.
+- **Applications:** the three sit on one near-black panel inside the light sheet, and each keeps its own register. A container query stacks them when the panel is narrow.
+- **Links:** table rows are marked as in-page jumps (↑, "section on this page"), distinct from the ↗ GitHub repositories. Demos are still omitted.
+
+**Buzzworks (new):** `content/buzzworks.ts` (verbatim) + `components/buzzworks/`.
+- **Look:** warm paper and charcoal, the supplied logo (on a paper label at night), and orange only for markers, highlights and selected states. The thread is in charcoal.
+- **Journey:** introduction and ownership ("sole developer", "from scratch" highlighted; where other teams' work met hers set apart), then one illustrative WhatsApp conversation.
+  - The conversation is fictional HTML with screen-reader speaker names, WhatsApp colours kept inside it, the notes' own caption, and numbered margin notes that jump to the documented flows.
+- **Then:** the nine flows as an index; personalisation; a conceptual system diagram (connections, not directions; labelled conceptual); the three difficult parts (a contrast line, the upload paragraph set as its own four steps, the chat / form / record layers); deployment with the rollout shown as "being prepared"; performance without numbers; tools; lessons.
+
+**Found and fixed while verifying:**
+1. The rollout note's text broke into flex columns.
+2. The conversation's list lost its numbers.
+3. The page thread used the orange accent. It's now charcoal on Buzzworks only.
+4. Crackd's plate tape collided with the date label, so the tape was removed. The user-app highlight was muddy on black and is now a yellow stroke.
+5. Crackd app names clipped at 1280px; they now stack by container query.
+6. The header trigger's hit area was exactly 44px, so a sub-pixel position failed it. It's now 46px.
+7. A translucent admin-card fill read as opaque to the theme test. The admin and matrix surfaces are now solid colour mixes.
+8. Back from a case study sometimes restored the homepage to the top (2 of 4 runs). Cause: `html { scroll-behavior: smooth }` from the case layout. Fixed as above; Back now restores exactly.
+
+## Iteration 15 — Crackd.ai page + work drawer (25 Oct 2026)
+
+**Source:** `handoff/content/work/crackd-ai.md` (revised). Every approved line is on the page (82 lines, `qa/crackd.mjs`); nothing from its implementation notes, retired claims (40% / 35%, TensorFlow, self-critique) or demo URLs is rendered.
+
+**Built:**
+- **Own page component:** `components/crackd/CrackdPage.tsx` + `content/crackd.ts`, chosen in the `[slug]` route. The other ten detail pages and the homepage are unchanged in markup and pixels (`qa/unchanged.mjs`).
+- **Look:** an engineering notebook in the portfolio's serif, paper and thread.
+  - Crackd black and yellow only where they mean something: the real logo as a taped sticker, yellow chapter tabs, a highlighter on "funny" (the one arrival moment) and on "a fairly low bar", and the black matrix card.
+  - The dark theme is a slightly deeper night (#1a1816).
+- **Backbone:** two dated phases joined by a thread that draws as you scroll, with a knot above each tab.
+  - **01 · September–December 2025 — "Contributions to the shared platform":** four short notes on the page.
+  - **02 · January–May 2026 — "My own implementations of the three applications":** a raised, ruled notebook sheet, with a figure seated on its edge.
+- **Three apps, three presentations:**
+  - User application: open and wide, in ink.
+  - Admin application: a tool panel with a ledger of the interfaces its paragraph names.
+  - LLM chaining matrix: a black card crossed by a knotted thread. The thread is decoration, not a diagram.
+  - Each app links only its own GitHub repository.
+- **Closing sections:** the questions set as a list beside a thinking figure, the punchline, the applications table (rows link to the app entries), tools, and credits.
+- **"On this page":** a sticky margin rail at ≥1100px, a compact index under the opening below that. Sections land 24px under the fixed header, and the current section is marked.
+- **"Browse work" drawer:** `components/WorkDrawer.tsx`, reusable and mounted only here.
+  - No shadcn MCP was connected and the project has no Radix or Tailwind, so it follows the Sheet anatomy on a native modal `<dialog>`.
+  - Behaviour: the background is inert, Tab wraps, Escape, overlay click or the close button dismiss it, scroll is locked, and focus starts on Crackd (marked "This page") and returns to the trigger.
+  - Arrow, Home and End keys move between entries; every entry is a real link; reduced motion fades it instead of sliding.
+  - Entries come from `site.ts`, styled with the homepage panels' tones and logos (the homepage components are untouched).
+  - On phones the trigger becomes a pill fixed at the bottom of the screen.
+
+**Found and fixed while verifying:**
+1. **Focus trap:** Tab could leave the modal for the browser's own controls. Tab and Shift+Tab now wrap inside the sheet.
+2. **Thread through the markers:** the phase thread crossed the dates and scope text. The text now sits beside the thread, and the marker column was widened.
+3. **Repo names:** names broke mid-word ("…interfac / e"). They now break only after `_` or `-`; the admin card was relaid so its repo link has room.
+4. **User-app highlight:** on a wrapped name it painted one full-width bar. It now follows each line.
+5. **Sticker tape:** the tape covered the logo's eyes on phones. It now sits on the corner.
+6. **Late highlight:** it finished too late in the scroll. Its range now ends earlier.
+7. **QA:** `check.mjs`'s template-avatar test assumed Crackd used the template. It now checks the other ten pages and Crackd's own placement separately.
+
 ## Iteration 14 — homepage copy from the revised home.md (25 Oct 2026)
 
 **Source:** `handoff/content/home.md` (revised) is the authority for every homepage string. All 53 approved strings are on the page and none of the retired copy remains (`qa/copy.mjs`).

@@ -253,3 +253,44 @@ Decisions (keep through compaction):
 - **Trajectory:** the note band reserves three lines; notes are re-quoted from the new About text.
 - **LinkedIn:** now linked; Résumé is still a placeholder.
 - **QA:** new `qa/copy.mjs` (93 checks plus screenshots in `qa/screenshots/copy/`).
+
+## Iteration 15 — Crackd.ai page + work drawer (25 Oct 2026)
+- **Crackd page:** `content/crackd.ts` (from crackd-ai.md) + `components/crackd/CrackdPage.tsx` + `crackd.css`, chosen in `app/work/[slug]/page.tsx` (`slug === "crackd-ai"`).
+  - `work.ts`'s Crackd record now only supplies the name, title, description and pager place; the retired claims are removed.
+- **Reusable components:** `components/WorkDrawer.tsx/.css` (native modal `<dialog>` sheet; data from `content/work-index.ts`) and `components/OnThisPage.tsx/.css`. Both are mounted on Crackd only.
+- **CSS scope:** component CSS only, scoped to `.theme-crackd`, `.sheet*` and `.toc*`; `globals.css` is untouched. The only document-level rules are `html[data-sheet-open]` and `html:has(.theme-crackd)`.
+- **QA:** new `qa/crackd.mjs` (61) and `qa/unchanged.mjs` (snapshots in `qa/screenshots/unchanged/base`; re-snap after intended changes elsewhere).
+
+## Iteration 16 — Crackd refined, Buzzworks, shared detail navigation (25 Oct 2026)
+- **Header:** `SiteHeader` takes `lead`. Every detail page passes `<WorkDrawer current={slug} />`; the homepage passes nothing. Header styles live in `WorkDrawer.css` (`.site-header .sheet-trigger`, and `.site-header[data-lead]` on phones).
+- **Layout:** `components/case/case.css` holds the shared case-study layout (`.case-layout/.case-rail/.case-content`). There is no document-level smooth scroll; OnThisPage scrolls itself.
+- **Buzzworks:** `content/buzzworks.ts` + `components/buzzworks/{BuzzworksPage.tsx,buzzworks.css}`, routed in `[slug]`. `work.ts` keeps only its name, title, description and pager place; the old sub-200ms claim is removed.
+- **QA:** new `qa/buzzworks.mjs` and `qa/case-shots.mjs`; `qa/unchanged.mjs --mask-header`.
+
+## Iteration 17 — TMU citation-tooling case study (25 Oct 2026)
+- **Page:** `content/tmu.ts` (verbatim copy plus clearly separated fictional examples) + `components/tmu/{TmuPage.tsx,Walkthrough.tsx,tmu.css}`, routed in `[slug]`.
+- **work.ts:** the TMU record keeps its name and pager place, with period "2025" (end null); the old 2027 placeholder and figure are removed.
+- **QA:** new `qa/tmu.mjs` (33). The unchanged guard skips the three bespoke pages.
+
+## Iteration 18 — GVI conservation case study (25 Oct 2026)
+- **Page:** `content/gvi.ts` (verbatim) + `content/gvi-photos.ts` (three photo slots: set `src` to replace a placeholder) + `components/gvi/{GviPage.tsx,PhotoSlot.tsx,gvi.css}`, routed in `[slug]`.
+- **work.ts:** the GVI record keeps its name and pager place, with period "Summer 2024"; the 2027 placeholder and old figure are removed.
+- **QA:** new `qa/gvi.mjs` (32). The unchanged guard skips the four bespoke pages.
+
+## Iteration 19 — research publications + consistency (25 Oct 2026)
+- **Pages:** `content/research.ts` (both papers verbatim, plus `companion` and `arogyaPhoto`) + `components/research/{ResearchParts.tsx,PmmyPage.tsx,TeenPage.tsx,research.css}`, routed in `[slug]`.
+- **work.ts:** the two records keep their names and pager places; the old claims and "Paper link to come" entries are removed.
+- **QA:** new `qa/research.mjs` (56) and `qa/consistency.mjs` (18). The unchanged guard skips all six bespoke pages.
+
+## Iteration 20 — ESP and ADI, Columbia/ADI logos (25 Oct 2026)
+- **Pages:** `content/columbia.ts` + `components/columbia/*` (routed in `[slug]`) and `components/ThemeLogo.{tsx,css}` (theme-variant logos, CSS-swapped from `data-theme`).
+- **Homepage:** WorkPanels' Teaching look uses `/logos/columbia-crown-light.png` with `backing: "bare"` (`.panel__logo--bare` in globals.css).
+- **Drawer:** `work-index.ts` has the crown on Teaching and `drawerSubMarks` for the ADI pill.
+- **Assets:** derived `public/logos/adi-mark.png`.
+- **QA:** new `qa/columbia.mjs` (53).
+
+## Iteration 21 — navigation and accent refinement (25 Oct 2026)
+- **Nav:** `SiteHeader` takes `workMenu` (replacing `lead`). `WorkDrawer` renders the nav Work button with a chevron and portals the dialog to `body`; the drawer starts with "Back to work overview". The underline is a `currentColor` mask in globals.css.
+- **Pages:** the Buzzworks `.bz-brand` symbol and serif name, plus a 31rem chat window. Crackd Light stone apps, with Dark re-scoped. GVI uses `ThemeLogo` (`gvi.webp` / `gvi-white.png`) and an open close.
+- **QA:** new `qa/refine.mjs` (30); trigger and brand checks updated in crackd, buzzworks and gvi.
+- **Follow-up:** drawer timing is 500ms in (`cubic-bezier(.32,.72,0,1)`) and 320ms out (`--sheet-out`); hover lift on entries (WorkDrawer.css); `qa/drawer-motion.mjs` added.

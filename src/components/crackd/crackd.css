@@ -1,0 +1,1158 @@
+/* =====================================================================
+   Crackd.ai — an engineering notebook (CrackdPage.tsx)
+   The portfolio's paper, serif and thread, with Crackd's black and yellow
+   kept to what carries meaning: the logo, the chapter numbers, a
+   highlighter, the matrix. Every rule is scoped to .theme-crackd.
+   ===================================================================== */
+
+/* light: warm paper, near-black ink, yellow used on purpose */
+.theme-crackd {
+  --bg: #f5efe2;
+  --surface: #fbf7ee;
+  --text: #17150f;
+  --ink-2: #2d2923;
+  --ink-3: #3b362e;
+  --muted: #5a5348;
+  --rule: #dccfb9;
+  --rule-strong: #c2b293;
+  --line: #2b2721; /* the thread, in near-black ink */
+  --ck-ink: #17150f;
+  --ck-black: #161512; /* the logo's own black, in both themes */
+  --ck-yellow: #f2cb3d; /* chapter numerals, tape, the dates */
+  --ck-yellow-soft: rgba(242, 203, 61, 0.55); /* the highlighter */
+  --ck-yellow-ink: #6f5300; /* yellow-family text on paper (AA) */
+  --ck-sheet: #fffcf4;
+  --ck-ruled: rgba(60, 48, 30, 0.07);
+  --ck-measure: 64ch;
+  --accent: #17150f; /* links and the breadcrumb in ink */
+  --selection: rgba(242, 203, 61, 0.45);
+}
+/* dark: a slightly deeper night than the rest of the site */
+:root[data-theme="dark"] .theme-crackd {
+  --bg: #1a1816;
+  --surface: #23201d;
+  --text: #f2ebdd;
+  --ink-2: #e3dacb;
+  --ink-3: #d2c8b9;
+  --muted: #cbc1b2;
+  --line: #d6c5ae;
+  --rule: #3c3530;
+  --rule-strong: #554b42;
+  --ck-ink: #f2ebdd;
+  --ck-yellow: #e0c057;
+  --ck-yellow-soft: rgba(224, 192, 87, 0.33);
+  --ck-yellow-ink: #e3c560;
+  --ck-sheet: #221f1c;
+  --ck-ruled: rgba(242, 235, 221, 0.04);
+  --accent: #e8c86a;
+  --selection: rgba(224, 192, 87, 0.32);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .theme-crackd {
+    --bg: #1a1816;
+    --surface: #23201d;
+    --text: #f2ebdd;
+    --ink-2: #e3dacb;
+    --ink-3: #d2c8b9;
+    --muted: #cbc1b2;
+    --line: #d6c5ae;
+    --rule: #3c3530;
+    --rule-strong: #554b42;
+    --ck-ink: #f2ebdd;
+    --ck-yellow: #e0c057;
+    --ck-yellow-soft: rgba(224, 192, 87, 0.33);
+    --ck-yellow-ink: #e3c560;
+    --ck-sheet: #221f1c;
+    --ck-ruled: rgba(242, 235, 221, 0.04);
+    --accent: #e8c86a;
+    --selection: rgba(224, 192, 87, 0.32);
+  }
+}
+
+.theme-crackd ::selection {
+  background: var(--selection);
+}
+.theme-crackd :is(.ck-section, .ck-phase, .ck-app) {
+  scroll-margin-top: calc(var(--header-h) + 1.5rem);
+}
+.theme-crackd a:focus-visible {
+  outline: 2px solid var(--ck-ink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ------------------------------------------------------- highlighter */
+.theme-crackd .ck-hl {
+  padding-inline: 0.06em;
+  margin-inline: -0.06em;
+  background-image: linear-gradient(
+    176deg,
+    transparent 0 52%,
+    var(--ck-yellow-soft) 52% 90%,
+    transparent 90%
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+/* the one authored moment on arrival: the highlighter crosses "funny" */
+@media (prefers-reduced-motion: no-preference) {
+  .theme-crackd .ck-hero .ck-hl {
+    animation: ck-swipe 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.35s both;
+  }
+  @supports (animation-timeline: view()) {
+    .theme-crackd .ck-hl--late {
+      animation: ck-swipe linear both;
+      animation-timeline: view();
+      animation-range: entry 30% cover 30%;
+    }
+  }
+}
+@keyframes ck-swipe {
+  from {
+    background-size: 0% 100%;
+  }
+}
+
+/* ------------------------------------------------------------ opening */
+.theme-crackd .ck-hero {
+  padding-bottom: clamp(2.5rem, 5vw, 3.75rem);
+}
+.ck-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 21rem);
+  align-items: end;
+  gap: clamp(2rem, 5vw, 5rem);
+}
+/* the dates first, marked with the highlighter */
+.ck-hero__dates {
+  width: fit-content;
+  padding: 0.2rem 0.55rem 0.18rem;
+  border-radius: 3px;
+  background: var(--ck-yellow);
+  color: var(--ck-black);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-variant-numeric: lining-nums;
+}
+:root[data-theme="dark"] .ck-hero__dates {
+  background: transparent;
+  padding-inline: 0;
+  color: var(--ck-yellow-ink);
+}
+/* then Crackd itself: the real logo on its own black plate (its lettering is white) */
+.ck-plate {
+  position: relative;
+  width: fit-content;
+  margin: clamp(1.1rem, 2vw, 1.5rem) 0 clamp(1.25rem, 2.4vw, 1.75rem);
+  padding: 0.8rem 1.1rem 0.75rem;
+  border-radius: 12px;
+  background: var(--ck-black);
+  rotate: -2deg;
+  box-shadow:
+    0 1px 2px rgb(var(--shade) / 0.2),
+    0 18px 28px -18px rgb(var(--shade) / 0.6);
+}
+.ck-plate__logo {
+  display: block;
+  width: clamp(8.75rem, 12vw, 11rem);
+  height: auto;
+}
+.ck-plate__tape {
+  position: absolute;
+  top: -0.55rem;
+  right: -0.9rem;
+  width: 3.6rem;
+  height: 1.2rem;
+  rotate: 24deg;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--ck-yellow) 75%, transparent);
+  mix-blend-mode: multiply;
+}
+:root[data-theme="dark"] .ck-plate {
+  box-shadow:
+    inset 0 0 0 1px rgba(242, 235, 221, 0.1),
+    0 18px 28px -16px rgb(0 0 0 / 0.75);
+}
+:root[data-theme="dark"] .ck-plate__tape {
+  mix-blend-mode: normal;
+  background: color-mix(in srgb, var(--ck-yellow) 60%, transparent);
+}
+.theme-crackd .ck-hero__title {
+  max-width: 12.5ch;
+  text-wrap: balance;
+}
+.theme-crackd .ck-hero__subtitle {
+  max-width: 34ch;
+}
+
+/* the remaining facts, on an index card */
+.ck-meta {
+  margin: 0 0 0.5rem;
+  padding: 0.35rem 1.35rem 0.6rem;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 14px 28px -24px rgb(var(--shade) / 0.5);
+}
+.ck-meta__item {
+  padding-block: 0.9rem;
+}
+.ck-meta__item + .ck-meta__item {
+  border-top: 1px dashed var(--rule-strong);
+}
+.ck-meta dt {
+  color: var(--ck-yellow-ink);
+}
+.ck-meta dd {
+  margin: 0.35rem 0 0;
+  font-size: 0.9688rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* ------------------------------------------------------------ sections */
+.ck-section {
+  padding-block: clamp(3rem, 6vw, 4.75rem);
+  border-top: 1px solid var(--rule);
+}
+.ck-h2 {
+  font-family: var(--serif);
+  font-size: clamp(2.1rem, 3.7vw, 3.05rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  max-width: 21ch;
+  text-wrap: balance;
+}
+.ck-h2--small {
+  font-size: clamp(1.7rem, 2.6vw, 2.1rem);
+}
+.ck-h3 {
+  margin-top: 0.7rem;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1.35rem, 2vw, 1.65rem);
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--ink-2);
+}
+.ck-prose {
+  max-width: var(--ck-measure);
+}
+.ck-prose p + p {
+  margin-top: 1.1em;
+}
+.ck-prose p {
+  text-wrap: pretty;
+}
+
+/* What is Crackd? */
+.ck-intro__opening {
+  margin: clamp(1.25rem, 2.4vw, 1.75rem) 0 clamp(1.5rem, 3vw, 2.25rem);
+  max-width: 24ch;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1.6rem, 2.7vw, 2.2rem);
+  line-height: 1.18;
+  color: var(--ck-ink);
+  text-wrap: balance;
+}
+.ck-term {
+  background-image: linear-gradient(transparent 62%, var(--ck-yellow-soft) 62% 92%, transparent 92%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.ck-bridge {
+  position: relative;
+  margin-top: clamp(2.25rem, 4vw, 3rem);
+  max-width: 40ch;
+  padding-right: 3rem;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1.3rem, 1.9vw, 1.5rem);
+  line-height: 1.3;
+  color: var(--ink-2);
+}
+.ck-bridge__arrow {
+  position: absolute;
+  right: 0;
+  bottom: -2.9rem;
+  width: 1.9rem;
+  height: auto;
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+}
+
+/* ------------------------------------------------- the two phases */
+.ck-phases {
+  --mark-w: 12.25rem;
+  --spine-x: 2.2rem; /* the centre of a chapter tab */
+  position: relative;
+  border-top: 1px solid var(--rule);
+}
+/* the thread from one chapter to the next: drawn as the phases scroll past
+   (where supported), otherwise simply there */
+.ck-spine {
+  position: absolute;
+  left: calc(var(--spine-x) - 0.75px);
+  top: clamp(2.75rem, 5.5vw, 4.5rem);
+  bottom: 18%;
+  width: 1.5px;
+  background: var(--line);
+  border-radius: 1px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent);
+  mask-image: linear-gradient(to bottom, #000 82%, transparent);
+  transform-origin: top;
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .ck-spine {
+      animation: ck-grow linear both;
+      animation-timeline: view();
+      animation-range: entry 15% contain 30%;
+    }
+  }
+}
+@keyframes ck-grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+.ck-phase {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--mark-w) minmax(0, 1fr);
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  padding-block: clamp(2.75rem, 5.5vw, 4.5rem);
+}
+.ck-phase__marker {
+  position: relative;
+  z-index: 1;
+}
+/* the chapter numerals: black tabs with a yellow numeral on paper; yellow
+   tabs with a black numeral at night */
+.ck-phase__n {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 4.9rem;
+  height: 4.9rem;
+  border-radius: 13px;
+  background: var(--ck-black);
+  color: var(--ck-yellow);
+  font-family: var(--serif);
+  font-size: 2.9rem;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: lining-nums;
+  rotate: -3deg;
+  box-shadow:
+    0 1px 1px rgb(var(--shade) / 0.14),
+    0 14px 22px -14px rgb(var(--shade) / 0.6);
+}
+:root[data-theme="dark"] .ck-phase__n {
+  background: var(--ck-yellow);
+  color: var(--ck-black);
+}
+.ck-phase--2 .ck-phase__n {
+  rotate: 2.5deg;
+}
+/* the thread knots itself just above each tab */
+.ck-knot {
+  position: absolute;
+  bottom: calc(100% - 0.35rem);
+  left: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  translate: -50% 0;
+  rotate: 3deg;
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+}
+/* the dates and scope sit beside the thread, never across it */
+.ck-phase__dates,
+.ck-phase__scope {
+  margin-left: calc(var(--spine-x) + 0.9rem);
+}
+.ck-phase__dates {
+  margin-top: 1.05rem;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-wrap: balance;
+  text-transform: uppercase;
+  color: var(--ck-ink);
+}
+.ck-phase__scope {
+  margin-top: 0.35rem;
+  max-width: 13ch;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.12rem;
+  line-height: 1.25;
+  color: var(--muted);
+}
+.ck-phase__intro {
+  margin-top: 1.25rem;
+}
+
+/* 01 — notes on the page: four short entries, no boxes */
+.ck-notes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.75rem, 3vw, 2.5rem) clamp(1.75rem, 4vw, 3.25rem);
+  margin-top: clamp(2rem, 4vw, 2.75rem);
+}
+.ck-note {
+  padding-top: 1rem;
+  border-top: 1px dashed var(--rule-strong);
+}
+.ck-note__title {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+.ck-note p {
+  margin-top: 0.55rem;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.ck-note p + p {
+  margin-top: 0.75em;
+}
+
+/* 02 — my own build, on a raised notebook sheet: more room, more depth */
+.ck-phase--2 {
+  /* room above the sheet for the figure sitting on its edge */
+  padding-top: calc(clamp(2.75rem, 5.5vw, 4.5rem) + 5.25rem);
+}
+.ck-phase--2 .ck-phase__marker {
+  padding-top: 1.75rem;
+}
+.ck-sheet {
+  position: relative;
+  padding: clamp(1.75rem, 4vw, 3.25rem) clamp(1.35rem, 4vw, 3.25rem) clamp(1.75rem, 3.5vw, 2.75rem);
+  border: 1px solid color-mix(in srgb, var(--rule) 80%, transparent);
+  border-radius: 8px;
+  background-color: var(--ck-sheet);
+  background-image: repeating-linear-gradient(to bottom, transparent 0 calc(2.1rem - 1px), var(--ck-ruled) calc(2.1rem - 1px) 2.1rem);
+  background-position: 0 1.1rem;
+  box-shadow:
+    0 1px 2px rgb(var(--shade) / 0.07),
+    0 30px 50px -34px rgb(var(--shade) / 0.5),
+    0 10px 18px -16px rgb(var(--shade) / 0.25);
+}
+:root[data-theme="dark"] .ck-sheet {
+  border-color: #332d28;
+  box-shadow:
+    inset 0 1px 0 rgba(242, 235, 221, 0.04),
+    0 30px 50px -30px rgb(0 0 0 / 0.75);
+}
+.ck-sheet__tape {
+  position: absolute;
+  top: -0.65rem;
+  width: 5.5rem;
+  height: 1.35rem;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--ck-yellow) 62%, transparent);
+  mix-blend-mode: multiply;
+}
+.ck-sheet__tape--l {
+  left: 2.25rem;
+  rotate: -3deg;
+}
+.ck-sheet__tape--r {
+  right: 13rem;
+  rotate: 2.5deg;
+  width: 4rem;
+}
+:root[data-theme="dark"] .ck-sheet__tape {
+  mix-blend-mode: normal;
+  background: color-mix(in srgb, var(--ck-yellow) 45%, transparent);
+}
+.ck-sheet .ck-h2 {
+  max-width: 17ch;
+}
+.ck-sheet__outro {
+  margin-top: clamp(2rem, 4vw, 2.75rem);
+  padding-top: 1.25rem;
+  max-width: 44ch;
+  border-top: 1px dashed var(--rule-strong);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1.3rem, 1.9vw, 1.5rem);
+  line-height: 1.3;
+}
+
+/* she sits on the sheet's top edge with her laptop */
+.avatar--ck-build {
+  right: clamp(1.25rem, 4vw, 3rem);
+  bottom: calc(100% - 1px);
+  width: clamp(6.75rem, 9.5vw, 8.25rem);
+  transform: translateY(var(--sink));
+}
+
+/* ------------------------------------------------- the three applications */
+/* light: the builds sit directly on the notebook sheet — the user app open,
+   the admin and matrix entries on pale-stone surfaces close to the paper,
+   with fine borders and soft shadows; yellow as short rules and marks.
+   dark: one near-black panel holds all three (below, unchanged). */
+.ck-apps {
+  display: grid;
+  gap: clamp(1.25rem, 2.5vw, 1.75rem);
+  container-type: inline-size;
+  margin-top: clamp(2.25rem, 4vw, 3rem);
+  --ck-stone: #efe8da; /* a step from the sheet, warmer than gray */
+}
+:root[data-theme="dark"] .ck-apps {
+  --ck-panel: #12110f;
+  --ck-ink: #f2ebdd;
+  --ink-2: #ddd4c4;
+  --muted: #bdb4a3;
+  --rule: rgba(242, 235, 221, 0.14);
+  --rule-strong: rgba(242, 235, 221, 0.24);
+  --ck-yellow-soft: rgba(240, 207, 85, 0.32);
+  padding: clamp(1.5rem, 3.5vw, 2.5rem);
+  margin-inline: calc(-1 * clamp(0.5rem, 1.5vw, 1.25rem));
+  border-radius: 12px;
+  background: var(--ck-panel);
+  color: var(--ck-ink);
+  box-shadow:
+    inset 0 0 0 1px rgba(242, 235, 221, 0.08),
+    0 26px 44px -26px rgb(0 0 0 / 0.8);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .ck-apps {
+    --ck-panel: #12110f;
+    --ck-ink: #f2ebdd;
+    --ink-2: #ddd4c4;
+    --muted: #bdb4a3;
+    --rule: rgba(242, 235, 221, 0.14);
+    --rule-strong: rgba(242, 235, 221, 0.24);
+    --ck-yellow-soft: rgba(240, 207, 85, 0.32);
+    padding: clamp(1.5rem, 3.5vw, 2.5rem);
+    margin-inline: calc(-1 * clamp(0.5rem, 1.5vw, 1.25rem));
+    border-radius: 12px;
+    background: var(--ck-panel);
+    color: var(--ck-ink);
+    box-shadow:
+      inset 0 0 0 1px rgba(242, 235, 221, 0.08),
+      0 26px 44px -26px rgb(0 0 0 / 0.8);
+  }
+}
+.ck-app {
+  position: relative;
+}
+.ck-app__name {
+  font-family: var(--serif);
+  font-size: clamp(1.65rem, 2.5vw, 2.15rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+}
+.ck-app__lede {
+  margin-top: 0.6rem;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1.2rem, 1.7vw, 1.4rem);
+  line-height: 1.3;
+  text-wrap: pretty;
+}
+.ck-app__body p {
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+/* the user application: the audience's side — open, wide, in the page's ink */
+.ck-app--user {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: 1.25rem clamp(1.5rem, 4vw, 3rem);
+  padding: 1.1rem 0 0.75rem;
+}
+/* a short yellow rule opens it */
+.ck-app--user::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2.75rem;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ck-yellow);
+}
+/* the highlighter as a yellow stroke under the words, line by line */
+.ck-app__mark {
+  background-image: linear-gradient(transparent 84%, #f0cf55 84% 92%, transparent 92%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* the admin application: a tool panel with its ledger of interfaces */
+.ck-app--admin {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(13rem, 16rem);
+  grid-template-areas:
+    "head ledger"
+    "body body";
+  gap: 1rem clamp(1.5rem, 3.5vw, 2.75rem);
+  padding: clamp(1.35rem, 3vw, 2rem);
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: var(--ck-stone);
+  box-shadow: 0 1px 1px rgb(var(--shade) / 0.05), 0 14px 26px -22px rgb(var(--shade) / 0.45);
+}
+.ck-app--admin .ck-app__head {
+  grid-area: head;
+}
+.ck-app--admin .ck-app__body {
+  grid-area: body;
+  max-width: 62ch;
+}
+.ck-ledger {
+  grid-area: ledger;
+  align-self: start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+.ck-ledger li {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.7rem 0.15rem;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.9375rem;
+  line-height: 1.3;
+  color: var(--ink-2);
+}
+.ck-ledger li::first-letter {
+  text-transform: uppercase;
+}
+.ck-ledger svg {
+  flex: none;
+  width: 1.15rem;
+  height: 1.15rem;
+  padding: 0.12rem;
+  border-radius: 4px;
+  background: var(--ck-yellow-soft);
+  fill: none;
+  stroke: var(--ck-ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* the matrix: the lab — a thread through knots across its top */
+.ck-app--matrix {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: 1.25rem clamp(1.5rem, 4vw, 3rem);
+  padding: clamp(2.6rem, 4.5vw, 3.25rem) clamp(1.35rem, 3vw, 2.25rem) clamp(1.5rem, 3vw, 2.25rem);
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+  background: var(--ck-stone);
+  box-shadow: 0 1px 1px rgb(var(--shade) / 0.05), 0 14px 26px -22px rgb(var(--shade) / 0.45);
+  overflow: hidden;
+}
+.ck-chain {
+  position: absolute;
+  top: 0.55rem;
+  left: 0;
+  width: 100%;
+  height: 1.9rem;
+  fill: none;
+  stroke: #c9a018; /* the yellow, deep enough to read on stone */
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.9;
+}
+
+:root[data-theme="dark"] .ck-apps a:focus-visible {
+  outline-color: #f0cf55;
+}
+:root[data-theme="dark"] .ck-app--user::before {
+  display: none;
+}
+:root[data-theme="dark"] .ck-app--admin {
+  border-color: var(--rule-strong);
+  background: color-mix(in srgb, #f2ebdd 4%, var(--ck-panel));
+  box-shadow: none;
+}
+:root[data-theme="dark"] .ck-app--matrix {
+  border-color: rgba(240, 207, 85, 0.38);
+  background-color: color-mix(in srgb, #f0cf55 3%, var(--ck-panel));
+  background-image: linear-gradient(180deg, rgba(240, 207, 85, 0.05), transparent 60%);
+  box-shadow: none;
+}
+:root[data-theme="dark"] .ck-app--matrix .ck-app__name {
+  color: #f0cf55;
+}
+:root[data-theme="dark"] .ck-app--matrix .ck-app__lede {
+  color: #e8dfcd;
+}
+:root[data-theme="dark"] .ck-app--matrix .ck-app__body p {
+  color: #d9d0bf;
+}
+:root[data-theme="dark"] .ck-chain {
+  stroke: #e0c057;
+  opacity: 0.75;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .ck-apps a:focus-visible {
+    outline-color: #f0cf55;
+  }
+  :root:not([data-theme]) .ck-app--user::before {
+    display: none;
+  }
+  :root:not([data-theme]) .ck-app--admin {
+    border-color: var(--rule-strong);
+    background: color-mix(in srgb, #f2ebdd 4%, var(--ck-panel));
+    box-shadow: none;
+  }
+  :root:not([data-theme]) .ck-app--matrix {
+    border-color: rgba(240, 207, 85, 0.38);
+    background-color: color-mix(in srgb, #f0cf55 3%, var(--ck-panel));
+    background-image: linear-gradient(180deg, rgba(240, 207, 85, 0.05), transparent 60%);
+    box-shadow: none;
+  }
+  :root:not([data-theme]) .ck-app--matrix .ck-app__name {
+    color: #f0cf55;
+  }
+  :root:not([data-theme]) .ck-app--matrix .ck-app__lede {
+    color: #e8dfcd;
+  }
+  :root:not([data-theme]) .ck-app--matrix .ck-app__body p {
+    color: #d9d0bf;
+  }
+  :root:not([data-theme]) .ck-chain {
+    stroke: #e0c057;
+    opacity: 0.75;
+  }
+}
+
+/* a repository: a small code card (the repository's name is code, so it's set as code) */
+.ck-repo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  max-width: 100%;
+  margin-top: 1.15rem;
+  padding: 0.55rem 0.8rem 0.55rem 0.65rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: 9px;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color 0.2s var(--ease),
+    background-color 0.2s var(--ease),
+    transform 0.25s var(--ease);
+}
+.ck-repo:hover {
+  border-color: var(--ck-ink);
+  background: var(--ck-yellow-soft);
+}
+.ck-repo__icon {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ck-repo__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.ck-repo__kind {
+  font-size: 0.6875rem;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.ck-repo__name {
+  overflow-wrap: break-word;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+.ck-repo__go {
+  margin-left: 0.15rem;
+  transition: translate 0.25s var(--ease);
+}
+.ck-repo:hover .ck-repo__go {
+  translate: 2px -2px;
+}
+/* on the dark panel only; in light the repo card keeps its paper styling */
+:root[data-theme="dark"] .ck-app--matrix .ck-repo {
+  border-color: rgba(239, 232, 218, 0.24);
+}
+:root[data-theme="dark"] .ck-app--matrix .ck-repo:hover {
+  border-color: #f0cf55;
+  background: rgba(240, 207, 85, 0.12);
+}
+:root[data-theme="dark"] .ck-app--matrix .ck-repo__kind {
+  color: #bdb4a3;
+}
+:root[data-theme="dark"] .ck-app--matrix .ck-repo:focus-visible {
+  outline-color: #f0cf55;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .ck-app--matrix .ck-repo {
+    border-color: rgba(239, 232, 218, 0.24);
+  }
+  :root:not([data-theme]) .ck-app--matrix .ck-repo:hover {
+    border-color: #f0cf55;
+    background: rgba(240, 207, 85, 0.12);
+  }
+  :root:not([data-theme]) .ck-app--matrix .ck-repo__kind {
+    color: #bdb4a3;
+  }
+  :root:not([data-theme]) .ck-app--matrix .ck-repo:focus-visible {
+    outline-color: #f0cf55;
+  }
+}
+
+/* ------------------------------------------- inside the chaining matrix */
+.ck-matrix .ck-prose {
+  margin-top: 1.5rem;
+}
+.ck-questions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 0 clamp(1rem, 3vw, 2.5rem);
+  max-width: 54rem;
+  margin: clamp(2rem, 4vw, 2.75rem) 0;
+}
+.ck-questions__lead {
+  grid-column: 1;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.3rem;
+  color: var(--muted);
+}
+.ck-questions__list {
+  grid-column: 1;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: q;
+}
+.ck-questions__list li {
+  position: relative;
+  padding: 0.7rem 0 0.7rem 2.6rem;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--serif);
+  font-size: clamp(1.35rem, 2.1vw, 1.7rem);
+  line-height: 1.22;
+  counter-increment: q;
+  text-wrap: balance;
+}
+.ck-questions__list li::before {
+  content: counter(q);
+  position: absolute;
+  left: 0;
+  top: 0.95rem;
+  display: grid;
+  place-items: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 50%;
+  background: var(--ck-yellow-soft);
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--ck-ink);
+}
+/* thinking it over, standing on the last line */
+.ck-questions .avatar--ck-think {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: end;
+  width: clamp(5.25rem, 7.5vw, 6.75rem);
+  transform: translateY(var(--sink));
+}
+
+/* -------------------------------------------------- what I took from it */
+.ck-takeaways .ck-prose {
+  margin-top: 1.5rem;
+}
+.ck-punchline {
+  margin-top: clamp(2rem, 4vw, 2.75rem);
+  max-width: 26ch;
+  font-family: var(--serif);
+  font-size: clamp(1.75rem, 3.2vw, 2.6rem);
+  font-weight: 500;
+  line-height: 1.14;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+/* ------------------------------------------------ the applications table */
+.ck-table-wrap {
+  margin-top: clamp(1.5rem, 3vw, 2rem);
+  overflow-x: auto;
+}
+.ck-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+.ck-table thead th {
+  padding: 0 1rem 0.7rem 0;
+  border-bottom: 1.5px solid var(--ck-ink);
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.ck-table tbody th,
+.ck-table td {
+  padding: 1rem 1rem 1rem 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: baseline;
+}
+.ck-table tbody th {
+  width: 36%;
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.15;
+}
+.ck-table td {
+  line-height: 1.55;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.ck-table a {
+  color: var(--ck-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(in srgb, var(--ck-yellow) 80%, transparent);
+}
+.ck-table a:hover {
+  text-decoration-color: var(--ck-ink);
+}
+
+/* ---------------------------------------------------- tools + credits */
+.ck-colophon {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(2rem, 5vw, 4rem);
+}
+.ck-tools {
+  margin-top: 1.4rem;
+  border-top: 1px solid var(--rule);
+}
+.ck-tools__item {
+  display: grid;
+  grid-template-columns: minmax(9rem, 13rem) minmax(0, 1fr);
+  gap: 0.25rem 1.5rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+.ck-tools dt {
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--ck-ink);
+}
+.ck-tools dd {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.ck-colophon__credits {
+  align-self: start;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+}
+.ck-credits__lead {
+  margin-top: 0.9rem;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.25rem;
+  line-height: 1.3;
+}
+.ck-credits {
+  margin-top: 1.1rem;
+}
+.ck-credits__item + .ck-credits__item {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--rule-strong);
+}
+.ck-credits dt {
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ck-yellow-ink);
+}
+.ck-credits dd {
+  margin: 0.3rem 0 0;
+  font-size: 0.9688rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+/* =================================================== narrower screens */
+
+@media (max-width: 899.98px) {
+  .ck-app--user,
+  .ck-app--matrix {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ck-app--admin {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "head" "body" "ledger";
+  }
+  .ck-ledger {
+    align-self: stretch;
+  }
+  .ck-colophon {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 759.98px) {
+  .ck-hero__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.75rem;
+  }
+  .ck-plate__logo {
+    width: 8.5rem;
+  }
+  /* the chapters stack: the tab and dates above the heading, the thread at the left edge */
+  .ck-phases {
+    --spine-x: 1.1rem;
+  }
+  .ck-phase {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+  .ck-phase__marker {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 1rem;
+    align-items: center;
+  }
+  .ck-phase__n {
+    grid-row: 1 / span 2;
+    width: 3.6rem;
+    height: 3.6rem;
+    font-size: 2.15rem;
+    margin-left: -0.6rem;
+  }
+  .ck-knot {
+    width: 2rem;
+    height: 2rem;
+  }
+  .ck-phase__dates {
+    margin: 0;
+  }
+  .ck-phase__scope {
+    max-width: none;
+    margin: 0.1rem 0 0;
+  }
+  .ck-phase__body {
+    padding-left: 2.25rem;
+  }
+  .ck-phase--2 {
+    padding-top: calc(clamp(2.75rem, 5.5vw, 4.5rem) + 1rem);
+  }
+  .ck-phase--2 .ck-phase__marker {
+    padding-top: 0;
+  }
+  .ck-phase--2 .ck-phase__body {
+    padding-left: 0;
+    margin-top: 5.25rem; /* room for her, on the sheet's edge */
+  }
+  .ck-notes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .avatar--ck-build {
+    width: 5.9rem;
+    right: 1rem;
+  }
+  .ck-sheet__tape--r {
+    right: 8.25rem;
+  }
+  .ck-questions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ck-questions .avatar--ck-think {
+    display: none; /* one figure per screen on phones */
+  }
+  .ck-table tbody th {
+    width: 40%;
+    font-size: 1.15rem;
+  }
+  .ck-table td {
+    font-size: 0.9375rem;
+  }
+  .ck-tools__item {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* table rows jump to the application's entry on this page (↑), unlike the
+   repositories, which leave the site (↗) */
+.ck-jump__arrow {
+  display: inline-block;
+  margin-left: 0.35em;
+  font-family: var(--sans);
+  font-size: 0.8em;
+  font-weight: 600;
+  color: var(--ck-yellow-ink);
+  text-decoration: none;
+  transition: translate 0.2s var(--ease);
+}
+.ck-jump:hover .ck-jump__arrow {
+  translate: 0 -2px;
+}
+
+/* the panel decides its own columns: two-column entries stack when it is narrow */
+@container (max-width: 600px) {
+  .ck-app--user,
+  .ck-app--matrix {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ck-app--admin {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "head" "body" "ledger";
+  }
+}

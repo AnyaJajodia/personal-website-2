@@ -10,6 +10,15 @@ import { work, getWork, getNeighbours, formatPeriod, type WorkEntry, type Sectio
 import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
 import { detailAvatars, type PoseName } from "@/content/avatars";
+import CrackdPage from "@/components/crackd/CrackdPage";
+import BuzzworksPage from "@/components/buzzworks/BuzzworksPage";
+import TmuPage from "@/components/tmu/TmuPage";
+import GviPage from "@/components/gvi/GviPage";
+import PmmyPage from "@/components/research/PmmyPage";
+import TeenPage from "@/components/research/TeenPage";
+import EspPage from "@/components/columbia/EspPage";
+import AdiPage from "@/components/columbia/AdiPage";
+import WorkDrawer from "@/components/WorkDrawer";
 
 export const dynamicParams = false;
 
@@ -82,6 +91,17 @@ export default async function WorkPage({ params }: Params) {
   const { slug } = await params;
   const entry = getWork(slug);
   if (!entry) notFound();
+  // Crackd, Buzzworks, TMU, GVI and the two research papers have their own pages
+  // (content/crackd.ts, buzzworks.ts, tmu.ts, gvi.ts, research.ts);
+  // every other entry uses the template below
+  if (slug === "crackd-ai") return <CrackdPage />;
+  if (slug === "buzzworks") return <BuzzworksPage />;
+  if (slug === "tmu-citation-tooling") return <TmuPage />;
+  if (slug === "gvi-conservation") return <GviPage />;
+  if (slug === "pmmy-research") return <PmmyPage />;
+  if (slug === "teenage-pregnancy-research") return <TeenPage />;
+  if (slug === "esp-teaching") return <EspPage />;
+  if (slug === "adi-mentorship") return <AdiPage />;
   const { prev, next } = getNeighbours(slug);
   const theme = entry.theme;
   const eyebrow = entry.eyebrow ?? (theme === "default" ? [entry.name] : []);
@@ -93,7 +113,7 @@ export default async function WorkPage({ params }: Params) {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <SiteHeader variant="detail" darkUntilSelector={theme === "lynxster" ? "[data-dark-band]" : undefined} />
+      <SiteHeader variant="detail" darkUntilSelector={theme === "lynxster" ? "[data-dark-band]" : undefined} workMenu={<WorkDrawer current={slug} />} />
       <DetailLine theme={theme} />
       <main id="main" className="detail__main">
         <header className="detail-hero" data-line="top" {...(theme === "lynxster" ? { "data-dark-band": "" } : {})}>

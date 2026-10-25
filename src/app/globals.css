@@ -2764,18 +2764,45 @@ body::before {
   }
 }
 
-/* --- the nav underline is a pen stroke, not a ruled line */
-.site-nav a {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 6' preserveAspectRatio='none'%3E%3Cpath d='M1 4c8-3 14 1 22-1s14-2 22 0 10 1 14-1' fill='none' stroke='%231d4f8c' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-size: 0% 5px;
-  background-position: 0 100%;
+/* --- the nav underline is a pen stroke, not a ruled line. It is drawn in
+   currentColor (a mask over a solid fill), so it always matches the text:
+   the shared hover colour on the homepage, and each detail page's own
+   theme-aware accent on its active "Work" item. */
+.site-nav a,
+.site-nav__label {
+  position: relative;
+  background: none;
+}
+.site-nav a::after,
+.site-nav__label::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 5px;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 6' preserveAspectRatio='none'%3E%3Cpath d='M1 4c8-3 14 1 22-1s14-2 22 0 10 1 14-1' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 6' preserveAspectRatio='none'%3E%3Cpath d='M1 4c8-3 14 1 22-1s14-2 22 0 10 1 14-1' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s var(--ease);
+  pointer-events: none;
+}
+.site-nav a:hover::after,
+.site-nav a.is-current::after,
+.site-nav__label::after {
+  transform: scaleX(1);
 }
 .site-nav a:hover,
-.site-nav a.is-current {
-  background-size: 100% 5px;
+.site-nav a.is-current,
+.site-nav__work {
+  color: var(--accent);
 }
-.site-header[data-tone="dark"] .site-nav a {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 6' preserveAspectRatio='none'%3E%3Cpath d='M1 4c8-3 14 1 22-1s14-2 22 0 10 1 14-1' fill='none' stroke='%2336afbb' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+@media (prefers-reduced-motion: reduce) {
+  .site-nav a::after {
+    transition: none;
+  }
 }
 
 /* --- project pages: plates and the work pager sit on paper shadows too */
@@ -3479,4 +3506,15 @@ body::before {
 .feature__desc,
 .feature__stream-text {
   text-wrap: pretty;
+}
+
+/* Teaching & mentorship: the Columbia crown stands on the card itself, in the
+   same 60px slot as the other identifiers (so names and dates line up), with
+   no tile behind it */
+.panel__logo.panel__logo--bare {
+  background: transparent;
+  box-shadow: none;
+}
+.panel__logo--bare img {
+  max-width: 56px;
 }

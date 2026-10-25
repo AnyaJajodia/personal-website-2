@@ -1,0 +1,586 @@
+/* =====================================================================
+   Work drawer (WorkDrawer.tsx) — a side sheet in the portfolio's shared
+   language: the page's paper and ink, the homepage panels' tones and logo
+   tiles, the serif names. Everything is scoped to .sheet* classes; the only
+   document-level rule applies while a sheet is open.
+   ===================================================================== */
+
+/* background scroll lock while open, without a layout shift */
+html[data-sheet-open] {
+  overflow: hidden;
+  padding-right: var(--sheet-scrollbar, 0px);
+}
+html[data-sheet-open] .site-header {
+  padding-right: var(--sheet-scrollbar, 0px);
+}
+
+/* ------------------------------------------------------------ sheet */
+.sheet {
+  --sheet-out: 320; /* ms, read by the component before it closes */
+  --sheet-ink: #242321;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  overflow: hidden;
+}
+.sheet::backdrop {
+  background: rgb(22 19 16 / 0.4);
+}
+.sheet__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(27rem, calc(100vw - 2.75rem));
+  background: var(--surface);
+  border-left: 1px solid var(--rule);
+  box-shadow:
+    -1px 0 0 rgb(var(--shade) / 0.05),
+    -28px 0 50px -30px rgb(var(--shade) / 0.55);
+}
+
+/* the motion: one plain horizontal slide from the edge the panel belongs to,
+   the overlay fading with it. The open is a long, soft deceleration (500ms,
+   the drawer curve: it leaves the edge without lunging and settles slowly);
+   the close eases both ways (320ms) so it neither snaps away nor slams out at
+   full speed. No overshoot, no scaling, nothing inside staggers and the page
+   behind never moves. */
+@media (prefers-reduced-motion: no-preference) {
+  .sheet[data-state] .sheet__panel {
+    will-change: transform;
+  }
+  .sheet[data-state="open"] .sheet__panel {
+    animation: sheet-in 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .sheet[data-state="open"]::backdrop {
+    animation: sheet-fade 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  .sheet[data-state="closing"] .sheet__panel {
+    animation: sheet-out 0.32s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  .sheet[data-state="closing"]::backdrop {
+    animation: sheet-fade-out 0.32s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sheet[data-state="open"] .sheet__panel {
+    animation: sheet-fade 0.18s ease-out;
+  }
+}
+@keyframes sheet-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes sheet-out {
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes sheet-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes sheet-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+.sheet__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: calc(1.35rem + env(safe-area-inset-top, 0px)) 1.35rem 1.1rem 1.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+.sheet__title {
+  font-family: var(--serif);
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.sheet__desc {
+  margin-top: 0.45rem;
+  max-width: 30ch;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.sheet__close {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: -0.35rem -0.35rem 0 0;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    border-color 0.2s var(--ease),
+    background-color 0.2s var(--ease);
+}
+.sheet__close:hover {
+  border-color: var(--text);
+}
+.sheet__close:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+.sheet__close svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+}
+
+.sheet__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.4rem 1.5rem 1.6rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule-strong) transparent;
+}
+.sheet__group {
+  margin: 1.35rem 0 0.7rem;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.sheet__features,
+.sheet__list,
+.sheet-entry__subs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sheet__features,
+.sheet__list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+/* --- Currently: the two organisations, by their own marks, on paper */
+.sheet-feature__link {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+  min-height: 4.5rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    border-color 0.2s var(--ease),
+    box-shadow 0.3s var(--ease),
+    transform 0.3s var(--ease);
+}
+.sheet-feature__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sheet-feature__lockup {
+  height: 2.9rem;
+  color: var(--logo-ink);
+}
+.sheet-feature__wordmark {
+  display: block;
+  width: 5.4rem;
+  height: auto;
+}
+
+/* --- Selected work: the homepage panels' coloured paper, compacted */
+.sheet-entry {
+  --tone-k: var(--tone);
+}
+.sheet-entry__link,
+.sheet-entry__head {
+  display: grid;
+  grid-template-columns: 2.85rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.85rem;
+  min-height: 3.9rem;
+  padding: 0.55rem 0.8rem 0.55rem 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--tone-k) 78%, #242321);
+  border-radius: 10px;
+  background: var(--tone-k);
+  color: var(--sheet-ink);
+  text-decoration: none;
+}
+.sheet-entry__link,
+.sheet-entry--group {
+  transition:
+    border-color 0.2s var(--ease),
+    box-shadow 0.3s var(--ease),
+    transform 0.3s var(--ease);
+}
+.sheet-entry--group {
+  border-radius: 10px;
+}
+.sheet-entry--group .sheet-entry__head {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.sheet-entry__tile {
+  display: grid;
+  place-items: center;
+  width: 2.85rem;
+  height: 2.85rem;
+  border-radius: 8px;
+  background: rgba(255, 252, 245, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(36, 35, 33, 0.08);
+  color: var(--sheet-ink);
+}
+.sheet-entry__tile--dark {
+  background: rgba(36, 35, 33, 0.88);
+  box-shadow: none;
+}
+.sheet-entry__tile img {
+  display: block;
+  width: auto;
+  max-width: 2.1rem;
+  height: 1.9rem;
+  object-fit: contain;
+}
+.sheet-entry__tile svg {
+  width: 1.7rem;
+  height: 1.7rem;
+}
+.sheet-entry__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+.sheet-entry__name {
+  font-family: var(--serif);
+  font-size: 1.28rem;
+  font-weight: 600;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+.sheet-entry__note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 550;
+  letter-spacing: 0.02em;
+  color: #3a3733;
+}
+.sheet-feature__link .sheet-entry__note {
+  color: var(--muted);
+}
+.sheet-entry__subs {
+  display: grid;
+  padding: 0.25rem 0.8rem 0.45rem 4.3rem;
+  border: 1px solid color-mix(in srgb, var(--tone-k) 78%, #242321);
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+  background: color-mix(in srgb, var(--tone-k) 55%, var(--surface));
+}
+.sheet-entry__sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem 0.5rem;
+  min-height: 44px;
+  font-size: 0.9375rem;
+  line-height: 1.3;
+  color: var(--sheet-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.24em;
+  text-decoration-color: rgba(36, 35, 33, 0.4);
+}
+.sheet-entry__sub:hover {
+  text-decoration-color: currentColor;
+}
+
+/* hover / focus / current */
+@media (hover: hover) {
+  /* each entry lifts a little off the sheet, like the homepage cards; a
+     project with sub-pages lifts as one card while any of its links is
+     hovered. Pressing settles it back down. */
+  .sheet-feature__link:hover,
+  .sheet-entry__link:hover,
+  .sheet-entry--group:has(.sheet-entry__sub:hover) {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 22px -14px rgb(var(--shade) / 0.6);
+  }
+  .sheet-feature__link:active,
+  .sheet-entry__link:active,
+  .sheet-entry--group:has(.sheet-entry__sub:active) {
+    transform: translateY(0);
+    box-shadow: 0 6px 12px -10px rgb(var(--shade) / 0.5);
+    transition-duration: 0.1s;
+  }
+  .sheet__overview:hover > span[aria-hidden] {
+    transform: translateX(-3px);
+  }
+  .sheet-feature__link:hover {
+    border-color: var(--rule-strong);
+  }
+  .sheet-entry__link:hover {
+    border-color: color-mix(in srgb, var(--tone-k) 45%, #242321);
+  }
+}
+.sheet-feature__link:focus-visible,
+.sheet-entry__link:focus-visible,
+.sheet-entry__sub:focus-visible,
+.sheet__home:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+.sheet-entry__link[aria-current="page"],
+.sheet-feature__link[aria-current="page"] {
+  box-shadow:
+    inset 0 0 0 1px var(--sheet-ink),
+    0 0 0 3px color-mix(in srgb, var(--tone-k, var(--rule)) 45%, transparent);
+  border-color: var(--sheet-ink);
+}
+.sheet__here {
+  display: inline-block;
+  padding: 0.14rem 0.5rem 0.16rem;
+  border-radius: 999px;
+  background: #242321;
+  color: #fbf6e8;
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+.sheet__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.15rem 1rem;
+  padding: 0.55rem 1.5rem calc(0.55rem + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--rule);
+}
+.sheet__foot-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.sheet__site {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sheet__home {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+.sheet__home:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+/* --- dark: the homepage's dark panel tones; the AMNH wordmark on a paper label */
+:root[data-theme="dark"] .sheet::backdrop {
+  background: rgb(0 0 0 / 0.55);
+}
+@media (hover: hover) {
+  :root[data-theme="dark"] :is(.sheet-feature__link:not([aria-current]):hover, .sheet-entry__link:not([aria-current]):hover, .sheet-entry--group:has(.sheet-entry__sub:hover)) {
+    box-shadow: 0 14px 24px -12px rgb(0 0 0 / 0.75);
+  }
+}
+@media (hover: hover) and (prefers-color-scheme: dark) {
+  :root:not([data-theme]) :is(.sheet-feature__link:not([aria-current]):hover, .sheet-entry__link:not([aria-current]):hover, .sheet-entry--group:has(.sheet-entry__sub:hover)) {
+    box-shadow: 0 14px 24px -12px rgb(0 0 0 / 0.75);
+  }
+}
+:root[data-theme="dark"] .sheet__panel {
+  box-shadow: -28px 0 50px -24px rgb(0 0 0 / 0.7);
+}
+:root[data-theme="dark"] .sheet-entry--crackd { --tone-k: #d4b852; }
+:root[data-theme="dark"] .sheet-entry--buzzworks { --tone-k: #dea47c; }
+:root[data-theme="dark"] .sheet-entry--tmu { --tone-k: #97b2cf; }
+:root[data-theme="dark"] .sheet-entry--inteli { --tone-k: #b59fba; }
+:root[data-theme="dark"] .sheet-entry--gvi { --tone-k: #94b1a1; }
+:root[data-theme="dark"] .sheet-entry--pubs { --tone-k: #cd95a2; }
+:root[data-theme="dark"] .sheet-entry--teaching { --tone-k: #a0aad2; }
+:root[data-theme="dark"] .sheet-entry__subs {
+  background: color-mix(in srgb, var(--tone-k) 82%, #000);
+}
+:root[data-theme="dark"] .sheet-feature--amnh .sheet-feature__logo {
+  padding: 0.35rem 0.45rem;
+  border-radius: 5px;
+  background: #f7f4ee;
+}
+:root[data-theme="dark"] .sheet-feature__link[aria-current="page"] {
+  --sheet-ink: #f2ebdd;
+}
+:root[data-theme="dark"] .sheet-entry__link[aria-current="page"] {
+  box-shadow:
+    inset 0 0 0 1px #242321,
+    0 0 0 3px color-mix(in srgb, var(--tone-k) 55%, transparent);
+}
+
+/* ------------------------------------------- the header's "Work" item */
+/* it reads exactly like its sibling links (the shared underline is in
+   globals.css), plus a small chevron for the menu it opens */
+.site-nav__work {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent); /* the page's own accent: this is the current section */
+  font: inherit;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.site-nav__work::before {
+  /* a ≥44px target around the text (within the header's height) */
+  content: "";
+  position: absolute;
+  inset: -0.7rem -0.4rem;
+}
+/* the label is an inline box like the links, so the shared pen-line
+   underline (globals.css) sits exactly where theirs does */
+.site-nav__label {
+  position: relative;
+  padding-block: 0.4rem;
+  /* a flex child is a block: give it the height of an inline box of the same
+     text (Inter's content area, 1.2667em), so its pen-line sits like theirs */
+  line-height: 1.2667;
+}
+.site-nav__chev {
+  width: 0.7em;
+  height: 0.7em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: rotate 0.25s var(--ease);
+}
+.site-nav__work[aria-expanded="true"] .site-nav__chev {
+  rotate: 180deg;
+}
+.site-nav__work:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+@media (max-width: 639.98px) {
+  .site-nav__work {
+    font-size: clamp(0.78rem, 3.4vw, 0.875rem);
+  }
+}
+@media (max-width: 359.98px) {
+  .site-nav__work {
+    font-size: 0.75rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-nav__chev {
+    transition: none;
+  }
+  /* hover keeps its border and shadow, without the lift */
+  .sheet-feature__link,
+  .sheet-entry__link,
+  .sheet-entry--group,
+  .sheet__overview > span[aria-hidden] {
+    transform: none !important;
+  }
+}
+
+/* "Back to work overview": the first line of the list */
+.sheet__overview {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  margin-top: 0.6rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+.sheet__overview > span[aria-hidden] {
+  transition: transform 0.25s var(--ease);
+}
+.sheet__overview:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+.sheet__overview:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* the Columbia crown on the Teaching entry: no tile, the artwork alone */
+.sheet-entry__tile--bare {
+  background: transparent;
+  box-shadow: none;
+}
+.sheet-entry__tile--bare img {
+  max-width: 2.4rem;
+  height: 2.25rem;
+}
+/* ADI's blue pill beside its link: the cropped mark, fully rounded */
+.sheet-entry__pill {
+  display: inline-block;
+  flex: none;
+  overflow: hidden;
+  height: 1.15rem;
+  border-radius: 999px;
+}
+.sheet-entry__pill img {
+  display: block;
+  width: auto;
+  height: 100%;
+}
+/* detail headers: the items share one text baseline (the Work button is an
+   inline-flex box among inline links), so text and pen-lines line up */
+.site-header[data-variant="detail"] .site-nav {
+  align-items: baseline;
+}

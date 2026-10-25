@@ -75,13 +75,19 @@ export const detailAvatars: Record<string, { section: string; pose: PoseName }[]
     { section: "collections-digitization/Overview", pose: "archivalPaper" },
     { section: "collections-digitization/Records, rigs, and workflows", pose: "copyStand" },
   ],
+  // not used: the Crackd page places its own two figures (components/crackd/CrackdPage.tsx)
   "crackd-ai": [{ section: "My contribution", pose: "snapping" }],
+  // not used: the Buzzworks page places its own figure (components/buzzworks/BuzzworksPage.tsx)
   buzzworks: [{ section: "My contribution", pose: "laptopFloor" }],
+  // not used: the TMU page places its own figure (components/tmu/TmuPage.tsx)
   "tmu-citation-tooling": [{ section: "My contribution", pose: "standingBook" }],
   "inteli-lens": [{ section: "My contribution", pose: "lookingUp" }],
+  // not used: the GVI page places its own figure (components/gvi/GviPage.tsx)
   "gvi-conservation": [{ section: "Overview", pose: "binoculars" }],
+  // not used: the research pages place their own figures (components/research/)
   "pmmy-research": [{ section: "Overview", pose: "readingSeated" }],
   "teenage-pregnancy-research": [{ section: "Overview", pose: "turningPage" }],
+  // not used: the Columbia pages place their own figure (components/columbia/)
   "esp-teaching": [{ section: "My contribution", pose: "raisedFinger" }],
   "adi-mentorship": [{ section: "My contribution", pose: "cheers" }],
 };

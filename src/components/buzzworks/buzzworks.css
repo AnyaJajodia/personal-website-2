@@ -1,0 +1,937 @@
+/* =====================================================================
+   Buzzworks — the employee's journey (BuzzworksPage.tsx)
+   The portfolio's warm paper and charcoal, its serif and thread; Buzzworks'
+   orange kept for highlights, workflow markers and selected states; WhatsApp
+   green only inside the illustrative conversation. Scoped to .theme-buzzworks.
+   ===================================================================== */
+
+.theme-buzzworks {
+  --bg: #f7f3ec;
+  --surface: #fffaf3;
+  --text: #1f1d1b;
+  --ink-2: #34312c;
+  --ink-3: #423e37;
+  --muted: #5d574e;
+  --rule: #ddd3c4;
+  --rule-strong: #c6b8a3;
+  --line: #3a3530;
+  --bz-orange: #f07020; /* the brand's own orange (logo) */
+  --bz-orange-ink: #a8430a; /* orange text on paper (AA) */
+  --bz-orange-soft: rgba(240, 112, 32, 0.12);
+  --bz-mark: rgba(240, 112, 32, 0.2);
+  --bz-measure: 64ch;
+  --accent: #a8430a;
+  --selection: rgba(240, 112, 32, 0.22);
+}
+:root[data-theme="dark"] .theme-buzzworks {
+  --bg: #1c1916;
+  --surface: #25211d;
+  --surface-2: #2e2924;
+  --text: #f3ebde;
+  --ink-2: #e2d9ca;
+  --ink-3: #d3c9ba;
+  --muted: #c9bfb0;
+  --rule: #3d3631;
+  --rule-strong: #564c43;
+  --line: #d6c5ae;
+  --bz-orange: #f29a5e;
+  --bz-orange-ink: #f4a670;
+  --bz-orange-soft: rgba(242, 154, 94, 0.12);
+  --bz-mark: rgba(242, 154, 94, 0.26);
+  --accent: #f4a670;
+  --selection: rgba(242, 154, 94, 0.3);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .theme-buzzworks {
+    --bg: #1c1916;
+    --surface: #25211d;
+    --surface-2: #2e2924;
+    --text: #f3ebde;
+    --ink-2: #e2d9ca;
+    --ink-3: #d3c9ba;
+    --muted: #c9bfb0;
+    --rule: #3d3631;
+    --rule-strong: #564c43;
+    --line: #d6c5ae;
+    --bz-orange: #f29a5e;
+    --bz-orange-ink: #f4a670;
+    --bz-orange-soft: rgba(242, 154, 94, 0.12);
+    --bz-mark: rgba(242, 154, 94, 0.26);
+    --accent: #f4a670;
+    --selection: rgba(242, 154, 94, 0.3);
+  }
+}
+/* the page's thread in charcoal ink (orange stays for markers and highlights) */
+.theme-buzzworks .detail-line path {
+  stroke: var(--line) !important;
+}
+.theme-buzzworks ::selection {
+  background: var(--selection);
+}
+.theme-buzzworks a:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.theme-buzzworks .case-content li[id] {
+  scroll-margin-top: calc(var(--header-h) + 1.5rem);
+}
+
+/* the highlighter, for words already in the sentence */
+.bz-mark {
+  padding: 0 0.08em;
+  margin: 0 -0.08em;
+  border-radius: 2px;
+  background: linear-gradient(transparent 12%, var(--bz-mark) 12% 92%, transparent 92%);
+  color: inherit;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* ------------------------------------------------------------ opening */
+.theme-buzzworks .bz-hero {
+  padding-bottom: clamp(2.5rem, 5vw, 3.75rem);
+}
+.bz-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 21rem);
+  align-items: end;
+  gap: clamp(2rem, 5vw, 5rem);
+}
+.bz-hero__dates {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bz-orange-ink);
+}
+.bz-hero__dates::before {
+  content: "";
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--bz-orange);
+}
+/* the supplied minimal symbol at its own proportions and colours, beside the
+   name set in the portfolio serif — the same in both themes, no tile */
+.bz-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: fit-content;
+  margin: clamp(1rem, 2vw, 1.4rem) 0 clamp(1.25rem, 2.4vw, 1.75rem);
+}
+.bz-brand__mark {
+  display: block;
+  width: auto;
+  height: clamp(2.4rem, 3.2vw, 2.85rem);
+  opacity: 1;
+  filter: none;
+}
+.bz-brand__name {
+  font-family: var(--serif);
+  font-size: clamp(1.75rem, 2.6vw, 2.2rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.theme-buzzworks .bz-hero__title {
+  max-width: 13ch;
+  text-wrap: balance;
+}
+.theme-buzzworks .bz-hero__subtitle {
+  max-width: 34ch;
+}
+.bz-facts {
+  margin: 0 0 0.5rem;
+  padding: 0.35rem 1.35rem 0.6rem;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 14px 28px -24px rgb(var(--shade) / 0.5);
+}
+.bz-facts__item {
+  padding-block: 0.9rem;
+}
+.bz-facts__item + .bz-facts__item {
+  border-top: 1px dashed var(--rule-strong);
+}
+.bz-facts dt {
+  color: var(--bz-orange-ink);
+}
+.bz-facts dd {
+  margin: 0.35rem 0 0;
+  font-size: 0.9688rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* ------------------------------------------------------------ sections */
+.bz-section {
+  padding-block: clamp(3rem, 6vw, 4.75rem);
+  border-top: 1px solid var(--rule);
+}
+.bz-h2 {
+  font-family: var(--serif);
+  font-size: clamp(2.1rem, 3.7vw, 3.05rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  max-width: 21ch;
+  text-wrap: balance;
+}
+.bz-h2--quiet {
+  font-size: clamp(1.6rem, 2.4vw, 2rem);
+}
+.bz-h3 {
+  font-family: var(--serif);
+  font-size: clamp(1.55rem, 2.3vw, 1.95rem);
+  font-weight: 600;
+  line-height: 1.1;
+  max-width: 26ch;
+  text-wrap: balance;
+}
+.bz-lead {
+  margin-top: clamp(1.2rem, 2.2vw, 1.6rem);
+  max-width: 34ch;
+  font-family: var(--serif);
+  font-size: clamp(1.45rem, 2.3vw, 1.85rem);
+  line-height: 1.22;
+  color: var(--text);
+  text-wrap: pretty;
+}
+.bz-prose {
+  max-width: var(--bz-measure);
+}
+.bz-prose p {
+  text-wrap: pretty;
+}
+.bz-prose p + p {
+  margin-top: 1.1em;
+}
+.bz-lead + .bz-prose,
+.bz-h2 + .bz-prose {
+  margin-top: 1.4rem;
+}
+
+/* what I owned: my part first; where other teams met it, set apart by a hairline */
+.bz-owned__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  margin-top: 1.4rem;
+}
+.bz-owned__first {
+  font-family: var(--serif);
+  font-size: clamp(1.45rem, 2.2vw, 1.8rem);
+  line-height: 1.25;
+  color: var(--text);
+}
+.bz-owned__others {
+  padding-left: 1rem;
+  border-left: 1px dashed var(--rule-strong);
+  color: var(--ink-2);
+}
+.avatar--bz-desk {
+  position: relative;
+  align-self: end;
+  width: clamp(7rem, 10vw, 9rem);
+  margin-bottom: calc(-1 * clamp(3rem, 6vw, 4.75rem));
+  transform: translateY(var(--sink));
+}
+
+/* -------------------------------------------- the illustrative conversation */
+.bz-convo .bz-h2 {
+  margin-bottom: clamp(1.25rem, 2.5vw, 1.75rem);
+}
+.bz-chat {
+  /* WhatsApp's own colours, kept to this illustration */
+  --wa-bar: #008069;
+  --wa-bar-ink: #ffffff;
+  --wa-wall: #efeae2;
+  --wa-in: #ffffff;
+  --wa-out: #d9fdd3;
+  --wa-ink: #111b21;
+  --wa-meta: #667781;
+  --wa-tick: #53bdeb;
+  --wa-reply: #008069;
+  /* a conversation window, not a phone: about a third wider than before */
+  --pw: min(31rem, 100%);
+  margin: 0;
+}
+/* mid widths: the window takes at most ~60%, so the notes keep room */
+@media (min-width: 760px) and (max-width: 1099.98px) {
+  .bz-chat {
+    --pw: min(31rem, 62%);
+  }
+}
+:root[data-theme="dark"] .bz-chat {
+  --wa-bar: #202c33;
+  --wa-bar-ink: #e9edef;
+  --wa-wall: #0b141a;
+  --wa-in: #202c33;
+  --wa-out: #005c4b;
+  --wa-ink: #e9edef;
+  --wa-meta: #8696a0;
+  --wa-reply: #00a884;
+}
+.bz-chat__phone {
+  position: relative;
+}
+/* the phone's screen is the first column; the margin notes sit in the second */
+.bz-chat__phone::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--pw);
+  border-radius: 14px;
+  background: var(--wa-wall);
+  box-shadow:
+    0 0 0 1px rgb(var(--shade) / 0.12),
+    0 30px 50px -32px rgb(var(--shade) / 0.6);
+}
+.bz-chat__bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: var(--pw);
+  padding: 0.6rem 0.95rem;
+  border-radius: 14px 14px 0 0;
+  background: var(--wa-bar);
+  color: var(--wa-bar-ink);
+}
+.bz-chat__avatar {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.bz-chat__who {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.bz-chat__name {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.bz-chat__status {
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+.bz-chat__log {
+  position: relative;
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0.85rem 0 1rem;
+  list-style: none;
+}
+.bz-chat__row {
+  display: grid;
+  grid-template-columns: var(--pw) minmax(0, 1fr);
+  align-items: start;
+  column-gap: clamp(1.25rem, 2.5vw, 2rem);
+}
+.bz-bubble,
+.bz-replies {
+  grid-column: 1;
+  max-width: calc(var(--pw) * 0.72);
+  margin-inline: 0.9rem;
+}
+.bz-bubble {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-self: start;
+  padding: 0.42rem 0.6rem 0.3rem;
+  border-radius: 9px;
+  background: var(--wa-in);
+  color: var(--wa-ink);
+  font-size: 0.9375rem;
+  line-height: 1.38;
+  box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+}
+.bz-bubble--out {
+  justify-self: end;
+  background: var(--wa-out);
+}
+.bz-bubble__list {
+  margin: 0.35rem 0 0;
+  padding-left: 1.3rem;
+  list-style: decimal;
+}
+.bz-bubble__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  align-self: flex-end;
+  margin-top: 0.1rem;
+  font-size: 0.6875rem;
+  color: var(--wa-meta);
+  font-variant-numeric: tabular-nums;
+}
+.bz-bubble__meta svg {
+  width: 1rem;
+  height: 0.65rem;
+  fill: none;
+  stroke: var(--wa-tick);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.bz-bubble--media {
+  padding: 0.3rem 0.3rem 0.3rem;
+}
+.bz-bubble__media {
+  display: grid;
+  gap: 0.3rem;
+}
+.bz-bubble__media svg {
+  display: block;
+  width: 11rem;
+  height: auto;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--wa-out) 60%, #fff);
+  fill: none;
+  stroke: color-mix(in srgb, var(--wa-ink) 35%, transparent);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.bz-doc__photo {
+  fill: color-mix(in srgb, var(--wa-ink) 14%, transparent);
+  stroke: none;
+}
+.bz-bubble__media-label {
+  padding-inline: 0.3rem;
+  font-size: 0.8125rem;
+}
+.bz-replies {
+  display: grid;
+  gap: 2px;
+  margin-top: -0.15rem;
+  padding: 0;
+  list-style: none;
+  justify-self: start;
+  min-width: 12rem;
+}
+.bz-replies li {
+  padding: 0.5rem;
+  background: var(--wa-in);
+  color: var(--wa-reply);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-align: center;
+  box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+}
+.bz-replies li:first-child {
+  border-radius: 9px 9px 0 0;
+}
+.bz-replies li:last-child {
+  border-radius: 0 0 9px 9px;
+}
+.bz-replies li:only-child {
+  border-radius: 9px;
+}
+/* margin notes: which documented flow this step illustrates */
+.bz-chat__note {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: fit-content;
+  font-size: 0.9375rem;
+  font-weight: 550;
+  color: var(--ink-2);
+  text-decoration: none;
+  text-underline-offset: 0.25em;
+}
+.bz-chat__note::before {
+  /* a short dashed lead from the screen's edge */
+  content: "";
+  position: absolute;
+  right: calc(100% + 0.35rem);
+  top: 50%;
+  width: clamp(1.1rem, 2.6vw, 2.1rem);
+  border-top: 1px dashed var(--bz-orange);
+}
+.bz-chat__note:hover {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--bz-orange);
+}
+.bz-chat__note-n {
+  display: grid;
+  place-items: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  border: 1.5px solid var(--bz-orange);
+  border-radius: 50%;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--bz-orange-ink);
+  font-variant-numeric: tabular-nums;
+}
+.bz-chat__caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.7rem;
+  max-width: 52ch;
+  margin-top: 1.1rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.bz-chat__tag {
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--bz-orange);
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bz-orange-ink);
+}
+
+/* ------------------------------------------------- the documented flows */
+.bz-caps__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(1.75rem, 4vw, 3.25rem);
+  margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: cap;
+}
+.bz-cap {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.1rem minmax(0, 1fr);
+  column-gap: 0.4rem;
+  padding: 1rem 0.75rem 1.05rem 0;
+  border-top: 1px solid var(--rule);
+  counter-increment: cap;
+  transition: background-color 0.6s var(--ease);
+}
+.bz-cap::before {
+  content: counter(cap, decimal-leading-zero);
+  grid-row: 1 / span 2;
+  padding-top: 0.42rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--bz-orange-ink);
+  font-variant-numeric: tabular-nums;
+}
+.bz-cap__name {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 1.12;
+}
+.bz-cap__text {
+  margin-top: 0.35rem;
+  font-size: 0.9688rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+/* arriving from a margin note: the flow is marked (colour only, no motion) */
+.bz-cap:target {
+  background: linear-gradient(90deg, var(--bz-orange-soft), transparent 85%);
+  border-top-color: var(--bz-orange);
+}
+
+/* ------------------------------------------------------- the system */
+.bz-system {
+  margin: clamp(1.75rem, 3.5vw, 2.5rem) 0;
+}
+.bz-system__frame {
+  padding: clamp(1.1rem, 2.5vw, 1.6rem);
+  border: 1px dashed var(--rule-strong);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+}
+.bz-system__frame-label {
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.bz-system__flow {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(0.9rem, 2vw, 1.4rem);
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.bz-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.85rem 0.85rem 0.95rem;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg);
+}
+/* the thread between neighbouring parts — a connection, not a claimed direction */
+.bz-node + .bz-node::before {
+  content: "";
+  position: absolute;
+  right: 100%;
+  top: 1.45rem;
+  width: clamp(0.9rem, 2vw, 1.4rem);
+  border-top: 1.5px solid var(--line);
+}
+.bz-node--core {
+  border-color: var(--bz-orange);
+  background: linear-gradient(180deg, var(--bz-orange-soft), transparent 70%), var(--bg);
+}
+.bz-node--edge {
+  background: transparent;
+  border-style: dashed;
+}
+.bz-node__name {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.12;
+}
+.bz-node__note {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+.bz-system__also {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 2rem;
+  margin: 1.1rem 0 0;
+  padding: 0.9rem 0 0;
+  list-style: none;
+  border-top: 1px dashed var(--rule);
+  font-size: 0.9rem;
+  color: var(--ink-2);
+}
+.bz-system__also-k {
+  margin-right: 0.45rem;
+  font-weight: 650;
+  color: var(--text);
+}
+.bz-system__caption {
+  margin-top: 0.8rem;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--muted);
+}
+
+/* -------------------------------------------------- the difficult parts */
+.bz-part {
+  margin-top: clamp(2.25rem, 4.5vw, 3.25rem);
+  padding-top: clamp(1.5rem, 3vw, 2rem);
+  border-top: 1px dashed var(--rule-strong);
+}
+.bz-part .bz-prose {
+  margin-top: 1.1rem;
+}
+.bz-part__contrast {
+  margin-top: 1rem;
+  max-width: 36ch;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1.35rem, 2.1vw, 1.65rem);
+  line-height: 1.28;
+  color: var(--text);
+}
+/* a document upload, as its steps: workflow markers on one thread */
+.bz-steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1rem, 2.5vw, 1.75rem);
+  max-width: 54rem;
+  margin: clamp(1.5rem, 3vw, 2rem) 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.bz-steps::before {
+  content: "";
+  position: absolute;
+  top: 0.8rem;
+  left: 0.8rem;
+  right: 1rem;
+  border-top: 1.5px solid var(--line);
+}
+.bz-steps li {
+  position: relative;
+  padding-top: 2.4rem;
+  font-size: 0.9688rem;
+  line-height: 1.45;
+  color: var(--ink-2);
+  counter-increment: step;
+  text-wrap: pretty;
+}
+.bz-steps li::first-letter {
+  text-transform: uppercase;
+}
+.bz-steps li::before {
+  content: counter(step);
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  border: 1.5px solid var(--bz-orange);
+  border-radius: 50%;
+  background: var(--bg);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--bz-orange-ink);
+}
+.bz-steps li:last-child::before {
+  background: var(--bz-orange);
+  color: #1f1d1b;
+}
+/* three records of one process */
+.bz-align {
+  display: grid;
+  grid-template-columns: minmax(12rem, 15rem) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+  margin-top: 1.2rem;
+}
+.bz-layers {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0.2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.bz-layers li {
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--surface);
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.15;
+  box-shadow: 0 8px 16px -14px rgb(var(--shade) / 0.5);
+}
+.bz-layers li::first-letter {
+  text-transform: uppercase;
+}
+.bz-layers li:nth-child(2) {
+  margin-left: 0.9rem;
+}
+.bz-layers li:nth-child(3) {
+  margin-left: 1.8rem;
+  border-color: var(--bz-orange);
+}
+.bz-align .bz-prose {
+  margin-top: 0;
+}
+.bz-pull {
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  max-width: 34ch;
+  font-family: var(--serif);
+  font-size: clamp(1.45rem, 2.3vw, 1.85rem);
+  line-height: 1.25;
+  text-wrap: pretty;
+}
+
+/* ----------------------------------------- deployment, performance, tools */
+.bz-status {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  max-width: 54ch;
+  margin-top: 1.75rem;
+  padding: 0.95rem 1.1rem;
+  border: 1px dashed var(--bz-orange);
+  border-radius: 10px;
+  background: var(--bz-orange-soft);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+.bz-status__dot {
+  flex: none;
+  width: 0.6rem;
+  height: 0.6rem;
+  border: 2px solid var(--bz-orange);
+  border-radius: 50%;
+  translate: 0 0.05rem;
+}
+.bz-perf {
+  margin-top: clamp(2.25rem, 4.5vw, 3rem);
+  padding-top: clamp(1.5rem, 3vw, 2rem);
+  border-top: 1px dashed var(--rule-strong);
+}
+.bz-perf .bz-prose {
+  margin-top: 1rem;
+}
+.bz-table-wrap {
+  margin-top: clamp(1.5rem, 3vw, 2rem);
+  overflow-x: auto;
+}
+.bz-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+.bz-table thead th {
+  padding: 0 1rem 0.7rem 0;
+  border-bottom: 1.5px solid var(--text);
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.bz-table tbody th,
+.bz-table td {
+  padding: 0.85rem 1rem 0.85rem 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: baseline;
+}
+.bz-table tbody th {
+  width: 32%;
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.15;
+}
+.bz-table td {
+  line-height: 1.55;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.bz-punchline {
+  margin-top: clamp(2rem, 4vw, 2.75rem);
+  max-width: 28ch;
+  font-family: var(--serif);
+  font-size: clamp(1.75rem, 3.2vw, 2.6rem);
+  font-weight: 500;
+  line-height: 1.14;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+/* =================================================== narrower screens */
+@media (max-width: 1099.98px) {
+  .bz-system__flow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.85rem;
+  }
+  .bz-node + .bz-node::before {
+    right: auto;
+    left: 1.6rem;
+    top: auto;
+    bottom: 100%;
+    width: 0;
+    height: 0.85rem;
+    border-top: 0;
+    border-left: 1.5px solid var(--line);
+  }
+  .bz-node {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.2rem 0.75rem;
+  }
+}
+@media (max-width: 759.98px) {
+  .bz-hero__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.75rem;
+  }
+  .bz-owned__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .avatar--bz-desk {
+    justify-self: end;
+    width: 6.5rem;
+  }
+  /* phones: the window fits the width; each note follows its exchange */
+  .bz-chat {
+    --pw: 100%;
+  }
+  .bz-chat__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bz-chat__note {
+    grid-column: 1;
+    grid-row: auto;
+    order: 3; /* after the bubble (and its quick replies) */
+    margin: 0.35rem 0.9rem 0.45rem;
+    padding: 0.2rem 0.55rem 0.2rem 0.25rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    font-size: 0.8125rem;
+    justify-self: center;
+  }
+  .bz-chat__note::before {
+    display: none;
+  }
+  .bz-chat__note-n {
+    width: 1.35rem;
+    height: 1.35rem;
+    font-size: 0.625rem;
+  }
+  .bz-bubble,
+  .bz-replies {
+    max-width: 84%;
+  }
+  .bz-caps__list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bz-steps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+  .bz-steps::before {
+    top: 0.8rem;
+    bottom: 1.2rem;
+    left: 0.8rem;
+    right: auto;
+    border-top: 0;
+    border-left: 1.5px solid var(--line);
+  }
+  .bz-steps li {
+    padding: 0.15rem 0 0 2.5rem;
+  }
+  .bz-align {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bz-table tbody th {
+    width: 38%;
+    font-size: 1.1rem;
+  }
+  .bz-table td {
+    font-size: 0.9375rem;
+  }
+}
