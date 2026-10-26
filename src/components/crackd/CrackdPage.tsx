@@ -335,7 +335,6 @@ export default function CrackdPage() {
                     <li key={q}>{q}</li>
                   ))}
                 </ol>
-                <Avatar pose="lookingUp" role="ck-think" />
               </div>
               <div className="ck-prose">
                 {crackd.matrix.after.map((p) => (

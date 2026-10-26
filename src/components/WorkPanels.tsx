@@ -40,7 +40,7 @@ type Logo =
     }
   | { kind: "mark"; mark: "lens" | "pages" | "mentor" };
 
-type Look = { key: string; tone: string; logo: Logo; backing?: "dark" | "bare" };
+type Look = { key: string; tone: string; logo: Logo; backing?: "dark" };
 
 const LOOKS: Record<string, Look> = {
   "crackd-ai": {
@@ -66,13 +66,13 @@ const LOOKS: Record<string, Look> = {
     logo: { kind: "img", src: "/logos/gvi.webp", w: 300, h: 237, art: 1, size: 27 },
   },
   "pmmy-research": { key: "pubs", tone: "#d3a1ad", logo: { kind: "mark", mark: "pages" } },
-  // the Columbia crown, standalone (no tile). The card stays light lavender in
-  // both themes, so its deep-blue artwork is the legible variant in both.
+  // the Columbia crown, in the same translucent tile as every other card. The
+  // card stays light lavender in both themes, so its deep-blue artwork is the
+  // legible variant in both.
   "esp-teaching": {
     key: "teaching",
     tone: "#b0b9da",
-    backing: "bare",
-    logo: { kind: "img", src: "/logos/columbia-crown-light.png", w: 300, h: 300, art: 239 / 300, size: 38 },
+    logo: { kind: "img", src: "/logos/columbia-crown-light.png", w: 300, h: 300, art: 239 / 300, size: 32 },
   },
 };
 
@@ -103,7 +103,7 @@ const MARKS = {
   ),
 };
 
-function LogoBlock({ logo, backing }: { logo: Logo; backing?: "dark" | "bare" }) {
+function LogoBlock({ logo, backing }: { logo: Logo; backing?: "dark" }) {
   return (
     <span className={`panel__logo${backing ? ` panel__logo--${backing}` : ""}`} aria-hidden="true">
       {logo.kind === "mark" ? (

@@ -3507,14 +3507,3 @@ body::before {
 .feature__stream-text {
   text-wrap: pretty;
 }
-
-/* Teaching & mentorship: the Columbia crown stands on the card itself, in the
-   same 60px slot as the other identifiers (so names and dates line up), with
-   no tile behind it */
-.panel__logo.panel__logo--bare {
-  background: transparent;
-  box-shadow: none;
-}
-.panel__logo--bare img {
-  max-width: 56px;
-}

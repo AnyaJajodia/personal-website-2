@@ -2,8 +2,10 @@
 //   content: every approved line of gvi-conservation.md; nothing from its
 //     internal notes; no embellishment of the AI model, the lion relocation,
 //     the run, fundraising or aerial surveys; certificate as text
-//   photographs: exactly three slots (opening, fieldwork, teaching), driven by
-//     content/gvi-photos.ts, with sensible proportions; no stock, video or autoplay
+//   photographs: Anya's three (opening, fieldwork, teaching) from
+//     content/gvi-photos.ts — loaded from the derived WebP set, at their own
+//     proportions, exact captions in figcaptions, descriptive alt; the opening
+//     caption over the road (desktop) or beneath (phone); no video or autoplay
 //   structure: heading outline, logo, one figure, no external links or files
 //   navigation, drawer, keyboard focus, layout in both themes, theme switching,
 //   the thread clear of text and photographs, reduced motion
@@ -52,16 +54,37 @@ const browser = await chromium.launch({ channel: "chrome" });
   ok("content: the lion relocation observed (not performed); the run helped organize and participated in", text.includes("i observed the darting and relocation process") && text.includes("helped organize and participated in a 50 km running event"));
   ok("content: the early working model, and the later ideas kept apart under their own label", text.includes("an early working model") && (await page.$eval(".gvi-after__k", (e) => e.textContent)) === "After the internship");
   ok("content: the certificate is readable text, with no file link", (await page.$$eval(".gvi-cert li", (l) => l.length)) === 3 && (await page.$$eval(".gvi-cert a, main a[href$='.pdf']", (a) => a.length)) === 0);
+  // the lower two load lazily: bring each into view (as a reader would) first
+  for (const f of await page.$$(".gvi-photo")) {
+    await f.scrollIntoViewIfNeeded();
+    await page.waitForFunction((el) => { const i = el.querySelector("img"); return i.complete && i.naturalWidth > 0; }, f, { timeout: 8000 }).catch(() => {});
+  }
+  await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
   const photos = await page.$$eval(".gvi-photo", (fs) =>
     fs.map((f) => {
       const r = f.querySelector(".gvi-photo__frame").getBoundingClientRect();
-      return { id: f.dataset.photo, ratio: +(r.width / r.height).toFixed(2), placeholder: !!f.querySelector(".gvi-photo__empty"), caption: !!f.querySelector("figcaption")?.textContent.trim() };
+      const img = f.querySelector("img");
+      return { id: f.dataset.photo, ratio: +(r.width / r.height).toFixed(2), placeholder: !!f.querySelector("[class*='empty'], [class*='wanted']"), caption: f.querySelector("figcaption")?.textContent.trim() ?? "", alt: img?.alt ?? "", loaded: !!img && img.complete && img.naturalWidth > 0, src: img?.currentSrc ?? "", srcset: img?.getAttribute("srcset") ?? "", filter: img ? getComputedStyle(img).filter : "" };
     }),
   );
-  ok("photographs: exactly three slots — opening, fieldwork, teaching — each captioned", photos.map((p) => p.id).join() === "opening,fieldwork,teaching" && photos.every((p) => p.caption), JSON.stringify(photos));
+  const captions = {
+    opening: "A tranquilized lioness being transported for relocation to another reserve.",
+    fieldwork: "Taba, one of the reserve’s two female cheetahs, carrying her prey.",
+    teaching: "The local preschool, where our team visited every other week to help teach lessons.",
+  };
+  ok("photographs: exactly three — opening, fieldwork, teaching — each with its exact caption in a figcaption", photos.map((p) => p.id).join() === "opening,fieldwork,teaching" && photos.every((p) => p.caption === captions[p.id]), JSON.stringify(photos.map((p) => p.caption)));
+  ok("photographs: the real files load from the derived WebP set with a responsive srcset; no filters; no placeholder scaffolding", photos.every((p) => p.loaded && /\/assets\/gvi\/web\/gvi-(lioness-relocation|cheetah-observation|community-learning)-\d+\.webp$/.test(p.src) && p.srcset.split(",").length >= 2 && p.filter === "none" && !p.placeholder), JSON.stringify(photos.map((p) => [p.id, p.loaded, p.src.split("/").pop(), p.filter])));
+  ok("photographs: descriptive alt text that doesn't simply repeat the caption", photos.every((p) => p.alt.length > 40 && norm(p.alt) !== norm(p.caption)) && !/impala|duiker|antelope|steenbok/i.test(photos[1].alt + photos[1].caption), JSON.stringify(photos.map((p) => p.alt)));
   const pr = Object.fromEntries(photos.map((p) => [p.id, p.ratio]));
-  ok("photographs: sensible proportions (wide opening ~2.3–2.6:1, portrait fieldwork 0.8:1, teaching 1.5:1)", pr.opening >= 2.2 && pr.opening <= 2.6 && Math.abs(pr.fieldwork - 0.8) < 0.03 && Math.abs(pr.teaching - 1.5) < 0.03, JSON.stringify(pr));
-  ok("photographs: placeholders are quiet and labelled, not stock (no <img> yet, no video, no autoplay)", photos.every((p) => p.placeholder) && (await page.$$eval(".gvi-photo img, main video, main iframe, [autoplay]", (x) => x.length)) === 0);
+  ok("photographs: lioness at 16:9 (trimmed from the top only), cheetah 2:3 and preschool 4:3 uncropped", Math.abs(pr.opening - 1.78) < 0.02 && Math.abs(pr.fieldwork - 0.67) < 0.02 && Math.abs(pr.teaching - 1.33) < 0.02, JSON.stringify(pr));
+  ok("photographs: the lioness is anchored to the bottom edge (only sky and bush trimmed)", (await page.$eval(".gvi-photo--opening img", (i) => getComputedStyle(i).objectPosition)) === "50% 100%");
+  ok("photographs: no video, iframe or autoplay", (await page.$$eval("main video, main iframe, [autoplay]", (x) => x.length)) === 0);
+  // the opening caption sits on the open road: inside the frame's lower-left, clear of the lioness's tail (from ~28% across)
+  const oc = await page.evaluate(() => {
+    const f = document.querySelector(".gvi-photo--opening .gvi-photo__frame").getBoundingClientRect(), c = document.querySelector(".gvi-photo--opening figcaption").getBoundingClientRect();
+    return { inside: c.left >= f.left && c.bottom <= f.bottom && c.top >= f.top, right: +((c.right - f.left) / f.width).toFixed(3), top: +((c.top - f.top) / f.height).toFixed(3) };
+  });
+  ok("opening caption (desktop): over the photograph's lower-left road, clear of the lioness, sling and people", oc.inside && oc.right < 0.26 && oc.top > 0.82, JSON.stringify(oc));
   const ext = await page.$$eval("main a[href^='http'], main a[download]", (as) => as.map((a) => a.href));
   ok("no external links or downloads", ext.length === 0, ext.join(" "));
   const outline = await page.$$eval("main h1, main h2, main h3", (hs) => hs.map((h) => +h.tagName[1]));
@@ -135,8 +158,10 @@ const browser = await chromium.launch({ channel: "chrome" });
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
   const page = await ctx.newPage();
   await page.goto(url, { waitUntil: "networkidle" });
-  const r = await page.$$eval(".gvi-photo__frame", (fs) => fs.map((f) => { const b = f.getBoundingClientRect(); return +(b.width / b.height).toFixed(2); }));
-  ok("photographs (phone): opening and fieldwork at 4:3, teaching at 3:2, none enormous", Math.abs(r[0] - 1.33) < 0.03 && Math.abs(r[1] - 1.33) < 0.03 && Math.abs(r[2] - 1.5) < 0.03, JSON.stringify(r));
+  const r = await page.$$eval(".gvi-photo__frame", (fs) => fs.map((f) => { const b = f.getBoundingClientRect(); return { ratio: +(b.width / b.height).toFixed(2), w: Math.round(b.width), h: Math.round(b.height) }; }));
+  ok("photographs (phone): the same proportions (lioness 16:9), the portrait capped so it isn't enormous", Math.abs(r[0].ratio - 1.78) < 0.02 && Math.abs(r[1].ratio - 0.67) < 0.02 && Math.abs(r[2].ratio - 1.33) < 0.02 && r[1].h <= 600 && r.every((x) => x.w <= 390), JSON.stringify(r));
+  const below = await page.$$eval(".gvi-photo", (fs) => fs.every((f) => f.querySelector("figcaption").getBoundingClientRect().top >= f.querySelector(".gvi-photo__frame").getBoundingClientRect().bottom));
+  ok("captions (phone): every caption, the opening's included, beneath its photograph", below);
   await ctx.close();
 }
 

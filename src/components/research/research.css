@@ -93,11 +93,19 @@
   text-transform: uppercase;
 }
 .rs-hero__year {
-  padding: 0.15rem 0.5rem;
-  border: 1.5px solid var(--rs-ink);
-  border-radius: 4px;
+  /* the shared hero mark: a short stroke in the page's accent */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
   color: var(--rs-ink);
   font-variant-numeric: lining-nums;
+}
+.rs-hero__year::before {
+  content: "";
+  width: 1.4rem;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--rs-mark);
 }
 .rs-hero__name {
   color: var(--ink-2);
@@ -227,13 +235,12 @@
 .rs-paper {
   padding-top: clamp(2rem, 4vw, 2.75rem);
 }
+/* the publication, set like a journal's title page: between two rules */
 .rs-paper__card {
   margin-top: 1.1rem;
-  padding: clamp(1.25rem, 3vw, 1.75rem) clamp(1.25rem, 3vw, 2rem);
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--surface);
-  box-shadow: 0 18px 34px -30px rgb(var(--shade) / 0.55);
+  padding: clamp(1.25rem, 3vw, 1.6rem) 0;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
 }
 .rs-paper__k::before {
   /* a short accent rule, like a journal's running head */
@@ -326,21 +333,26 @@
   color: var(--rs-ink);
   text-wrap: balance;
 }
+/* a short run of named factors in the accent, thin dots between */
 .rs-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.2rem 0.6rem;
   margin: 1.25rem 0;
-  padding: 0;
+  padding: 0.85rem 0 0;
+  border-top: 1px solid var(--rule);
   list-style: none;
 }
 .rs-chips li {
-  padding: 0.25rem 0.7rem;
-  border: 1px solid var(--rs-mark);
-  border-radius: 999px;
-  background: var(--rs-soft);
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 550;
+  color: var(--rs-ink);
+}
+.rs-chips li:not(:last-child)::after {
+  content: "·";
+  margin-left: 0.6rem;
+  font-weight: 400;
+  color: var(--muted);
 }
 .rs-chips li::first-letter {
   text-transform: uppercase;
@@ -370,19 +382,20 @@
   gap: clamp(1rem, 2.5vw, 1.75rem);
 }
 .rs-step__n {
+  /* the step's numeral, set on the thread like a knot: the paper behind it
+     breaks the line */
   position: relative;
   z-index: 1;
   display: grid;
   place-items: center;
   width: 2.4rem;
   height: 2.4rem;
-  border: 1.5px solid var(--rs-mark-strong);
-  border-radius: 50%;
   background: var(--bg);
-  font-size: 0.8125rem;
-  font-weight: 700;
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  font-weight: 600;
   color: var(--rs-ink);
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 .rs-step .rs-h3 {
   padding-top: 0.25rem;
@@ -413,9 +426,8 @@
 .rs-note {
   max-width: 58ch;
   margin-top: 1.1rem;
-  padding: 0.75rem 1rem 0.8rem;
-  border-radius: 8px;
-  background: linear-gradient(var(--rs-note), var(--rs-note)) 0 0 / 2px 100% no-repeat, color-mix(in srgb, var(--rs-note) 14%, transparent);
+  padding: 0.1rem 0 0.1rem 1rem;
+  border-left: 1px solid var(--rs-note);
   font-family: var(--serif);
   font-style: italic;
   font-size: 1.08rem;
@@ -426,7 +438,7 @@
   max-width: 60ch;
   margin-top: 1.4rem;
   padding-top: 1rem;
-  border-top: 1px dashed var(--rule-strong);
+  border-top: 1px solid var(--rule);
   font-size: 0.9688rem;
   line-height: 1.55;
   color: var(--ink-2);
@@ -446,6 +458,10 @@
   margin-bottom: calc(-1 * clamp(3rem, 6vw, 4.75rem));
   transform: translateY(var(--sink));
 }
+/* standing figures share one height across the case studies */
+.theme-research--teen .avatar--rs-reader {
+  width: clamp(4.75rem, 6vw, 5.6rem);
+}
 
 /* limitations: numbered points, then the close */
 .rs-limits__list {
@@ -459,25 +475,19 @@
 }
 .rs-limits__list li {
   position: relative;
-  padding-left: 2.4rem;
+  padding-left: 2rem;
   line-height: 1.6;
   counter-increment: lim;
   text-wrap: pretty;
 }
 .rs-limits__list li::before {
-  content: counter(lim);
+  content: counter(lim) ".";
   position: absolute;
   left: 0;
-  top: 0.1rem;
-  display: grid;
-  place-items: center;
-  width: 1.6rem;
-  height: 1.6rem;
-  border-radius: 50%;
-  background: var(--rs-soft);
-  border: 1px solid var(--rs-mark);
-  font-size: 0.75rem;
-  font-weight: 700;
+  top: -0.05rem;
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: 600;
   color: var(--rs-ink);
 }
 .rs-limits__close {
@@ -556,24 +566,37 @@
   text-transform: uppercase;
   color: var(--muted);
 }
+/* the companion paper: a row between rules; pointing at it washes it in the accent */
 .rs-companion__link {
   position: relative;
   display: grid;
   gap: 0.25rem;
   margin-top: 0.6rem;
-  padding: 1rem 3rem 1.05rem 1.2rem;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--surface);
+  padding: 1rem 3rem 1.05rem 0;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
   color: inherit;
   text-decoration: none;
-  transition:
-    border-color 0.2s var(--ease),
-    box-shadow 0.25s var(--ease);
+  isolation: isolate;
 }
-.rs-companion__link:hover {
-  border-color: var(--rule-strong);
-  box-shadow: 0 12px 24px -18px rgb(var(--shade) / 0.5);
+/* the wash reaches a little past the text, so the words never move */
+.rs-companion__link::before {
+  content: "";
+  position: absolute;
+  inset: 0 -0.85rem;
+  z-index: -1;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--rs-mark) 16%, transparent);
+  opacity: 0;
+  transition: opacity 0.3s var(--ease);
+}
+@media (hover: hover) {
+  .rs-companion__link:hover::before {
+    opacity: 1;
+  }
+  .rs-companion__link:hover .rs-companion__go {
+    translate: 3px -50%;
+  }
 }
 .rs-companion__name {
   font-family: var(--serif);
@@ -593,6 +616,7 @@
   translate: 0 -50%;
   font-size: 1.2rem;
   color: var(--accent);
+  transition: translate 0.35s var(--ease);
 }
 
 /* --------------------------------------------- figures: methods + chart */
@@ -641,12 +665,12 @@
 .rs-strand .rs-prose {
   margin-top: 0.75rem;
 }
+/* figures: open, between two rules; the steps inside are the only boxes */
 .rs-methods {
   margin: clamp(2rem, 4vw, 2.75rem) 0 0;
-  padding: clamp(1.1rem, 2.5vw, 1.6rem);
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--surface);
+  padding: 1.1rem 0 1.2rem;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
 }
 .rs-methods__lanes {
   display: grid;
@@ -734,10 +758,9 @@
     "cap cap";
   gap: 1rem clamp(1.5rem, 4vw, 3rem);
   margin: 1.25rem 0 0;
-  padding: clamp(1.1rem, 2.5vw, 1.6rem);
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--surface);
+  padding: 1.1rem 0 1.2rem;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
 }
 .rs-chart__plot {
   grid-area: plot;
@@ -843,10 +866,9 @@
   display: grid;
   gap: 1.25rem;
   margin: clamp(1.5rem, 3vw, 2rem) 0 clamp(2rem, 4vw, 2.75rem);
-  padding: clamp(1.1rem, 2.5vw, 1.6rem);
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--surface);
+  padding: 1.1rem 0 1.2rem;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
 }
 .rs-nfhs__rounds {
   position: relative;
@@ -975,6 +997,7 @@
   margin-top: 1.25rem;
   align-items: start;
 }
+/* the documented reach: the figure set into the text, a rule above and below */
 .rs-reach {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -982,9 +1005,9 @@
   gap: 0.4rem 1.25rem;
   max-width: 44rem;
   margin: 1.5rem 0;
-  padding: 1rem 1.25rem;
-  border-radius: 12px;
-  background: var(--rs-soft);
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
 }
 .rs-reach__value {
   font-family: var(--serif);
@@ -1005,10 +1028,8 @@
 .rs-roles {
   display: grid;
   margin: 0;
-  padding: 0.4rem 0.95rem;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--surface);
+  padding: 0;
+  border-top: 1px solid var(--rule-strong);
   list-style: none;
 }
 .rs-roles li {
@@ -1018,7 +1039,7 @@
   line-height: 1.4;
 }
 .rs-roles li + li {
-  border-top: 1px dashed var(--rule);
+  border-top: 1px solid var(--rule);
 }
 .rs-roles li::first-letter {
   text-transform: uppercase;

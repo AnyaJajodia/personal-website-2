@@ -1,38 +1,38 @@
-import Image from "next/image";
+"use client";
+
+import Image, { type ImageLoader } from "next/image";
 import type { FieldPhoto } from "@/content/gvi-photos";
 
 /**
- * One of the page's photographs (content/gvi-photos.ts). With a `src`, the
- * photograph at its configured proportions; without one, a quiet placeholder
- * of the same shape — a viewfinder, what belongs there, and the caption — so
- * the composition holds and nothing shifts when the real photo arrives.
+ * One of the page's photographs (content/gvi-photos.ts): a figure at the
+ * photograph's own proportions, served from the pre-sized WebP copies
+ * (scripts/build-gvi-photos.mjs) through a responsive srcset, with its
+ * caption. The opening photograph can carry its caption over the open road
+ * in its lower-left corner when the frame is wide enough (gvi.css); every
+ * other case, and every narrow screen, sets it beneath the frame.
  */
 export default function PhotoSlot({ photo, className = "", priority = false }: { photo: FieldPhoto; className?: string; priority?: boolean }) {
-  const style = { "--ratio": photo.ratio, "--ratio-narrow": photo.ratioNarrow ?? photo.ratio } as React.CSSProperties;
+  // the smallest exported width that covers the request, else the largest
+  const loader: ImageLoader = ({ src, width }) => `${src}-${photo.widths.find((w) => w >= width) ?? photo.widths[photo.widths.length - 1]}.webp`;
+  const style = { "--ratio": `${photo.width} / ${photo.height}` } as React.CSSProperties;
   return (
-    <figure className={`gvi-photo ${className}`.trim()} data-photo={photo.id} style={style}>
+    <figure className={`gvi-photo${photo.overlay ? " gvi-photo--overlay" : ""} ${className}`.trim()} data-photo={photo.id} style={style}>
       <div className="gvi-photo__frame">
-        {photo.src ? (
-          <Image
-            className="gvi-photo__img"
-            src={photo.src}
-            alt={photo.alt}
-            width={photo.width ?? 1600}
-            height={photo.height ?? 1000}
-            unoptimized
-            preload={priority}
-            loading={priority ? "eager" : "lazy"}
-          />
-        ) : (
-          <div className="gvi-photo__empty">
-            <span className="gvi-photo__corners" aria-hidden="true" />
-            <span className="gvi-photo__label">Photograph to come</span>
-            <span className="gvi-photo__wanted">{photo.wanted}</span>
-            {photo.care ? <span className="gvi-photo__care">{photo.care}</span> : null}
-          </div>
-        )}
+        <Image
+          className="gvi-photo__img"
+          loader={loader}
+          src={photo.stem}
+          alt={photo.alt}
+          width={photo.width}
+          height={photo.height}
+          sizes={photo.sizes}
+          preload={priority}
+          loading={priority ? "eager" : "lazy"}
+        />
       </div>
-      <figcaption className="gvi-photo__caption">{photo.caption}</figcaption>
+      <figcaption className="gvi-photo__caption">
+        <span>{photo.caption}</span>
+      </figcaption>
     </figure>
   );
 }

@@ -57,7 +57,7 @@ function Tile({ logo }: { logo: DrawerLogo }) {
   if (logo.kind === "lynxster") return <LynxsterLockup className="sheet-feature__lockup" />;
   if (logo.kind === "wordmark") return <Image className="sheet-feature__wordmark" src={logo.src} alt="" width={logo.w} height={logo.h} unoptimized />;
   return (
-    <span className={`sheet-entry__tile${logo.kind === "img" && logo.dark ? " sheet-entry__tile--dark" : ""}${logo.kind === "img" && logo.bare ? " sheet-entry__tile--bare" : ""}`} aria-hidden="true">
+    <span className={`sheet-entry__tile${logo.kind === "img" && logo.dark ? " sheet-entry__tile--dark" : ""}`} aria-hidden="true">
       {logo.kind === "mark" ? (
         <svg viewBox="0 0 40 40" focusable="false">
           <g fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
@@ -70,6 +70,12 @@ function Tile({ logo }: { logo: DrawerLogo }) {
     </span>
   );
 }
+
+const go = (
+  <svg className="sheet-entry__go" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+    <path d="M3 8h9.5M8.5 4l4 4-4 4" />
+  </svg>
+);
 
 const here = (
   <span className="sheet__here">
@@ -95,6 +101,7 @@ function Entry({ e, current, pick }: { e: DrawerEntry; current: string; pick: Pi
               {isHere ? here : null}
             </span>
           </span>
+          {go}
         </Link>
       </li>
     );
@@ -121,8 +128,11 @@ function Entry({ e, current, pick }: { e: DrawerEntry; current: string; pick: Pi
                   <Image src={drawerSubMarks[l.slug].src} alt="" width={drawerSubMarks[l.slug].w} height={drawerSubMarks[l.slug].h} unoptimized />
                 </span>
               ) : null}
-              {l.label}
-              {l.slug === current ? here : null}
+              <span className="sheet-entry__sub-text">
+                {l.label}
+                {l.slug === current ? <> {here}</> : null}
+              </span>
+              {go}
             </Link>
           </li>
         ))}
@@ -306,6 +316,7 @@ export default function WorkDrawer({ current }: { current: string }) {
                           {isHere ? here : null}
                         </span>
                       </span>
+                      {go}
                     </Link>
                   </li>
                 );

@@ -163,8 +163,9 @@ for (const theme of ["light", "dark"]) {
     return { apps: cs(".ck-apps").backgroundColor, admin: cs(".ck-app--admin").backgroundColor, matrix: cs(".ck-app--matrix").backgroundColor, name: cs(".ck-app--matrix .ck-app__name").color, body: cs(".ck-app--admin .ck-app__body p").color, chain: cs(".ck-chain").stroke, opacity: cs(".ck-apps").opacity, repos: document.querySelectorAll(".ck-apps a[href*='github.com']").length };
   });
   if (theme === "light") {
-    const [la, lm, ln, lb] = await Promise.all([lum(page, c.admin), lum(page, c.matrix), lum(page, c.name), lum(page, c.body)]);
-    ok("Crackd (light): no near-black block — the outer panel is gone; admin and matrix on pale stone with dark text; full opacity; all three repo links", c.apps === "rgba(0, 0, 0, 0)" && la > 0.7 && lm > 0.7 && ln < 0.05 && lb < 0.1 && c.opacity === "1" && c.repos === 3, JSON.stringify(c));
+    const [ln, lb] = await Promise.all([lum(page, c.name), lum(page, c.body)]);
+    // design pass: the three builds are open entries on the sheet — no boxes inside it
+    ok("Crackd (light): no near-black block and no boxes inside the sheet — admin and matrix are open entries with dark text; full opacity; all three repo links", c.apps === "rgba(0, 0, 0, 0)" && c.admin === "rgba(0, 0, 0, 0)" && c.matrix === "rgba(0, 0, 0, 0)" && ln < 0.05 && lb < 0.1 && c.opacity === "1" && c.repos === 3, JSON.stringify(c));
     ok("Crackd (light): yellow kept as accents — the matrix thread and the user app's short rule", /rgb\(201, 160, 24\)/.test(c.chain) && (await page.evaluate(() => getComputedStyle(document.querySelector(".ck-app--user"), "::before").backgroundColor)) !== "rgba(0, 0, 0, 0)", c.chain);
   } else {
     ok("Crackd (dark): the near-black panel and yellow matrix unchanged", c.apps === "rgb(18, 17, 15)" && c.name === "rgb(240, 207, 85)" && c.repos === 3, JSON.stringify(c));

@@ -126,7 +126,7 @@ The page follows `handoff/content/work/tmu-citation-tooling.md`; its internal no
 - The walkthrough, review rows and bibliography lines are fictional (one invented reference, note 14 → note 13 → "Hale 2016") and are labelled illustrative wherever they appear (`src/content/tmu.ts`)
 - Metrics shown are only the confirmed 800+ footnotes, 92% accuracy and 30% fewer manual review cycles; no benchmark method or timing is stated
 
-## GVI page — three photographs to supply (25 Oct 2026)
+## GVI page — photographs (supplied 25 Oct 2026; resized copies via `node scripts/build-gvi-photos.mjs`)
 Set each one's `src`, `alt`, `width` and `height` in `src/content/gvi-photos.ts`, with the file in `public/work/gvi/`. The placeholders already hold the right proportions.
 - [ ] **Opening** (wide, 21:9 on desktop, 4:3 on phones): an animal within the wider bushveld, or a documentary fieldwork image
 - [ ] **Fieldwork** (portrait 4:5; 4:3 on phones): monitoring, surveys or camera traps
@@ -154,3 +154,5 @@ Both pages follow `handoff/content/work/pmmy-research.md` and `teenage-pregnancy
 ## Navigation / Buzzworks / GVI refinement — notes (25 Oct 2026)
 - The GVI white logo is served from `public/logos/gvi-white.png` (not `public/assets/logos/`). It is used only in Dark; Light keeps `gvi.webp`.
 - The Buzzworks header uses `public/logos/buzzworks-minimal.png` beside "Buzzworks" set in the site serif. This is page typography, not the official wordmark.
+
+- GVI: Taba's caption deliberately doesn't name the prey species. Add it to `content/gvi-photos.ts` once confirmed.

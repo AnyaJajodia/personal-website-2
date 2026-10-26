@@ -1,5 +1,88 @@
 # Visual & functional review
 
+## Iteration 23 — GVI photographs (25 Oct 2026)
+
+**Photographs:** Anya's three files from `public/assets/gvi/` replace the placeholders. The originals are untouched; `scripts/build-gvi-photos.mjs` makes resized WebP copies in `public/assets/gvi/web/` (480–2400 px, never upscaled, nothing cropped or retouched). `PhotoSlot` serves them through `next/image` with a loader that picks the right size for each screen, with dimensions reserved so nothing shifts. The placeholder viewfinder, labels and wording are gone.
+- **Opening (lioness):** the full page width at its own 3:2, so the people, sling, tail and head all stay in frame. The caption sits on a small pale frosted note over the empty road at the lower-left, only when the frame is at least 68rem wide; narrower, it moves below. Measured at 1440: the note ends 21.6% across, and the lioness's tail starts at about 29%.
+- **Fieldwork (Taba):** the supplied 2:3 portrait, whole, capped at 22rem in the column (24rem on phones); caption below.
+- **Community:** the 4:3 photograph, whole; caption below. The face-obscuring edits are kept exactly: after resizing, every copy matches a resize of the original (mean pixel difference ≈2/255, no pixel off by more than 60), with the same count of near-black pixels.
+
+**Follow-up — shorter opening photograph:** the lioness photograph is now 16:9 (698px tall at 1440, was 827), trimmed from the top only (`object-position: 50% 100%`), so the staff, sling and lioness along the bottom stay in frame. 16:9 is the shallowest crop before the tallest of the staff loses his head (2:1 cuts his face). The overlay caption stays on the road.
+
+**Captions:** exactly as supplied, in `figcaption`. The alt text describes each scene without repeating the caption or naming the prey's species. There are no filters, dimming, parallax or hover effects, and one 8px radius throughout.
+
+## Iteration 22 — design pass: work pages, drawer, avatars (25 Oct 2026)
+
+**Scope:** the eight bespoke work pages, navigation, the drawer, shared components, motion, hover states and avatars, plus the homepage Teaching card. Design only: no copy, dates, order or placeholders changed.
+
+**Drawer:**
+- **Before:** a stack of fully coloured blocks with black "THIS PAGE" pills. Now it is an editorial index:
+  - Each entry is a row on the paper: a small tile in the homepage card's colour, the serif name and a muted category, with hairlines between rows.
+  - Grouped pages hang from their parent on a thin thread.
+  - The current page is washed in its own colour and marked "● This page".
+- **Hover:**
+  - The row tints in its colour.
+  - The tile lifts 2px with a soft shadow.
+  - An arrow slides in.
+  - Pressing settles it back.
+  - The close button turns a quarter-turn.
+  - Under reduced motion, the tint stays and nothing moves.
+- **Motion:**
+  - The panel slides in over 500ms on a soft curve.
+  - Its contents travel slightly less far, all together with no stagger, so the open has a little depth.
+  - The close takes 320ms, eased at both ends.
+- **Homepage Teaching card:** the Columbia crown now sits in the same translucent tile as every other card.
+
+**Cards and elements removed across pages** (each replaced by open typography: rules, hairlines and margin notes):
+- **Hero fact cards:** Crackd, Buzzworks and TMU now use an open list under a rule, as GVI, PMMY and ESP already did. TMU's tool chips become a dotted run of names.
+- **Hero date badges:** five different treatments (yellow fill, boxes, a dot, a dash) become one shared mark, a short stroke in the page accent plus the date.
+- **Crackd:**
+  - Admin and the matrix are no longer boxes inside the notebook sheet. Each build opens with a short yellow rule; the matrix's own thread of knots is its divider.
+  - Dark keeps its panel, now flat inside.
+  - Checkbox ledger → highlighter strokes.
+  - Circled question numbers → serif numerals.
+  - The credits card is open.
+- **Buzzworks:**
+  - The system diagram's dashed frame and gradient node are flattened.
+  - Numbered step circles → knots on the thread.
+  - Stacked "records" cards → stepped lines.
+  - The ICICI dashed box → a note with a fine orange rule.
+  - The "Illustration" pill → a plain label.
+- **TMU:**
+  - The results card → figures between rules.
+  - Sticky notes → margin notes with a gold rule.
+  - Source-type pills → a dotted run.
+  - Review-matrix pills → a numbered three-column index.
+  - The checklist card → an open list.
+  - Output panels lose their shadows.
+  - The "Illustrative" pill → a highlighted word.
+- **GVI:** the placement facts, field logs, formats, questions and certificate are no longer tinted, bordered or double-framed; each is open under a sage rule.
+- **Research pages:**
+  - The publication card → title-page rules.
+  - The methods, chart and NFHS figures are open between rules.
+  - Chips → a dotted run.
+  - Tinted notes → a fine left rule.
+  - Circled step and limit numbers → serif numerals.
+  - The 200+ panel → a figure between rules.
+  - The roles card is open.
+  - The companion paper → a row with a hover wash.
+- **ESP/ADI:** the session example and the matching card are open; the matching numbers are plain.
+- **"On this page" on phones:** the boxed card → an index between rules.
+
+**Avatars** (minimal: one per page, each standing on a rule):
+- Crackd's second, floating figure is removed.
+- ESP's figure now stands on the "Across the program" rule.
+- Standing figures share one height across pages: TMU and teen shrink, GVI grows slightly.
+
+**Found and fixed:**
+
+| # | Pri | Defect | Fix |
+|---|-----|--------|-----|
+| 1 | P2 | Buzzworks capabilities and ADI themes: descriptions sat low under some headings (the grid rows stretched to the taller neighbour). | `align-content: start` |
+| 2 | P2 | Dotted runs began a wrapped line with "·" and swallowed the capital ("books"). | Separators moved after each item. |
+| 3 | P3 | Crackd repo card wrapped `caption_voting_user_interface` by 1px. | Tighter gap. |
+| 4 | P3 | The companion link animated its padding (layout work). | Replaced with a fading wash. |
+
 ## Iteration 21 — navigation and accent refinement (25 Oct 2026)
 
 **Navigation:**

@@ -294,3 +294,13 @@ Decisions (keep through compaction):
 - **Pages:** the Buzzworks `.bz-brand` symbol and serif name, plus a 31rem chat window. Crackd Light stone apps, with Dark re-scoped. GVI uses `ThemeLogo` (`gvi.webp` / `gvi-white.png`) and an open close.
 - **QA:** new `qa/refine.mjs` (30); trigger and brand checks updated in crackd, buzzworks and gvi.
 - **Follow-up:** drawer timing is 500ms in (`cubic-bezier(.32,.72,0,1)`) and 320ms out (`--sheet-out`); hover lift on entries (WorkDrawer.css); `qa/drawer-motion.mjs` added.
+
+## Iteration 22 — design pass (25 Oct 2026)
+- **Drawer:** an editorial index (rows, colour tiles, a thread for groups, a wash for the current page). The hover tint, tile lift and arrow live in `WorkDrawer.css`; the markup adds `.sheet-entry__go` and `.sheet-entry__sub-text`.
+- **Pages:** boxed cards, pills, checklists and circled numbers are replaced by open rules and lists in each page's CSS; one hero date mark across all eight. The crown on the homepage Teaching card is tiled (`WorkPanels.tsx`; `.panel__logo--bare` removed).
+- **Avatars:** Crackd's think figure is removed; ESP's figure stands on the program rule; standing figures share one height.
+- **QA:** `qa/pass-shots.mjs` (full-page frames) added; refine, check and columbia assertions updated.
+
+## Iteration 23 — GVI photographs (25 Oct 2026)
+- `scripts/build-gvi-photos.mjs` → `public/assets/gvi/web/*.webp`. `content/gvi-photos.ts` (files, widths, captions, alt, sizes, `overlay`); `PhotoSlot.tsx` is a client component with a width-picking loader; the photo styles and the container-query overlay live in gvi.css.
+- **Follow-up:** the GVI opening photograph is 16:9, anchored to the bottom (gvi.css `.gvi-photo--opening`).

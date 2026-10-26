@@ -1,3 +1,43 @@
+# QA report — iteration 23: GVI photographs (25 Oct 2026)
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 |
+| `node qa/gvi.mjs` (photo checks rewritten) | **36/36**. Exact captions in figcaptions; files load from the WebP set with a srcset; no filters or placeholders; descriptive alt with no prey species; uncropped 3:2 / 2:3 / 4:3. Opening caption inside the lower-left road at 1440, every caption below on phones; the portrait ≤ 600px tall on a phone; the thread and avatar clear of the photos |
+| `node qa/refine.mjs` / `consistency.mjs` | **30/30** / **18/18** |
+| `node qa/contrast-audit.mjs light,dark /work/gvi-conservation` | 0 below AA (smallest 5.8 / 9.07) |
+| Face-obscuring check (sharp, every derived width vs a resize of the original) | Mean diff ≈ 2/255, 0% of pixels off by > 60; near-black pixel counts match |
+| impeccable detector (gvi.css, PhotoSlot.tsx) | 0 findings |
+| Delivery | 1440: lioness 2400w, cheetah 480w, preschool 800w. 390: 480w each. No console errors, no failed requests, no horizontal overflow |
+
+**Follow-up (16:9 opening crop):** build 0; `node qa/gvi.mjs` **37/37** (adds the bottom-anchored crop; opening ratio 1.78 on desktop and phone). Viewed `qa/screenshots/gvi-photos/1440-light-opening-16x9.png`.
+
+**Screenshots viewed:** `qa/screenshots/gvi-photos/`. 1440 light and dark (opening, field, teach, full opening figure, caption close-up, opening bottom), 1100 light (caption below), 390 light and dark (all three).
+
+---
+
+# QA report — iteration 22: design pass (25 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build). Chrome was driven by Playwright; the Claude in Chrome extension is not connected.
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 |
+| `node qa/refine.mjs` / `crackd.mjs` / `buzzworks.mjs` / `gvi.mjs` / `tmu.mjs` / `research.mjs` / `columbia.mjs` | **30/30** / **72/72** / **36/36** / **32/32** / **33/33** / **56/56** / **53/53** |
+| `node qa/check.mjs` / `interact.mjs` / `theme.mjs` / `consistency.mjs` / `copy.mjs` / `hero-rig.mjs` | 0 fails / **33/33** / **19/19** / **18/18** / **93/93** / **16/16** |
+| Test updates (deliberate design changes) | refine: no boxes inside the Crackd sheet. check and columbia: the Columbia crown is tiled, on the homepage and in the drawer |
+| `node qa/contrast-audit.mjs light,dark` (all 8 pages) | 0 runs below AA in either theme. Smallest: Buzzworks 4.89 light / 4.72 dark |
+| `node qa/unchanged.mjs compare --skip=<8 pages> --mask-header` | Lynxster, AMNH and Inteli-lens are unchanged. Homepage markup differs only by the Teaching logo element; pixels 0.021% / 0.009% |
+| `node qa/drawer-motion.mjs` | Open: speed builds to ≈57px/frame by ~100ms and settles by ~440ms. Close: eased both ways, done by ~300ms |
+| impeccable detector (changed files) | 0 findings, after replacing one padding transition |
+
+**Screenshots viewed:**
+- `qa/screenshots/pass22/` (before) and `pass22b/` (after): every page at 1440 light (full height) and as phone sheets at 390 dark
+- Drawer at 1440 light and dark, mid-slide, hover, bottom (group hover), and 390 dark and light
+- Homepage Teaching card in light
+
+---
+
 # QA report — iteration 21: navigation and accent refinement (25 Oct 2026)
 
 **Preview:** http://localhost:3100 (production build). Chrome was driven by Playwright; the Claude in Chrome extension is not connected.

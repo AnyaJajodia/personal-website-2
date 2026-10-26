@@ -66,15 +66,23 @@
   gap: clamp(1.75rem, 3.5vw, 2.5rem);
 }
 .tmu-hero__dates {
+  display: flex;
   width: fit-content;
-  padding: 0.18rem 0.55rem;
-  border: 1.5px solid var(--tmu-blue-ink);
-  border-radius: 4px;
+  align-items: center;
+  gap: 0.6rem;
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   color: var(--tmu-blue-ink);
   font-variant-numeric: lining-nums;
+}
+.tmu-hero__dates::before {
+  /* the shared hero mark: a short stroke in the page's accent */
+  content: "";
+  width: 1.4rem;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
 }
 .tmu-logo {
   width: fit-content;
@@ -97,18 +105,10 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr) minmax(0, 1.5fr);
   gap: 0 clamp(1.25rem, 3vw, 2.25rem);
   margin: 0;
-  padding: 0.35rem 1.35rem 0.6rem;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--surface);
-  box-shadow: 0 14px 28px -24px rgb(var(--shade) / 0.5);
+  border-top: 1px solid var(--rule-strong);
 }
 .tmu-facts__item {
   padding-block: 0.85rem;
-}
-.tmu-facts__item + .tmu-facts__item {
-  padding-left: clamp(1.25rem, 3vw, 2.25rem);
-  border-left: 1px dashed var(--rule-strong);
 }
 .tmu-facts dt {
   color: var(--tmu-blue-ink);
@@ -118,21 +118,21 @@
   font-size: 0.9688rem;
   line-height: 1.5;
 }
+/* the tools: a plain run of names, separated by thin dots */
 .tmu-facts__tools {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3rem;
-  margin: 0.15rem 0 0;
+  gap: 0 0.5rem;
+  margin: 0;
   padding: 0;
   list-style: none;
+  font-size: 0.9688rem;
+  line-height: 1.5;
 }
-.tmu-facts__tools li {
-  padding: 0.12rem 0.5rem;
-  border: 1px solid var(--rule);
-  border-radius: 5px;
-  background: var(--bg);
-  font-size: 0.8125rem;
-  line-height: 1.45;
+.tmu-facts__tools li:not(:last-child)::after {
+  content: "·";
+  margin-left: 0.5rem;
+  color: var(--muted);
 }
 
 /* ------------------------------------------------------------ narrative */
@@ -189,14 +189,12 @@
   font-weight: 550;
 }
 
-/* the confirmed results: a single output panel */
+/* the confirmed results: three figures set in the text's own column, between rules */
 .tmu-results {
   margin: clamp(1.75rem, 3.5vw, 2.5rem) 0 0;
-  padding: clamp(1.25rem, 2.6vw, 1.75rem);
-  border: 1px solid var(--tmu-blue-line);
-  border-radius: 12px;
-  background: var(--tmu-cell);
-  box-shadow: 0 18px 36px -30px rgb(var(--shade) / 0.55);
+  padding: 1.1rem 0 1.15rem;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
 }
 .tmu-results__figures {
   display: grid;
@@ -232,7 +230,7 @@
   margin-top: 1.1rem;
   padding-top: 1rem;
   max-width: 62ch;
-  border-top: 1px dashed var(--rule-strong);
+  border-top: 1px solid var(--rule);
   font-size: 0.9688rem;
   line-height: 1.6;
   color: var(--ink-2);
@@ -252,10 +250,10 @@
   line-height: 1.5;
   color: var(--muted);
 }
+/* "illustrative": a word marked with the highlighter, not a badge */
 .walk__tag {
-  padding: 0.08rem 0.5rem;
-  border-radius: 999px;
-  background: var(--tmu-gold-soft);
+  padding: 0 0.1rem;
+  background: linear-gradient(transparent 58%, var(--tmu-gold-soft) 58%);
   color: var(--text);
   font-size: 0.6875rem;
   font-weight: 700;
@@ -548,44 +546,46 @@
   grid-area: note;
   align-self: start;
   margin-top: 4.25rem;
-  padding: 0.7rem 0.85rem 0.75rem;
-  border-radius: 8px;
-  background: linear-gradient(var(--tmu-gold-soft), var(--tmu-gold-soft)) 0 0 / 3px 100% no-repeat, color-mix(in srgb, var(--tmu-gold-soft) 35%, transparent);
+  padding: 0.15rem 0 0.15rem 0.95rem;
+  border-left: 1px solid var(--tmu-gold);
   font-family: var(--serif);
   font-style: italic;
   font-size: 1.08rem;
   line-height: 1.35;
   color: var(--text);
 }
+/* the source types: one run of names in the accent, thin dots between */
 .tmu-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.2rem 0.6rem;
   margin: 0;
-  padding: 0;
+  padding: 0.85rem 0 0;
+  border-top: 1px solid var(--rule);
   list-style: none;
 }
 .tmu-tags li {
-  padding: 0.25rem 0.7rem;
-  border: 1px solid var(--tmu-blue-line);
-  border-radius: 999px;
-  background: var(--tmu-blue-soft);
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 550;
   color: var(--tmu-blue-ink);
+}
+.tmu-tags li:not(:last-child)::after {
+  content: "·";
+  margin-left: 0.6rem;
+  color: var(--muted);
+  font-weight: 400;
 }
 .tmu-tags li::first-letter {
   text-transform: uppercase;
 }
 
-/* output panels */
+/* output panels: a document's page, a shade off the paper, flat */
 .tmu-out {
   margin: 0;
   padding: clamp(1.1rem, 2.4vw, 1.6rem);
-  border: 1px solid var(--tmu-blue-line);
-  border-radius: 12px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
   background: var(--tmu-cell);
-  box-shadow: 0 18px 36px -30px rgb(var(--shade) / 0.55);
 }
 .tmu-out__title {
   margin-bottom: 0.7rem;
@@ -596,7 +596,7 @@
 .tmu-out__cap {
   margin-top: 1.1rem;
   padding-top: 0.9rem;
-  border-top: 1px dashed var(--rule-strong);
+  border-top: 1px solid var(--rule);
 }
 .tmu-bibs {
   display: grid;
@@ -638,37 +638,34 @@
 .tmu-matrix__lead {
   font-weight: 600;
 }
+/* the matrix's six columns, in order, as a short numbered index */
 .tmu-matrix__cols {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 clamp(1rem, 2.5vw, 1.75rem);
   margin: 0.6rem 0 0;
   padding: 0;
   list-style: none;
   counter-reset: col;
 }
 .tmu-matrix__cols li {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.25rem 0.65rem 0.25rem 0.3rem;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: var(--surface);
-  font-size: 0.875rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--rule);
+  font-size: 0.9375rem;
+  line-height: 1.4;
   counter-increment: col;
 }
 .tmu-matrix__cols li::before {
   content: counter(col);
-  display: grid;
-  place-items: center;
-  width: 1.3rem;
-  height: 1.3rem;
-  border-radius: 50%;
-  background: var(--tmu-blue-soft);
+  flex: none;
+  min-width: 0.8rem;
   color: var(--tmu-blue-ink);
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 /* the example review matrix: given real room */
 .tmu-review__scroll {
@@ -737,46 +734,45 @@
   justify-content: space-between;
   gap: 1.5rem;
 }
+/* the editorial work: an open list under a rule */
 .tmu-proof__list {
   display: grid;
-  gap: 0.15rem;
   margin: 0;
-  padding: 0.5rem 0.9rem;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--surface);
+  padding: 0;
+  border-top: 1px solid var(--rule-strong);
   list-style: none;
 }
 .tmu-proof__list li {
   display: grid;
-  grid-template-columns: 1.4rem minmax(0, 1fr);
-  gap: 0.6rem;
-  padding: 0.55rem 0;
+  grid-template-columns: 0.85rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.65rem 0;
   font-size: 0.9375rem;
   line-height: 1.4;
 }
 .tmu-proof__list li + li {
-  border-top: 1px dashed var(--rule);
+  border-top: 1px solid var(--rule);
+}
+/* a short stroke of the highlighter for each task */
+.tmu-proof__list li::before {
+  content: "";
+  width: 0.85rem;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--tmu-gold);
+  translate: 0 -0.25em;
 }
 .tmu-proof__list li::first-letter {
   text-transform: uppercase;
 }
 .tmu-proof__list svg {
-  width: 1.3rem;
-  height: 1.3rem;
-  padding: 0.15rem;
-  border-radius: 4px;
-  background: var(--tmu-gold-soft);
-  fill: none;
-  stroke: var(--text);
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  display: none;
 }
 .avatar--tmu-reader {
   position: relative;
   align-self: flex-end;
-  width: clamp(6rem, 8.5vw, 7.5rem);
+  width: clamp(4.75rem, 6vw, 5.4rem); /* standing figures share one height across the case studies */
   margin-bottom: calc(-1 * clamp(3rem, 6vw, 4.75rem));
   transform: translateY(var(--sink));
 }
@@ -795,8 +791,8 @@
   position: relative;
   padding: 0.7rem 0.75rem;
   border: 1px solid var(--tmu-blue-line);
-  border-radius: 9px;
-  background: var(--tmu-cell);
+  border-radius: 6px;
+  background: transparent;
   font-family: var(--serif);
   font-size: 1.12rem;
   font-weight: 600;
@@ -885,6 +881,9 @@
 }
 /* tablets: the review matrix keeps a readable width and scrolls in its panel */
 @media (min-width: 760px) and (max-width: 1099.98px) {
+  .tmu-matrix__cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .tmu-review__table {
     min-width: 46rem;
   }
@@ -894,9 +893,7 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .tmu-facts__item + .tmu-facts__item {
-    padding-left: 0;
-    border-left: 0;
-    border-top: 1px dashed var(--rule-strong);
+    border-top: 1px solid var(--rule);
   }
   .tmu-modules {
     grid-template-columns: minmax(0, 1fr);
@@ -930,6 +927,9 @@
   .tmu-hero__grid {
     grid-template-columns: minmax(0, 1fr);
     gap: 1.75rem;
+  }
+  .tmu-matrix__cols {
+    grid-template-columns: minmax(0, 1fr);
   }
   .tmu-results__figures {
     grid-template-columns: minmax(0, 1fr);

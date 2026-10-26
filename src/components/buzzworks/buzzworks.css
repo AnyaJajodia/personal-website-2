@@ -101,7 +101,7 @@
 .bz-hero__dates {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.6rem;
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -109,10 +109,11 @@
   color: var(--bz-orange-ink);
 }
 .bz-hero__dates::before {
+  /* the shared hero mark: a short stroke in the page's accent */
   content: "";
-  width: 0.55rem;
-  height: 0.55rem;
-  border-radius: 50%;
+  width: 1.4rem;
+  height: 2px;
+  border-radius: 1px;
   background: var(--bz-orange);
 }
 /* the supplied minimal symbol at its own proportions and colours, beside the
@@ -146,19 +147,19 @@
 .theme-buzzworks .bz-hero__subtitle {
   max-width: 34ch;
 }
+/* the facts: an open list under a rule, as on every case study */
 .bz-facts {
   margin: 0 0 0.5rem;
-  padding: 0.35rem 1.35rem 0.6rem;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--surface);
-  box-shadow: 0 14px 28px -24px rgb(var(--shade) / 0.5);
+  padding: 0 0 0.25rem;
+  border-top: 1px solid var(--rule-strong);
+  /* the page's own paper, so the thread passes behind the facts */
+  background: var(--bg);
 }
 .bz-facts__item {
   padding-block: 0.9rem;
 }
 .bz-facts__item + .bz-facts__item {
-  border-top: 1px dashed var(--rule-strong);
+  border-top: 1px solid var(--rule);
 }
 .bz-facts dt {
   color: var(--bz-orange-ink);
@@ -499,9 +500,6 @@
   color: var(--muted);
 }
 .bz-chat__tag {
-  padding: 0.1rem 0.5rem;
-  border: 1px solid var(--bz-orange);
-  border-radius: 999px;
   font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -527,6 +525,8 @@
   padding: 1rem 0.75rem 1.05rem 0;
   border-top: 1px solid var(--rule);
   counter-increment: cap;
+  /* rows keep to their content when a neighbour in the row is taller */
+  align-content: start;
   transition: background-color 0.6s var(--ease);
 }
 .bz-cap::before {
@@ -561,11 +561,11 @@
 .bz-system {
   margin: clamp(1.75rem, 3.5vw, 2.5rem) 0;
 }
+/* an open figure between two rules: the parts are the only boxes */
 .bz-system__frame {
-  padding: clamp(1.1rem, 2.5vw, 1.6rem);
-  border: 1px dashed var(--rule-strong);
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  padding: 1.1rem 0 1.2rem;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
 }
 .bz-system__frame-label {
   font-size: 0.75rem;
@@ -603,7 +603,7 @@
 }
 .bz-node--core {
   border-color: var(--bz-orange);
-  background: linear-gradient(180deg, var(--bz-orange-soft), transparent 70%), var(--bg);
+  background: var(--bz-orange-soft);
 }
 .bz-node--edge {
   background: transparent;
@@ -627,7 +627,7 @@
   margin: 1.1rem 0 0;
   padding: 0.9rem 0 0;
   list-style: none;
-  border-top: 1px dashed var(--rule);
+  border-top: 1px solid var(--rule);
   font-size: 0.9rem;
   color: var(--ink-2);
 }
@@ -684,7 +684,7 @@
 }
 .bz-steps li {
   position: relative;
-  padding-top: 2.4rem;
+  padding-top: 2rem;
   font-size: 0.9688rem;
   line-height: 1.45;
   color: var(--ink-2);
@@ -695,24 +695,19 @@
   text-transform: uppercase;
 }
 .bz-steps li::before {
-  content: counter(step);
+  /* a knot on the thread; the last one, where the task completes, filled */
+  content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  display: grid;
-  place-items: center;
-  width: 1.65rem;
-  height: 1.65rem;
+  top: 0.45rem;
+  left: 0.45rem;
+  width: 0.7rem;
+  height: 0.7rem;
   border: 1.5px solid var(--bz-orange);
   border-radius: 50%;
   background: var(--bg);
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--bz-orange-ink);
 }
 .bz-steps li:last-child::before {
   background: var(--bz-orange);
-  color: #1f1d1b;
 }
 /* three records of one process */
 .bz-align {
@@ -722,33 +717,31 @@
   align-items: start;
   margin-top: 1.2rem;
 }
+/* three records of one process: stepped lines, the backend record last */
 .bz-layers {
   display: grid;
-  gap: 0.45rem;
   margin: 0.2rem 0 0;
   padding: 0;
   list-style: none;
+  border-bottom: 1px solid var(--rule);
 }
 .bz-layers li {
-  padding: 0.65rem 0.85rem;
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  background: var(--surface);
+  padding: 0.7rem 0 0.7rem 0.1rem;
+  border-top: 1px solid var(--rule);
   font-family: var(--serif);
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 600;
   line-height: 1.15;
-  box-shadow: 0 8px 16px -14px rgb(var(--shade) / 0.5);
 }
 .bz-layers li::first-letter {
   text-transform: uppercase;
 }
 .bz-layers li:nth-child(2) {
-  margin-left: 0.9rem;
+  padding-left: 1.1rem;
 }
 .bz-layers li:nth-child(3) {
-  margin-left: 1.8rem;
-  border-color: var(--bz-orange);
+  padding-left: 2.2rem;
+  color: var(--bz-orange-ink);
 }
 .bz-align .bz-prose {
   margin-top: 0;
@@ -763,26 +756,17 @@
 }
 
 /* ----------------------------------------- deployment, performance, tools */
+/* a status note: set apart by a fine orange rule, not a box */
 .bz-status {
-  display: flex;
-  align-items: baseline;
-  gap: 0.75rem;
   max-width: 54ch;
   margin-top: 1.75rem;
-  padding: 0.95rem 1.1rem;
-  border: 1px dashed var(--bz-orange);
-  border-radius: 10px;
-  background: var(--bz-orange-soft);
+  padding: 0.15rem 0 0.15rem 1.1rem;
+  border-left: 1px solid var(--bz-orange);
   font-size: 1rem;
   line-height: 1.55;
 }
 .bz-status__dot {
-  flex: none;
-  width: 0.6rem;
-  height: 0.6rem;
-  border: 2px solid var(--bz-orange);
-  border-radius: 50%;
-  translate: 0 0.05rem;
+  display: none;
 }
 .bz-perf {
   margin-top: clamp(2.25rem, 4.5vw, 3rem);

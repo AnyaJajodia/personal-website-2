@@ -13,7 +13,7 @@ import { currently, selectedWork } from "./site";
 export type WorkMark = "lens" | "pages" | "mentor";
 
 export type DrawerLogo =
-  | { kind: "img"; src: string; w: number; h: number; dark?: boolean; bare?: boolean }
+  | { kind: "img"; src: string; w: number; h: number; dark?: boolean }
   | { kind: "mark"; mark: WorkMark }
   | { kind: "lynxster" }
   | { kind: "wordmark"; src: string; w: number; h: number };
@@ -38,8 +38,8 @@ const LOOKS: Record<string, { key: string; tone: string; logo: DrawerLogo }> = {
   "inteli-lens": { key: "inteli", tone: "#b9a4be", logo: { kind: "mark", mark: "lens" } },
   "gvi-conservation": { key: "gvi", tone: "#a5bdb0", logo: { kind: "img", src: "/logos/gvi.webp", w: 300, h: 237 } },
   "pmmy-research": { key: "pubs", tone: "#d3a1ad", logo: { kind: "mark", mark: "pages" } },
-  // the Columbia crown, standalone; deep blue, as the tile stays lavender in both themes
-  "esp-teaching": { key: "teaching", tone: "#b0b9da", logo: { kind: "img", src: "/logos/columbia-crown-light.png", w: 300, h: 300, bare: true } },
+  // the Columbia crown, deep blue: its tile keeps the lavender tone in both themes
+  "esp-teaching": { key: "teaching", tone: "#b0b9da", logo: { kind: "img", src: "/logos/columbia-crown-light.png", w: 300, h: 300 } },
 };
 
 export const drawerCurrent: DrawerEntry[] = currently.features.map((f) => ({

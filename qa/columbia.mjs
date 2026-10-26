@@ -124,7 +124,7 @@ for (const pg of [
   }));
   await page.keyboard.press("Escape");
   await page.waitForTimeout(350);
-  ok(`${pg.tag}: drawer — this page marked and focused; Teaching shows the crown untiled; ADI's pill beside its link`, dr.cur.join() === `/work/${pg.slug}` && dr.focus === `/work/${pg.slug}` && dr.crown.bg === "rgba(0, 0, 0, 0)" && dr.crown.src.endsWith("columbia-crown-light.png") && dr.crown.shown && dr.pill?.overflow === "hidden" && dr.pill.hidden === "true", JSON.stringify(dr));
+  ok(`${pg.tag}: drawer — this page marked and focused; Teaching shows the crown on its lavender tile; ADI's pill beside its link`, dr.cur.join() === `/work/${pg.slug}` && dr.focus === `/work/${pg.slug}` && dr.crown.bg === "rgb(176, 185, 218)" && dr.crown.src.endsWith("columbia-crown-light.png") && dr.crown.shown && dr.pill?.overflow === "hidden" && dr.pill.hidden === "true", JSON.stringify(dr));
   await ctx.close();
 
   // System mode follows the OS, and the first painted frame already shows the right wordmark
@@ -166,7 +166,7 @@ for (const pg of [
       return { surface: getComputedStyle(p).backgroundColor, tile: getComputedStyle(logo).backgroundColor, shadow: getComputedStyle(logo).boxShadow, src: img.getAttribute("src"), opacity: getComputedStyle(img).opacity, svg: p.querySelectorAll(".panel__logo svg").length, visibleH: Math.round(ir.height * 239 / 300), slot: `${Math.round(lr.width)}x${Math.round(lr.height)}`, centred: Math.abs(ir.left + ir.width / 2 - (lr.left + lr.width / 2)) < 1.5 };
     });
     const expectSurface = theme === "light" ? "rgb(176, 185, 218)" : "rgb(160, 170, 210)";
-    ok(`homepage card (${theme}): the standalone Columbia crown (no tile, no generic icon) on the unchanged lavender surface`, card.surface === expectSurface && card.tile === "rgba(0, 0, 0, 0)" && card.shadow === "none" && card.src.endsWith("columbia-crown-light.png") && card.opacity === "1" && card.svg === 0 && card.slot === "60x60" && card.centred, JSON.stringify(card));
+    ok(`homepage card (${theme}): the Columbia crown in the same translucent tile as every other card (no generic icon) on the unchanged lavender surface`, card.surface === expectSurface && card.tile === "rgba(255, 252, 245, 0.5)" && card.src.endsWith("columbia-crown-light.png") && card.opacity === "1" && card.svg === 0 && card.slot === "60x60" && card.centred, JSON.stringify(card));
     await ctx.close();
   }
   // only the Teaching card's identifier changed: compare against the pre-change snapshot outside that box

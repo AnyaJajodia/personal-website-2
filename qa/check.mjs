@@ -374,13 +374,12 @@ for (const [w, h] of [[375, 812], [768, 1024], [1440, 900]]) {
     }),
   );
   const sizes = new Set(layers.map((l) => l.size + l.radius));
-  // every identifier sits in the same slot; all but Teaching on a translucent tile —
-  // Teaching's Columbia crown stands alone on the card (no tile), by design
-  const tiled = layers.filter((l) => l.k !== "teaching");
+  // every identifier sits in the same slot on a translucent tile — Teaching's
+  // Columbia crown included (design pass: it sits in the tile like the others)
   const crown = layers.find((l) => l.k === "teaching");
   ok(
-    "panels: one identifier slot (same size/shape); translucent tiles, opaque unfiltered artwork; Teaching's crown untiled",
-    sizes.size === 1 && tiled.every((l) => l.bgAlpha > 0 && l.bgAlpha < 1) && layers.every((l) => l.artOpacity === 1 && l.filter === "none") && crown.bgAlpha === 0 && crown.src.endsWith("columbia-crown-light.png"),
+    "panels: one identifier slot (same size/shape); translucent tiles for every card, the Columbia crown included; opaque unfiltered artwork",
+    sizes.size === 1 && layers.filter((l) => l.k !== "crackd").every((l) => l.bgAlpha > 0 && l.bgAlpha < 1) && layers.every((l) => l.artOpacity === 1 && l.filter === "none") && crown.src.endsWith("columbia-crown-light.png"),
     [...sizes].join() + " · " + layers.map((l) => `${l.k} bg${l.bgAlpha} art${l.artOpacity}`).join(", "),
   );
   ok(

@@ -62,11 +62,11 @@
 
 /* narrow: a compact two-column index under the opening */
 @media (max-width: 1099.98px) {
+  /* an open index between two rules, like the facts above it */
   .toc {
-    padding: 1rem 1.1rem 0.6rem;
-    border: 1px solid var(--rule);
-    border-radius: 10px;
-    background: var(--surface);
+    padding: 0.9rem 0 0.35rem;
+    border-top: 1px solid var(--rule-strong);
+    border-bottom: 1px solid var(--rule);
   }
   .toc__list {
     display: grid;
@@ -79,6 +79,7 @@
     min-height: 44px;
     align-items: center;
     padding-left: 0;
+    border-top: 1px solid var(--rule);
   }
   .toc__link::before {
     display: none;
