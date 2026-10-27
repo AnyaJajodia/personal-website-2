@@ -710,8 +710,8 @@ section[id] {
   flex-direction: column;
 }
 .feature--lynxster {
-  --plate: #dfe6e2;
-  --plate-rule: #c9d3ce;
+  --plate: #eef2f6;
+  --plate-rule: #c9d3de;
 }
 .feature--amnh {
   --plate: #ebe0cc;
@@ -729,26 +729,18 @@ section[id] {
 .feature:hover .feature__visual {
   border-color: color-mix(in srgb, var(--plate-rule) 55%, #6f675b);
 }
-/* Lynxster: the real disclosure-funnel card, set like a product shot that
-   runs off the plate's edge */
+/* Lynxster: the branded preview fills the plate (LynxsterVisual, its own
+   palette per theme); the plate's edge matches it */
 .feature--lynxster .feature__visual {
-  background: radial-gradient(120% 90% at 0% 0%, #ecf1ee, var(--plate) 60%);
+  background: #eef2f6;
 }
-.feature__shot {
-  position: absolute;
-  left: 7%;
-  top: 12%;
-  width: 86%;
-  max-width: none;
-  height: auto;
-  border-radius: 6px;
-  box-shadow:
-    0 1px 2px rgba(15, 30, 32, 0.12),
-    0 22px 40px -22px rgba(15, 30, 32, 0.45);
-  transition: transform 0.7s var(--ease);
+:root[data-theme="dark"] .feature--lynxster {
+  --plate-rule: #26302f;
 }
-.feature:hover .feature__shot {
-  transform: translateY(-2%);
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .feature--lynxster {
+    --plate-rule: #26302f;
+  }
 }
 /* AMNH: an archive index card with a drawing of a digitization rig */
 .archive-card {
@@ -820,17 +812,51 @@ section[id] {
   display: flex;
   align-items: center;
 }
-/* the open line-drawn lockup is set larger than the dense wordmark so the two read with equal weight */
-.feature__lockup {
-  height: 4.9rem;
-  aspect-ratio: 441 / 271;
-  color: var(--logo-ink); /* a one-colour line mark (Lynxster's own pages set it light on dark too) */
-  -webkit-mask-image: url("/logos/lynxster-lockup.png");
-  mask-image: url("/logos/lynxster-lockup.png");
-}
 .feature__wordmark {
   width: auto;
   height: 2.2rem;
+}
+/* Lynxster's mark beside the role, in the portfolio's own ink (the preview
+   above it carries Lynxster's colours) */
+.feature__mark {
+  height: 3.1rem;
+  aspect-ratio: 1138 / 844;
+  color: var(--logo-ink);
+}
+/* Lynxster's own colours on its card: the status pill and the link
+   (navy in light, teal in dark) */
+.feature--lynxster {
+  --lx-ink: #24467c;
+  --lx-pill-bg: #e4ebf5;
+  --lx-pill-ink: #1d3a68;
+}
+:root[data-theme="dark"] .feature--lynxster {
+  --lx-ink: #4cc7bc;
+  --lx-pill-bg: #11302d;
+  --lx-pill-ink: #8fe0d6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .feature--lynxster {
+    --lx-ink: #4cc7bc;
+    --lx-pill-bg: #11302d;
+    --lx-pill-ink: #8fe0d6;
+  }
+}
+.feature--lynxster .lx-status-pill {
+  border-color: color-mix(in srgb, var(--lx-ink) 35%, transparent);
+  background: var(--lx-pill-bg);
+  color: var(--lx-pill-ink);
+}
+.feature--lynxster .lx-status-pill svg {
+  stroke: var(--lx-ink);
+}
+/* (outranks the dark theme's one-accent link rule) */
+:root .feature.feature--lynxster .feature__cta {
+  color: var(--lx-ink);
+}
+.feature--lynxster:has(.feature__cta:focus-visible),
+.feature--lynxster .feature__title-link:focus-visible {
+  outline-color: var(--lx-ink);
 }
 .feature__meta {
   display: flex;
@@ -907,6 +933,56 @@ section[id] {
   outline: 2px solid var(--accent);
   outline-offset: 6px;
   border-radius: 2px;
+}
+/* the preview and the title open the page too (the preview is a pointer-only
+   duplicate of the title link; the title and the button are the keyboard stops) */
+a.feature__visual {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.feature__title-link {
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 3px;
+  transition: opacity 0.25s var(--ease);
+}
+.feature__title-link:hover {
+  opacity: 0.78;
+}
+.feature__title-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+/* a restrained status pill (Lynxster: patent pending) */
+.feature__status {
+  margin: 0;
+}
+.lx-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.22rem 0.62rem 0.24rem 0.45rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.lx-status-pill svg {
+  flex: none;
+  width: 0.78rem;
+  height: 0.78rem;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.4;
 }
 @media (max-width: 699.98px) {
   .features {
@@ -1887,65 +1963,6 @@ a.contact-list__row:hover {
   color: var(--accent);
 }
 
-/* =================================================== Lynxster theme */
-
-.theme-lynxster .detail-hero {
-  background: var(--lx-bg);
-  color: var(--lx-text);
-  --text: var(--lx-text);
-  --muted: var(--lx-muted);
-  --rule: var(--lx-rule);
-  --accent: var(--lx-accent);
-}
-.theme-lynxster .detail-hero :focus-visible {
-  outline-color: var(--lx-accent);
-}
-.theme-lynxster .detail-hero__title {
-  max-width: 13ch;
-}
-.detail-hero__logo {
-  width: clamp(150px, 16vw, 210px);
-  margin: -0.5rem 0 1.5rem -0.6rem;
-  color: var(--lx-text);
-}
-.theme-lynxster .detail-hero__lede {
-  color: var(--lx-muted);
-  padding-bottom: 0.4rem;
-}
-.lx-shot {
-  background: linear-gradient(180deg, var(--lx-bg) 0 50%, var(--bg) 50% 100%);
-  padding-bottom: clamp(3rem, 6vw, 5rem);
-}
-.lx-shot__screen {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  aspect-ratio: 16 / 8.2;
-  background: var(--lx-surface);
-  border: 1px solid var(--lx-rule);
-  border-radius: 10px;
-  color: var(--lx-muted);
-  box-shadow: 0 30px 60px -40px rgba(7, 9, 7, 0.55);
-}
-.lx-shot__mark {
-  width: 64px;
-  color: var(--lx-accent);
-  margin-bottom: 0.6rem;
-}
-.lx-shot__text {
-  font-family: var(--serif);
-  font-size: clamp(1.4rem, 2.4vw, 2rem);
-  color: var(--lx-text);
-}
-.lx-shot__sub {
-  color: var(--lx-muted);
-}
-.lx-shot figcaption {
-  margin-top: 0.9rem;
-}
-
 /* ======================================================= AMNH theme */
 
 .theme-amnh {
@@ -2603,7 +2620,8 @@ body::before {
   width: 5.5rem;
   height: 1.55rem;
   pointer-events: none;
-  background: rgba(240, 216, 150, 0.62);
+  /* Lynxster: the cool sage tape (it sits with the navy and teal) */
+  background: rgba(181, 205, 196, 0.6);
   mix-blend-mode: var(--tape-blend);
   transform: rotate(-5deg);
   /* torn ends */
@@ -2612,7 +2630,8 @@ body::before {
 }
 .feature--amnh::before {
   left: 2.2rem;
-  background: rgba(181, 205, 196, 0.6);
+  /* AMNH: the warm yellow tape, with the archive card's paper */
+  background: rgba(240, 216, 150, 0.62);
   transform: rotate(4deg);
 }
 .feature:hover::before {
@@ -2918,7 +2937,8 @@ body::before {
   border-radius: 2px;
 }
 .feature:hover .feature__visual,
-.feature:has(.feature__cta:focus-visible) .feature__visual {
+.feature:has(.feature__cta:focus-visible) .feature__visual,
+.feature:has(.feature__title-link:focus-visible) .feature__visual {
   transform: perspective(1100px) rotateX(2.4deg) rotateY(-3deg);
   box-shadow:
     0 1px 1px rgb(var(--shade) / 0.06),

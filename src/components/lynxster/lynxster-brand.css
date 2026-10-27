@@ -1,0 +1,425 @@
+/* =====================================================================
+   Lynxster brand pieces, adapted from the "01 Floating", "05 Watching" and
+   "09B Package assembly" studies (kept locally in .local-references/): the
+   real mark (public/assets/lynxster/lynxster-mark.png, as a mask) and the
+   wordmark set in Jost Light. Each theme has its own colour:
+     light  mark and glow in Lynxster navy #24467C
+     dark   mark in light teal #7FD6CC, glow and accents in teal #4CC7BC
+   ===================================================================== */
+@import "@fontsource/jost/latin-300.css";
+
+.lxb {
+  --lxb-mark: #24467c;
+  --lxb-accent: #2d5592;
+  --lxb-glow: rgb(36 70 124 / 0.34);
+  --lxb-glow-soft: rgb(36 70 124 / 0.13);
+  --lxb-bg-1: #f8fafc;
+  --lxb-bg-2: #e4e9f0;
+  --lxb-surface: #ffffff;
+  --lxb-line: #dfe4eb;
+  --lxb-skel: #d3dae3;
+  --lxb-skel-2: #e7ebf1;
+  --lxb-shadow: 0 26px 60px -30px rgb(20 32 52 / 0.32), 0 4px 14px -8px rgb(20 32 52 / 0.12);
+}
+:root[data-theme="dark"] .lxb {
+  --lxb-mark: #7fd6cc;
+  --lxb-accent: #4cc7bc;
+  --lxb-glow: rgb(76 199 188 / 0.5);
+  --lxb-glow-soft: rgb(127 214 204 / 0.14);
+  --lxb-bg-1: #131b1b;
+  --lxb-bg-2: #070908;
+  --lxb-surface: #161d1d;
+  --lxb-line: #26302f;
+  --lxb-skel: #2b3635;
+  --lxb-skel-2: #1f2827;
+  --lxb-shadow: 0 30px 70px -32px rgb(0 0 0 / 0.75), 0 4px 16px -8px rgb(0 0 0 / 0.5);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .lxb {
+    --lxb-mark: #7fd6cc;
+    --lxb-accent: #4cc7bc;
+    --lxb-glow: rgb(76 199 188 / 0.5);
+    --lxb-glow-soft: rgb(127 214 204 / 0.14);
+    --lxb-bg-1: #131b1b;
+    --lxb-bg-2: #070908;
+    --lxb-surface: #161d1d;
+    --lxb-line: #26302f;
+    --lxb-skel: #2b3635;
+    --lxb-skel-2: #1f2827;
+    --lxb-shadow: 0 30px 70px -32px rgb(0 0 0 / 0.75), 0 4px 16px -8px rgb(0 0 0 / 0.5);
+  }
+}
+
+/* the mark: a mask filled with the theme's mark colour. A glow has to sit on
+   a parent — a filter on the masked element itself would be masked away. */
+.lxb-mark {
+  display: block;
+  aspect-ratio: 1138 / 844;
+  background-color: var(--lxb-mark);
+  -webkit-mask: url("/assets/lynxster/lynxster-mark.png") center / contain no-repeat;
+  mask: url("/assets/lynxster/lynxster-mark.png") center / contain no-repeat;
+  transition: background-color 0.4s ease;
+}
+.lxb-word {
+  font-family: "Jost", "Futura", "Century Gothic", var(--sans);
+  font-weight: 300;
+  letter-spacing: 0.62em;
+  text-indent: 0.62em; /* balances the tracking after the last letter */
+  text-transform: lowercase;
+  color: var(--lxb-mark);
+  line-height: 1;
+  transition: color 0.4s ease;
+}
+
+/* ------------------------------------------------ 01 · floating (homepage) */
+/* on the homepage in dark, the plate meets the page's warm night: a deep
+   teal-charcoal centre fading out to the page's own colour at the edges */
+:root[data-theme="dark"] .lxb-float {
+  --lxb-bg-1: #121918;
+  --lxb-bg-2: #1d1b19;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .lxb-float {
+    --lxb-bg-1: #121918;
+    --lxb-bg-2: #1d1b19;
+  }
+}
+.lxb-float {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  container-type: size;
+  background:
+    radial-gradient(46% 52% at 50% 44%, var(--lxb-glow-soft), transparent 72%),
+    radial-gradient(70% 70% at 50% 45%, var(--lxb-bg-1), var(--lxb-bg-2) 82%);
+}
+.lxb-float__lock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7cqh;
+}
+.lxb-float__bob {
+  width: min(40cqw, 52cqh);
+  filter: drop-shadow(0 0 6px var(--lxb-glow-soft));
+}
+.lxb-float__shadow {
+  width: min(22cqw, 26cqh);
+  height: 3.2cqh;
+  margin-top: -5cqh;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--lxb-glow), transparent);
+  opacity: 0.75;
+}
+.lxb-float .lxb-word {
+  font-size: clamp(0.8rem, 5cqh, 1.45rem);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .lxb-float__bob {
+    animation:
+      lxb-bob 6s ease-in-out infinite,
+      lxb-glow 6s ease-in-out infinite;
+  }
+  .lxb-float__shadow {
+    animation: lxb-shadow 6s ease-in-out infinite;
+  }
+}
+@keyframes lxb-bob {
+  0%,
+  100% {
+    transform: translateY(5px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+@keyframes lxb-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 5px var(--lxb-glow-soft));
+  }
+  50% {
+    filter: drop-shadow(0 0 9px var(--lxb-glow)) drop-shadow(0 0 26px var(--lxb-glow));
+  }
+}
+@keyframes lxb-shadow {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scaleX(0.72);
+    opacity: 0.4;
+  }
+}
+
+/* ------------------------------------- 09B · assembly (the detail page) */
+/* Abstract records — skeleton lines, never text or data — drawn together
+   and sealed with the mark. The finished composition is the resting state;
+   the motion only plays once, quickly, on arrival. */
+.lxb-assembly {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 8.2;
+  overflow: hidden;
+  border: 1px solid var(--lxb-line);
+  border-radius: 18px;
+  container-type: size;
+  background:
+    radial-gradient(42% 50% at 50% 50%, var(--lxb-glow-soft), transparent 75%),
+    radial-gradient(75% 80% at 50% 42%, var(--lxb-bg-1), var(--lxb-bg-2) 85%);
+  box-shadow: var(--lxb-shadow);
+}
+/* a faint dot field */
+.lxb-assembly::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--lxb-glow-soft) 1.2px, transparent 1.4px);
+  background-size: 20px 20px;
+  -webkit-mask-image: radial-gradient(70% 80% at 50% 50%, #000 25%, transparent 80%);
+  mask-image: radial-gradient(70% 80% at 50% 50%, #000 25%, transparent 80%);
+}
+.lxb-stack {
+  position: relative;
+  width: 100cqw;
+  height: 100cqh;
+}
+.lxb-sheet {
+  --x: 0cqw;
+  --r: 0deg;
+  position: absolute;
+  top: 16cqh;
+  left: 50%;
+  width: 24cqw;
+  height: 68cqh;
+  margin-left: -12cqw;
+  padding: 3.2cqh 2.2cqw;
+  border-radius: 1.6cqw;
+  background: var(--lxb-surface);
+  border: 1px solid var(--lxb-line);
+  box-shadow: var(--lxb-shadow);
+  /* at rest: gathered behind the centre record, still visibly fanned */
+  transform: translateX(calc(var(--x) * 0.5)) translateY(-1cqh) rotate(calc(var(--r) * 0.75));
+}
+.lxb-sheet--l {
+  --x: -24cqw;
+  --r: -8deg;
+  top: 20cqh;
+  height: 60cqh;
+}
+.lxb-sheet--r {
+  --x: 24cqw;
+  --r: 7deg;
+  top: 20cqh;
+  height: 60cqh;
+}
+.lxb-sheet--c {
+  top: 13cqh;
+  height: 72cqh;
+  width: 27cqw;
+  margin-left: -13.5cqw;
+  transform: none;
+}
+/* skeleton content: a header bar, lines, a block — illustrative only */
+.lxb-sheet i {
+  display: block;
+  height: 1.6cqh;
+  margin-top: 2.4cqh;
+  border-radius: 99px;
+  background: var(--lxb-skel-2);
+}
+.lxb-sheet i:first-child {
+  width: 46%;
+  height: 2.2cqh;
+  margin-top: 0;
+  background: var(--lxb-accent);
+  opacity: 0.85;
+}
+.lxb-sheet i:nth-child(2) {
+  width: 70%;
+  background: var(--lxb-skel);
+}
+.lxb-sheet i:nth-child(3) {
+  width: 92%;
+}
+.lxb-sheet i:nth-child(4) {
+  width: 84%;
+}
+.lxb-sheet i:nth-child(5) {
+  width: 64%;
+}
+.lxb-sheet i.lxb-block {
+  height: 13cqh;
+  width: 100%;
+  margin-top: 3.4cqh;
+  border-radius: 0.8cqw;
+  background: var(--lxb-skel-2);
+}
+/* the seal: a disc with a dashed inner ring and the mark, glowing */
+.lxb-seal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(30cqh, 22cqw);
+  aspect-ratio: 1;
+  translate: -50% -38%;
+  display: grid;
+  place-items: center;
+  z-index: 3;
+}
+.lxb-seal__disc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--lxb-surface);
+  border: 1px solid var(--lxb-line);
+  box-shadow: var(--lxb-shadow);
+}
+.lxb-seal__disc::before {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  border: 1px dashed var(--lxb-accent);
+  opacity: 0.6;
+}
+.lxb-seal__glow {
+  position: relative;
+  width: 62%;
+  filter: drop-shadow(0 0 8px var(--lxb-glow)) drop-shadow(0 0 22px var(--lxb-glow));
+}
+.lxb-seal__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--lxb-accent);
+  opacity: 0;
+}
+/* AssemblyPlayer runs it: data-play="wait" holds the pieces apart (faintly)
+   until the whole visual is in view, then "run" plays the sequence once.
+   Without JavaScript, or with reduced motion, there is no data-play and the
+   finished composition simply shows. */
+@media (prefers-reduced-motion: no-preference) {
+  .lxb-assembly[data-play="wait"] .lxb-sheet--l,
+  .lxb-assembly[data-play="wait"] .lxb-sheet--r {
+    opacity: 0.25;
+    transform: translateX(var(--x)) translateY(8cqh) rotate(var(--r));
+  }
+  .lxb-assembly[data-play="wait"] .lxb-sheet--c {
+    opacity: 0.25;
+    transform: translateY(8cqh);
+  }
+  .lxb-assembly[data-play="wait"] .lxb-seal {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+  .lxb-assembly[data-play="run"] .lxb-sheet--l,
+  .lxb-assembly[data-play="run"] .lxb-sheet--r {
+    /* the fan holds its spread until the gather (listed later, so it wins
+       while running) takes over and keeps the gathered end state */
+    animation:
+      lxb-fan 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) both,
+      lxb-gather 0.6s cubic-bezier(0.6, 0, 0.3, 1) 0.85s forwards;
+  }
+  .lxb-assembly[data-play="run"] .lxb-sheet--r {
+    animation-delay: 0.12s, 0.85s;
+  }
+  .lxb-assembly[data-play="run"] .lxb-sheet--c {
+    animation: lxb-rise 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) 0.24s backwards;
+  }
+  .lxb-assembly[data-play="run"] .lxb-seal {
+    animation: lxb-stamp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 1.25s backwards;
+  }
+  .lxb-assembly[data-play="run"] .lxb-seal__ring {
+    animation: lxb-ring 1.2s ease-out 1.7s;
+  }
+  .lxb-assembly[data-play="run"] .lxb-seal__ring + .lxb-seal__ring {
+    animation-delay: 1.95s;
+  }
+  /* on hover, just the last beat: the seal's two ripples (their own keyframes
+     name, so switching to them always starts a fresh animation) */
+  .lxb-assembly[data-ripple="on"] .lxb-seal__ring {
+    animation: lxb-ripple 1.2s ease-out;
+  }
+  .lxb-assembly[data-ripple="on"] .lxb-seal__ring + .lxb-seal__ring {
+    animation-delay: 0.25s;
+  }
+}
+@keyframes lxb-fan {
+  from {
+    opacity: 0.25;
+    transform: translateX(var(--x)) translateY(8cqh) rotate(var(--r));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(var(--x)) rotate(var(--r));
+  }
+}
+@keyframes lxb-gather {
+  from {
+    transform: translateX(var(--x)) rotate(var(--r));
+  }
+  to {
+    transform: translateX(calc(var(--x) * 0.5)) translateY(-1cqh) rotate(calc(var(--r) * 0.75));
+  }
+}
+@keyframes lxb-rise {
+  from {
+    opacity: 0.25;
+    transform: translateY(8cqh);
+  }
+}
+@keyframes lxb-stamp {
+  from {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+@keyframes lxb-ripple {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+@keyframes lxb-ring {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+@media (max-width: 699.98px) {
+  .lxb-assembly {
+    aspect-ratio: 4 / 3.4;
+    border-radius: 12px;
+  }
+  .lxb-sheet {
+    width: 34cqw;
+    margin-left: -17cqw;
+  }
+  .lxb-sheet--l {
+    --x: -26cqw;
+  }
+  .lxb-sheet--r {
+    --x: 26cqw;
+  }
+  .lxb-sheet--c {
+    width: 38cqw;
+    margin-left: -19cqw;
+  }
+  .lxb-seal {
+    width: min(34cqh, 34cqw);
+  }
+}

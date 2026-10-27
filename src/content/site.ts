@@ -72,11 +72,17 @@ export const currently = {
     {
       slug: "lynxster",
       name: "Lynxster",
-      role: "Chief Technology Officer",
-      period: "2026–now",
-      description:
-        "Building software that gives customers independently verifiable records, designed for FERPA requirements and US and Canadian legal frameworks.",
+      role: "CTO & Co-founder",
+      period: "April 2026–present",
+      /** a restrained status pill beside the role (lynxster.md) */
+      status: "Patent pending",
+      description: "Engineering, product development, and technical leadership for independently verifiable digital records.",
       cta: "Explore Lynxster",
+      /** two rows, like AMNH's workstreams (condensed from lynxster.md) */
+      streams: [
+        { name: "From developer to co-founder", text: "Joined in April 2026 as a Junior Developer; now Chief Technology Officer and Co-founder." },
+        { name: "What I work on", text: "Engineering and infrastructure · Cryptography and product · Agent-assisted development · Product and communication" },
+      ],
     },
     {
       slug: "amnh",

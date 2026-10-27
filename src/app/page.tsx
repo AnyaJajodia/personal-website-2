@@ -6,10 +6,11 @@ import SiteFooter from "@/components/SiteFooter";
 import SmoothAnchors from "@/components/SmoothAnchors";
 import Image from "next/image";
 import RigDrawing from "@/components/RigDrawing";
-import { LynxsterLockup } from "@/components/Logo";
+import { LynxsterMark } from "@/components/Logo";
 import { ContactList } from "@/components/ContactList";
 import WorkPanels from "@/components/WorkPanels";
 import MoreBento from "@/components/MoreBento";
+import LynxsterFloat from "@/components/lynxster/LynxsterFloat";
 import DotField from "@/components/DotField";
 import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
@@ -160,51 +161,61 @@ export default function Home() {
                 {currently.features.map((f) => {
                   return (
                     <article key={f.slug} className={`feature feature--${f.slug}`} data-line="feature">
-                      <div className="feature__visual">
+                      {/* the preview also opens the page: a duplicate of the title link,
+                          so it is skipped by keyboard and screen readers */}
+                      <Link href={`/work/${f.slug}`} className="feature__visual" tabIndex={-1} aria-hidden="true">
                         {f.slug === "lynxster" ? (
-                          <Image
-                            className="feature__shot"
-                            src="/work/lynxster-funnel.webp"
-                            alt="The disclosure funnel in the Lynxster application"
-                            width={1096}
-                            height={532}
-                            unoptimized
-                            loading="eager"
-                          />
+                          <LynxsterFloat />
                         ) : (
-                          <div className="archive-card" aria-hidden="true">
+                          <div className="archive-card">
                             <span className="archive-card__dept">Invertebrate Zoology</span>
                             <RigDrawing className="archive-card__rig" />
                           </div>
                         )}
-                      </div>
+                      </Link>
                       <div className="feature__body">
                         {/* caption line: the organisation's own mark is the heading, set
                             inline with role and dates — no second name treatment */}
                         <div className="feature__caption">
                         <h3 className="feature__title">
-                          {f.slug === "lynxster" ? (
-                            <LynxsterLockup className="feature__lockup" />
-                          ) : (
-                            <Image
-                              className="feature__wordmark"
-                              src="/logos/amnh.png"
-                              alt={f.name}
-                              width={960}
-                              height={209}
-                              unoptimized
-                              loading="eager"
-                            />
-                          )}
+                          {/* the organisation's mark is the title, and a link to its page */}
+                          <Link href={`/work/${f.slug}`} className="feature__title-link">
+                            {f.slug === "lynxster" ? (
+                              // the mark alone (the preview above carries the wordmark)
+                              <LynxsterMark className="feature__mark" label="Lynxster" />
+                            ) : (
+                              <Image
+                                className="feature__wordmark"
+                                src="/logos/amnh.png"
+                                alt={f.name}
+                                width={960}
+                                height={209}
+                                unoptimized
+                                loading="eager"
+                              />
+                            )}
+                          </Link>
                         </h3>
                         <p className="feature__meta">
                           {f.role}
                           <span className="visually-hidden">, </span>
                           <span className="feature__period">{f.period}</span>
                         </p>
+                        {"status" in f && f.status ? (
+                          <p className="feature__status">
+                            <span className="lx-status-pill">
+                              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                                <circle cx="8" cy="8" r="6" />
+                                <circle cx="8" cy="8" r="2.6" />
+                              </svg>
+                              {f.status}
+                            </span>
+                          </p>
+                        ) : null}
                         </div>
+                        {"description" in f && f.description ? <p className="feature__desc">{f.description}</p> : null}
                         {"streams" in f && f.streams ? (
-                          // two workstreams inside the one commitment, each with its own line
+                          // two rows inside the one commitment, each with its own line
                           <ul className="feature__streams">
                             {f.streams.map((st) => (
                               <li key={st.name} className="feature__stream">
@@ -213,8 +224,6 @@ export default function Home() {
                               </li>
                             ))}
                           </ul>
-                        ) : "description" in f ? (
-                          <p className="feature__desc">{f.description}</p>
                         ) : null}
                         <p className="feature__foot">
                           <Link href={`/work/${f.slug}`} className="feature__cta">

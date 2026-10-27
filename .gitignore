@@ -8,3 +8,7 @@ qa/screenshots/
 
 # Impeccable review captures (local)
 .impeccable/
+
+# Local-only design references (real product screens): never commit or serve
+.local-references/
+public/**/*-mode-reference.png

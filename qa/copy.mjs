@@ -33,8 +33,9 @@ for (const raw of md.split("\n")) {
     continue;
   }
   if (line === "Anya Jajodia.") continue; // the name, split over two lines (checked below)
-  // "Chief Technology Officer · 2026–now": role and date are set in their own spans
-  const meta = line.match(/^(Chief Technology Officer|Volunteer) · (.+)$/);
+  // "CTO & Co-founder · April 2026–present": role and date are set in their own spans
+  // (home.md's Lynxster entry follows the revised lynxster.md since 27 Oct 2026)
+  const meta = line.match(/^(CTO & Co-founder|Volunteer) · (.+)$/);
   if (meta) {
     expected.push(meta[1], meta[2]);
     continue;
@@ -42,6 +43,9 @@ for (const raw of md.split("\n")) {
   expected.push(line.replace(/\s*[↗↓]$/, "").trim());
 }
 const retired = [
+  "FERPA",
+  "US and Canadian legal frameworks",
+  "The disclosure funnel",
   "Engineering, research, and other things",
   "follow the occasional question into a museum",
   "I started out with QMSS",
@@ -79,7 +83,7 @@ const browser = await chromium.launch({ channel: "chrome" });
   ok("hero: the name reads “Anya Jajodia.”", norm(await page.$eval(".hero__name", (e) => e.textContent)) === "Anya Jajodia.");
   ok("document title and description use the approved hero copy", head.includes("Building ideas. Exploring possibilities. Asking better questions.") && head.includes("occasionally into the backrooms of a museum."), head);
   const metas = await page.$$eval(".feature__meta", (ms) => ms.map((m) => m.innerText.replace(/\s*,\s*/g, " ").replace(/\s+/g, " ").trim()));
-  ok("Currently: role and dates in the caption metadata", metas[0] === "Chief Technology Officer 2026–now" && metas[1] === "Volunteer 2026–now", metas.join(" | "));
+  ok("Currently: role and dates in the caption metadata", metas[0] === "CTO & Co-founder April 2026–present" && metas[1] === "Volunteer 2026–now", metas.join(" | "));
   const dates = await page.$$eval(".panel__date", (d) => d.map((x) => x.textContent));
   // home.md's dates, except where the completed detail pages corrected them (iteration 24):
   // Crackd spans 2025–2026 (Sept 2025–May 2026); both displayed papers are from 2022;

@@ -71,54 +71,17 @@ export function formatPeriod(p?: Period): string | null {
 
 export const work: WorkEntry[] = [
   {
+    // the page itself is components/lynxster/LynxsterPage.tsx (copy in
+    // content/lynxster.ts); this entry gives the drawer, pager and <title>
     slug: "lynxster",
     name: "Lynxster",
     theme: "lynxster",
     title: "Building systems of trust.",
-    subtitle: "Product engineering and cryptographic implementation for independently verifiable records.",
-    role: { label: "Role", value: "Engineering & technical leadership" },
-    period: {
-      label: "Period",
-      start: "2026",
-      end: "2027",
-      needsReview: true,
-      reviewNote: "Placeholder end year; start month not verified; confirm formal title.",
-    },
-    meta: [{ label: "Focus", value: "Cryptography · Product development · Agentic workflows" }],
-    lede: [
-      "Lynxster is building tools for recording disclosures and producing evidence packages that can be verified independently. My work connects the underlying cryptographic implementation with the application people use to manage those workflows.",
-    ],
-    sections: [
-      {
-        heading: "My work",
-        paragraphs: [
-          "I’ve worked across the MVP: implementing the cryptographic core, building application workflows, developing internal tools, and preparing technical documentation and demos.",
-          "That means moving between different kinds of problems. Some require careful attention to data structures and verification behavior. Others require a clear interface, a useful explanation, or a development process that makes errors easier to catch.",
-        ],
-      },
-      {
-        heading: "Building with agents",
-        paragraphs: [
-          "I’ve also developed agent-assisted workflows for planning, coding, review, and security review. The useful part is the structure around the generated code: clear tasks, separate review stages, and a way to bring findings back into implementation.",
-          "These workflows support the engineering process alongside direct development and manual review.",
-        ],
-      },
-      {
-        heading: "From implementation to explanation",
-        paragraphs: [
-          "Building the system has also meant making it understandable. I’ve worked on programming guides, technical explanations, and demos that connect implementation details to the product’s purpose.",
-          "Writing those explanations often reveals where the implementation—or the explanation itself—needs more work.",
-        ],
-      },
-      {
-        heading: "What I’m learning",
-        paragraphs: [
-          "This work has made me more attentive to the distance between a specification, a working implementation, and a product someone can actually use. Each has to support the others, and keeping them aligned takes deliberate effort.",
-        ],
-      },
-    ],
-    description:
-      "Lynxster: product engineering and cryptographic implementation for independently verifiable records.",
+    subtitle: "Engineering, product development, and technical leadership for independently verifiable digital records.",
+    role: { label: "Role", value: "Chief Technology Officer & Co-founder" },
+    period: { label: "Period", start: "April 2026", end: "present" },
+    sections: [],
+    description: "Lynxster: engineering, product development, and technical leadership for independently verifiable digital records.",
   },
   {
     slug: "amnh",

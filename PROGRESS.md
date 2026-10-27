@@ -383,3 +383,36 @@ Decisions (keep through compaction):
   - Tiles show the hover line; the opened view shows the title + longer caption (`aria-describedby`).
   - The opened view measures its caption (`--cap-h`, with a ResizeObserver) and sizes the photo to leave room, so the longest caption fits on desktop, a short laptop (1280×720) and phones. On phones the caption takes the full width, with the arrows below.
   - QA: `qa/wildlife.mjs` 141 checks, with per-photo copy/image matching and caption-fit checks at 1440 (both themes), 1280×720 and 390 (both themes).
+
+## Lynxster pass (27 Oct 2026)
+- The page has its own component (`components/lynxster/`):
+  - **LynxsterPage:** opening, preview, then the problem (statement), developer → co-founder (two stops on a thread that draws in once), what I work on (a 2×2 ruled register with authored icons; the patent note inside “Product and communication”), what I'm learning, and more to come. One avatar (notebook) on a section rule.
+  - **LynxsterVisual:** a branded seal-and-mark preview, swappable for the light/dark mockups. **InView:** a one-time entrance.
+- **Themes:** one complete treatment each, with tokens on `:root:has(.theme-lx)` covering the header, body, drawer, links, rules and focus. Light: #f3f5f8 / deep blue #1f4384. Dark: #080b0a / teal #5cb8c3. The thread follows `--lx-accent`, and the header is no longer a dark band in light mode.
+- **Homepage:** Lynxster is “CTO & Co-founder”, April 2026–present, with a Patent pending pill and the description from lynxster.md (the FERPA/legal line is removed). The preview and the title link to the detail page for both Lynxster and AMNH; the preview is a pointer-only duplicate (`aria-hidden`, `tabindex=-1`); the title link has a focus ring and lifts the card.
+- **Removed:** the generic template's Lynxster branches (dark band, ScreenshotFrame) and the old screenshot CSS. The references were moved to `.local-references/` (gitignored).
+- **QA:** new `qa/lynxster.mjs` (64) and `qa/lynxster-shots.mjs`. `check`, `copy` and `pass24` were updated for the new design.
+
+## Lynxster pass 2 (27 Oct 2026): visuals from the studies, recomposed page
+- **Studies:** 01 Floating, 05 Watching and 09B Package assembly, moved to `.local-references/lynxster/` (never committed or served).
+- **Brand pieces** (`lynxster-brand.css`): the real mark as a mask, with the glow on a parent so the mask doesn't clip it, and a Jost Light wordmark (`@fontsource/jost`). Light is navy #24467C with a navy glow; dark is mark #7FD6CC with a teal #4CC7BC glow. This fixes the studies' teal glow in light mode.
+- **Homepage:**
+  - LynxsterFloat (01: gentle bob, glow pulse, shadow; static with reduced motion).
+  - The mark alone beside the role (`.feature__mark`, navy/teal).
+  - The lockup rule is removed.
+- **Detail page:**
+  - **Header band:** LynxsterWatch (05: a pointer glow, the mark tilting, eyes as cut-outs in the band colour when the pointer comes near; mouse and pen only, no tilt with reduced motion). Light is a near-white #FCFDFE band over #EEF1F5; dark is a near-black #070908 band over #111514.
+  - **Main visual:** LynxsterAssembly (09B: three abstract records fan, gather and are sealed, in under 2s; the finished state rests, and is shown at once with reduced motion). It straddles the band edge.
+  - **Body:** an editorial problem spread; the path with each stop carrying its own paragraph (a vertical thread on phones); the areas as a ruled list with ringed icons and the patent note; a learning band in the header colour with the notebook figure on its edge; then More to come.
+- **home.md:** the Lynxster entry now agrees with lynxster.md.
+- **QA:** `qa/lynxster.mjs` has 93 checks. `check` (mark and figure assertions) and `copy` (home.md meta) were updated.
+- Refinements (your requests, 27 Oct 2026):
+  - **Assembly:** it plays once the whole preview is in view (`AssemblyPlayer`: `data-play` wait → run; complete and still with reduced motion or without JS). Hovering afterwards replays only the seal's two ripples (`data-ripple`, its own `lxb-ripple` keyframes).
+  - **Progression:** the thread runs exactly dot to dot, with its loop between, plus a faint dashed “ongoing” tail past today.
+  - **Homepage Lynxster card:**
+    - the small mark is in the portfolio's ink;
+    - the Patent pending pill and “Explore Lynxster” are in Lynxster colours;
+    - the dark preview fades to the page's warm night at its edges;
+    - two rows (“From developer to co-founder”, “What I work on”) fill the space above the link and mirror AMNH's;
+    - the tapes are swapped (sage on Lynxster, yellow on AMNH).
+  - **QA:** `qa/lynxster.mjs` 102.

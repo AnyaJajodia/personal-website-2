@@ -10,6 +10,6 @@ export function LynxsterLockup({ className = "" }: { className?: string }) {
   );
 }
 
-export function LynxsterMark({ className = "" }: { className?: string }) {
-  return <span className={`logo-mask logo-mask--mark ${className}`} role="img" aria-label="Lynxster logo" />;
+export function LynxsterMark({ className = "", label = "Lynxster logo" }: { className?: string; label?: string }) {
+  return <span className={`logo-mask logo-mask--mark ${className}`} role="img" aria-label={label} />;
 }

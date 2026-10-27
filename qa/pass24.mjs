@@ -50,7 +50,8 @@ for (const theme of ["light", "dark"]) {
 {
   const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } });
   const p = await ctx.newPage();
-  for (const s of ["lynxster", "amnh"]) {
+  // (Lynxster has its own page since the Lynxster pass: qa/lynxster.mjs)
+  for (const s of ["amnh"]) {
     await p.goto(`${base}/work/${s}`, { waitUntil: "networkidle" });
     ok(`${s}: untouched opening (no case-hero, no flourish anchor)`, (await p.$$eval(".case-hero, [data-line='flourish']", (x) => x.length)) === 0);
   }

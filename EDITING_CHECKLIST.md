@@ -215,3 +215,22 @@ That's 14 photographs.
 - [ ] **Page weight.** The originals are PNGs of 1.5–5.1 MB, about 44 MB for the whole page and 3 MB more on the homepage for the preview. They load lazily, a few at a time as you scroll, with a soft colour in each place until they arrive. On slow connections they appear late. If you want, smaller WebP copies could be served with the originals kept as the master files (a scripted, reversible step), but only with your go-ahead, since this pass was told not to resize or regenerate.
 - [x] **Copy:** every photograph now has your title, a short hover caption (`hover`) and a longer caption for the opened view (`caption`), all in `content/wildlife-photos.json`. The alt text was updated to match your identifications: lioness, white lion, tawny eagle, southern yellow-billed hornbill, African jacana, Taba, and the female leopard.
 - [ ] The earlier temporary files (`1.png`–`7.png`, `IMG_…`, the screenshot, and their renamed copies) are gone from the folder, so the old filename mapping no longer applies.
+
+
+## Lynxster page (27 Oct 2026)
+Page: `/work/lynxster` (`components/lynxster/`). Copy: `content/lynxster.ts`, verbatim from the revised `handoff/content/work/lynxster.md`; its internal notes are not rendered. Homepage card: `content/site.ts`, shown as “CTO & Co-founder · April 2026–present · Patent pending”.
+
+**Visuals (27 Oct 2026, second pass).** These were adapted from your three HTML studies, which now live in `.local-references/lynxster/` (gitignored, never served or committed):
+- homepage: 01 Floating
+- page header: 05 Watching
+- main visual: 09B Package assembly, rebuilt with abstract records only, so no product data or claims
+
+They use the real `lynxster-mark.png` and a Jost Light wordmark, with navy in light mode and teal in dark.
+
+- [ ] **Copy:** confirm the one typo I corrected from the Markdown, “interally” → “internally”.
+- [x] **home.md now matches:** its Lynxster entry reads “CTO & Co-founder · April 2026–present · Patent pending” with the lynxster.md line; the FERPA / legal-frameworks claim is removed.
+- [ ] **Reference images:** the two new references were moved from `public/assets/lynxster/` to `.local-references/lynxster/`, which is gitignored (as is `public/**/*-mode-reference.png`). They were never committed, pushed or served.
+- [ ] **Older screens are already in git history and on GitHub:**
+  - `handoff/assets/references/lynxster-{light,dark}-{dashboard,terms}.png` and `handoff/design/lynxster-detail-mockup.png` (committed in `d00542b`; under `handoff/`, so not served by the site).
+  - `public/work/lynxster-funnel.webp` (the old homepage screenshot). It's deleted in the working tree, but committed and pushed, and it would have been publicly reachable on any deployment made from those commits.
+  - Removing them from history needs a rewrite and force push. Not done; your call.

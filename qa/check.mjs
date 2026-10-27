@@ -350,8 +350,9 @@ for (const [w, h] of [[375, 812], [768, 1024], [1440, 900]]) {
   await settle(page, 600);
   const logos = await page.$$eval("img[src*='/logos/']", (imgs) => imgs.map((i) => ({ src: i.getAttribute("src"), ok: i.complete && i.naturalWidth > 0, ratio: +(i.getBoundingClientRect().width / i.getBoundingClientRect().height).toFixed(2), natural: +(i.naturalWidth / i.naturalHeight).toFixed(2) })));
   ok("supplied logos load undistorted (rendered ratio = file ratio)", logos.length === 6 && logos.every((l) => l.ok && Math.abs(l.ratio - l.natural) < 0.05), logos.map((l) => `${l.src.split("/").pop()} ${l.ratio}/${l.natural}`).join(", "));
-  const lynx = await page.$eval(".feature__lockup", (e) => { const r = e.getBoundingClientRect(); return { w: Math.round(r.width), h: Math.round(r.height), label: e.getAttribute("aria-label") }; });
-  ok("Currently: Lynxster lockup sizeable and labelled", lynx.h >= 64 && lynx.label === "Lynxster", JSON.stringify(lynx));
+  // beside the role, Lynxster's mark alone (the preview above carries the wordmark)
+  const lynx = await page.$eval(".feature__mark", (e) => { const r = e.getBoundingClientRect(); return { w: Math.round(r.width), h: Math.round(r.height), label: e.getAttribute("aria-label"), ratio: +(r.width / r.height).toFixed(2) }; });
+  ok("Currently: Lynxster mark sizeable, undistorted and labelled", lynx.h >= 44 && Math.abs(lynx.ratio - 1138 / 844) < 0.03 && lynx.label === "Lynxster", JSON.stringify(lynx));
   // three logo layers: muted panel → container with a translucent BACKGROUND only → opaque artwork
   const layers = await page.evaluate(() =>
     [...document.querySelectorAll(".panel")].map((p) => {
@@ -564,9 +565,10 @@ for (const [w, h] of [[1440, 900], [1024, 768], [768, 1024], [390, 844]]) {
   );
   ok(`avatars: decorative (aria-hidden, empty alt, no pointer events), sized boxes @${w}`, a11y.every((a) => a.hidden && a.alt === "" && a.pe === "none" && a.w && a.h), `${a11y.length} figures`);
   ok(`avatars: only the hero loads eagerly @${w}`, a11y.every((a) => (a.role === "perched") === (a.loading === "eager")));
-  // the only images left in the accessibility tree are the three real ones
+  // the only images left in the accessibility tree are the two real ones (the
+  // Lynxster and AMNH marks; the old Lynxster screenshot is gone)
   const imgs = (await page.locator("body").ariaSnapshot()).split("\n").filter((l) => /- img\b/.test(l));
-  ok(`avatars: none in the accessibility tree @${w}`, imgs.length === 3, imgs.map((l) => l.trim()).join(" | "));
+  ok(`avatars: none in the accessibility tree @${w}`, imgs.length === 2, imgs.map((l) => l.trim()).join(" | "));
   // walk down the page like a reader, so every figure meets its cue
   const max = await page.evaluate(() => document.documentElement.scrollHeight - innerHeight);
   for (let y = 0; y <= max; y += 70) {
@@ -667,7 +669,7 @@ for (const [w, h] of [[1440, 900], [1024, 768], [768, 1024], [390, 844]]) {
   ok("avatars: reduced motion shows every figure in place, unanimated", r.length >= 4 && r.every((x) => x.in === "still" && x.op === "1" && x.anim === 0), JSON.stringify(r[0]));
   await page.goto(base + "/work/lynxster", { waitUntil: "networkidle" });
   const d = await page.evaluate(() => [...document.querySelectorAll("[data-avatar]")].map((el) => el.dataset.in));
-  ok("avatars: reduced motion on project pages too", d.length === 2 && d.every((x) => x === "still"), d.join());
+  ok("avatars: reduced motion on project pages too (Lynxster's one figure)", d.length === 1 && d.every((x) => x === "still"), d.join());
   await page.context().close();
 }
 {
@@ -676,7 +678,7 @@ for (const [w, h] of [[1440, 900], [1024, 768], [768, 1024], [390, 844]]) {
   const res = [];
   // (the bespoke pages have their own layouts; their figures are checked separately below,
   // Inteli-lens's in qa/inteli.mjs — feet on its closing rule at five widths)
-  for (const slug of slugs.filter((s) => !["crackd-ai", "buzzworks", "tmu-citation-tooling", "gvi-conservation", "pmmy-research", "teenage-pregnancy-research", "esp-teaching", "adi-mentorship", "inteli-lens"].includes(s))) {
+  for (const slug of slugs.filter((s) => !["lynxster", "crackd-ai", "buzzworks", "tmu-citation-tooling", "gvi-conservation", "pmmy-research", "teenage-pregnancy-research", "esp-teaching", "adi-mentorship", "inteli-lens"].includes(s))) {
     await page.goto(`${base}/work/${slug}`, { waitUntil: "networkidle" });
     const r = await page.evaluate(() =>
       [...document.querySelectorAll("[data-avatar]")].map((el) => {
@@ -689,7 +691,18 @@ for (const [w, h] of [[1440, 900], [1024, 768], [768, 1024], [390, 844]]) {
     res.push(`${slug}:${r.length}:${r.every(Boolean)}`);
   }
   ok("project pages: 1–2 figures each, standing on the rule under their section", res.every((x) => /:(1|2):true$/.test(x)), res.join(" "));
-  ok("project pages: two for Lynxster and AMNH", res.some((x) => x === "lynxster:2:true") && res.some((x) => x === "amnh:2:true"));
+  ok("project pages: two for AMNH", res.some((x) => x === "amnh:2:true"));
+  // Lynxster (its own page): one figure, standing on the top edge of the
+  // "What I'm learning" band
+  await page.goto(`${base}/work/lynxster`, { waitUntil: "networkidle" });
+  const lxFig = await page.evaluate(() =>
+    [...document.querySelectorAll("[data-avatar]")].map((el) => {
+      const band = el.closest(".lx-learning");
+      const b = el.getBoundingClientRect();
+      return !!band && Math.abs(b.bottom - b.height * (1 - parseFloat(getComputedStyle(el).getPropertyValue("--base"))) - band.getBoundingClientRect().top) < 3;
+    }),
+  );
+  ok("Lynxster: one figure, standing on the learning band's top edge", lxFig.length === 1 && lxFig[0], JSON.stringify(lxFig));
   // Crackd: one sits on the phase-02 sheet's top edge (iteration 26: the questions, and the figure on them, are gone)
   await page.goto(`${base}/work/crackd-ai`, { waitUntil: "networkidle" });
   const ck = await page.evaluate(() => {

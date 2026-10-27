@@ -4,8 +4,7 @@ import { notFound } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import DetailLine from "@/components/DetailLine";
-import { LynxsterLockup } from "@/components/Logo";
-import { WorkFigure, ScreenshotFrame } from "@/components/Figures";
+import { WorkFigure } from "@/components/Figures";
 import { work, getWork, getNeighbours, formatPeriod, type WorkEntry, type Section } from "@/content/work";
 import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
@@ -19,6 +18,7 @@ import TeenPage from "@/components/research/TeenPage";
 import EspPage from "@/components/columbia/EspPage";
 import AdiPage from "@/components/columbia/AdiPage";
 import InteliPage from "@/components/inteli/InteliPage";
+import LynxsterPage from "@/components/lynxster/LynxsterPage";
 import WorkDrawer from "@/components/WorkDrawer";
 
 export const dynamicParams = false;
@@ -92,10 +92,11 @@ export default async function WorkPage({ params }: Params) {
   const { slug } = await params;
   const entry = getWork(slug);
   if (!entry) notFound();
-  // Crackd, Buzzworks, TMU, Inteli-lens, GVI, the two research papers and the
-  // Columbia pages have their own pages (content/crackd.ts, buzzworks.ts, tmu.ts,
-  // inteli.ts, gvi.ts, research.ts, columbia.ts);
+  // Lynxster, Crackd, Buzzworks, TMU, Inteli-lens, GVI, the two research papers
+  // and the Columbia pages have their own pages (content/lynxster.ts, crackd.ts,
+  // buzzworks.ts, tmu.ts, inteli.ts, gvi.ts, research.ts, columbia.ts);
   // every other entry uses the template below
+  if (slug === "lynxster") return <LynxsterPage />;
   if (slug === "crackd-ai") return <CrackdPage />;
   if (slug === "buzzworks") return <BuzzworksPage />;
   if (slug === "tmu-citation-tooling") return <TmuPage />;
@@ -116,10 +117,10 @@ export default async function WorkPage({ params }: Params) {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <SiteHeader variant="detail" darkUntilSelector={theme === "lynxster" ? "[data-dark-band]" : undefined} workMenu={<WorkDrawer current={slug} />} />
+      <SiteHeader variant="detail" workMenu={<WorkDrawer current={slug} />} />
       <DetailLine theme={theme} />
       <main id="main" className="detail__main">
-        <header className="detail-hero" data-line="top" {...(theme === "lynxster" ? { "data-dark-band": "" } : {})}>
+        <header className="detail-hero" data-line="top">
           <div className="container" data-line="content">
             <nav aria-label="Breadcrumb" className="breadcrumb label" data-line="crumb">
               <Link href="/#work">Work</Link>
@@ -128,7 +129,6 @@ export default async function WorkPage({ params }: Params) {
             </nav>
             <div className="detail-hero__grid">
               <div className="detail-hero__main">
-                {theme === "lynxster" ? <LynxsterLockup className="detail-hero__logo" /> : null}
                 {eyebrow.length ? (
                   <p className="eyebrow">
                     {eyebrow.map((line) => (
@@ -153,8 +153,6 @@ export default async function WorkPage({ params }: Params) {
             </div>
           </div>
         </header>
-
-        {theme === "lynxster" ? <ScreenshotFrame /> : null}
 
         {entry.figure ? (
           <div className="container detail-figure">

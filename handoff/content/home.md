@@ -14,8 +14,9 @@ Outside of that: wildlife photography, writing, and squash. Some interests have 
 ## Currently
 Two threads I’m following.
 ### Lynxster 
-Chief Technology Officer · 2026–now
-Building software that gives customers independently verifiable records, designed for FERPA requirements and US and Canadian legal frameworks.
+CTO & Co-founder · April 2026–present
+Patent pending
+Engineering, product development, and technical leadership for independently verifiable digital records.
 Explore Lynxster ↗
 ### American Museum of Natural History
 Volunteer · 2026–now

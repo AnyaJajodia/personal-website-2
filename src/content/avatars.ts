@@ -71,10 +71,8 @@ export type PoseName = keyof typeof poses;
  * research has no details yet, so nothing illustrates it.
  */
 export const detailAvatars: Record<string, { section: string; pose: PoseName }[]> = {
-  lynxster: [
-    { section: "My work", pose: "typingDesk" },
-    { section: "From implementation to explanation", pose: "notebook" },
-  ],
+  // not used: the Lynxster page places its own figure (components/lynxster/LynxsterPage.tsx)
+  lynxster: [{ section: "What I work on", pose: "notebook" }],
   amnh: [
     { section: "collections-digitization/Overview", pose: "archivalPaper" },
     { section: "collections-digitization/Records, rigs, and workflows", pose: "copyStand" },

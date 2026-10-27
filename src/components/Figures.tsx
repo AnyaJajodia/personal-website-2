@@ -1,5 +1,4 @@
 import type { Figure } from "@/content/work";
-import { LynxsterMark } from "./Logo";
 
 export function WorkFigure({ figure, startAt = 1 }: { figure: Figure; startAt?: number }) {
   if (figure.kind === "flow") {
@@ -43,23 +42,3 @@ export function WorkFigure({ figure, startAt = 1 }: { figure: Figure; startAt?: 
 }
 
 /** Lynxster: screenshot space straddling the dark opening and the light case study. */
-export function ScreenshotFrame() {
-  return (
-    <div className="lx-shot">
-      <div className="container">
-        <figure className="lx-shot__figure">
-          <div
-            className="lx-shot__screen"
-            role="img"
-            aria-label="Placeholder for a selected Lynxster application screenshot"
-          >
-            <LynxsterMark className="lx-shot__mark" />
-            <span className="lx-shot__text">Application screenshot</span>
-            <span className="label lx-shot__sub">To be selected</span>
-          </div>
-          <figcaption className="caption">The Lynxster application. A selected, cropped screenshot will appear here.</figcaption>
-        </figure>
-      </div>
-    </div>
-  );
-}
