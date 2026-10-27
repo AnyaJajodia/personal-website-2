@@ -1,6 +1,7 @@
 // Functional checks for the Wildlife photography page and its homepage link.
 // Usage: BASE_URL=http://localhost:3100 node qa/wildlife.mjs
 import { chromium } from "playwright";
+import sharp from "sharp";
 import { readFileSync, statSync } from "node:fs";
 
 const base = process.env.BASE_URL ?? "http://localhost:3100";
@@ -8,7 +9,7 @@ const route = "/wildlife-photography";
 const m = JSON.parse(readFileSync("src/content/wildlife-photos.json", "utf8"));
 const gen = JSON.parse(readFileSync("src/content/wildlife-photos.generated.json", "utf8"));
 // the viewing order: the opening photograph, then the rows
-const photos = [m.hero, ...m.rows.flatMap((r) => r.photos)].map((id) => ({ id, ...m.photos[id], ...gen[m.photos[id].file] }));
+const photos = [m.hero, ...m.rows.flatMap((r) => r.photos.flat())].map((id) => ({ id, ...m.photos[id], ...gen[m.photos[id].file] }));
 const N = photos.length;
 let pass = 0,
   fail = 0;
@@ -101,16 +102,30 @@ for (const [vw, vh] of [
       }
     const col = document.querySelector(".wl-section").getBoundingClientRect();
     const pad = parseFloat(getComputedStyle(document.querySelector(".wl-section")).paddingLeft);
-    // in a horizontal row, every photograph shares one height
+    // in a horizontal row, every cell (a photograph, or a stacked column of
+    // them) is exactly as tall as the others, and the row is filled edge to edge
     const rows = [...document.querySelectorAll(".wl-row")].map((row) => {
-      const hs = [...row.querySelectorAll(".wl-tile")].map((t) => t.getBoundingClientRect());
-      const horizontal = getComputedStyle(row).flexDirection === "row";
-      return horizontal ? Math.max(...hs.map((h) => h.height)) - Math.min(...hs.map((h) => h.height)) : 0;
+      if (getComputedStyle(row).flexDirection !== "row") return 0;
+      const cells = [...row.children].map((c) => {
+        const tiles = [...c.querySelectorAll(".wl-tile")].map((t) => t.getBoundingClientRect());
+        return { top: Math.min(...tiles.map((t) => t.top)), bottom: Math.max(...tiles.map((t) => t.bottom)), left: Math.min(...tiles.map((t) => t.left)), right: Math.max(...tiles.map((t) => t.right)) };
+      });
+      const hs = cells.map((c) => c.bottom - c.top);
+      const rr = row.getBoundingClientRect();
+      const fill = Math.abs(cells[cells.length - 1].right - rr.right) + Math.abs(cells[0].left - rr.left);
+      return Math.max(Math.max(...hs) - Math.min(...hs), fill);
     });
     const area = (w) => {
       const a = [...document.querySelectorAll(`.wl-item[data-weight="${w}"] .wl-tile`)].map((t) => t.getBoundingClientRect().width * t.getBoundingClientRect().height);
       return a.reduce((x, y) => x + y, 0) / a.length;
     };
+    // one evenly spaced body: the gap below the opening photograph and between
+    // rows equals the gap between photographs in a row
+    const g = parseFloat(getComputedStyle(document.querySelector(".wl-row")).columnGap);
+    const blocks = [document.querySelector(".wl-opening"), ...document.querySelectorAll(".wl-row")].map((e) => e.getBoundingClientRect());
+    const vgaps = blocks.slice(1).map((r, i) => r.top - blocks[i].bottom);
+    const evenGaps = vgaps.every((v) => Math.abs(v - g) < 1.5);
+    const square = tiles.every((t) => getComputedStyle(t).borderTopLeftRadius === "0px");
     const text = document.querySelector("main").innerText;
     const srcs = imgs.map((i) => i.getAttribute("src"));
     return {
@@ -127,15 +142,21 @@ for (const [vw, vh] of [
       dupes: srcs.length - new Set(srcs).size,
       words: /final edits|still to come|main gallery|secondary|supporting photograph/i.test(text),
       count: document.querySelector(".wl-intro__num")?.textContent,
+      g,
+      vgaps,
+      evenGaps,
+      square,
     };
   });
   const tag = `${vw}×${vh}`;
   ok(r.n === N && r.loaded === N, `${tag}: ${N} photographs, all loaded`, `${r.loaded} loaded`);
   ok(r.ratioErr < 0.005, `${tag}: every photograph keeps its own proportions (nothing stretched or cropped)`, `max error ${(r.ratioErr * 100).toFixed(2)}%`);
   ok(r.overlaps === 0 && r.inside, `${tag}: photographs don't overlap and stay inside the column`, `${r.overlaps} overlaps`);
-  ok(r.rowSpread <= 1.5, `${tag}: photographs in a row share one height`, `spread ${r.rowSpread.toFixed(2)}px`);
+  ok(r.rowSpread <= 1.5, `${tag}: every cell in a row (single or stacked) is the same height, filling the row`, `spread ${r.rowSpread.toFixed(2)}px`);
   ok(r.mainVsSupport > 1.6, `${tag}: the main photographs are given more room than the supporting ones`, `${r.mainVsSupport.toFixed(2)}× the area`);
   ok(r.overflow <= 0, `${tag}: no horizontal overflow`, `${r.overflow}px`);
+  ok(r.evenGaps && r.g <= 12, `${tag}: one evenly spaced collection — the same small gap between all photographs`, `gap ${r.g}px; between rows ${r.vgaps.map((v) => v.toFixed(1)).join(", ")}`);
+  ok(r.square, `${tag}: photographs have square corners`);
   if (vw === 1440) {
     ok(r.alts, "every photograph has descriptive alt text");
     ok(r.dupes === 0, "no photograph appears twice on the page");
@@ -161,24 +182,42 @@ for (const theme of ["light", "dark"]) {
   const label = (i) => p.evaluate((i) => +getComputedStyle(document.querySelectorAll(".wl-tile__label")[i]).opacity, i);
   ok((await label(0)) === 0, `${theme}: captions are hidden at rest`);
   await p.locator(".wl-tile").nth(0).hover();
-  await settle(p, 500);
+  await settle(p, 900); // Motion's fade: 0.45s after a 0.06s delay
   ok((await label(0)) === 1, `${theme}: hovering a photograph shows its caption`);
-  // contrast of the label
-  const contrast = await p.evaluate(() => {
-    const parse = (c) => {
-      const m = c.match(/[\d.]+/g).map(Number);
-      return m.length >= 3 ? m : null;
-    };
-    const lin = (v) => ((v /= 255) <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
-    const L = ([r, g, b]) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
-    const cr = (a, b) => (Math.max(L(a), L(b)) + 0.05) / (Math.min(L(a), L(b)) + 0.05);
-    // the label's ground is --surface at 90% over the photograph: test against the surface itself
-    const surface = parse(getComputedStyle(document.querySelector(".wl-collection")).getPropertyValue("--surface").trim().replace(/^#(..)(..)(..)$/, (_, r, g, b) => `rgb(${parseInt(r, 16)},${parseInt(g, 16)},${parseInt(b, 16)})`));
-    const title = parse(getComputedStyle(document.querySelector(".wl-tile__title")).color);
-    const cap = parse(getComputedStyle(document.querySelector(".wl-tile__caption")).color);
-    return { title: cr(title, surface), cap: cr(cap, surface) };
-  });
-  ok(contrast.title >= 7 && contrast.cap >= 4.5, `${theme}: caption label text contrast`, `title ${contrast.title.toFixed(1)}:1, caption ${contrast.cap.toFixed(1)}:1`);
+  // the caption is plain white text over its wash: sample the
+  // photograph behind every caption (text hidden) and take its 90th-percentile luminance
+  if (theme === "light") {
+    const worst = [];
+    const tiles = p.locator(".wl-tile");
+    for (let i = 0; i < (await tiles.count()); i++) {
+      await tiles.nth(i).scrollIntoViewIfNeeded();
+      await tiles.nth(i).hover();
+      await p.waitForTimeout(650);
+      const box = await p.evaluate((i) => {
+        const l = document.querySelectorAll(".wl-tile__label")[i];
+        l.style.textShadow = "none";
+        l.querySelectorAll("span").forEach((s) => (s.style.color = "transparent"));
+        const r = l.getBoundingClientRect();
+        return { x: r.left, y: r.top, width: r.width, height: r.height, op: getComputedStyle(l).opacity, title: l.textContent };
+      }, i);
+      const shot = await p.screenshot({ clip: { x: box.x, y: box.y, width: box.width, height: box.height } });
+      await p.evaluate((i) => {
+        const l = document.querySelectorAll(".wl-tile__label")[i];
+        l.style.textShadow = "";
+        l.querySelectorAll("span").forEach((s) => (s.style.color = ""));
+      }, i);
+      const { data, info } = await sharp(shot).raw().toBuffer({ resolveWithObject: true });
+      const lin = (v) => ((v /= 255) <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+      const Ls = [];
+      for (let k = 0; k < data.length; k += info.channels) Ls.push(0.2126 * lin(data[k]) + 0.7152 * lin(data[k + 1]) + 0.0722 * lin(data[k + 2]));
+      Ls.sort((x, y) => x - y);
+      worst.push({ title: box.title, cr: 1.05 / (Ls[Math.floor(Ls.length * 0.9)] + 0.05), shown: box.op === "1" });
+    }
+    const low = worst.reduce((m, w) => (w.cr < m.cr ? w : m));
+    ok(worst.every((w) => w.shown), "every photograph shows its caption on hover");
+    ok(low.cr >= 4.5, "every hover caption (white on the shaded photograph) is readable", `lowest ${low.cr.toFixed(1)}:1 (${low.title})`);
+    await p.evaluate(() => scrollTo(0, 0));
+  }
 
   await p.mouse.move(2, 2);
   await settle(p, 400);
@@ -187,7 +226,7 @@ for (const theme of ["light", "dark"]) {
   let guard = 0;
   while (!(await p.evaluate(() => document.activeElement?.classList.contains("wl-tile"))) && guard++ < 30) await p.keyboard.press("Tab");
   ok(guard < 30, `${theme}: the photographs are reachable with Tab`);
-  await settle(p, 400);
+  await settle(p, 900);
   ok((await label(0)) === 1, `${theme}: keyboard focus shows the caption too`);
   await p.keyboard.press("Enter");
   await settle(p);
@@ -220,6 +259,26 @@ for (const theme of ["light", "dark"]) {
   });
   ok(vc.cap >= 4.5 && vc.count >= 4.5, `${theme}: the view's caption and counter are readable on the scrim`, `${vc.cap.toFixed(1)}:1, ${vc.count.toFixed(1)}:1`);
 
+  // the caption row keeps one place for every photograph: centred, 60% of the
+  // screen wide (from 20% in to 80%), the same on every photograph
+  const grid = [];
+  for (let k = 0; k < 3; k++) {
+    grid.push(
+      await p.evaluate(() => {
+        const f = document.querySelector(".wl-view__frame").getBoundingClientRect();
+        return {
+          text: document.querySelector(".wl-view__text").getBoundingClientRect().left - innerWidth * 0.2,
+          nav: document.querySelector(".wl-view__nav").getBoundingClientRect().right - innerWidth * 0.8,
+          centre: (f.left + f.right) / 2 - innerWidth / 2,
+        };
+      }),
+    );
+    await p.keyboard.press("ArrowRight");
+    await settle(p, 600);
+  }
+  ok(grid.every((g) => Math.abs(g.text) < 1.5 && Math.abs(g.nav) < 1.5 && Math.abs(g.centre) < 1.5), `${theme}: the view's caption row is centred and fixed for every photograph, as is the photograph`, JSON.stringify(grid.map((g) => [g.text, g.nav, g.centre].map((v) => +v.toFixed(1)))));
+  for (let k = 0; k < 3; k++) await p.keyboard.press("ArrowLeft");
+  await settle(p, 600);
   await p.keyboard.press("ArrowRight");
   await settle(p, 600);
   ok((await p.locator("#wl-view-title").textContent()) === photos[1].title, `${theme}: → shows the next photograph`);
@@ -300,6 +359,83 @@ for (const theme of ["light", "dark"]) {
   await p.keyboard.press("Escape");
   await settle(p);
   ok(errs.length === 0, `${theme}: no console errors through all of the above`, errs.join(" | "));
+  await ctx.close();
+}
+
+// ------------------------------------------- the copy, photograph by photograph
+// every tile carries its own title + hover line; every opened photograph its
+// own title + longer caption + alt text, and the whole caption fits on screen
+{
+  const page = await b.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(base + route, { waitUntil: "networkidle" });
+  const tilesCopy = await page.evaluate(() =>
+    [...document.querySelectorAll(".wl-tile")].map((t) => ({
+      src: t.querySelector("img").getAttribute("src"),
+      alt: t.querySelector("img").alt,
+      title: t.querySelector(".wl-tile__title").textContent,
+      hover: t.querySelector(".wl-tile__caption").textContent,
+    })),
+  );
+  const tileBad = photos.filter((ph, i) => {
+    const t = tilesCopy[i];
+    return !t || !t.src.endsWith(ph.file) || t.title !== ph.title || t.hover !== ph.hover || t.alt !== ph.alt;
+  });
+  ok(tileBad.length === 0, `every tile shows its own title and hover caption, on the right photograph (${N})`, tileBad.map((x) => x.id).join(", "));
+  ok(photos.every((ph) => ph.hover && ph.caption && ph.hover !== ph.caption && ph.alt !== ph.caption && ph.alt !== ph.hover), "each photograph has a distinct hover caption, expanded caption and alt text");
+  await page.close();
+}
+for (const [vw, vh, theme] of [
+  [1440, 900, "light"],
+  [1440, 900, "dark"],
+  [1280, 720, "light"],
+  [390, 844, "light"],
+  [390, 844, "dark"],
+]) {
+  const ctx = await b.newContext({ viewport: { width: vw, height: vh }, colorScheme: theme, reducedMotion: "reduce", hasTouch: vw < 600, isMobile: vw < 600 });
+  await ctx.addInitScript((t) => {
+    try {
+      localStorage.setItem("theme", t);
+    } catch {}
+  }, theme);
+  const page = await ctx.newPage();
+  await page.goto(base + route, { waitUntil: "networkidle" });
+  await page.locator(".wl-tile").first().click();
+  await page.waitForTimeout(500);
+  const seen = [];
+  for (let i = 0; i < N; i++) {
+    seen.push(
+      await page.evaluate(() => {
+        const lin = (v) => ((v /= 255) <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+        const L = ([r, g, b]) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+        const px = (c) => c.match(/[\d.]+/g).map(Number).slice(0, 3);
+        const img = document.querySelector(".wl-view__img");
+        const f = document.querySelector(".wl-view__frame").getBoundingClientRect();
+        const cap = document.querySelector(".wl-view__cap").getBoundingClientRect();
+        const capEl = document.querySelector("#wl-view-caption");
+        const a = L(px(getComputedStyle(capEl).color)), bg = L(px(getComputedStyle(document.querySelector(".theme-wl")).backgroundColor));
+        return {
+          src: img.getAttribute("src"),
+          alt: img.alt,
+          title: document.querySelector("#wl-view-title").textContent,
+          caption: capEl.textContent,
+          fits: f.top >= 0 && cap.bottom <= innerHeight + 0.5 && cap.top >= f.bottom - 0.5,
+          ratio: Math.abs(f.width / f.height - img.naturalWidth / img.naturalHeight) / (img.naturalWidth / img.naturalHeight),
+          contrast: (Math.max(a, bg) + 0.05) / (Math.min(a, bg) + 0.05),
+          capBottom: Math.round(cap.bottom),
+        };
+      }),
+    );
+    await page.keyboard.press("ArrowRight");
+    await page.waitForTimeout(250);
+  }
+  const tag = `${vw}×${vh} ${theme}`;
+  const wrong = photos.filter((ph, i) => !seen[i].src.endsWith(ph.file) || seen[i].title !== ph.title || seen[i].caption !== ph.caption || seen[i].alt !== ph.alt);
+  ok(wrong.length === 0, `${tag}: every opened photograph shows its own title, longer caption and alt text`, wrong.map((x) => x.id).join(", "));
+  const spill = seen.filter((x) => !x.fits);
+  ok(spill.length === 0, `${tag}: every photograph and its whole caption fit on screen (the longest included)`, spill.map((x) => `${x.title} → ${x.capBottom}px of ${vh}`).join("; "));
+  ok(seen.every((x) => x.ratio < 0.005), `${tag}: the opened photographs keep their proportions`);
+  const low = Math.min(...seen.map((x) => x.contrast));
+  ok(low >= 4.5, `${tag}: the longer captions are readable`, `${low.toFixed(1)}:1`);
   await ctx.close();
 }
 

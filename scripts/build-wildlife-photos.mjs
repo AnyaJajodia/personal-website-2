@@ -129,7 +129,7 @@ for (const [id, p] of Object.entries(m.photos)) {
 }
 
 // the sequence: every photograph once (hero first, outside the rows)
-const seq = [m.hero, ...m.rows.flatMap((r) => r.photos)];
+const seq = [m.hero, ...m.rows.flatMap((r) => r.photos.flat())];
 for (const id of seq) if (!m.photos[id]) fail(`sequence names an unknown photograph: ${id}`);
 const dupes = seq.filter((id, i) => seq.indexOf(id) !== i);
 if (dupes.length) fail(`listed more than once: ${dupes.join(", ")}`);

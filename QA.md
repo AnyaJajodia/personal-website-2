@@ -1,5 +1,10 @@
 # QA report — iteration 29: Wildlife photography, final selection (26 Oct 2026)
 
+**Composition revision:**
+- **Suites:** `qa/wildlife.mjs` 107/107 (the row check now measures cells, single or stacked: ≤ 0.03 px spread and filling the row) and `check.mjs` 190/190 on the rebuilt production build. Lint is clean.
+- **Screenshots viewed:** desktop rows 2–3, the end of the page (dark), and phone rows 2–3.
+- **Note:** `Feeding_Giraffe.png` was modified on disk at 21:18. This session didn't change it; its dimensions are unchanged.
+
 Route `/wildlife-photography`; homepage plate in “Other things”. Playwright with Chrome against the production build on :3100.
 
 | Command | Result |

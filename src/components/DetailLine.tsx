@@ -72,16 +72,28 @@ function buildPath(theme: Theme, root: HTMLElement): Pt[] | null {
   //   tag  — the thread drops from under the header and ties a loop just above
   //          the element's top-right corner (facts hung like a field tag), then
   //          leaves for the margin on the element's right, crossing nothing
+  //   underline — the thread begins where the element's bottom border ends
+  //          (a rule drawn under a heading) and curls once into the margin,
+  //          so nothing above the rule is crossed (Wildlife photography)
   //   mark — the thread drops from under the header to just past the
   //          element's end, makes a small loop there (a footnote mark after a
   //          title, a knot after a wordmark), and leaves once for the margin
   const anchor = wide ? root.querySelector<HTMLElement>('[data-line="flourish"]') : null;
   if (anchor) {
     const r = rel(anchor, rootTop)!;
-    const kind = anchor.dataset.flourish === "mark" ? "mark" : "tag";
+    const kind = anchor.dataset.flourish === "mark" ? "mark" : anchor.dataset.flourish === "underline" ? "underline" : "tag";
     const k = parseFloat(anchor.dataset.flourishScale ?? "") || (kind === "mark" ? 0.42 : 0.6);
     let startY: number;
-    if (kind === "mark") {
+    if (kind === "underline") {
+      const ux = r.right;
+      // the middle of the element's bottom border
+      const uy = r.bottom - (parseFloat(getComputedStyle(anchor).borderBottomWidth) || 1) / 2;
+      const lx = Math.min(gx - 4, ux + 34);
+      pts.push(pt(ux - 1, uy), pt(ux + 14, uy - 1));
+      pts.push(...loop(lx, uy - 14, 12, 14, { drift: 18, steps: 11 }));
+      pts.push(pt(gx + 4, uy + 46), pt(gx, uy + 130));
+      startY = uy + 250;
+    } else if (kind === "mark") {
       const mx = r.right + 18 * k + 8;
       const my = r.top + r.height * 0.3;
       pts.push(pt(mx + 150, -20), pt(mx + 70, my - 70), pt(mx + 6, my - 4));

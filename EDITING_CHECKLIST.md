@@ -199,19 +199,19 @@ Page: `/wildlife-photography` (`components/wildlife/`). The collection, its copy
 2. Edit the JSON (`photos`, plus a place in `rows`).
 3. Run the script.
 
-Photos in a row share one height. A row of one or two main photos reads large; a row of three secondary photos reads small. `"width": 0.8` narrows a row; `"space"` is `tight`, `normal` or `wide`.
+Photos in a row share one height. A nested list in `rows` stacks photos in a column, and the column is exactly as tall as the row. Widths are worked out in `content/wildlife.ts`. `"width": 0.8` narrows a row. All photographs sit the same small distance apart (one continuous collection).
 
-**Sequence:** the opening photo, then six rows:
+**Sequence:** the opening photo, then five rows:
 1. Golden hour lion + Elephant among trees
-2. Hornbill · Perched raptor · Feeding giraffe
-3. Collared cheetah + Walking leopard
-4. Jacana · Elephant family · Elephant profile (at 80% width, with the photographer beside them)
-5. Sunset giraffes + African fish eagle
-6. Twilight hippos
+2. Hornbill over Perched raptor (stacked) + Walking leopard (large)
+3. Collared cheetah over Feeding giraffe + Jacana (largest) + Elephant family over Elephant profile
+4. Sunset giraffes + African fish eagle
+5. Twilight hippos
+
+The camera avatar kneels on the closing rule after the hippos.
 
 That's 14 photographs.
 
 - [ ] **Page weight.** The originals are PNGs of 1.5–5.1 MB, about 44 MB for the whole page and 3 MB more on the homepage for the preview. They load lazily, a few at a time as you scroll, with a soft colour in each place until they arrive. On slow connections they appear late. If you want, smaller WebP copies could be served with the originals kept as the master files (a scripted, reversible step), but only with your go-ahead, since this pass was told not to resize or regenerate.
-- [ ] **Titles** come from your filenames. Two files had no name, so I titled them from what they show: `hero.png` → “Lion” (walking away down a dirt road; it may be a young lion) and `homepage.png` → “Jacana”. Please confirm both.
-- [ ] Captions are factual one-liners in the JSON; edit them freely.
+- [x] **Copy:** every photograph now has your title, a short hover caption (`hover`) and a longer caption for the opened view (`caption`), all in `content/wildlife-photos.json`. The alt text was updated to match your identifications: lioness, white lion, tawny eagle, southern yellow-billed hornbill, African jacana, Taba, and the female leopard.
 - [ ] The earlier temporary files (`1.png`–`7.png`, `IMG_…`, the screenshot, and their renamed copies) are gone from the folder, so the old filename mapping no longer applies.

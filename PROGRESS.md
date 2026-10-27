@@ -353,3 +353,33 @@ Decisions (keep through compaction):
 - Phones get a single column, with supporting photos at 74% on alternating sides.
 - Homepage: `MoreBento`'s photo plate shows `homepage.png` whole (container units: `min(100cqw, 100cqh × ratio)`) with viewfinder corners. The label reads “14 photographs →”. The contact-sheet CSS was removed.
 - QA: `qa/wildlife.mjs` (107) and `qa/wildlife-shots.mjs` updated for the new collection.
+
+- Composition revised (your request): row 2 stacks the Hornbill over the Perched raptor beside a large Walking leopard. Row 3 is cheetah/feeding giraffe (stacked) + a large Jacana + elephant family/profile (stacked). Stacks use `wl-stack`, and cell widths come from `layoutRow()` in `content/wildlife.ts`, so every cell is exactly as tall. The avatar moved to the closing rule (`.wl-pager`). On phones stacks dissolve (`display: contents`).
+- `Feeding_Giraffe.png` changed on disk at 21:18 (outside this session's commands; same 1928×1295). The data was reread; the suite checks the file served matches the one on disk.
+- Opening revised (your request): a smaller title (clamp 2.3–3.6rem). Under it is one horizontal strip on a ground line: a redrawn sketch of three acacias standing on the line, the tagline, and the count with the hint (the thread's tag loop now sits above the count). The opening photograph is now the full width of the page (1240 px at 1440). On phones the trees stand on the line below the words.
+- Opening and spacing revised again (your request):
+  - The opening is one row on a ground line that begins at the viewport's left edge (`.wl-strip`, negative margin) and ends with the container. In it: the trees (same size) standing on the line, “Wildlife photography” at its earlier size (clamp 2.75–5.25rem), and the tagline as two lines spread over the title's exact height.
+  - The tagline is 15–22 px and sits beside the title from 1180 px up; below that it moves under the title.
+  - The count and hint sit under the line at the right.
+  - The thread now begins where the line ends: a new `underline` flourish kind in DetailLine, used only by this page.
+  - Photos have square corners (tiles and the larger view; the FLIP no longer animates radius).
+  - The collection is one evenly spaced body: the same gap, clamp 6–12px, between all photos and rows, including after the opening photo. The “tight/normal/wide” passages were removed.
+- Tweaks (your requests):
+  - Dark mode on this page uses --bg #141414 (with surface and rules to match), set on `:root:has(.theme-wl)`.
+  - The ground line is 2px in leaf green, the same as the thread; the thread starts at the border's centre, so the two read as one line.
+  - The doodle sits ~16px in from the edge, and the title keeps its place.
+  - The tagline's lines sit close together, the second on the title's baseline (within 1px).
+- Hover captions (your request): a horizontal progressive blur after the motion-primitives ProgressiveBlur.
+  - Six stacked `backdrop-filter` layers (0–7.5px), each masked to a band; strongest at the left edge and clearing by ~58% across.
+  - A bottom-left wash, with the caption (title + line) as plain white text and no icon.
+  - Faded in by Motion (`motion` 12 added as a dependency): `whileHover`/`whileFocus` variants, layers hidden at rest, `MotionConfig reducedMotion="user"`. The CSS image zoom on hover was removed.
+  - Measured caption contrast against the blurred photo behind it: ≥ 7.6:1 on all 14.
+- Expanded view (your request): the photo stays centred. On a six-column grid of the screen, the title and caption begin at column 2 and the arrows end at column 4, for every photo (≥ 640px; on phones the row spans the screen).
+- QA: `qa/wildlife.mjs` 119 checks (caption contrast now sampled from the screen; six-column grid check added).
+- Hover captions: blur removed (your request). Only the bottom-left wash and plain white text remain, still faded by Motion. Lowest measured caption contrast: 7.5:1.
+- Cheetah enlarged (your request): row 3 is now Collared cheetah + Jacana (both large, ~731/499 × 548 at 1440); the supporting trio (Feeding giraffe · Elephant family · Elephant profile) has its own row (~334 tall).
+- Expanded view: the caption row is now one fixed, centred row, half the screen wide (25%–75%), with the title on the left and arrows on the right, the same for every photo. The suite checks it.
+- Copy (your goal, 27 Oct 2026): titles, hover captions and longer expanded captions for all 14 photos, from your text. In `wildlife-photos.json` they're `title` / `hover` / `caption`, plus alt text updated to the confirmed identifications.
+  - Tiles show the hover line; the opened view shows the title + longer caption (`aria-describedby`).
+  - The opened view measures its caption (`--cap-h`, with a ResizeObserver) and sizes the photo to leave room, so the longest caption fits on desktop, a short laptop (1280×720) and phones. On phones the caption takes the full width, with the arrows below.
+  - QA: `qa/wildlife.mjs` 141 checks, with per-photo copy/image matching and caption-fit checks at 1440 (both themes), 1280×720 and 390 (both themes).

@@ -10,8 +10,9 @@
   --wl-moss: #4b6540; /* accent text on paper (AA) */
   --wl-leaf: #7e9667; /* lines and marks */
   --wl-soft: rgba(126, 150, 103, 0.16);
-  --wl-r: 14px; /* a tile's corners */
-  --wl-view-radius: 18px; /* the larger view's corners */
+  --wl-thread: 2px; /* the ground line under the title and the thread it becomes */
+  --wl-r: 0; /* photographs keep square corners, in the grid and the larger view */
+  --wl-view-radius: 0;
   --accent: #4b6540;
   --selection: rgba(126, 150, 103, 0.3);
 }
@@ -31,6 +32,22 @@
     --selection: rgba(148, 170, 126, 0.3);
   }
 }
+/* dark: a deeper, near-neutral night for the photographs (this page only;
+   set on the root so the body, header and drawer share it) */
+:root[data-theme="dark"]:has(.theme-wl) {
+  --bg: #141414;
+  --surface: #1e1d1c;
+  --rule: #2e2c2a;
+  --rule-strong: #46423d;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]):has(.theme-wl) {
+    --bg: #141414;
+    --surface: #1e1d1c;
+    --rule: #2e2c2a;
+    --rule-strong: #46423d;
+  }
+}
 .theme-wl ::selection {
   background: var(--selection);
 }
@@ -41,94 +58,94 @@
 /* the thread in leaf green */
 .theme-wl .detail-line path {
   stroke: var(--wl-leaf) !important;
+  stroke-width: var(--wl-thread) !important;
 }
 
 /* ------------------------------------------------------------ opening */
-/* shorter than a case study's: the photographs start in the first view */
 .wl-hero {
-  padding-top: calc(var(--header-h) + clamp(2rem, 5vw, 3.5rem));
-  padding-bottom: clamp(1.25rem, 2.6vw, 2rem);
+  padding-top: calc(var(--header-h) + clamp(1.75rem, 4vw, 2.75rem));
+  padding-bottom: 0;
 }
 .wl-hero .breadcrumb {
-  margin-bottom: clamp(1rem, 2.4vw, 1.6rem);
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
 }
-.theme-wl .wl-hero__title {
-  max-width: none;
-  font-size: clamp(2.75rem, 6.4vw, 5.25rem);
-  text-wrap: balance;
+/* one row on a ground line that starts at the page's left edge (the negative
+   margin reaches from the container out to the viewport) and ends with the
+   container: the trees standing on it, the title, the two-line introduction */
+.wl-strip {
+  --wl-strip-pad: clamp(0.7rem, 1.2vw, 1rem);
+  display: flex;
+  align-items: flex-end;
+  margin-left: calc((100% - 100vw) / 2);
+  padding-bottom: var(--wl-strip-pad);
+  /* the same green and weight as the thread that continues from its end */
+  border-bottom: var(--wl-thread) solid var(--wl-leaf);
 }
-
-.wl-section {
-  padding-bottom: clamp(3.5rem, 8vw, 6rem);
-}
-.wl-collection {
-  --g: clamp(12px, 1.5vw, 20px); /* the gap inside a row */
-}
-
-/* the opening photograph, as large as the first view allows, with the
-   introduction beside it (right, so the thread's loop leaves for the margin
-   without crossing the photograph) */
-.wl-opening {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem);
-  grid-template-areas: "photo intro";
-  gap: clamp(1.75rem, 4vw, 3.5rem);
-  align-items: end;
-}
-.wl-opening__photo {
-  grid-area: photo;
-  /* never taller than the space under the title in the first view */
-  width: min(100%, calc((100svh - var(--header-h) - 15.5rem) * var(--ar)));
-  min-width: min(100%, 26rem);
-}
-.wl-opening__intro {
-  grid-area: intro;
-  display: grid;
-  justify-items: start;
-  gap: 0.6rem;
-  padding-bottom: 0.2rem;
-}
-/* the acacia from the homepage's old drawn contact sheet, on its own horizon */
-.wl-intro__tree {
-  width: clamp(7rem, 10vw, 8.75rem);
-  margin-bottom: 0.9rem;
-}
+/* the acacia from the homepage's old drawn contact sheet; the drawing's
+   bottom edge is its ground, set down onto the line */
 .wl-acacia {
+  flex: none;
   display: block;
-  width: 100%;
+  width: clamp(7rem, 11vw, 10.5rem);
   height: auto;
+  /* in from the page edge a little; the title keeps its place, so the space
+     between the trees and the title shrinks by the same amount */
+  --wl-tree-in: clamp(0.6rem, 1.1vw, 1rem);
+  margin: 0 calc(clamp(0.75rem, 1.6vw, 1.4rem) - var(--wl-tree-in)) calc(-1 * var(--wl-strip-pad)) var(--wl-tree-in);
   fill: none;
   stroke: var(--wl-leaf);
-  stroke-width: 1.4;
+  stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
   overflow: visible;
 }
-.wl-acacia__ground {
-  stroke: var(--rule-strong);
+.theme-wl .wl-hero__title {
+  flex: none;
+  max-width: none;
+  margin: 0 clamp(1.75rem, 3.4vw, 3rem) 0 0;
+  font-size: clamp(2.75rem, 6.4vw, 5.25rem);
+  line-height: 0.98;
+  white-space: nowrap;
 }
-.wl-intro__lede {
-  margin: 0 0 0.9rem;
+/* two sentences, two lines, set close together beside the title, the second
+   sitting on the title's baseline (the padding is the title's descent) */
+.wl-strip__lede {
+  flex: 1 1 0%;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-width: 0;
+  margin: 0;
+  padding-bottom: calc(clamp(2.75rem, 6.4vw, 5.25rem) * var(--wl-descent, 0.1));
   font-family: var(--serif);
-  font-size: clamp(1.3rem, 1.75vw, 1.6rem);
+  font-size: clamp(0.95rem, 1.18vw, 1.4rem);
   line-height: 1.3;
   color: var(--ink-2);
-  text-wrap: pretty;
+}
+.wl-strip__lede span {
+  display: block;
+}
+/* under the line, at its right-hand end */
+.wl-strip__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 0.35rem 1.75rem;
+  margin-top: 0.8rem;
 }
 .wl-intro__count {
   display: flex;
   align-items: baseline;
   gap: 0.45rem;
   margin: 0;
-  padding-top: 0.85rem;
-  width: 100%;
-  border-top: 1px solid var(--rule);
   font-size: 0.9375rem;
   color: var(--ink-3);
 }
 .wl-intro__num {
   font-family: var(--serif);
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 600;
   line-height: 1;
   color: var(--wl-moss);
@@ -153,51 +170,57 @@
 }
 
 /* ------------------------------------------------------- collection */
-/* rows: each photograph grows in proportion to its aspect ratio, so the
-   row's photographs share one height and every one keeps its proportions */
+/* one continuous body: the opening photograph, then the rows, every
+   photograph the same small distance from its neighbours */
+.wl-section {
+  margin-top: clamp(1.25rem, 2.5vw, 2rem);
+  /* room for the photographer kneeling on the closing rule */
+  padding-bottom: clamp(6.5rem, 10vw, 8.5rem);
+}
+.wl-collection {
+  --g: clamp(6px, 0.75vw, 12px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--g);
+}
 .wl-rows {
   display: flex;
   flex-direction: column;
-  margin-top: clamp(3rem, 7vw, 5.5rem);
+  gap: var(--g);
 }
 .wl-row {
   position: relative;
   display: flex;
   gap: var(--g);
   width: calc(var(--w) * 100%);
-  margin-top: clamp(2.25rem, 4.5vw, 3.5rem);
 }
-.wl-row:first-child {
-  margin-top: 0;
-}
-/* kept with the row before: supporting photographs answer the ones above */
-.wl-row[data-space="tight"] {
-  margin-top: var(--g);
-}
-/* a new passage */
-.wl-row[data-space="wide"] {
-  margin-top: clamp(3.75rem, 8vw, 6.5rem);
-}
-.wl-item {
-  flex: var(--ar) 1 0%;
+/* a cell is exactly as wide as content/wildlife.ts works out (--cw), so
+   every cell in the row is the same height */
+.wl-cell {
+  flex: none;
+  width: var(--cw);
   min-width: 0;
 }
-/* the space a narrower row leaves, for the photographer */
-.wl-row__aside {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 100%;
-  width: calc((1 / var(--w) - 1) * 100%);
+.wl-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--g);
+}
+.wl-stack > .wl-item {
+  width: 100%;
+}
+/* the photographer, kneeling on the closing rule (the pager's top border) */
+.wl-pager {
+  position: relative;
 }
 .avatar--wl-shoot {
-  left: clamp(1.25rem, 3.5vw, 3rem);
-  bottom: 0;
+  right: clamp(0.5rem, 4vw, 3.5rem);
+  bottom: 100%;
   width: clamp(4.6rem, 6.4vw, 6rem);
   transform: translateY(var(--sink));
 }
 
-/* a tile: the photograph whole, softly cornered, resting on the paper */
+/* a tile: the photograph whole, square-cornered, resting on the paper */
 .wl-tile {
   --tone: var(--tone-l);
   position: relative;
@@ -213,9 +236,8 @@
   color: inherit;
   font: inherit;
   cursor: zoom-in;
-  box-shadow:
-    0 0 0 1px rgb(var(--shade) / 0.06),
-    0 16px 30px -24px rgb(var(--shade) / 0.55);
+  /* a hairline edge only: with photographs this close, shadows would run together */
+  box-shadow: 0 0 0 1px rgb(var(--shade) / 0.06);
   transition:
     transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
@@ -255,70 +277,65 @@
   border-radius: var(--wl-r);
 }
 
-/* the caption: a small paper label that rises into the corner */
+/* the hover caption: a soft wash under the words (faded in by Motion) and
+   the caption as plain white text. Hidden at rest. */
+.wl-tile__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+/* the wash: enough shade under the words for white text on a pale sky */
+.wl-tile__veil::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* deepest at the bottom left, where the words sit */
+  background:
+    linear-gradient(0deg, rgb(8 8 6 / 0.72) 0%, rgb(8 8 6 / 0.42) 30%, transparent 62%),
+    linear-gradient(90deg, rgb(8 8 6 / 0.34) 0%, rgb(8 8 6 / 0.14) 45%, transparent 75%);
+}
 .wl-tile__label {
   position: absolute;
-  left: 0.6rem;
-  bottom: 0.6rem;
-  z-index: 1;
+  left: clamp(0.75rem, 1.6vw, 1.25rem);
+  bottom: clamp(0.7rem, 1.4vw, 1.1rem);
+  z-index: 2;
   display: grid;
-  gap: 0.12rem;
-  max-width: calc(100% - 1.2rem);
-  padding: 0.5rem 0.75rem 0.55rem;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--surface) 90%, transparent);
-  -webkit-backdrop-filter: blur(10px) saturate(1.15);
-  backdrop-filter: blur(10px) saturate(1.15);
-  box-shadow: 0 8px 18px -12px rgb(var(--shade) / 0.55);
-  color: var(--text);
+  gap: 0.15rem;
+  max-width: min(75%, 26rem);
+  color: #fff;
   text-align: left;
+  text-shadow: 0 1px 12px rgb(0 0 0 / 0.35);
   opacity: 0;
-  transform: translateY(8px);
-  transition:
-    opacity 0.22s ease-out,
-    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
 }
 .wl-tile__title {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
   font-family: var(--serif);
-  font-size: 1.15rem;
+  font-size: clamp(1.05rem, 1.5vw, 1.4rem);
   font-weight: 600;
   line-height: 1.1;
 }
-.wl-tile__title::before {
-  /* a leaf, the page's one small mark */
-  content: "";
-  flex: none;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 0 70% 0 70%;
-  background: var(--wl-leaf);
+/* the opening photograph is far larger: its caption is set a size up */
+.wl-opening .wl-tile__title {
+  font-size: clamp(1.3rem, 2vw, 1.85rem);
+}
+.wl-opening .wl-tile__caption {
+  font-size: 0.9375rem;
 }
 .wl-tile__caption {
   font-size: 0.8125rem;
   line-height: 1.35;
-  color: var(--muted);
-}
-.wl-tile:focus-visible .wl-tile__label {
-  opacity: 1;
-  transform: none;
+  color: rgb(255 255 255 / 0.92);
 }
 @media (hover: hover) {
   .wl-tile:hover {
-    transform: translateY(-3px);
+    z-index: 1;
+    transform: translateY(-2px);
     box-shadow:
       0 0 0 1px rgb(var(--shade) / 0.06),
-      0 22px 36px -24px rgb(var(--shade) / 0.65);
-  }
-  .wl-tile:hover .wl-tile__img {
-    transform: scale(1.035);
-  }
-  .wl-tile:hover .wl-tile__label {
-    opacity: 1;
-    transform: none;
+      0 18px 30px -20px rgb(var(--shade) / 0.6);
   }
 }
 .wl-tile:active {
@@ -326,7 +343,7 @@
   transition-duration: 0.15s;
 }
 
-.wl-pager {
+.theme-wl .wl-pager {
   padding-block: 2rem clamp(3.5rem, 7vw, 5rem);
 }
 
@@ -362,17 +379,23 @@
   inset: 0;
   display: grid;
   place-items: center;
-  padding: clamp(4.25rem, 9vh, 5.5rem) clamp(1rem, 4vw, 3rem) clamp(1rem, 3.5vh, 2.25rem);
+  --wl-pad-t: clamp(4.25rem, 9vh, 5.5rem);
+  --wl-pad-b: clamp(1rem, 3.5vh, 2.25rem);
+  padding: var(--wl-pad-t) 0 var(--wl-pad-b);
+  overflow-y: auto; /* a last resort on very short screens */
   cursor: zoom-out;
 }
+/* the full width of the screen: the photograph is centred in it, and the
+   caption row keeps one place on a six-column grid whatever the photograph */
 .wl-view__figure {
-  /* the photograph as large as fits, at its own proportions */
-  --fw: min(100vw - 2rem, 84rem, calc((100svh - 12.5rem) * var(--ar)));
+  /* the photograph as large as fits at its own proportions, leaving room for
+     its caption (--cap-h: the caption row's measured height, set on opening) */
+  --wl-room: calc(100svh - var(--wl-pad-t) - var(--wl-pad-b) - 1rem - var(--cap-h, 4rem) - 0.25rem);
+  --fw: min(100vw - 2rem, 84rem, calc(var(--wl-room) * var(--ar)));
   display: grid;
   gap: 1rem;
-  width: max(var(--fw), min(28rem, 100vw - 2rem));
+  width: 100%;
   margin: 0;
-  cursor: auto;
 }
 .wl-view__frame {
   --tone: var(--tone-l);
@@ -410,16 +433,20 @@
   opacity: 1;
 }
 
+/* one fixed, centred row for every photograph: 60% of the screen wide, equal
+   space either side; the words on the left, the arrows on the right */
 .wl-view__cap {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 0.75rem 1.5rem;
-  width: 100%;
-  padding-inline: 0.15rem;
+  gap: 0.75rem 2rem;
+  width: 60%;
+  margin-inline: auto;
+  cursor: auto;
 }
 .wl-view__text {
   min-width: 0;
+  max-width: 62ch; /* the longer captions read as a short paragraph */
 }
 .wl-view__title {
   display: flex;
@@ -440,10 +467,11 @@
   background: var(--wl-leaf);
 }
 .wl-view__caption {
-  margin: 0.25rem 0 0;
-  font-size: 0.9375rem;
-  line-height: 1.45;
+  margin: 0.35rem 0 0;
+  font-size: 0.9875rem;
+  line-height: 1.55;
   color: var(--ink-3);
+  text-wrap: pretty;
 }
 .wl-view__nav {
   display: flex;
@@ -500,52 +528,43 @@
   z-index: 2;
 }
 
-@media (max-width: 899.98px) {
-  .wl-opening {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "intro" "photo";
-    gap: 1.5rem;
+/* narrower than the title and both lines can share: the introduction moves
+   under the title; the trees span both, still standing on the line */
+@media (max-width: 1179.98px) {
+  .wl-strip {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: end;
+    row-gap: 0.7rem;
   }
-  .wl-opening__photo {
-    width: 100%;
-    min-width: 0;
+  .wl-acacia {
+    grid-row: 1 / span 2;
   }
-  .wl-opening__intro {
-    grid-template-columns: auto 1fr;
-    align-items: baseline;
-    column-gap: 1.5rem;
+  .theme-wl .wl-hero__title {
+    margin-right: 0;
+    white-space: normal;
   }
-  .wl-intro__lede {
-    grid-column: 1 / -1;
-    max-width: 36ch;
-    margin-bottom: 0.4rem;
-  }
-  .wl-intro__count {
-    width: auto;
-    padding-top: 0;
-    border-top: 0;
-  }
-  /* phones and tablets: the thread keeps its flourish by the breadcrumb */
-  .wl-intro__tree {
-    display: none;
+  .wl-strip__lede {
+    display: block;
+    padding: 0;
+    font-size: clamp(1.1rem, 2.3vw, 1.35rem);
+    line-height: 1.3;
   }
 }
-/* phones: one photograph at a time; the main ones full width, the
-   supporting ones smaller and to alternate sides */
+/* phones: one photograph at a time, the same small gap throughout; the main
+   ones full width, the supporting ones smaller and to alternate sides */
 @media (max-width: 639.98px) {
   .wl-row {
     flex-direction: column;
     width: 100%;
   }
-  .wl-row[data-space="normal"] {
-    margin-top: 2.25rem;
-  }
-  .wl-row[data-space="wide"] {
-    margin-top: 3rem;
-  }
-  .wl-item {
-    flex: none;
+  .wl-cell,
+  .wl-stack > .wl-item {
     width: 100%;
+  }
+  /* a stack's photographs join the column one by one */
+  .wl-stack {
+    display: contents;
   }
   .wl-item[data-weight="support"] {
     width: 74%;
@@ -554,41 +573,38 @@
   .wl-item[data-weight="support"][data-side="start"] {
     align-self: flex-start;
   }
-  /* beside the last (left-hand) supporting photograph of its row */
-  .wl-row__aside {
-    top: auto;
-    left: auto;
-    right: 0;
-    width: 26%;
-    height: 50%;
-  }
   .avatar--wl-shoot {
-    left: auto;
-    right: 0.1rem;
+    right: 0.25rem;
     width: 4.6rem;
   }
-  .wl-opening__intro {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 0.35rem;
+  .wl-acacia {
+    width: 6rem;
+  }
+  .wl-strip__meta {
+    justify-content: flex-start;
+  }
+}
+@media (max-width: 639.98px) {
+  /* the caption takes the full width; the arrows follow on their own line */
+  .wl-view__cap {
+    flex-wrap: wrap;
+    width: auto;
+    margin-inline: 0.75rem;
+  }
+  .wl-view__text {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+  .wl-view__nav {
+    margin-left: auto;
   }
 }
 @media (max-width: 599.98px) {
-  .theme-wl {
-    --wl-r: 10px;
-    --wl-view-radius: 12px;
-  }
   .wl-intro__hint {
     font-size: 0.8125rem;
   }
-  .wl-view__stage {
-    padding-inline: 0.75rem;
-  }
   .wl-view__figure {
-    --fw: min(100vw - 1.5rem, calc((100svh - 13rem) * var(--ar)));
-    width: max(var(--fw), 100vw - 1.5rem);
-  }
-  .wl-view__cap {
-    align-items: flex-start;
+    --fw: min(100vw - 1.5rem, calc(var(--wl-room) * var(--ar)));
   }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -1,22 +1,23 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { MotionConfig, motion, type Variants } from "motion/react";
 import type { Photo, Row } from "@/content/wildlife";
 
 /**
  * The collection: the opening photograph beside the introduction, then a
- * sequence of rows. In a row every photograph keeps its own proportions and
- * all share one height (each item grows in proportion to its aspect ratio —
- * CSS only, nothing cropped, nothing measured), so a row of two main
- * photographs reads large and a row of three supporting ones reads small.
+ * sequence of rows. A row's cells — single photographs, or columns of them
+ * stacked — are all exactly as tall as each other, every photograph at its own
+ * proportions (widths worked out in content/wildlife.ts; CSS only, nothing
+ * cropped, nothing measured), so main photographs can be placed large and
+ * supporting ones small.
  * Photographs are the supplied files, untouched; each opens into a larger view.
  *
  * The larger view is a shared-element transition, after
  * https://21st.dev/@jahed/components/shared-element-gallery: the photograph
  * lifts out of the grid and grows into place on a spring, and on closing
  * returns to exactly where it came from (FLIP, with the Web Animations API —
- * transform and border-radius on one element, the frosted scrim's opacity
- * beside it). The view is a native modal <dialog>: the page behind is inert,
+ * a transform on one element, the frosted scrim's opacity beside it). The view is a native modal <dialog>: the page behind is inert,
  * focus moves to the close button and returns to the photograph's tile.
  *
  *   open      click / tap a tile, or Enter / Space on it
@@ -27,6 +28,33 @@ import type { Photo, Row } from "@/content/wildlife";
  * With prefers-reduced-motion the view simply fades in and out, and changing
  * photograph is a short crossfade.
  */
+
+/*
+ * The hover caption: a soft shade over the photograph's lower left with the
+ * caption as plain white text on it. Motion fades it in on hover or keyboard
+ * focus; at rest the shade is hidden.
+ */
+const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
+const veil: Variants = {
+  rest: {
+    opacity: 0,
+    transition: { duration: 0.25, ease: EASE },
+    transitionEnd: { visibility: "hidden" },
+  },
+  hover: {
+    opacity: 1,
+    visibility: "visible",
+    transition: { duration: 0.4, ease: EASE },
+  },
+};
+const caption: Variants = {
+  rest: { opacity: 0, x: -8, transition: { duration: 0.2, ease: EASE } },
+  hover: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.45, delay: 0.06, ease: EASE },
+  },
+};
 
 /** a spring as a CSS linear() easing (semi-implicit Euler, 120 Hz) */
 function spring(stiffness: number, damping: number) {
@@ -44,14 +72,16 @@ function spring(stiffness: number, damping: number) {
   }
   const n = 48;
   const pts = Array.from({ length: n + 1 }, (_, i) => (i === n ? 1 : xs[Math.round((i / n) * (xs.length - 1))]));
-  return { easing: `linear(${pts.map((p) => +p.toFixed(4)).join(", ")})`, duration: Math.round(t * 1000) };
+  return {
+    easing: `linear(${pts.map((p) => +p.toFixed(4)).join(", ")})`,
+    duration: Math.round(t * 1000),
+  };
 }
 /** opening: a soft spring that just overshoots (ζ ≈ 0.82) */
 const OPEN = spring(230, 25);
 /** closing and settling back: critically damped, quicker */
 const CLOSE = spring(420, 41);
 const EASE_OUT = "cubic-bezier(0.22, 1, 0.36, 1)";
-const TILE_RADIUS = 14;
 
 /** background scroll locked without a layout shift (the work drawer's lock: WorkDrawer.css) */
 function lock() {
@@ -73,7 +103,7 @@ function mapRect(from: DOMRect, to: DOMRect) {
   const sy = to.height / from.height;
   const dx = to.left + to.width / 2 - (from.left + from.width / 2);
   const dy = to.top + to.height / 2 - (from.top + from.height / 2);
-  return { t: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`, s: Math.min(sx, sy) };
+  return { t: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})` };
 }
 
 function Arrow({ dir }: { dir: "prev" | "next" }) {
@@ -89,13 +119,9 @@ type Props = {
   rows: Row[];
   /** the opening photograph followed by every row's, in order: what ← / → walk through */
   sequence: Photo[];
-  /** the introduction set beside the opening photograph */
-  intro: React.ReactNode;
-  /** a figure placed in the space a narrower row leaves (row index → node) */
-  asides?: Record<number, React.ReactNode>;
 };
 
-export default function WildlifeGallery({ hero, rows, sequence, intro, asides = {} }: Props) {
+export default function WildlifeGallery({ hero, rows, sequence }: Props) {
   const photos = sequence;
   const n = photos.length;
   const indexOf = (ph: Photo) => photos.findIndex((x) => x.id === ph.id);
@@ -107,10 +133,19 @@ export default function WildlifeGallery({ hero, rows, sequence, intro, asides = 
   const frameRef = useRef<HTMLDivElement>(null);
   const scrimRef = useRef<HTMLDivElement>(null);
   const capRef = useRef<HTMLElement>(null);
+  const figRef = useRef<HTMLElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const phase = useRef<"closed" | "opening" | "open" | "closing">("closed");
   const origin = useRef<{ rect: DOMRect } | null>(null);
   const swapDir = useRef(0);
+
+  /** captions differ in length: the photograph leaves exactly the caption's
+   * height free (its width never depends on the photograph, so this settles) */
+  const fitCaption = useCallback(() => {
+    const cap = capRef.current,
+      fig = figRef.current;
+    if (cap && fig) fig.style.setProperty("--cap-h", `${cap.offsetHeight}px`);
+  }, []);
   const [ready, setReady] = useState(false);
 
   // tiles fade in as their photographs arrive (only ones still loading when
@@ -119,8 +154,12 @@ export default function WildlifeGallery({ hero, rows, sequence, intro, asides = 
     rootRef.current?.querySelectorAll<HTMLImageElement>(".wl-tile__img").forEach((img) => {
       if (img.complete) return;
       img.dataset.pending = "true";
-      img.addEventListener("load", () => delete img.dataset.pending, { once: true });
-      img.addEventListener("error", () => delete img.dataset.pending, { once: true });
+      img.addEventListener("load", () => delete img.dataset.pending, {
+        once: true,
+      });
+      img.addEventListener("error", () => delete img.dataset.pending, {
+        once: true,
+      });
     });
   }, []);
 
@@ -150,26 +189,30 @@ export default function WildlifeGallery({ hero, rows, sequence, intro, asides = 
     if (!d || !frame || !scrim || !cap) return;
     lock();
     d.showModal();
+    fitCaption();
     closeRef.current?.focus({ preventScroll: true });
     lift(view, true);
     const done = () => {
       if (phase.current === "opening") phase.current = "open";
     };
     if (reduced() || !origin.current) {
-      const a = d.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 160, easing: "ease-out" });
+      const a = d.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 160,
+        easing: "ease-out",
+      });
       a.onfinish = done;
       return;
     }
     const last = frame.getBoundingClientRect();
-    const { t, s } = mapRect(last, origin.current.rect);
-    frame.animate(
-      [
-        { transform: t, borderRadius: `${TILE_RADIUS / s}px` },
-        { transform: "none", borderRadius: getComputedStyle(frame).borderTopLeftRadius },
-      ],
-      { duration: OPEN.duration, easing: OPEN.easing },
-    ).onfinish = done;
-    scrim.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 360, easing: EASE_OUT });
+    const { t } = mapRect(last, origin.current.rect);
+    frame.animate([{ transform: t }, { transform: "none" }], {
+      duration: OPEN.duration,
+      easing: OPEN.easing,
+    }).onfinish = done;
+    scrim.animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: 360,
+      easing: EASE_OUT,
+    });
     cap.animate(
       [
         { opacity: 0, transform: "translateY(10px)" },
@@ -177,8 +220,14 @@ export default function WildlifeGallery({ hero, rows, sequence, intro, asides = 
       ],
       { duration: 420, delay: 140, easing: EASE_OUT, fill: "backwards" },
     );
-    d.querySelectorAll<HTMLElement>(".wl-view__close").forEach((b) => b.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, delay: 160, fill: "backwards" }));
-  }, [view]);
+    d.querySelectorAll<HTMLElement>(".wl-view__close").forEach((b) =>
+      b.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 300,
+        delay: 160,
+        fill: "backwards",
+      }),
+    );
+  }, [view, fitCaption]);
 
   /* ----------------------------------------------------------- close */
   const finish = useCallback(() => {
@@ -203,7 +252,11 @@ export default function WildlifeGallery({ hero, rows, sequence, intro, asides = 
     const tile = tileRefs.current[view];
     if (!d || !frame || !scrim || !cap || !tile) return finish();
     if (reduced()) {
-      d.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 140, easing: "ease-in", fill: "forwards" }).onfinish = finish;
+      d.animate([{ opacity: 1 }, { opacity: 0 }], {
+        duration: 140,
+        easing: "ease-in",
+        fill: "forwards",
+      }).onfinish = finish;
       return;
     }
     // bring the tile into view behind the scrim if the visitor moved far from it
@@ -212,24 +265,25 @@ export default function WildlifeGallery({ hero, rows, sequence, intro, asides = 
     const target = tile.querySelector("img")!.getBoundingClientRect();
     // from wherever it is now (mid-drag included) to the tile
     const current = getComputedStyle(frame).transform;
-    const radiusNow = getComputedStyle(frame).borderTopLeftRadius;
     frame.getAnimations().forEach((a) => a.cancel());
     frame.style.transform = "none";
     const base = frame.getBoundingClientRect();
     frame.style.transform = "";
-    const { t, s } = mapRect(base, target);
-    frame.animate(
-      [
-        { transform: current === "none" ? "none" : current, borderRadius: radiusNow },
-        { transform: t, borderRadius: `${TILE_RADIUS / s}px` },
-      ],
-      { duration: CLOSE.duration, easing: CLOSE.easing, fill: "forwards" },
-    ).onfinish = finish;
+    const { t } = mapRect(base, target);
+    frame.animate([{ transform: current === "none" ? "none" : current }, { transform: t }], { duration: CLOSE.duration, easing: CLOSE.easing, fill: "forwards" }).onfinish = finish;
     const scrimNow = getComputedStyle(scrim).opacity;
     scrim.getAnimations().forEach((a) => a.cancel());
-    scrim.animate([{ opacity: scrimNow }, { opacity: 0 }], { duration: Math.min(320, CLOSE.duration), easing: "ease-out", fill: "forwards" });
+    scrim.animate([{ opacity: scrimNow }, { opacity: 0 }], {
+      duration: Math.min(320, CLOSE.duration),
+      easing: "ease-out",
+      fill: "forwards",
+    });
     [cap, ...d.querySelectorAll<HTMLElement>(".wl-view__close")].forEach((el) =>
-      el.animate([{ opacity: getComputedStyle(el).opacity }, { opacity: 0 }], { duration: 140, easing: "ease-out", fill: "forwards" }),
+      el.animate([{ opacity: getComputedStyle(el).opacity }, { opacity: 0 }], {
+        duration: 140,
+        easing: "ease-out",
+        fill: "forwards",
+      }),
     );
   }, [view, finish]);
 
@@ -254,6 +308,7 @@ export default function WildlifeGallery({ hero, rows, sequence, intro, asides = 
     const dir = swapDir.current;
     if (view === null || !dir) return;
     swapDir.current = 0;
+    fitCaption();
     const frame = frameRef.current,
       cap = capRef.current;
     if (!frame || !cap) return;
@@ -266,8 +321,11 @@ export default function WildlifeGallery({ hero, rows, sequence, intro, asides = 
       ],
       { duration: reduced() ? 140 : 380, easing: EASE_OUT },
     );
-    cap.animate([{ opacity: 0.2 }, { opacity: 1 }], { duration: 260, easing: "ease-out" });
-  }, [view]);
+    cap.animate([{ opacity: 0.2 }, { opacity: 1 }], {
+      duration: 260,
+      easing: "ease-out",
+    });
+  }, [view, fitCaption]);
 
   /* -------------------------------------------------------- keyboard */
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -281,10 +339,22 @@ export default function WildlifeGallery({ hero, rows, sequence, intro, asides = 
   };
 
   /* ------------------------------------------------- drag and swipe */
-  const drag = useRef<{ x: number; y: number; t: number; axis: "" | "x" | "y"; id: number } | null>(null);
+  const drag = useRef<{
+    x: number;
+    y: number;
+    t: number;
+    axis: "" | "x" | "y";
+    id: number;
+  } | null>(null);
   const onPointerDown = (e: React.PointerEvent) => {
     if (phase.current !== "open" || (e.pointerType === "mouse" && e.button !== 0)) return;
-    drag.current = { x: e.clientX, y: e.clientY, t: performance.now(), axis: "", id: e.pointerId };
+    drag.current = {
+      x: e.clientX,
+      y: e.clientY,
+      t: performance.now(),
+      axis: "",
+      id: e.pointerId,
+    };
   };
   const onPointerMove = (e: React.PointerEvent) => {
     const g = drag.current,
@@ -332,10 +402,18 @@ export default function WildlifeGallery({ hero, rows, sequence, intro, asides = 
     // not far enough: settle back
     const from = frame.style.transform;
     frame.style.transform = "";
-    if (!reduced()) frame.animate([{ transform: from }, { transform: "none" }], { duration: CLOSE.duration, easing: CLOSE.easing });
+    if (!reduced())
+      frame.animate([{ transform: from }, { transform: "none" }], {
+        duration: CLOSE.duration,
+        easing: CLOSE.easing,
+      });
     const so = scrim.style.opacity;
     scrim.style.opacity = "";
-    if (so && !reduced()) scrim.animate([{ opacity: so }, { opacity: 1 }], { duration: 240, easing: "ease-out" });
+    if (so && !reduced())
+      scrim.animate([{ opacity: so }, { opacity: 1 }], {
+        duration: 240,
+        easing: "ease-out",
+      });
   };
   // a click that ended a drag is not a click on the scrim
   const onStageClick = (e: React.MouseEvent) => {
@@ -346,6 +424,15 @@ export default function WildlifeGallery({ hero, rows, sequence, intro, asides = 
   // tidy up if the page is left with the view open
   useEffect(() => () => unlock(), []);
 
+  // keep the room for the caption right as the window changes size
+  const isOpen = view !== null;
+  useEffect(() => {
+    if (!isOpen || !capRef.current) return;
+    const ro = new ResizeObserver(fitCaption);
+    ro.observe(capRef.current);
+    return () => ro.disconnect();
+  }, [isOpen, fitCaption]);
+
   const p = view === null ? null : photos[view];
   const ar = p ? p.width / p.height : 1;
 
@@ -354,15 +441,25 @@ export default function WildlifeGallery({ hero, rows, sequence, intro, asides = 
   const tile = (ph: Photo, eager = false, className = "") => {
     const i = indexOf(ph);
     return (
-      <button
+      <motion.button
         type="button"
         className={`wl-tile ${className}`.trim()}
-        ref={(el) => {
+        ref={(el: HTMLButtonElement | null) => {
           tileRefs.current[i] = el;
         }}
         onClick={() => open(i)}
         aria-haspopup="dialog"
-        style={{ "--ar": `${ph.width} / ${ph.height}`, "--tone-l": ph.tone.light, "--tone-d": ph.tone.dark } as React.CSSProperties}
+        initial="rest"
+        animate="rest"
+        whileHover="hover"
+        whileFocus="hover"
+        style={
+          {
+            "--ar": `${ph.width} / ${ph.height}`,
+            "--tone-l": ph.tone.light,
+            "--tone-d": ph.tone.dark,
+          } as React.CSSProperties
+        }
       >
         {/* the supplied file itself, scaled by the browser; never cropped */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -377,11 +474,12 @@ export default function WildlifeGallery({ hero, rows, sequence, intro, asides = 
           decoding="async"
           draggable={false}
         />
-        <span className="wl-tile__label" aria-hidden="true">
+        <motion.span className="wl-tile__veil" variants={veil} aria-hidden="true" />
+        <motion.span className="wl-tile__label" variants={caption} aria-hidden="true">
           <span className="wl-tile__title">{ph.title}</span>
-          <span className="wl-tile__caption">{ph.caption}</span>
-        </span>
-      </button>
+          <span className="wl-tile__caption">{ph.hover}</span>
+        </motion.span>
+      </motion.button>
     );
   };
 
@@ -389,120 +487,132 @@ export default function WildlifeGallery({ hero, rows, sequence, intro, asides = 
   let support = 0;
 
   return (
-    <div className="wl-collection" ref={rootRef}>
-      <div className="wl-opening">
-        <div className="wl-opening__intro">{intro}</div>
-        <div className="wl-opening__photo" style={{ "--ar": hero.width / hero.height } as React.CSSProperties}>
-          {tile(hero, true)}
-        </div>
-      </div>
+    <MotionConfig reducedMotion="user">
+      <div className="wl-collection" ref={rootRef}>
+        <div className="wl-opening">{tile(hero, true)}</div>
 
-      <h2 className="visually-hidden" id="wl-collection-title">
-        The photographs
-      </h2>
-      <div className="wl-rows" aria-labelledby="wl-collection-title" role="list">
-        {rows.map((row, r) => (
-          <div
-            key={r}
-            className="wl-row"
-            data-space={row.space}
-            style={{ "--w": row.width } as React.CSSProperties}
-          >
-            {row.photos.map((ph, k) => {
-              const side = ph.weight === "support" ? (support++ % 2 === 0 ? "start" : "end") : undefined;
-              return (
-                <div
-                  key={ph.id}
-                  role="listitem"
-                  className="wl-item"
-                  data-weight={ph.weight}
-                  data-side={side}
-                  style={{ "--ar": ph.width / ph.height } as React.CSSProperties}
-                >
-                  {tile(ph, r === 0 && k < 2)}
-                </div>
-              );
-            })}
-            {asides[r] ? <div className="wl-row__aside">{asides[r]}</div> : null}
-          </div>
-        ))}
-      </div>
-
-      <dialog
-        ref={dialogRef}
-        className="wl-view"
-        aria-labelledby="wl-view-title"
-        aria-describedby="wl-view-caption"
-        onCancel={(e) => {
-          e.preventDefault();
-          close();
-        }}
-        onKeyDown={onKeyDown}
-      >
-        {p ? (
-          <>
-            <div className="wl-view__scrim" ref={scrimRef} aria-hidden="true" />
-            <div className="wl-view__stage" onClick={onStageClick}>
-              <figure className="wl-view__figure" style={{ "--ar": ar } as React.CSSProperties}>
-                <div
-                  className="wl-view__frame"
-                  ref={frameRef}
-                  onPointerDown={onPointerDown}
-                  onPointerMove={onPointerMove}
-                  onPointerUp={onPointerUp}
-                  onPointerCancel={onPointerUp}
-                  style={{ "--tone-l": p.tone.light, "--tone-d": p.tone.dark } as React.CSSProperties}
-                >
-                  {/* the whole photograph, the same file as its tile (already loaded) */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    key={p.id}
-                    className="wl-view__img"
-                    src={p.src}
-                    width={p.width}
-                    height={p.height}
-                    alt={p.alt}
-                    decoding="sync"
-                    data-ready={ready ? "true" : undefined}
-                    onLoad={() => setReady(true)}
-                    draggable={false}
-                  />
-                </div>
-                <figcaption className="wl-view__cap" ref={capRef}>
-                  <div className="wl-view__text" aria-live="polite">
-                    <h2 className="wl-view__title" id="wl-view-title">
-                      {p.title}
-                    </h2>
-                    <p className="wl-view__caption" id="wl-view-caption">
-                      {p.caption}
-                    </p>
+        <h2 className="visually-hidden" id="wl-collection-title">
+          The photographs
+        </h2>
+        <div className="wl-rows" aria-labelledby="wl-collection-title" role="list">
+          {rows.map((row, r) => (
+            <div key={r} className="wl-row" style={{ "--w": row.width } as React.CSSProperties}>
+              {row.cells.map((cell, k) => {
+                const item = (ph: Photo, extra = "", style?: React.CSSProperties) => {
+                  const side = ph.weight === "support" ? (support++ % 2 === 0 ? "start" : "end") : undefined;
+                  return (
+                    <div
+                      key={ph.id}
+                      role="listitem"
+                      className={`wl-item ${extra}`.trim()}
+                      data-weight={ph.weight}
+                      data-side={side}
+                      style={
+                        {
+                          "--ar": ph.width / ph.height,
+                          ...style,
+                        } as React.CSSProperties
+                      }
+                    >
+                      {tile(ph, r === 0)}
+                    </div>
+                  );
+                };
+                const width = { "--cw": cell.width } as React.CSSProperties;
+                // a single photograph, or a column of them exactly as tall as the row
+                return cell.photos.length === 1 ? (
+                  item(cell.photos[0], "wl-cell", width)
+                ) : (
+                  <div key={k} className="wl-cell wl-stack" style={width}>
+                    {cell.photos.map((ph) => item(ph))}
                   </div>
-                  <div className="wl-view__nav">
-                    <button type="button" className="wl-btn" onClick={() => go(-1)} aria-label="Previous photograph">
-                      <Arrow dir="prev" />
-                    </button>
-                    <span className="wl-view__count">
-                      <span className="visually-hidden">Photograph </span>
-                      {view! + 1}
-                      <span aria-hidden="true"> / </span>
-                      <span className="visually-hidden"> of </span>
-                      {n}
-                    </span>
-                    <button type="button" className="wl-btn" onClick={() => go(1)} aria-label="Next photograph">
-                      <Arrow dir="next" />
-                    </button>
-                  </div>
-                </figcaption>
-              </figure>
+                );
+              })}
             </div>
-            <button type="button" className="wl-btn wl-view__close" ref={closeRef} onClick={close} aria-label="Close">
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M6.5 6.5l11 11M17.5 6.5l-11 11" />
-              </svg>
-            </button>
-          </>
-        ) : null}
-      </dialog>
-    </div>
+          ))}
+        </div>
+
+        <dialog
+          ref={dialogRef}
+          className="wl-view"
+          aria-labelledby="wl-view-title"
+          aria-describedby="wl-view-caption"
+          onCancel={(e) => {
+            e.preventDefault();
+            close();
+          }}
+          onKeyDown={onKeyDown}
+        >
+          {p ? (
+            <>
+              <div className="wl-view__scrim" ref={scrimRef} aria-hidden="true" />
+              <div className="wl-view__stage" onClick={onStageClick}>
+                <figure className="wl-view__figure" ref={figRef} style={{ "--ar": ar } as React.CSSProperties}>
+                  <div
+                    className="wl-view__frame"
+                    ref={frameRef}
+                    onPointerDown={onPointerDown}
+                    onPointerMove={onPointerMove}
+                    onPointerUp={onPointerUp}
+                    onPointerCancel={onPointerUp}
+                    style={
+                      {
+                        "--tone-l": p.tone.light,
+                        "--tone-d": p.tone.dark,
+                      } as React.CSSProperties
+                    }
+                  >
+                    {/* the whole photograph, the same file as its tile (already loaded) */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      key={p.id}
+                      className="wl-view__img"
+                      src={p.src}
+                      width={p.width}
+                      height={p.height}
+                      alt={p.alt}
+                      decoding="sync"
+                      data-ready={ready ? "true" : undefined}
+                      onLoad={() => setReady(true)}
+                      draggable={false}
+                    />
+                  </div>
+                  <figcaption className="wl-view__cap" ref={capRef}>
+                    <div className="wl-view__text" aria-live="polite">
+                      <h2 className="wl-view__title" id="wl-view-title">
+                        {p.title}
+                      </h2>
+                      <p className="wl-view__caption" id="wl-view-caption">
+                        {p.caption}
+                      </p>
+                    </div>
+                    <div className="wl-view__nav">
+                      <button type="button" className="wl-btn" onClick={() => go(-1)} aria-label="Previous photograph">
+                        <Arrow dir="prev" />
+                      </button>
+                      <span className="wl-view__count">
+                        <span className="visually-hidden">Photograph </span>
+                        {view! + 1}
+                        <span aria-hidden="true"> / </span>
+                        <span className="visually-hidden"> of </span>
+                        {n}
+                      </span>
+                      <button type="button" className="wl-btn" onClick={() => go(1)} aria-label="Next photograph">
+                        <Arrow dir="next" />
+                      </button>
+                    </div>
+                  </figcaption>
+                </figure>
+              </div>
+              <button type="button" className="wl-btn wl-view__close" ref={closeRef} onClick={close} aria-label="Close">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M6.5 6.5l11 11M17.5 6.5l-11 11" />
+                </svg>
+              </button>
+            </>
+          ) : null}
+        </dialog>
+      </div>
+    </MotionConfig>
   );
 }
