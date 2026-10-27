@@ -55,7 +55,7 @@ const same = (arr) => arr.every((x) => x === arr[0]);
 const within = (arr, tol) => Math.max(...arr) - Math.min(...arr) <= tol;
 for (const w of [1440, 390]) {
   ok(`@${w}: every page has the header drawer trigger, same header height`, pick(w, "light", "header").every(Boolean) && same(pick(w, "light", "header")), pick(w, "light", "header").join(" "));
-  ok(`@${w}: every page has On this page`, pick(w, "light", "tocLinks").every((n) => n >= 7), pick(w, "light", "tocLinks").join(" "));
+  ok(`@${w}: every page has On this page`, pick(w, "light", "tocLinks").every((n) => n >= 5), pick(w, "light", "tocLinks").join(" "));
   ok(`@${w}: same h2 size and serif across pages`, same(pick(w, "light", "h2")) && same(pick(w, "light", "h2Font")), pick(w, "light", "h2").join(" "));
   ok(`@${w}: same body size and line height`, same(pick(w, "light", "body")) && same(pick(w, "light", "lh")), `${pick(w, "light", "body").join(" ")} / ${pick(w, "light", "lh").join(" ")}`);
   ok(`@${w}: same section rhythm (padding)`, same(pick(w, "light", "secPad")), pick(w, "light", "secPad").join(" "));

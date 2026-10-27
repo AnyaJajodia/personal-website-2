@@ -66,6 +66,49 @@ function buildPath(theme: Theme, root: HTMLElement): Pt[] | null {
     pts.push(pt(f + 26, fy + 18), pt(vw + 30, fy + 34));
     return resample(spline(pts, 14), N);
   }
+  // A page can give the flourish a job instead of a fixed place: an element
+  // marked data-line="flourish" (wide screens only; every other page and
+  // screen keeps the default below).
+  //   tag  — the thread drops from under the header and ties a loop just above
+  //          the element's top-right corner (facts hung like a field tag), then
+  //          leaves for the margin on the element's right, crossing nothing
+  //   mark — the thread drops from under the header to just past the
+  //          element's end, makes a small loop there (a footnote mark after a
+  //          title, a knot after a wordmark), and leaves once for the margin
+  const anchor = wide ? root.querySelector<HTMLElement>('[data-line="flourish"]') : null;
+  if (anchor) {
+    const r = rel(anchor, rootTop)!;
+    const kind = anchor.dataset.flourish === "mark" ? "mark" : "tag";
+    const k = parseFloat(anchor.dataset.flourishScale ?? "") || (kind === "mark" ? 0.42 : 0.6);
+    let startY: number;
+    if (kind === "mark") {
+      const mx = r.right + 18 * k + 8;
+      const my = r.top + r.height * 0.3;
+      pts.push(pt(mx + 150, -20), pt(mx + 70, my - 70), pt(mx + 6, my - 4));
+      pts.push(...loop(mx, my - 4 * k, 34 * k, 30 * k, { drift: 40 * k, steps: 12 }));
+      pts.push(pt(mx + 70, my + 30), pt(Math.min(gx - 60, mx + 420), my + 90), pt(gx, my + 170));
+      startY = my + 300;
+    } else {
+      const lx = r.right - 30;
+      const ly = r.top - 52 * k - 14;
+      pts.push(pt(lx - 120, -20), pt(lx - 70, ly - 120), pt(lx - 50 * k, ly + 10 * k));
+      pts.push(...loop(lx, ly - 6 * k, 40 * k, 36 * k, { drift: 56 * k, steps: 12 }));
+      pts.push(pt(lx + 60 * k + 10, ly + 30 * k), pt(gx, Math.max(ly + 110, r.top + 40)));
+      startY = Math.max(ly + 230, r.top + 160);
+    }
+    pts.push(pt(gx, startY));
+    const stop = end.top - 40;
+    const n = Math.max(1, Math.round((stop - startY) / 260));
+    for (let i = 1; i <= n; i++) {
+      const y = startY + ((stop - startY) * i) / n;
+      if (i === Math.ceil(n / 2) && n > 2) pts.push(...knotShape(gx, y, 11, { turns: 1.6, dir: -1 }));
+      else pts.push(pt(gx + (i % 2 ? 8 : -6), y));
+    }
+    pts.push(...loop(gx, end.top + 4, 12, 18, { dir: -1 }));
+    pts.push(pt(gx - 30, end.bottom + 30), pt(gx - 10, Math.min(H - 6, end.bottom + 120)));
+    return resample(spline(pts, 14), N);
+  }
+
   // the line arrives from under the header rather than starting in mid-air
   pts.push(pt(wide ? fx - 170 : vw + 30, wide ? -20 : fy - 70), pt(wide ? fx - 130 : vw - 20, wide ? fy - 100 : fy - 34));
   if (theme === "amnh") {

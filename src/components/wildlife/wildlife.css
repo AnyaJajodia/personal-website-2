@@ -1,0 +1,607 @@
+/* =====================================================================
+   Wildlife photography (WildlifePage.tsx, WildlifeGallery.tsx)
+   The portfolio's paper, serif and thread; a moss accent of its own (light:
+   moss #4B6540 for words, leaf #7E9667 for lines; dark: #B9CB9E / #94AA7E).
+   The photographs carry the colour; everything else stays quiet and soft-
+   cornered. Scoped to .theme-wl.
+   ===================================================================== */
+
+.theme-wl {
+  --wl-moss: #4b6540; /* accent text on paper (AA) */
+  --wl-leaf: #7e9667; /* lines and marks */
+  --wl-soft: rgba(126, 150, 103, 0.16);
+  --wl-r: 14px; /* a tile's corners */
+  --wl-view-radius: 18px; /* the larger view's corners */
+  --accent: #4b6540;
+  --selection: rgba(126, 150, 103, 0.3);
+}
+:root[data-theme="dark"] .theme-wl {
+  --wl-moss: #b9cb9e;
+  --wl-leaf: #94aa7e;
+  --wl-soft: rgba(148, 170, 126, 0.14);
+  --accent: #b9cb9e;
+  --selection: rgba(148, 170, 126, 0.3);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .theme-wl {
+    --wl-moss: #b9cb9e;
+    --wl-leaf: #94aa7e;
+    --wl-soft: rgba(148, 170, 126, 0.14);
+    --accent: #b9cb9e;
+    --selection: rgba(148, 170, 126, 0.3);
+  }
+}
+.theme-wl ::selection {
+  background: var(--selection);
+}
+.theme-wl :focus-visible {
+  outline: 2px solid var(--wl-moss);
+  outline-offset: 3px;
+}
+/* the thread in leaf green */
+.theme-wl .detail-line path {
+  stroke: var(--wl-leaf) !important;
+}
+
+/* ------------------------------------------------------------ opening */
+/* shorter than a case study's: the photographs start in the first view */
+.wl-hero {
+  padding-top: calc(var(--header-h) + clamp(2rem, 5vw, 3.5rem));
+  padding-bottom: clamp(1.25rem, 2.6vw, 2rem);
+}
+.wl-hero .breadcrumb {
+  margin-bottom: clamp(1rem, 2.4vw, 1.6rem);
+}
+.theme-wl .wl-hero__title {
+  max-width: none;
+  font-size: clamp(2.75rem, 6.4vw, 5.25rem);
+  text-wrap: balance;
+}
+
+.wl-section {
+  padding-bottom: clamp(3.5rem, 8vw, 6rem);
+}
+.wl-collection {
+  --g: clamp(12px, 1.5vw, 20px); /* the gap inside a row */
+}
+
+/* the opening photograph, as large as the first view allows, with the
+   introduction beside it (right, so the thread's loop leaves for the margin
+   without crossing the photograph) */
+.wl-opening {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem);
+  grid-template-areas: "photo intro";
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  align-items: end;
+}
+.wl-opening__photo {
+  grid-area: photo;
+  /* never taller than the space under the title in the first view */
+  width: min(100%, calc((100svh - var(--header-h) - 15.5rem) * var(--ar)));
+  min-width: min(100%, 26rem);
+}
+.wl-opening__intro {
+  grid-area: intro;
+  display: grid;
+  justify-items: start;
+  gap: 0.6rem;
+  padding-bottom: 0.2rem;
+}
+/* the acacia from the homepage's old drawn contact sheet, on its own horizon */
+.wl-intro__tree {
+  width: clamp(7rem, 10vw, 8.75rem);
+  margin-bottom: 0.9rem;
+}
+.wl-acacia {
+  display: block;
+  width: 100%;
+  height: auto;
+  fill: none;
+  stroke: var(--wl-leaf);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+}
+.wl-acacia__ground {
+  stroke: var(--rule-strong);
+}
+.wl-intro__lede {
+  margin: 0 0 0.9rem;
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 1.75vw, 1.6rem);
+  line-height: 1.3;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.wl-intro__count {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  margin: 0;
+  padding-top: 0.85rem;
+  width: 100%;
+  border-top: 1px solid var(--rule);
+  font-size: 0.9375rem;
+  color: var(--ink-3);
+}
+.wl-intro__num {
+  font-family: var(--serif);
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--wl-moss);
+  font-variant-numeric: lining-nums;
+}
+.wl-intro__hint {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.wl-intro__hint::before {
+  /* a small open frame: these open */
+  content: "";
+  flex: none;
+  width: 0.7rem;
+  height: 0.55rem;
+  border: 1.5px solid var(--wl-leaf);
+  border-radius: 3px;
+}
+
+/* ------------------------------------------------------- collection */
+/* rows: each photograph grows in proportion to its aspect ratio, so the
+   row's photographs share one height and every one keeps its proportions */
+.wl-rows {
+  display: flex;
+  flex-direction: column;
+  margin-top: clamp(3rem, 7vw, 5.5rem);
+}
+.wl-row {
+  position: relative;
+  display: flex;
+  gap: var(--g);
+  width: calc(var(--w) * 100%);
+  margin-top: clamp(2.25rem, 4.5vw, 3.5rem);
+}
+.wl-row:first-child {
+  margin-top: 0;
+}
+/* kept with the row before: supporting photographs answer the ones above */
+.wl-row[data-space="tight"] {
+  margin-top: var(--g);
+}
+/* a new passage */
+.wl-row[data-space="wide"] {
+  margin-top: clamp(3.75rem, 8vw, 6.5rem);
+}
+.wl-item {
+  flex: var(--ar) 1 0%;
+  min-width: 0;
+}
+/* the space a narrower row leaves, for the photographer */
+.wl-row__aside {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  width: calc((1 / var(--w) - 1) * 100%);
+}
+.avatar--wl-shoot {
+  left: clamp(1.25rem, 3.5vw, 3rem);
+  bottom: 0;
+  width: clamp(4.6rem, 6.4vw, 6rem);
+  transform: translateY(var(--sink));
+}
+
+/* a tile: the photograph whole, softly cornered, resting on the paper */
+.wl-tile {
+  --tone: var(--tone-l);
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--ar);
+  padding: 0;
+  border: 0;
+  border-radius: var(--wl-r);
+  overflow: hidden;
+  isolation: isolate; /* clips the zoomed image to the corners (Safari) */
+  background: var(--tone);
+  color: inherit;
+  font: inherit;
+  cursor: zoom-in;
+  box-shadow:
+    0 0 0 1px rgb(var(--shade) / 0.06),
+    0 16px 30px -24px rgb(var(--shade) / 0.55);
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+:root[data-theme="dark"] .wl-tile,
+:root[data-theme="dark"] .wl-view__frame {
+  --tone: var(--tone-d);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .wl-tile,
+  :root:not([data-theme]) .wl-view__frame {
+    --tone: var(--tone-d);
+  }
+}
+.wl-tile__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* the box already has the photograph's proportions */
+  transition:
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.6s ease-out;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.wl-tile__img[data-pending] {
+  opacity: 0;
+}
+/* lifted into the larger view: its place stays, empty, until it returns */
+.wl-tile[data-lifted="true"] {
+  visibility: hidden;
+}
+.wl-tile:focus-visible {
+  outline: 2px solid var(--wl-moss);
+  outline-offset: 3px;
+  border-radius: var(--wl-r);
+}
+
+/* the caption: a small paper label that rises into the corner */
+.wl-tile__label {
+  position: absolute;
+  left: 0.6rem;
+  bottom: 0.6rem;
+  z-index: 1;
+  display: grid;
+  gap: 0.12rem;
+  max-width: calc(100% - 1.2rem);
+  padding: 0.5rem 0.75rem 0.55rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  -webkit-backdrop-filter: blur(10px) saturate(1.15);
+  backdrop-filter: blur(10px) saturate(1.15);
+  box-shadow: 0 8px 18px -12px rgb(var(--shade) / 0.55);
+  color: var(--text);
+  text-align: left;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.22s ease-out,
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+.wl-tile__title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+.wl-tile__title::before {
+  /* a leaf, the page's one small mark */
+  content: "";
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 0 70% 0 70%;
+  background: var(--wl-leaf);
+}
+.wl-tile__caption {
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--muted);
+}
+.wl-tile:focus-visible .wl-tile__label {
+  opacity: 1;
+  transform: none;
+}
+@media (hover: hover) {
+  .wl-tile:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 0 0 1px rgb(var(--shade) / 0.06),
+      0 22px 36px -24px rgb(var(--shade) / 0.65);
+  }
+  .wl-tile:hover .wl-tile__img {
+    transform: scale(1.035);
+  }
+  .wl-tile:hover .wl-tile__label {
+    opacity: 1;
+    transform: none;
+  }
+}
+.wl-tile:active {
+  transform: scale(0.985);
+  transition-duration: 0.15s;
+}
+
+.wl-pager {
+  padding-block: 2rem clamp(3.5rem, 7vw, 5rem);
+}
+
+/* ------------------------------------------------------- larger view */
+.wl-view {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  background: transparent;
+  color: var(--text);
+  overscroll-behavior: contain;
+}
+.wl-view::backdrop {
+  background: transparent;
+}
+/* frosted paper, in the page's own colour (either theme) */
+.wl-view__scrim {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  backdrop-filter: blur(18px) saturate(1.1);
+}
+.wl-view__stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(4.25rem, 9vh, 5.5rem) clamp(1rem, 4vw, 3rem) clamp(1rem, 3.5vh, 2.25rem);
+  cursor: zoom-out;
+}
+.wl-view__figure {
+  /* the photograph as large as fits, at its own proportions */
+  --fw: min(100vw - 2rem, 84rem, calc((100svh - 12.5rem) * var(--ar)));
+  display: grid;
+  gap: 1rem;
+  width: max(var(--fw), min(28rem, 100vw - 2rem));
+  margin: 0;
+  cursor: auto;
+}
+.wl-view__frame {
+  --tone: var(--tone-l);
+  position: relative;
+  justify-self: center;
+  width: var(--fw);
+  aspect-ratio: var(--ar);
+  border-radius: var(--wl-view-radius);
+  overflow: hidden;
+  background: var(--tone);
+  box-shadow:
+    0 0 0 1px rgb(var(--shade) / 0.08),
+    0 40px 70px -40px rgb(var(--shade) / 0.6);
+  touch-action: pinch-zoom;
+  cursor: grab;
+  user-select: none;
+  will-change: transform;
+}
+.wl-view__frame[data-dragging] {
+  cursor: grabbing;
+}
+.wl-view__frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  -webkit-user-drag: none;
+}
+.wl-view__img {
+  opacity: 0;
+  transition: opacity 0.35s ease-out;
+}
+.wl-view__img[data-ready] {
+  opacity: 1;
+}
+
+.wl-view__cap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  width: 100%;
+  padding-inline: 0.15rem;
+}
+.wl-view__text {
+  min-width: 0;
+}
+.wl-view__title {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(1.5rem, 2.4vw, 1.9rem);
+  font-weight: 600;
+  line-height: 1.1;
+}
+.wl-view__title::before {
+  content: "";
+  flex: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 0 70% 0 70%;
+  background: var(--wl-leaf);
+}
+.wl-view__caption {
+  margin: 0.25rem 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+.wl-view__nav {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.35rem;
+}
+.wl-view__count {
+  min-width: 4.5ch;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: var(--ink-3);
+}
+
+/* round controls on frosted paper */
+.wl-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease-out,
+    border-color 0.2s ease-out,
+    transform 0.2s ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.wl-btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.wl-btn:hover {
+  border-color: var(--wl-leaf);
+  background: var(--surface);
+}
+.wl-btn:active {
+  transform: scale(0.94);
+}
+.wl-view__close {
+  position: absolute;
+  top: max(1rem, env(safe-area-inset-top));
+  right: max(1rem, env(safe-area-inset-right));
+  z-index: 2;
+}
+
+@media (max-width: 899.98px) {
+  .wl-opening {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "intro" "photo";
+    gap: 1.5rem;
+  }
+  .wl-opening__photo {
+    width: 100%;
+    min-width: 0;
+  }
+  .wl-opening__intro {
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    column-gap: 1.5rem;
+  }
+  .wl-intro__lede {
+    grid-column: 1 / -1;
+    max-width: 36ch;
+    margin-bottom: 0.4rem;
+  }
+  .wl-intro__count {
+    width: auto;
+    padding-top: 0;
+    border-top: 0;
+  }
+  /* phones and tablets: the thread keeps its flourish by the breadcrumb */
+  .wl-intro__tree {
+    display: none;
+  }
+}
+/* phones: one photograph at a time; the main ones full width, the
+   supporting ones smaller and to alternate sides */
+@media (max-width: 639.98px) {
+  .wl-row {
+    flex-direction: column;
+    width: 100%;
+  }
+  .wl-row[data-space="normal"] {
+    margin-top: 2.25rem;
+  }
+  .wl-row[data-space="wide"] {
+    margin-top: 3rem;
+  }
+  .wl-item {
+    flex: none;
+    width: 100%;
+  }
+  .wl-item[data-weight="support"] {
+    width: 74%;
+    align-self: flex-end;
+  }
+  .wl-item[data-weight="support"][data-side="start"] {
+    align-self: flex-start;
+  }
+  /* beside the last (left-hand) supporting photograph of its row */
+  .wl-row__aside {
+    top: auto;
+    left: auto;
+    right: 0;
+    width: 26%;
+    height: 50%;
+  }
+  .avatar--wl-shoot {
+    left: auto;
+    right: 0.1rem;
+    width: 4.6rem;
+  }
+  .wl-opening__intro {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.35rem;
+  }
+}
+@media (max-width: 599.98px) {
+  .theme-wl {
+    --wl-r: 10px;
+    --wl-view-radius: 12px;
+  }
+  .wl-intro__hint {
+    font-size: 0.8125rem;
+  }
+  .wl-view__stage {
+    padding-inline: 0.75rem;
+  }
+  .wl-view__figure {
+    --fw: min(100vw - 1.5rem, calc((100svh - 13rem) * var(--ar)));
+    width: max(var(--fw), 100vw - 1.5rem);
+  }
+  .wl-view__cap {
+    align-items: flex-start;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wl-tile,
+  .wl-tile__img,
+  .wl-tile__label {
+    transition-duration: 0.01s;
+  }
+  .wl-tile:hover,
+  .wl-tile:active {
+    transform: none;
+  }
+  .wl-tile:hover .wl-tile__img {
+    transform: none;
+  }
+}

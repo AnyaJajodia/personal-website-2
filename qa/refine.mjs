@@ -121,16 +121,11 @@ for (const theme of ["light", "dark"]) {
   });
   ok(`Buzzworks header (${theme}): the minimal orange symbol (true proportions, full opacity) + “Buzzworks” in the portfolio serif; no white tile or full logo`, b.src.endsWith("buzzworks-minimal.png") && Math.abs(b.ratio - b.natural) < 0.03 && b.opacity === "1" && b.filter === "none" && b.bg === "rgba(0, 0, 0, 0)" && b.name === "Buzzworks" && /Cormorant/.test(b.font) && b.full === 0, JSON.stringify(b));
   if (theme === "light") {
-    const c = await page.evaluate(() => {
-      const bar = document.querySelector(".bz-chat__bar").getBoundingClientRect();
-      const rows = [...document.querySelectorAll(".bz-chat__row")];
-      const notes = [...document.querySelectorAll(".bz-chat__note")].map((n) => n.getBoundingClientRect());
-      const bubbleText = parseFloat(getComputedStyle(document.querySelector(".bz-bubble")).fontSize);
-      return { w: Math.round(bar.width), rows: rows.length, notesRight: Math.max(...notes.map((n) => n.right)), contentRight: document.querySelector(".case-content").getBoundingClientRect().right, notesLeft: Math.min(...notes.map((n) => n.left)), bubbleText, height: Math.round(document.querySelector(".bz-chat__phone").getBoundingClientRect().height) };
-    });
-    // the earlier window was 23.5rem (376px)
-    const grow = c.w / 376;
-    ok(`Buzzworks chat (desktop): the window is ${Math.round((grow - 1) * 100)}% wider (25–35%), text unscaled, notes beside it within the column`, grow >= 1.25 && grow <= 1.35 && c.bubbleText === 15 && c.notesLeft > c.w && c.notesRight <= c.contentRight + 1 && c.rows === 12, JSON.stringify(c));
+    // iteration 25 replaced the single annotated chat with the four-scenario
+    // reconstruction (interactions: qa/buzzworks-recon.mjs). Kept here: the window
+    // stays a readable conversation width (≈31rem, as widened in iteration 21), text unscaled
+    const c = await page.evaluate(() => ({ w: Math.round(document.querySelector(".wa__window").getBoundingClientRect().width), text: parseFloat(getComputedStyle(document.querySelector(".wa-bubble")).fontSize) }));
+    ok("Buzzworks conversation (desktop): a readable window (≥ 31rem), text unscaled", c.w >= 496 && c.text === 15, JSON.stringify(c));
   }
   await ctx.close();
 }
@@ -139,17 +134,10 @@ for (const theme of ["light", "dark"]) {
   const page = await ctx.newPage();
   await page.goto(`${base}/work/buzzworks`, { waitUntil: "networkidle" });
   const m = await page.evaluate(() => {
-    const out = [];
-    for (const row of document.querySelectorAll(".bz-chat__row")) {
-      const note = row.querySelector(".bz-chat__note");
-      if (!note) continue;
-      const nb = note.getBoundingClientRect(), bb = row.querySelector(".bz-bubble").getBoundingClientRect();
-      out.push(nb.top >= bb.bottom - 1);
-    }
-    const chat = document.querySelector(".bz-chat__phone").getBoundingClientRect();
-    return { after: out, fits: chat.right <= innerWidth - 10 && chat.left >= 10, over: document.documentElement.scrollWidth - innerWidth };
+    const w = document.querySelector(".wa__window").getBoundingClientRect();
+    return { fits: w.right <= innerWidth - 10 && w.left >= 10, over: document.documentElement.scrollWidth - innerWidth };
   });
-  ok("Buzzworks chat (phone): fits the width; each note sits below its exchange; no overflow", m.after.length >= 4 && m.after.every(Boolean) && m.fits && m.over <= 0, JSON.stringify(m));
+  ok("Buzzworks conversation (phone): fits the width; no overflow", m.fits && m.over <= 0, JSON.stringify(m));
   await ctx.close();
 }
 
@@ -158,17 +146,17 @@ for (const theme of ["light", "dark"]) {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, colorScheme: theme });
   const page = await ctx.newPage();
   await page.goto(`${base}/work/crackd-ai`, { waitUntil: "networkidle" });
+  // iteration 26: three open entries (letter, name, summary, named screens, actions) — no screenshots
   const c = await page.evaluate(() => {
     const cs = (s) => getComputedStyle(document.querySelector(s));
-    return { apps: cs(".ck-apps").backgroundColor, admin: cs(".ck-app--admin").backgroundColor, matrix: cs(".ck-app--matrix").backgroundColor, name: cs(".ck-app--matrix .ck-app__name").color, body: cs(".ck-app--admin .ck-app__body p").color, chain: cs(".ck-chain").stroke, opacity: cs(".ck-apps").opacity, repos: document.querySelectorAll(".ck-apps a[href*='github.com']").length };
+    return { apps: cs(".ck-apps").backgroundColor, admin: cs("#admin-application").backgroundColor, matrix: cs("#llm-chaining-matrix").backgroundColor, name: cs("#llm-chaining-matrix .ck-app__name").color, body: cs("#admin-application .ck-app__body").color, letter: cs(".ck-app__n").color, rule: getComputedStyle(document.querySelector(".ck-app"), "::before").backgroundColor, opacity: cs(".ck-apps").opacity, repos: document.querySelectorAll(".ck-apps a[href*='github.com']").length, imgs: document.querySelectorAll(".ck-apps img").length };
   });
   if (theme === "light") {
     const [ln, lb] = await Promise.all([lum(page, c.name), lum(page, c.body)]);
-    // design pass: the three builds are open entries on the sheet — no boxes inside it
-    ok("Crackd (light): no near-black block and no boxes inside the sheet — admin and matrix are open entries with dark text; full opacity; all three repo links", c.apps === "rgba(0, 0, 0, 0)" && c.admin === "rgba(0, 0, 0, 0)" && c.matrix === "rgba(0, 0, 0, 0)" && ln < 0.05 && lb < 0.1 && c.opacity === "1" && c.repos === 3, JSON.stringify(c));
-    ok("Crackd (light): yellow kept as accents — the matrix thread and the user app's short rule", /rgb\(201, 160, 24\)/.test(c.chain) && (await page.evaluate(() => getComputedStyle(document.querySelector(".ck-app--user"), "::before").backgroundColor)) !== "rgba(0, 0, 0, 0)", c.chain);
+    ok("Crackd (light): no near-black block and no boxes inside the sheet — open entries with dark text; full opacity; all three repo links; no screenshots", c.apps === "rgba(0, 0, 0, 0)" && c.admin === "rgba(0, 0, 0, 0)" && c.matrix === "rgba(0, 0, 0, 0)" && ln < 0.05 && lb < 0.1 && c.opacity === "1" && c.repos === 3 && c.imgs === 0, JSON.stringify(c));
+    ok("Crackd (light): yellow kept as accents — each entry's short rule and its letter", c.rule === "rgb(242, 203, 61)" && c.letter === "rgb(111, 83, 0)", JSON.stringify([c.rule, c.letter]));
   } else {
-    ok("Crackd (dark): the near-black panel and yellow matrix unchanged", c.apps === "rgb(18, 17, 15)" && c.name === "rgb(240, 207, 85)" && c.repos === 3, JSON.stringify(c));
+    ok("Crackd (dark): the near-black panel, yellow letters, all three repo links", c.apps === "rgb(18, 17, 15)" && c.letter === "rgb(227, 197, 96)" && c.repos === 3 && c.imgs === 0, JSON.stringify(c));
   }
   await ctx.close();
 }
@@ -195,7 +183,7 @@ for (const theme of ["light", "dark", "system-dark"]) {
       const s = document.querySelector(".gvi-stayed"), cs = getComputedStyle(s);
       const q = document.querySelector(".gvi-stayed__quote"), qcs = getComputedStyle(q);
       const p = document.querySelector(".gvi-stayed .gvi-prose");
-      const other = getComputedStyle(document.querySelector("#threads .gvi-prose")).maxWidth;
+      const other = getComputedStyle(document.querySelector(".gvi-threads .gvi-prose")).maxWidth;
       return { card: !!document.querySelector(".gvi-stayed__panel"), bg: cs.backgroundColor, img: cs.backgroundImage, radius: cs.borderRadius, label: getComputedStyle(document.querySelector(".gvi-stayed__label")).fontSize, quoteCh: Math.round(q.getBoundingClientRect().width / (parseFloat(qcs.fontSize) * 0.5)), quoteColor: qcs.color, proseMax: getComputedStyle(p).maxWidth === other ? "64ch" : getComputedStyle(p).maxWidth, rule: cs.borderTopWidth };
     });
     ok(`GVI close (${theme}): open section — small label, green pull quote at a comfortable measure, normal-width prose, one fine rule; no card, border or gradient`, !st.card && st.bg === "rgba(0, 0, 0, 0)" && st.img === "none" && st.radius === "0px" && parseFloat(st.label) <= 14 && st.quoteCh <= 48 && st.proseMax === "64ch" && st.rule === "1px", JSON.stringify(st));

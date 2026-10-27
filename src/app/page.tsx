@@ -267,7 +267,7 @@ export default function Home() {
               </h2>
               <p className="more__intro">{more.intro}</p>
             </div>
-            <MoreBento items={more.items} />
+            <MoreBento items={more.items} links={more.links} />
             <p className="more__note">{more.note}</p>
           </div>
         </section>

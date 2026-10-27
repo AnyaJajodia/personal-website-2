@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
@@ -8,7 +7,8 @@ import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
 import WorkDrawer from "@/components/WorkDrawer";
 import OnThisPage from "@/components/OnThisPage";
-import { crackd, crackdSections, type App } from "@/content/crackd";
+import { crackd, crackdSections } from "@/content/crackd";
+import CrackdApps from "./CrackdApps";
 import { getNeighbours } from "@/content/work";
 import "../case/case.css";
 import "./crackd.css";
@@ -19,10 +19,9 @@ import "./crackd.css";
  * something: its logo, the two chapter numbers, a highlighter, the matrix.
  *
  * The two dated phases are the spine. 01 (Sept–Dec 2025) is the shared
- * platform, set as notes on the page; 02 (Jan–May 2026) is my own build, set
- * on a raised notebook sheet with an entry per application. A thread runs from
- * one chapter to the next. No screenshots or architecture are drawn: they are
- * still to come, and nothing stands in for them.
+ * platform, set lightly on the page; 02 (Jan–May 2026) is my own build, on a
+ * raised notebook sheet with an entry per application (CrackdApps), each with
+ * its walkthrough. No screenshots on the page itself, and no architecture map.
  */
 
 /** "Can a model learn to be funny?" with the highlighter on its last word */
@@ -47,114 +46,9 @@ function Knot() {
   );
 }
 
-function RepoLink({ app }: { app: App }) {
-  return (
-    <a className="ck-repo" href={app.repo.url} target="_blank" rel="noopener noreferrer">
-      <svg className="ck-repo__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="M9 7 4 12l5 5M15 7l5 5-5 5" />
-      </svg>
-      <span className="ck-repo__text">
-        <span className="ck-repo__kind">Code on GitHub</span>
-        {/* a long repository name may break only after an underscore or hyphen */}
-        <span className="ck-repo__name">
-          {app.repo.label.split(/(?<=[_-])/).map((part, i) => (
-            <Fragment key={i}>
-              {i ? <wbr /> : null}
-              {part}
-            </Fragment>
-          ))}
-        </span>
-      </span>
-      <span className="ck-repo__go" aria-hidden="true">
-        ↗
-      </span>
-      <span className="visually-hidden"> (opens in a new tab)</span>
-    </a>
-  );
-}
-
-/** the three applications, each in its own register */
-function UserApp({ app }: { app: App }) {
-  return (
-    <article className="ck-app ck-app--user" id={app.id} aria-labelledby={`${app.id}-title`}>
-      <div className="ck-app__head">
-        <h3 className="ck-app__name" id={`${app.id}-title`}>
-          <span className="ck-app__mark">{app.name}</span>
-        </h3>
-        <p className="ck-app__lede">{app.lede}</p>
-      </div>
-      <div className="ck-app__body">
-        {app.paragraphs.map((p) => (
-          <p key={p}>{p}</p>
-        ))}
-        <RepoLink app={app} />
-      </div>
-    </article>
-  );
-}
-
-function AdminApp({ app }: { app: App }) {
-  // the three interfaces the paragraph names, ticked off a ledger (its own words)
-  const ledger = ["inspecting database records", "managing permissions", "reviewing statistics"].filter((w) => app.paragraphs[0].includes(w));
-  return (
-    <article className="ck-app ck-app--admin" id={app.id} aria-labelledby={`${app.id}-title`}>
-      <div className="ck-app__head">
-        <h3 className="ck-app__name" id={`${app.id}-title`}>
-          {app.name}
-        </h3>
-        <p className="ck-app__lede">{app.lede}</p>
-      </div>
-      <div className="ck-app__body">
-        {app.paragraphs.map((p) => (
-          <p key={p}>{p}</p>
-        ))}
-        <RepoLink app={app} />
-      </div>
-      <ul className="ck-ledger" aria-hidden="true">
-        {ledger.map((w) => (
-          <li key={w}>
-            <svg viewBox="0 0 20 20" focusable="false">
-              <path d="M4 10.5l4 4 8-9" pathLength={1} />
-            </svg>
-            {w}
-          </li>
-        ))}
-      </ul>
-    </article>
-  );
-}
-
-function MatrixApp({ app }: { app: App }) {
-  return (
-    <article className="ck-app ck-app--matrix" id={app.id} aria-labelledby={`${app.id}-title`}>
-      {/* decoration only: a thread passing through three knots — one step's
-          output becoming the next one's input. Not a diagram of the app. */}
-      <svg className="ck-chain" viewBox="0 0 600 60" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-        <path
-          d="M0 34c40-2 70-8 96-6 22 2 30 18 46 14 14-4 6-24-8-20-14 5-4 22 14 22 60 0 96-14 150-12 22 1 30 18 46 14 14-4 6-24-8-20-14 5-4 22 14 22 60 0 100-12 154-10 20 1 30 16 46 12 14-4 6-23-8-19-14 5-4 21 14 21 30 0 40-4 44-5"
-          vectorEffect="non-scaling-stroke"
-        />
-      </svg>
-      <div className="ck-app__head">
-        <h3 className="ck-app__name" id={`${app.id}-title`}>
-          {app.name}
-        </h3>
-        <p className="ck-app__lede">{app.lede}</p>
-      </div>
-      <div className="ck-app__body">
-        {app.paragraphs.map((p) => (
-          <p key={p}>{p}</p>
-        ))}
-        <RepoLink app={app} />
-      </div>
-    </article>
-  );
-}
-
 export default function CrackdPage() {
   const { prev, next } = getNeighbours("crackd-ai");
   const [p1, p2] = crackd.phases;
-  const [user, admin, matrix] = crackd.apps;
   const period = crackd.meta.find((m) => m.label === "Period")!;
   const facts = crackd.meta.filter((m) => m.label !== "Period");
 
@@ -167,7 +61,7 @@ export default function CrackdPage() {
       <DetailLine theme="default" />
       <main id="main" className="detail__main">
         {/* ------------------------------------------------------ opening */}
-        <header className="detail-hero ck-hero" data-line="top">
+        <header className="detail-hero case-hero ck-hero" data-line="top">
           <div className="container" data-line="content">
             <nav aria-label="Breadcrumb" className="breadcrumb label" data-line="crumb">
               <Link href="/#work">Work</Link>
@@ -176,15 +70,17 @@ export default function CrackdPage() {
             </nav>
             <div className="ck-hero__grid">
               <div className="ck-hero__main">
-                {/* the dates, then Crackd itself, then the question */}
-                <p className="ck-hero__dates">
-                  <span className="visually-hidden">{period.label}: </span>
-                  {period.value}
-                </p>
-                {/* the real logo: white lettering, so it sits on its own black plate */}
-                <p className="ck-plate">
-                  <Image className="ck-plate__logo" src="/logos/crackd.png" alt="Crackd" width={202} height={84} unoptimized preload />
-                </p>
+                {/* Crackd itself and its dates on one line, then the question */}
+                <div className="case-hero__id">
+                  {/* the real logo: white lettering, so it sits on its own black plate */}
+                  <p className="ck-plate">
+                    <Image className="ck-plate__logo" src="/logos/crackd.png" alt="Crackd" width={202} height={84} unoptimized preload />
+                  </p>
+                  <p className="ck-hero__dates">
+                    <span className="visually-hidden">{period.label}: </span>
+                    {period.value}
+                  </p>
+                </div>
                 <h1 className="detail-hero__title ck-hero__title">
                   <span data-line="title">
                     <Title />
@@ -192,8 +88,8 @@ export default function CrackdPage() {
                 </h1>
                 <p className="detail-hero__subtitle ck-hero__subtitle">{crackd.subtitle}</p>
               </div>
-              {/* the remaining facts, on an index card */}
-              <dl className="ck-meta">
+              {/* the facts, hung from the thread like a tag (DetailLine) */}
+              <dl className="ck-meta" data-line="flourish" data-flourish="tag">
                 {facts.map((m) => (
                   <div key={m.label} className="ck-meta__item">
                     <dt className="label">{m.label}</dt>
@@ -219,14 +115,14 @@ export default function CrackdPage() {
               <h2 className="ck-h2" id={`${crackd.intro.id}-title`}>
                 {crackd.intro.heading}
               </h2>
-              <p className="ck-intro__opening">{crackd.intro.opening}</p>
               <div className="ck-prose">
                 {crackd.intro.paragraphs.map((p) => (
                   <p key={p}>
-                    {p.includes("“flavors.”") ? (
+                    {p.includes("“flavors,”") ? (
                       <>
-                        {p.split("“flavors.”")[0]}
-                        <span className="ck-term">“flavors.”</span>
+                        {p.split("“flavors,”")[0]}
+                        <span className="ck-term">“flavors,”</span>
+                        {p.split("“flavors,”")[1]}
                       </>
                     ) : (
                       p
@@ -253,7 +149,6 @@ export default function CrackdPage() {
                     {p1.n}
                   </span>
                   <p className="ck-phase__dates">{p1.dates}</p>
-                  <p className="ck-phase__scope">{p1.scope}</p>
                 </div>
                 <div className="ck-phase__body">
                   <h2 className="ck-h2" id={`${p1.id}-title`}>
@@ -262,19 +157,10 @@ export default function CrackdPage() {
                     </span>
                     {p1.heading}
                   </h2>
-                  <div className="ck-prose ck-phase__intro">
-                    {p1.paragraphs.map((p) => (
+                  <p className="ck-phase__lead">{p1.paragraphs[0]}</p>
+                  <div className="ck-prose">
+                    {p1.paragraphs.slice(1).map((p) => (
                       <p key={p}>{p}</p>
-                    ))}
-                  </div>
-                  <div className="ck-notes">
-                    {p1.notes.map((n) => (
-                      <div key={n.heading} className="ck-note">
-                        <h3 className="ck-note__title">{n.heading}</h3>
-                        {n.paragraphs.map((p) => (
-                          <p key={p}>{p}</p>
-                        ))}
-                      </div>
                     ))}
                   </div>
                 </div>
@@ -287,12 +173,9 @@ export default function CrackdPage() {
                     {p2.n}
                   </span>
                   <p className="ck-phase__dates">{p2.dates}</p>
-                  <p className="ck-phase__scope">{p2.scope}</p>
                 </div>
                 <div className="ck-phase__body">
                   <div className="ck-sheet">
-                    <span className="ck-sheet__tape ck-sheet__tape--l" aria-hidden="true" />
-                    <span className="ck-sheet__tape ck-sheet__tape--r" aria-hidden="true" />
                     {/* building: sat on the sheet's top edge with her laptop */}
                     <Avatar pose="laptopFloor" role="ck-build" />
                     <h2 className="ck-h2" id={`${p2.id}-title`}>
@@ -306,12 +189,7 @@ export default function CrackdPage() {
                         <p key={p}>{p}</p>
                       ))}
                     </div>
-                    <div className="ck-apps">
-                      <UserApp app={user} />
-                      <AdminApp app={admin} />
-                      <MatrixApp app={matrix} />
-                    </div>
-                    <p className="ck-sheet__outro">{crackd.appsOutro}</p>
+                    <CrackdApps />
                   </div>
                 </div>
               </section>
@@ -322,24 +200,9 @@ export default function CrackdPage() {
               <h2 className="ck-h2" id={`${crackd.matrix.id}-title`}>
                 {crackd.matrix.heading}
               </h2>
-              <h3 className="ck-h3">{crackd.matrix.subheading}</h3>
+              <p className="ck-matrix__lead">{crackd.matrix.paragraphs[0]}</p>
               <div className="ck-prose">
-                {crackd.matrix.before.map((p) => (
-                  <p key={p}>{p}</p>
-                ))}
-              </div>
-              <div className="ck-questions">
-                <p className="ck-questions__lead">{crackd.matrix.questionsLead}</p>
-                <ol className="ck-questions__list">
-                  {crackd.matrix.questions.map((q) => (
-                    <li key={q}>{q}</li>
-                  ))}
-                </ol>
-              </div>
-              <div className="ck-prose">
-                {crackd.matrix.after.map((p) => (
-                  <p key={p}>{p}</p>
-                ))}
+                <p>{crackd.matrix.paragraphs[1]}</p>
               </div>
             </section>
 
@@ -360,70 +223,17 @@ export default function CrackdPage() {
               </p>
             </section>
 
-            {/* ------------------------------------- the applications, in brief */}
-            <section className="ck-section ck-table-section" id={crackd.table.id} aria-labelledby={`${crackd.table.id}-title`}>
-              <h2 className="ck-h2" id={`${crackd.table.id}-title`}>
-                {crackd.table.heading}
-              </h2>
-              <div className="ck-table-wrap">
-                <table className="ck-table">
-                  <thead>
-                    <tr>
-                      {crackd.table.columns.map((c) => (
-                        <th key={c} scope="col">
-                          {c}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {crackd.table.rows.map((r) => (
-                      <tr key={r.app}>
-                        <th scope="row">
-                          {/* a jump to the application's entry above, not an external link */}
-                          <a href={`#${r.anchor}`} className="ck-jump">
-                            {r.app}
-                            <span className="ck-jump__arrow" aria-hidden="true">
-                              ↑
-                            </span>
-                            <span className="visually-hidden"> (section on this page)</span>
-                          </a>
-                        </th>
-                        <td>{r.what}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-
-            {/* ------------------------------------------ tools + credits */}
+            {/* ------------------------------------------ tools + credit */}
             <section className="ck-section ck-colophon" id={crackd.tools.id} aria-labelledby={`${crackd.tools.id}-title`}>
-              <div className="ck-colophon__tools">
-                <h2 className="ck-h2" id={`${crackd.tools.id}-title`}>
-                  {crackd.tools.heading}
-                </h2>
-                <dl className="ck-tools">
-                  {crackd.tools.items.map((t) => (
-                    <div key={t.label} className="ck-tools__item">
-                      <dt>{t.label}</dt>
-                      <dd>{t.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-              <div className="ck-colophon__credits">
-                <h2 className="ck-h2 ck-h2--small">{crackd.credits.heading}</h2>
-                <p className="ck-credits__lead">{crackd.credits.lead}</p>
-                <dl className="ck-credits">
-                  {crackd.credits.phases.map((c) => (
-                    <div key={c.dates} className="ck-credits__item">
-                      <dt>{c.dates}</dt>
-                      <dd>{c.text}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
+              <h2 className="ck-h2 ck-h2--small" id={`${crackd.tools.id}-title`}>
+                {crackd.tools.heading}
+              </h2>
+              <ul className="ck-tools">
+                {crackd.tools.items.map((t) => (
+                  <li key={t}>{t}</li>
+                ))}
+              </ul>
+              <p className="ck-credit">{crackd.tools.credit}</p>
             </section>
           </div>
         </div>

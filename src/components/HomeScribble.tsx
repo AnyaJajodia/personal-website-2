@@ -211,6 +211,8 @@ export default function HomeScribble() {
     };
 
     const rebuild = () => {
+      // leaving the page: the DOM can go before this effect is cleaned up
+      if (!root.isConnected) return;
       const L = measure(root);
       const route = buildRoute(L);
       const { dense, at } = splineIndexed(route.points, 4);

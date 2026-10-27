@@ -37,6 +37,8 @@ const POSES = {
   "07-reading/reading-05": 300,
   "05-idea/idea-01": 300,
   "02-matcha/matcha-04": 300,
+  // wildlife photography page
+  "08-photography/photography-02": 340,
 };
 
 mkdirSync(OUT, { recursive: true });

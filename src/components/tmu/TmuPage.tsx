@@ -84,7 +84,7 @@ export default function TmuPage() {
       <DetailLine theme="default" />
       <main id="main" className="detail__main">
         {/* ------------------------------------------------------ opening */}
-        <header className="detail-hero tmu-hero" data-line="top">
+        <header className="detail-hero case-hero tmu-hero" data-line="top">
           <div className="container" data-line="content">
             <nav aria-label="Breadcrumb" className="breadcrumb label" data-line="crumb">
               <Link href="/#work">Work</Link>
@@ -93,16 +93,20 @@ export default function TmuPage() {
             </nav>
             <div className="tmu-hero__grid">
               <div className="tmu-hero__main">
-                <p className="tmu-hero__dates">
-                  <span className="visually-hidden">{period.label}: </span>
-                  {period.value}
-                </p>
-                {/* the supplied logo, unchanged */}
-                <p className="tmu-logo">
-                  <Image className="tmu-logo__img" src="/logos/tmu.png" alt="Toronto Metropolitan University" width={256} height={140} unoptimized preload />
-                </p>
+                {/* the supplied logo, unchanged, with the dates */}
+                <div className="case-hero__id">
+                  <p className="tmu-logo">
+                    <Image className="tmu-logo__img" src="/logos/tmu.png" alt="Toronto Metropolitan University" width={256} height={140} unoptimized preload />
+                  </p>
+                  <p className="tmu-hero__dates">
+                    <span className="visually-hidden">{period.label}: </span>
+                    {period.value}
+                  </p>
+                </div>
+                {/* the thread makes a small loop after the title: its footnote mark (DetailLine) */}
                 <h1 className="detail-hero__title tmu-hero__title">
                   <span data-line="title">{t.title}</span>
+                  <span className="case-hero__mark" data-line="flourish" data-flourish="mark" data-flourish-scale="0.62" aria-hidden="true" />
                 </h1>
                 <p className="detail-hero__subtitle tmu-hero__subtitle">{t.subtitle}</p>
               </div>
@@ -200,13 +204,7 @@ export default function TmuPage() {
             <div className="tmu-stages" id="stages">
               <Stage s={extract} />
               <Stage s={follow} />
-              <Stage s={convert}>
-                <ul className="tmu-tags" aria-label="Source types handled">
-                  {convert.tags!.map((tag) => (
-                    <li key={tag}>{tag}</li>
-                  ))}
-                </ul>
-              </Stage>
+              <Stage s={convert} />
               <Stage s={replace} />
               <Stage s={bibs}>
                 <figure className="tmu-out tmu-bibs" aria-labelledby="tmu-bibs-cap">
@@ -304,19 +302,7 @@ export default function TmuPage() {
                     <p key={p}>{p}</p>
                   ))}
                 </div>
-                <div className="tmu-proof">
-                  <ul className="tmu-proof__list" aria-label="Editorial review">
-                    {t.editorial.tasks.map((task) => (
-                      <li key={task}>
-                        <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-                          <path d="M4 10.5l4 4 8-9" />
-                        </svg>
-                        {task}
-                      </li>
-                    ))}
-                  </ul>
-                  <Avatar pose="standingBook" role="tmu-reader" />
-                </div>
+                <Avatar pose="standingBook" role="tmu-reader" />
               </div>
             </section>
 
@@ -324,11 +310,6 @@ export default function TmuPage() {
               <h2 className="tmu-h2" id={`${t.engineering.id}-title`}>
                 {t.engineering.heading}
               </h2>
-              <ol className="tmu-modules" aria-label="Modular stages">
-                {t.engineering.modules.map((m) => (
-                  <li key={m}>{m}</li>
-                ))}
-              </ol>
               <div className="tmu-prose">
                 {t.engineering.paragraphs.map((p) => (
                   <p key={p}>{p}</p>

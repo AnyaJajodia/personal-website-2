@@ -2,207 +2,213 @@
 
 ## There’s a workflow behind that message.
 
-Building a personalized WhatsApp HR platform, from account verification and onboarding to employee requests.
+Designing and building a personalized WhatsApp HR platform, from account verification and onboarding to everyday employee requests.
 
 Role: Full Stack Software Development Intern
 Period: May 2025–May 2026
-Scope: Application design and development · Workflow orchestration · API integration · Deployment
+Scope: Conversational UX design · Full-stack development · Workflow orchestration · API integration · Deployment
 
 ## HR workflows, inside a conversation
 
-An employee might need to complete a form, upload a document, check an application, or find out what still needs doing. Each action involves information and processes that already exist somewhere in the company’s systems.
+Buzzworks provides HR services and software to businesses. I extended its existing Veytan HR platform into WhatsApp, allowing candidates and employees to complete tasks through a conversation connected to their accounts.
 
-At Buzzworks, I built a WhatsApp-based interface to those workflows, extending the existing Veytan HR platform into a conversational experience.
+The application supported onboarding, forms, documents, offers, signatures, leave requests, status checks, and company-policy questions. It was developed for Buzzworks’ own use and as a service for client companies.
 
-Employees could verify their identity, access relevant tasks, provide information, submit documents, and make requests through the chat. Behind each exchange, the application connected the conversation to the person’s account and the company’s backend.
+I was the sole developer responsible for designing and building the conversational application from scratch. I worked with product stakeholders on requirements, company teams on existing and additional APIs, the infrastructure team on hosting, and Wacto’s team on messaging integration.
 
-The platform was developed as a service Buzzworks could offer client companies, rather than solely as an internal tool.
+## Explore the experience
 
-## What I owned
+Different workflows called for different interactions: selecting a task, correcting a form, reviewing an offer, or asking an open-ended question.
 
-I was the sole developer building the conversational application and workflow orchestration from scratch over a year-long internship.
+The reconstructed examples below show several of those journeys, using fictional information.
 
-I worked with product stakeholders to translate HR requirements into conversational flows, implemented the application and integrations, and led demos and technical walkthroughs.
+<!-- INSERT TABBED WHATSAPP RECONSTRUCTION HERE.
+See implementation notes below. -->
 
-The company’s teams supplied existing APIs and helped provide additional endpoints where needed. I coordinated with the infrastructure team on the EC2 environment and with Wacto’s team on messaging integration.
+## Designing within WhatsApp
 
-My responsibility was making those pieces work together as a usable application: deciding what the conversation needed to know, what should happen next, and how each action reached the underlying system.
+### Make choices easier to navigate
 
-## One conversation, several kinds of work
+I used buttons and single-choice lists where users were selecting from known options, keeping text input for information they needed to provide. Menus, contextual prompts, and return paths helped people move through the available workflows without memorizing commands.
 
-### Access an account
+### Let people correct an answer
 
-Verify identity through an OTP-based flow and establish the account context needed for personalized interactions.
+Forms did not end with the first round of inputs. I built a review step that summarized the collected information and let users select individual fields to edit before submission.
 
-### Find pending tasks
+After a correction, the application returned an updated summary so users could check their information without starting over.
 
-Retrieve outstanding tasks associated with the employee or candidate and guide them through the relevant steps.
+### Work within the platform’s limits
 
-### Complete forms
+WhatsApp limited selection lists to ten items. When an account had more pending tasks, I displayed the first ten and explained which additional tasks would become accessible as the visible ones were completed.
 
-Collect information through a sequence of questions, validate responses, and support review and correction within the implemented workflows.
+This made the constraint explicit and gave users a next action rather than leaving the remaining tasks unexplained.
 
-### Review offers and provide signatures
-
-Present offer-related information and support acceptance, rejection, and signature collection.
-
-### Complete KYC and submit documents
-
-Collect identification, banking information, and other required details, with document uploads and processing integrated into the workflow.
-
-### Apply for leave
-
-Submit leave requests through the conversation, connecting the interaction to the company’s existing processes.
-
-### Check statuses
-
-Retrieve the status of supported tasks and requests without requiring the user to navigate the web portal.
-
-### Ask about company policies
-
-Use a two-agent Claude system to answer company-policy questions, providing another conversational route into information that would otherwise require navigating documents.
-
-### Choose a language
-
-Support multilingual interactions across the onboarding experience.
-
-## Personalized beyond the greeting
-
-Personalization meant more than inserting a name into a message.
-
-The application needed the right account context, the person’s pending tasks, and their current position in a workflow. Those details determined which questions to ask and which actions were relevant.
-
-I integrated the conversation with Veytan APIs for retrieving information and submitting updates. The messaging layer became another interface to existing HR processes, while the workflow engine managed the steps between a request and its completion.
-
-## The system behind the messages
+## Behind the conversation
 
 I separated messaging integration, conversational workflow logic, and backend API interactions into modular services packaged with Docker.
 
-A Redis-backed state machine tracked the conversation’s current stage and the information collected along the way. Rather than treating every message as a new request, the application interpreted it within the active workflow.
+Meta’s WhatsApp Business APIs, Wacto, and webhooks connected incoming messages to the application. A Redis-backed state machine tracked the active workflow and collected information, while task handlers retrieved account-specific data and submitted updates through Veytan and company APIs.
 
-Meta’s WhatsApp Business APIs and Wacto formed part of the messaging integration. Company APIs connected the application to account information, tasks, forms, and document operations.
+Collecting an answer and completing a backend task were separate steps. The application needed to preserve that distinction while supporting review, editing, and submission.
 
-I used Postman to inspect and test API behavior, then built the orchestration needed to turn individual endpoints into complete conversational experiences.
+<!-- INSERT HIGH-LEVEL SYSTEM DIAGRAM HERE. -->
 
-## Engineering the difficult parts
+## Engineering decisions
 
-### Policy questions needed a different approach
+### Select the documents before asking the model to read them
 
-A structured form has an expected sequence. A question about company policy can arrive in many different forms.
+For company-policy questions, I designed a two-stage Claude workflow to avoid sending the full document collection into every request.
 
-I built a two-agent Claude system for policy inquiries alongside the structured HR workflows. This extended the application beyond collecting and submitting information into helping employees find answers within company-policy material.
+The first stage received the question alongside document titles and descriptions, then selected relevant files. The application retrieved those files through a content API, and the second stage used the returned, processed document content to answer the question.
 
-### A document upload was the start of a workflow
+Separating selection from answering limited unnecessary retrieval and model context, with the aim of reducing token costs and response time. It also introduced a dependency: the answering stage needed the selector to find the appropriate material.
 
-Receiving a file in WhatsApp did not, by itself, complete a document task.
+<!-- INSERT TWO-STAGE POLICY WORKFLOW DIAGRAM HERE. -->
 
-The application had to obtain the media through the relevant APIs, process the document where required, and associate the resulting information and file references with the correct account and task.
+### Treat an upload as part of a task
 
-I integrated OCR and media APIs to support document fields and uploads, including identification information such as PAN and Aadhaar. Document handling connected the conversation to the company’s backend storage and submission workflows.
+A document arriving in WhatsApp did not mean the underlying task was complete.
 
-### Conversations and records had to stay aligned
+I integrated media retrieval, OCR, and company-backend storage workflows so uploaded files and extracted information could be associated with the correct account and task. This supported identification and KYC documents alongside other forms and attachments.
 
-The chat, the in-progress form, and the backend record each represented a different part of the same process.
+The work connected a familiar interaction—sending a file—to the processing and submission required by the HR system.
 
-The Redis-backed state machine tracked progress while task handlers collected information and called the appropriate APIs. Review and editing behavior allowed users to correct information within supported flows before submission.
+## Deployment and delivery
 
-Keeping those responsibilities explicit was central to the design: collecting an answer and completing a backend task were separate steps.
+I deployed the containerized application on AWS EC2, coordinating server setup and connectivity with the infrastructure team. I configured messaging webhooks and used Postman to inspect and test the APIs behind the workflows.
 
-## Deployment and integration
-
-I deployed the containerized application on an AWS EC2 instance, coordinating with the company’s infrastructure team on server setup and connectivity.
-
-The work included configuring messaging webhooks and connecting externally received events to the application services. Integration required coordination across the application, hosting environment, messaging provider, and existing company APIs.
-
-I also led product demonstrations and technical walkthroughs to explain the flows, gather feedback, and prepare the system for further integration.
+Throughout development, I led demonstrations and technical walkthroughs to gather feedback and refine the experience.
 
 At the stage documented here, the platform was being prepared for integration into ICICI Bank’s internal infrastructure.
 
-## Performance considerations
-
-Latency and concurrency informed my architecture decisions, including the use of Redis for conversation state and Docker for modular service deployment.
-
-Responsiveness depended on more than the speed of an individual handler. Authentication, company API calls, document processing, and messaging delivery all contributed to the experience.
-
 ## Tools and infrastructure
 
-| Area | Tools and responsibilities |
+| Area | Tools and approach |
 | --- | --- |
-| Messaging | Meta WhatsApp Business APIs, Wacto, webhook integration |
-| Workflow state | Redis-backed state machine and task handlers |
-| Service packaging | Docker and modular application services |
-| Hosting | AWS EC2 |
-| Backend integration | Veytan and company REST APIs |
-| API testing | Postman |
-| Documents | Media APIs, OCR, file uploads, and company-backend storage integration |
-| Policy inquiries | Two-agent Claude system |
+| Messaging | Meta WhatsApp Business APIs · Wacto · Webhooks |
+| Workflow orchestration | Redis-backed state machine · Task handlers |
+| Infrastructure | Docker · AWS EC2 |
+| Backend integration | Veytan and company REST APIs · Postman |
+| Documents | Media APIs · OCR · Company-backend storage integration |
+| Policy questions | Two-stage Claude document selection and answering |
 
 ## What I took from it
 
-A conversational interface still needs a carefully structured system underneath it.
+Building this application taught me to consider the conversation and the system together. A simpler choice on screen could require careful state handling underneath; a useful backend capability still needed an interaction someone could navigate.
 
-Each message has to arrive in the right context. The application needs to know who is speaking, what they are trying to do, what information has already been collected, and what the backend has actually accepted.
-
-Building the system also taught me how much engineering happens between teams and services: understanding an API, clarifying a requirement, debugging a webhook, and making sure the whole journey works beyond an isolated endpoint.
-
-The visible interaction might be a short exchange. Making that exchange useful involves considerably more.
-
----
+I also learned how much progress depended on working across boundaries: clarifying requirements, understanding another team’s API, debugging an integration, and following the journey through to completion.
 
 <!-- INTERNAL IMPLEMENTATION AND EVIDENCE NOTES — DO NOT RENDER
 
-CONFIDENTIALITY
-Do not show proprietary application screens, employee records, company documents,
-source code, credentials, infrastructure addresses, or internal API endpoints.
+CONTENT AND OWNERSHIP
+Anya designed and built the conversational UX, application, and orchestration.
+She did not build the entire existing Veytan platform.
+Company teams supported APIs and infrastructure.
+Wacto supported messaging integration.
+Dates: May 2025–May 2026.
 
-VISUAL MATERIAL
-A fictional, clearly labeled conversation can illustrate the experience.
+VISUAL DISTRIBUTION
+1. One tabbed WhatsApp reconstruction under "Explore the experience."
+2. One high-level architecture diagram under "Behind the conversation."
+3. One focused policy workflow diagram within "Engineering decisions."
+Avoid additional visuals or lists that repeat the surrounding explanation.
+
+WHATSAPP RECONSTRUCTION
+Four scenarios:
+- Complete a form — default.
+- Ask about a policy.
+- Manage leave.
+- Review an offer.
+
+Use supplied screenshots as private references for interaction patterns.
+Do not render the original screenshots or embed proprietary materials.
+
 Caption:
-"Illustrative conversation reconstructed to explain the workflow.
-No employee data or proprietary application screens shown."
+"Illustrative workflows reconstructed using fictional information. No employee
+data or proprietary application screens are shown."
 
-Do not present reconstructed conversations as screenshots of the deployed product.
-A high-level architecture diagram may explain confirmed component relationships.
-Do not invent endpoints, storage services, or security mechanisms.
+Use one shared panel with scenario controls above it.
+Keep the panel compact and responsive; avoid major height jumps between tabs.
+Provide accessible scenario controls and keyboard operation.
 
-OWNERSHIP
-Anya built the conversational application and orchestration.
-Company teams supported APIs and infrastructure; Wacto supported integration.
-Do not imply Anya built the entire existing Veytan platform.
+Use selected clickable choices and Next / Back / Restart controls.
+Do not require typing, actual uploads, live AI, authentication, or backend access.
+Do not autoplay long conversations.
 
-DATES
-May 2025–May 2026 replaces older "Present" and placeholder dates.
+SCENARIO DETAILS
+Complete a form:
+Demonstrate selection, short inputs, a fictional attachment, summary,
+selection of one field to edit, updated summary, and submission confirmation.
+Preserve the correction loop.
+Do not reproduce personal details, résumé previews, or real documents.
 
-STACK
-Confirm final programming languages, frameworks, service names, and Docker setup.
-Older discussions conflict about FastAPI. Do not include it without confirmation.
-Do not infer Kubernetes, autoscaling, or independently scalable services.
+Ask about a policy:
+Demonstrate a question, a brief answer based on fictional policy material,
+and an "Ask another question" option.
+Do not copy internal policies or present sample terms as actual entitlements.
 
-DOCUMENT STORAGE
-Company-backend storage integration is established.
-Confirm the actual storage destination and file lifecycle before naming S3
-or describing retention, encryption, or deletion behavior.
+Manage leave:
+Demonstrate the menu, fictional leave balances, and a sample leave policy.
+The application supported leave requests, but confirm the actual request
+sequence before reconstructing it.
 
-POLICY AGENTS
-The two-agent Claude system appears in the supplied résumé history.
-Confirm each agent's responsibility, document-access method, and actual
-handling of unanswered questions before expanding this section.
-Do not invent RAG, citations, confidence scores, or escalation mechanisms.
+Review an offer:
+Demonstrate a fictional document card, accept/reject choice, sample signature
+upload, and confirmation.
+Use a generic signature placeholder, never a real signature.
+Document viewing belongs within these scenarios, not a separate fifth tab.
 
-WORKFLOW DETAILS
-Confirm the final status of nominee forms, prior-employment forms,
-reminders, session recovery, and advanced editing before adding them.
-Do not claim retry safety, duplicate suppression, or synchronization guarantees
-without implementation evidence.
+INTERACTION LANGUAGE
+Use buttons, quick replies, list selections, document cards, and concise
+confirmation messages where supported by the references.
+Do not describe these as conventional web radio buttons inside WhatsApp.
+Do not invent authentication methods or unconfirmed branches.
+
+TASK-LIST LIMIT
+Implemented approach: show the first ten pending tasks and explain that
+additional tasks become accessible as visible tasks are completed.
+Do not describe this as pagination, "load more," or a prioritization algorithm.
+Do not claim measured improvements in task completion.
+
+ARCHITECTURE
+Show the confirmed relationships between:
+Employee/candidate in WhatsApp; messaging integration; workflow logic and
+Redis state; company APIs; company systems and document operations.
+Docker packages application services; AWS EC2 hosts the application.
+Keep this conceptual, not a detailed network or deployment map.
+
+POLICY WORKFLOW
+Question + document titles/descriptions
+→ Claude stage 1 selects relevant files
+→ content API retrieves selected documents
+→ Claude stage 2 answers using returned content
+→ answer delivered in WhatsApp.
+
+The content API supplied processed/chunked content.
+Do not imply Anya independently built that upstream processing service.
+Do not invent vector databases, embeddings, citations, fallback behavior,
+or measured token/cost/latency reductions.
+Describe reduced context and retrieval as the design rationale.
+Do not claim an asymptotic time-complexity improvement.
+
+TECHNICAL BOUNDARIES
+Do not infer S3, Kubernetes, autoscaling, retry safety, duplicate suppression,
+or synchronization guarantees.
+Confirm languages and frameworks before expanding the stack.
+Do not restore conflicting FastAPI claims without confirmation.
 
 PERFORMANCE
-Earlier résumé versions state sub-200ms responses at 10K+ sessions.
-Retain as an internal claim pending measurement context:
-what was timed, concurrent versus total sessions, workload, and environment.
-Do not silently present it as end-to-end WhatsApp delivery latency.
+Earlier résumé versions cite sub-200ms responses at 10K+ sessions.
+Leave those figures out of public copy until the measured operation, workload,
+session definition, and environment are established.
 
 ROLLOUT
-AWS EC2 deployment is confirmed by Anya.
+AWS EC2 deployment is confirmed.
 ICICI integration was being prepared; completed bank rollout is not established.
+
+CONFIDENTIALITY
+Do not publish employee records, internal policy text, proprietary documents,
+source code, credentials, infrastructure addresses, or internal endpoints.
+Do not invent testimonials or outcomes.
 
 END INTERNAL NOTES -->

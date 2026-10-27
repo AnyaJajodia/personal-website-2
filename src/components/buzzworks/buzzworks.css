@@ -89,14 +89,11 @@
 }
 
 /* ------------------------------------------------------------ opening */
-.theme-buzzworks .bz-hero {
-  padding-bottom: clamp(2.5rem, 5vw, 3.75rem);
-}
 .bz-hero__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(15rem, 21rem);
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 20rem);
   align-items: end;
-  gap: clamp(2rem, 5vw, 5rem);
+  gap: clamp(2rem, 5vw, 5.5rem);
 }
 .bz-hero__dates {
   display: flex;
@@ -121,31 +118,31 @@
 .bz-brand {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.65rem;
   width: fit-content;
-  margin: clamp(1rem, 2vw, 1.4rem) 0 clamp(1.25rem, 2.4vw, 1.75rem);
+  margin: 0;
 }
 .bz-brand__mark {
   display: block;
   width: auto;
-  height: clamp(2.4rem, 3.2vw, 2.85rem);
+  height: clamp(2.1rem, 2.8vw, 2.5rem);
   opacity: 1;
   filter: none;
 }
 .bz-brand__name {
   font-family: var(--serif);
-  font-size: clamp(1.75rem, 2.6vw, 2.2rem);
+  font-size: clamp(1.6rem, 2.3vw, 1.95rem);
   font-weight: 600;
   line-height: 1;
   letter-spacing: -0.01em;
   color: var(--text);
 }
 .theme-buzzworks .bz-hero__title {
-  max-width: 13ch;
+  max-width: 19ch;
   text-wrap: balance;
 }
 .theme-buzzworks .bz-hero__subtitle {
-  max-width: 34ch;
+  max-width: 42ch;
 }
 /* the facts: an open list under a rule, as on every case study */
 .bz-facts {
@@ -219,23 +216,12 @@
   margin-top: 1.4rem;
 }
 
-/* what I owned: my part first; where other teams met it, set apart by a hairline */
-.bz-owned__grid {
+/* the product and my part, the figure at her desk on the section's rule */
+.bz-intro__grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: clamp(1.5rem, 4vw, 3rem);
   margin-top: 1.4rem;
-}
-.bz-owned__first {
-  font-family: var(--serif);
-  font-size: clamp(1.45rem, 2.2vw, 1.8rem);
-  line-height: 1.25;
-  color: var(--text);
-}
-.bz-owned__others {
-  padding-left: 1rem;
-  border-left: 1px dashed var(--rule-strong);
-  color: var(--ink-2);
 }
 .avatar--bz-desk {
   position: relative;
@@ -245,12 +231,11 @@
   transform: translateY(var(--sink));
 }
 
-/* -------------------------------------------- the illustrative conversation */
-.bz-convo .bz-h2 {
-  margin-bottom: clamp(1.25rem, 2.5vw, 1.75rem);
-}
-.bz-chat {
-  /* WhatsApp's own colours, kept to this illustration */
+/* ------------------------------------------- explore the experience */
+/* four journeys, one window: scenario tabs above, one shared window
+   (one height for all four — the conversation scrolls inside it), the step
+   controls beneath, then the caption. WhatsApp's colours stay inside it. */
+.wa {
   --wa-bar: #008069;
   --wa-bar-ink: #ffffff;
   --wa-wall: #efeae2;
@@ -259,18 +244,12 @@
   --wa-ink: #111b21;
   --wa-meta: #667781;
   --wa-tick: #53bdeb;
-  --wa-reply: #008069;
-  /* a conversation window, not a phone: about a third wider than before */
-  --pw: min(31rem, 100%);
-  margin: 0;
+  --wa-reply: #00796b;
+  --wa-field: #ffffff;
+  margin: clamp(1.75rem, 3.5vw, 2.5rem) 0 0;
+  max-width: 40rem;
 }
-/* mid widths: the window takes at most ~60%, so the notes keep room */
-@media (min-width: 760px) and (max-width: 1099.98px) {
-  .bz-chat {
-    --pw: min(31rem, 62%);
-  }
-}
-:root[data-theme="dark"] .bz-chat {
+:root[data-theme="dark"] .wa {
   --wa-bar: #202c33;
   --wa-bar-ink: #e9edef;
   --wa-wall: #0b141a;
@@ -278,37 +257,91 @@
   --wa-out: #005c4b;
   --wa-ink: #e9edef;
   --wa-meta: #8696a0;
-  --wa-reply: #00a884;
+  --wa-reply: #2bd3b0;
+  --wa-field: #2a3942;
 }
-.bz-chat__phone {
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .wa {
+    --wa-bar: #202c33;
+    --wa-bar-ink: #e9edef;
+    --wa-wall: #0b141a;
+    --wa-in: #202c33;
+    --wa-out: #005c4b;
+    --wa-ink: #e9edef;
+    --wa-meta: #8696a0;
+    --wa-reply: #2bd3b0;
+    --wa-field: #2a3942;
+  }
+}
+/* the scenario tabs: the page's own type, the selected one underlined in orange */
+.wa__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--rule);
+}
+.wa__tab {
   position: relative;
+  min-height: 44px;
+  padding: 0.55rem 0 0.6rem;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.9688rem;
+  font-weight: 550;
+  cursor: pointer;
+  transition: color 0.2s var(--ease);
 }
-/* the phone's screen is the first column; the margin notes sit in the second */
-.bz-chat__phone::before {
+.wa__tab::after {
   content: "";
   position: absolute;
-  top: 0;
-  bottom: 0;
   left: 0;
-  width: var(--pw);
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--bz-orange);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s var(--ease);
+}
+.wa__tab:hover {
+  color: var(--text);
+}
+.wa__tab[aria-selected="true"] {
+  color: var(--text);
+}
+.wa__tab[aria-selected="true"]::after {
+  transform: none;
+}
+.wa__tab:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+/* the window */
+.wa__window {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: clamp(28rem, 62vh, 34rem);
+  overflow: hidden;
   border-radius: 14px;
   background: var(--wa-wall);
   box-shadow:
     0 0 0 1px rgb(var(--shade) / 0.12),
     0 30px 50px -32px rgb(var(--shade) / 0.6);
 }
-.bz-chat__bar {
-  position: relative;
+.wa__bar {
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  width: var(--pw);
   padding: 0.6rem 0.95rem;
-  border-radius: 14px 14px 0 0;
   background: var(--wa-bar);
   color: var(--wa-bar-ink);
 }
-.bz-chat__avatar {
+.wa__avatar {
   display: grid;
   place-items: center;
   width: 2.2rem;
@@ -319,44 +352,62 @@
   font-weight: 700;
   letter-spacing: 0.04em;
 }
-.bz-chat__who {
+.wa__who {
   display: flex;
   flex-direction: column;
   line-height: 1.2;
 }
-.bz-chat__name {
+.wa__name {
   font-size: 0.95rem;
   font-weight: 600;
 }
-.bz-chat__status {
+.wa__status {
   font-size: 0.75rem;
-  opacity: 0.85;
 }
-.bz-chat__log {
-  position: relative;
-  display: grid;
+.wa__log {
+  display: flex;
+  flex-direction: column;
   gap: 0.35rem;
   margin: 0;
-  padding: 0.85rem 0 1rem;
+  padding: 0.85rem 0.9rem 1rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   list-style: none;
+  scrollbar-width: thin;
 }
-.bz-chat__row {
-  display: grid;
-  grid-template-columns: var(--pw) minmax(0, 1fr);
-  align-items: start;
-  column-gap: clamp(1.25rem, 2.5vw, 2rem);
+.wa__log:focus-visible {
+  outline: 2px solid var(--bz-orange);
+  outline-offset: -2px;
 }
-.bz-bubble,
-.bz-replies {
-  grid-column: 1;
-  max-width: calc(var(--pw) * 0.72);
-  margin-inline: 0.9rem;
+.wa-row {
+  display: flex;
+  flex-direction: column;
+  /* rows never shrink to fit the window — the log scrolls instead */
+  flex-shrink: 0;
 }
-.bz-bubble {
+.wa-row--me {
+  align-items: flex-end;
+}
+.wa-row--bot {
+  align-items: flex-start;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .wa-row {
+    animation: wa-in 0.28s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+}
+@keyframes wa-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.wa-bubble {
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-self: start;
+  max-width: min(82%, 24rem);
+  margin: 0;
   padding: 0.42rem 0.6rem 0.3rem;
   border-radius: 9px;
   background: var(--wa-in);
@@ -365,16 +416,24 @@
   line-height: 1.38;
   box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
 }
-.bz-bubble--out {
-  justify-self: end;
+.wa-bubble--me {
   background: var(--wa-out);
 }
-.bz-bubble__list {
+.wa-bubble__lines {
   margin: 0.35rem 0 0;
-  padding-left: 1.3rem;
-  list-style: decimal;
+  padding: 0;
+  list-style: none;
 }
-.bz-bubble__meta {
+.wa-bubble__lines li + li {
+  margin-top: 0.1rem;
+}
+.wa-bubble__sample {
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--wa-meta);
+}
+.wa-meta {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
@@ -384,7 +443,7 @@
   color: var(--wa-meta);
   font-variant-numeric: tabular-nums;
 }
-.bz-bubble__meta svg {
+.wa-ticks {
   width: 1rem;
   height: 0.65rem;
   fill: none;
@@ -393,108 +452,273 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.bz-bubble--media {
-  padding: 0.3rem 0.3rem 0.3rem;
-}
-.bz-bubble__media {
-  display: grid;
-  gap: 0.3rem;
-}
-.bz-bubble__media svg {
-  display: block;
-  width: 11rem;
-  height: auto;
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--wa-out) 60%, #fff);
-  fill: none;
-  stroke: color-mix(in srgb, var(--wa-ink) 35%, transparent);
-  stroke-width: 2;
-  stroke-linecap: round;
-}
-.bz-doc__photo {
-  fill: color-mix(in srgb, var(--wa-ink) 14%, transparent);
-  stroke: none;
-}
-.bz-bubble__media-label {
-  padding-inline: 0.3rem;
-  font-size: 0.8125rem;
-}
-.bz-replies {
-  display: grid;
-  gap: 2px;
-  margin-top: -0.15rem;
-  padding: 0;
-  list-style: none;
-  justify-self: start;
-  min-width: 12rem;
-}
-.bz-replies li {
-  padding: 0.5rem;
-  background: var(--wa-in);
-  color: var(--wa-reply);
-  font-size: 0.9375rem;
-  font-weight: 500;
-  text-align: center;
-  box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
-}
-.bz-replies li:first-child {
-  border-radius: 9px 9px 0 0;
-}
-.bz-replies li:last-child {
-  border-radius: 0 0 9px 9px;
-}
-.bz-replies li:only-child {
-  border-radius: 9px;
-}
-/* margin notes: which documented flow this step illustrates */
-.bz-chat__note {
-  position: relative;
-  grid-column: 2;
-  grid-row: 1;
-  align-self: center;
-  display: inline-flex;
+/* a fictional document card */
+.wa-doc {
+  display: flex;
   align-items: center;
   gap: 0.6rem;
-  width: fit-content;
+  margin-top: 0.45rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--wa-ink) 6%, transparent);
+}
+.wa-doc svg {
+  flex: none;
+  width: 1.4rem;
+  height: 1.6rem;
+  fill: none;
+  stroke: #e2533b;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+.wa-doc__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.wa-doc__name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.wa-doc__meta {
+  font-size: 0.75rem;
+  color: var(--wa-meta);
+}
+/* a sample attachment the person sends (a generic photo or signature, never a real one) */
+.wa-bubble--media {
+  padding: 0.3rem;
+}
+.wa-file {
+  display: block;
+  width: 10rem;
+  height: auto;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--wa-out) 55%, #fff);
+  fill: none;
+  stroke: color-mix(in srgb, #111b21 32%, transparent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.wa-file--sig {
+  background: #fff;
+  stroke: #1d3a8a;
+}
+.wa-file--sig .wa-file__line {
+  stroke: #b8c0c7;
+  stroke-width: 1;
+}
+.wa-bubble__caption {
+  padding: 0.3rem 0.3rem 0;
+  font-size: 0.8125rem;
+}
+/* the options under the latest message: quick replies, or a selection list */
+.wa-row--opts {
+  max-width: min(82%, 24rem);
+  min-width: 13rem;
+}
+.wa-list__title {
+  padding: 0.45rem 0.7rem 0.2rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--wa-meta);
+}
+.wa-opts {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.wa-row--list .wa-opts,
+.wa-row--list .wa-list__title {
+  background: var(--wa-in);
+}
+.wa-row--list {
+  overflow: hidden;
+  border-radius: 9px;
+  box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+}
+.wa-opt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 0;
+  background: var(--wa-in);
+  color: var(--wa-reply);
+  font: inherit;
   font-size: 0.9375rem;
   font-weight: 550;
-  color: var(--ink-2);
-  text-decoration: none;
-  text-underline-offset: 0.25em;
+  box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease);
 }
-.bz-chat__note::before {
-  /* a short dashed lead from the screen's edge */
+.wa-opts li:first-child .wa-opt {
+  border-radius: 9px 9px 0 0;
+}
+.wa-opts li:last-child .wa-opt {
+  border-radius: 0 0 9px 9px;
+}
+.wa-opts li:only-child .wa-opt {
+  border-radius: 9px;
+}
+.wa-row--list .wa-opt {
+  justify-content: flex-start;
+  border-radius: 0 !important;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--wa-ink) 8%, transparent);
+  color: var(--wa-ink);
+  font-weight: 450;
+}
+.wa-opt__radio {
+  flex: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  border: 2px solid var(--wa-meta);
+  border-radius: 50%;
+}
+.wa-opt:disabled {
+  cursor: default;
+  color: color-mix(in srgb, var(--wa-reply) 55%, var(--wa-ink));
+}
+.wa-row--list .wa-opt:disabled {
+  color: color-mix(in srgb, var(--wa-ink) 72%, var(--wa-in));
+}
+/* the path's choice, while it is the next step: a quiet orange ring */
+.wa-opt--path {
+  box-shadow:
+    inset 0 0 0 2px var(--bz-orange),
+    0 1px 0.5px rgba(11, 20, 26, 0.13);
+}
+.wa-opt--path:hover {
+  background: color-mix(in srgb, var(--bz-orange) 10%, var(--wa-in));
+}
+.wa-opt--path .wa-opt__radio {
+  border-color: var(--wa-reply);
+}
+.wa-opt[aria-pressed="true"] .wa-opt__radio {
+  border-color: var(--wa-reply);
+  background: radial-gradient(circle, var(--wa-reply) 0 40%, transparent 46%);
+}
+.wa-opt:focus-visible,
+.wa__send:focus-visible {
+  outline: 2px solid var(--bz-orange);
+  outline-offset: 1px;
+}
+/* the composer: a prepared reply or sample attachment, sent with one tap */
+.wa__composer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.6rem 0.6rem;
+  background: color-mix(in srgb, var(--wa-wall) 90%, var(--wa-ink));
+}
+.wa__field {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  background: var(--wa-field);
+  color: var(--wa-ink);
+  font-size: 0.9375rem;
+  overflow-wrap: anywhere;
+}
+.wa__field--file::before {
   content: "";
-  position: absolute;
-  right: calc(100% + 0.35rem);
-  top: 50%;
-  width: clamp(1.1rem, 2.6vw, 2.1rem);
-  border-top: 1px dashed var(--bz-orange);
+  flex: none;
+  width: 0.85rem;
+  height: 1rem;
+  margin-right: 0.55rem;
+  border: 1.5px solid var(--wa-meta);
+  border-radius: 2px;
 }
-.bz-chat__note:hover {
-  color: var(--text);
-  text-decoration: underline;
-  text-decoration-color: var(--bz-orange);
+.wa__field--idle {
+  color: color-mix(in srgb, var(--wa-ink) 70%, var(--wa-field));
 }
-.bz-chat__note-n {
+.wa__send {
+  flex: none;
   display: grid;
   place-items: center;
-  width: 1.65rem;
-  height: 1.65rem;
-  border: 1.5px solid var(--bz-orange);
+  width: 44px;
+  height: 44px;
+  border: 0;
   border-radius: 50%;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  color: var(--bz-orange-ink);
+  background: #00a884;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 0 2px var(--bz-orange);
+}
+.wa__send svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: currentColor;
+}
+/* the step controls */
+.wa__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  margin-top: 0.9rem;
+}
+.wa__progress {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
-.bz-chat__caption {
+.wa__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.wa__ctl {
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 550;
+  cursor: pointer;
+  transition:
+    border-color 0.2s var(--ease),
+    background-color 0.2s var(--ease);
+}
+.wa__ctl:hover:not(:disabled) {
+  border-color: var(--text);
+}
+.wa__ctl--next:not(:disabled) {
+  border-color: var(--bz-orange);
+  background: var(--bz-orange-soft);
+}
+.wa__ctl:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.wa__ctl:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+.wa__caption {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.35rem 0.7rem;
   max-width: 52ch;
-  margin-top: 1.1rem;
+  margin-top: 1rem;
   font-size: 0.875rem;
   line-height: 1.5;
   color: var(--muted);
@@ -507,92 +731,103 @@
   color: var(--bz-orange-ink);
 }
 
-/* ------------------------------------------------- the documented flows */
-.bz-caps__list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: clamp(1.75rem, 4vw, 3.25rem);
-  margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: cap;
+/* ------------------------------------------------ designing within WhatsApp */
+/* the three decisions as an index: the decision on the left, its reasoning on the right */
+.bz-decisions {
+  margin-top: clamp(1.5rem, 3vw, 2rem);
 }
-.bz-cap {
-  position: relative;
+.bz-decision {
   display: grid;
-  grid-template-columns: 2.1rem minmax(0, 1fr);
-  column-gap: 0.4rem;
-  padding: 1rem 0.75rem 1.05rem 0;
+  grid-template-columns: minmax(12rem, 0.8fr) minmax(0, 1.6fr);
+  gap: 0.75rem clamp(1.5rem, 4vw, 3rem);
+  padding: clamp(1.25rem, 2.5vw, 1.75rem) 0;
   border-top: 1px solid var(--rule);
-  counter-increment: cap;
-  /* rows keep to their content when a neighbour in the row is taller */
-  align-content: start;
-  transition: background-color 0.6s var(--ease);
 }
-.bz-cap::before {
-  content: counter(cap, decimal-leading-zero);
-  grid-row: 1 / span 2;
-  padding-top: 0.42rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--bz-orange-ink);
-  font-variant-numeric: tabular-nums;
+.bz-decision .bz-h3 {
+  position: relative;
+  padding-top: 0.75rem;
+  font-size: clamp(1.4rem, 2vw, 1.7rem);
 }
-.bz-cap__name {
-  font-family: var(--serif);
-  font-size: 1.4rem;
-  font-weight: 600;
-  line-height: 1.12;
-}
-.bz-cap__text {
-  margin-top: 0.35rem;
-  font-size: 0.9688rem;
-  line-height: 1.6;
-  color: var(--ink-2);
-  text-wrap: pretty;
-}
-/* arriving from a margin note: the flow is marked (colour only, no motion) */
-.bz-cap:target {
-  background: linear-gradient(90deg, var(--bz-orange-soft), transparent 85%);
-  border-top-color: var(--bz-orange);
+.bz-decision .bz-h3::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2rem;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--bz-orange);
 }
 
-/* ------------------------------------------------------- the system */
+/* ------------------------------------------------------- the diagrams */
 .bz-system {
   margin: clamp(1.75rem, 3.5vw, 2.5rem) 0;
 }
-/* an open figure between two rules: the parts are the only boxes */
-.bz-system__frame {
-  padding: 1.1rem 0 1.2rem;
-  border-top: 1px solid var(--rule-strong);
-  border-bottom: 1px solid var(--rule);
+.bz-arch,
+.bz-flow {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
-.bz-system__frame-label {
-  font-size: 0.75rem;
-  font-weight: 650;
+/* architecture: five parts in a row; the middle three sit in one frame —
+   the application services, packaged with Docker on AWS EC2 */
+.bz-arch {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  column-gap: clamp(0.9rem, 2vw, 1.4rem);
+}
+.bz-arch__host {
+  grid-column: 2 / 5;
+  grid-row: 1;
+  margin: 0 calc(-1 * clamp(0.45rem, 1vw, 0.7rem)) calc(-1 * clamp(0.45rem, 1vw, 0.7rem));
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+}
+.bz-arch__host-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
 }
-.bz-system__flow {
-  display: grid;
+.bz-arch .bz-node {
+  grid-row: 1;
+  margin-top: 2.2rem;
+}
+.bz-arch .bz-node:nth-child(2) {
+  grid-column: 1;
+}
+.bz-arch .bz-node:nth-child(3) {
+  grid-column: 2;
+}
+.bz-arch .bz-node:nth-child(4) {
+  grid-column: 3;
+}
+.bz-arch .bz-node:nth-child(5) {
+  grid-column: 4;
+}
+.bz-arch .bz-node:nth-child(6) {
+  grid-column: 5;
+}
+/* the policy workflow: five steps, the two Claude stages marked */
+.bz-flow {
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: clamp(0.9rem, 2vw, 1.4rem);
-  margin: 1rem 0 0;
-  padding: 0;
-  list-style: none;
+  column-gap: clamp(0.9rem, 2vw, 1.4rem);
 }
 .bz-node {
   position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  padding: 0.85rem 0.85rem 0.95rem;
+  padding: 0.8rem 0.8rem 0.9rem;
   border: 1px solid var(--rule);
   border-radius: 10px;
   background: var(--bg);
 }
-/* the thread between neighbouring parts — a connection, not a claimed direction */
+/* the thread between neighbouring parts — a connection, not a claimed protocol */
 .bz-node + .bz-node::before {
   content: "";
   position: absolute;
@@ -609,9 +844,16 @@
   background: transparent;
   border-style: dashed;
 }
+.bz-node__stage {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bz-orange-ink);
+}
 .bz-node__name {
   font-family: var(--serif);
-  font-size: 1.15rem;
+  font-size: 1.12rem;
   font-weight: 600;
   line-height: 1.12;
 }
@@ -620,35 +862,24 @@
   line-height: 1.45;
   color: var(--ink-2);
 }
-.bz-system__also {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem 2rem;
-  margin: 1.1rem 0 0;
-  padding: 0.9rem 0 0;
-  list-style: none;
-  border-top: 1px solid var(--rule);
-  font-size: 0.9rem;
-  color: var(--ink-2);
-}
-.bz-system__also-k {
-  margin-right: 0.45rem;
-  font-weight: 650;
-  color: var(--text);
-}
 .bz-system__caption {
-  margin-top: 0.8rem;
+  margin-top: 0.9rem;
+  max-width: 62ch;
   font-family: var(--serif);
   font-style: italic;
   font-size: 1.05rem;
+  line-height: 1.4;
   color: var(--muted);
 }
 
-/* -------------------------------------------------- the difficult parts */
+/* ------------------------------------------------ engineering decisions */
 .bz-part {
-  margin-top: clamp(2.25rem, 4.5vw, 3.25rem);
-  padding-top: clamp(1.5rem, 3vw, 2rem);
-  border-top: 1px dashed var(--rule-strong);
+  margin-top: clamp(2rem, 4vw, 2.75rem);
+  padding-top: clamp(1.25rem, 2.5vw, 1.75rem);
+  border-top: 1px solid var(--rule);
+}
+.bz-h2 + .bz-part {
+  margin-top: clamp(1.5rem, 3vw, 2rem);
 }
 .bz-part .bz-prose {
   margin-top: 1.1rem;
@@ -662,101 +893,9 @@
   line-height: 1.28;
   color: var(--text);
 }
-/* a document upload, as its steps: workflow markers on one thread */
-.bz-steps {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(1rem, 2.5vw, 1.75rem);
-  max-width: 54rem;
-  margin: clamp(1.5rem, 3vw, 2rem) 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: step;
-}
-.bz-steps::before {
-  content: "";
-  position: absolute;
-  top: 0.8rem;
-  left: 0.8rem;
-  right: 1rem;
-  border-top: 1.5px solid var(--line);
-}
-.bz-steps li {
-  position: relative;
-  padding-top: 2rem;
-  font-size: 0.9688rem;
-  line-height: 1.45;
-  color: var(--ink-2);
-  counter-increment: step;
-  text-wrap: pretty;
-}
-.bz-steps li::first-letter {
-  text-transform: uppercase;
-}
-.bz-steps li::before {
-  /* a knot on the thread; the last one, where the task completes, filled */
-  content: "";
-  position: absolute;
-  top: 0.45rem;
-  left: 0.45rem;
-  width: 0.7rem;
-  height: 0.7rem;
-  border: 1.5px solid var(--bz-orange);
-  border-radius: 50%;
-  background: var(--bg);
-}
-.bz-steps li:last-child::before {
-  background: var(--bz-orange);
-}
-/* three records of one process */
-.bz-align {
-  display: grid;
-  grid-template-columns: minmax(12rem, 15rem) minmax(0, 1fr);
-  gap: clamp(1.5rem, 4vw, 3rem);
-  align-items: start;
-  margin-top: 1.2rem;
-}
-/* three records of one process: stepped lines, the backend record last */
-.bz-layers {
-  display: grid;
-  margin: 0.2rem 0 0;
-  padding: 0;
-  list-style: none;
-  border-bottom: 1px solid var(--rule);
-}
-.bz-layers li {
-  padding: 0.7rem 0 0.7rem 0.1rem;
-  border-top: 1px solid var(--rule);
-  font-family: var(--serif);
-  font-size: 1.25rem;
-  font-weight: 600;
-  line-height: 1.15;
-}
-.bz-layers li::first-letter {
-  text-transform: uppercase;
-}
-.bz-layers li:nth-child(2) {
-  padding-left: 1.1rem;
-}
-.bz-layers li:nth-child(3) {
-  padding-left: 2.2rem;
-  color: var(--bz-orange-ink);
-}
-.bz-align .bz-prose {
-  margin-top: 0;
-}
-.bz-pull {
-  margin-top: clamp(1.5rem, 3vw, 2.25rem);
-  max-width: 34ch;
-  font-family: var(--serif);
-  font-size: clamp(1.45rem, 2.3vw, 1.85rem);
-  line-height: 1.25;
-  text-wrap: pretty;
-}
 
-/* ----------------------------------------- deployment, performance, tools */
-/* a status note: set apart by a fine orange rule, not a box */
+/* ------------------------------------------------- deployment and tools */
+/* the rollout status: set apart by a fine orange rule, not a box */
 .bz-status {
   max-width: 54ch;
   margin-top: 1.75rem;
@@ -764,17 +903,6 @@
   border-left: 1px solid var(--bz-orange);
   font-size: 1rem;
   line-height: 1.55;
-}
-.bz-status__dot {
-  display: none;
-}
-.bz-perf {
-  margin-top: clamp(2.25rem, 4.5vw, 3rem);
-  padding-top: clamp(1.5rem, 3vw, 2rem);
-  border-top: 1px dashed var(--rule-strong);
-}
-.bz-perf .bz-prose {
-  margin-top: 1rem;
 }
 .bz-table-wrap {
   margin-top: clamp(1.5rem, 3vw, 2rem);
@@ -814,22 +942,40 @@
   color: var(--ink-2);
   text-wrap: pretty;
 }
-.bz-punchline {
-  margin-top: clamp(2rem, 4vw, 2.75rem);
-  max-width: 28ch;
-  font-family: var(--serif);
-  font-size: clamp(1.75rem, 3.2vw, 2.6rem);
-  font-weight: 500;
-  line-height: 1.14;
-  letter-spacing: -0.01em;
-  text-wrap: balance;
-}
 
 /* =================================================== narrower screens */
 @media (max-width: 1099.98px) {
-  .bz-system__flow {
+  .bz-arch,
+  .bz-flow {
     grid-template-columns: minmax(0, 1fr);
-    gap: 0.85rem;
+    row-gap: 0.85rem;
+  }
+  .bz-arch__host {
+    grid-column: 1;
+    grid-row: 2 / 5;
+    margin: 0 -0.6rem;
+  }
+  .bz-arch .bz-node {
+    grid-column: 1 !important;
+    margin: 0;
+  }
+  .bz-arch .bz-node:nth-child(2) {
+    grid-row: 1;
+  }
+  .bz-arch .bz-node:nth-child(3) {
+    grid-row: 2;
+    margin-top: 2.2rem;
+  }
+  .bz-arch .bz-node:nth-child(4) {
+    grid-row: 3;
+  }
+  .bz-arch .bz-node:nth-child(5) {
+    grid-row: 4;
+    margin-bottom: 0.7rem;
+  }
+  .bz-arch .bz-node:nth-child(6) {
+    grid-row: 5;
+    margin-top: 0.85rem;
   }
   .bz-node + .bz-node::before {
     right: auto;
@@ -847,69 +993,28 @@
     align-items: baseline;
     gap: 0.2rem 0.75rem;
   }
+  .bz-node__stage {
+    flex-basis: 100%;
+  }
 }
 @media (max-width: 759.98px) {
   .bz-hero__grid {
     grid-template-columns: minmax(0, 1fr);
     gap: 1.75rem;
   }
-  .bz-owned__grid {
+  .bz-intro__grid,
+  .bz-decision {
     grid-template-columns: minmax(0, 1fr);
   }
   .avatar--bz-desk {
     justify-self: end;
     width: 6.5rem;
   }
-  /* phones: the window fits the width; each note follows its exchange */
-  .bz-chat {
-    --pw: 100%;
+  .wa__window {
+    height: clamp(28rem, 72vh, 32rem);
   }
-  .bz-chat__row {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .bz-chat__note {
-    grid-column: 1;
-    grid-row: auto;
-    order: 3; /* after the bubble (and its quick replies) */
-    margin: 0.35rem 0.9rem 0.45rem;
-    padding: 0.2rem 0.55rem 0.2rem 0.25rem;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--bg) 92%, transparent);
-    font-size: 0.8125rem;
-    justify-self: center;
-  }
-  .bz-chat__note::before {
-    display: none;
-  }
-  .bz-chat__note-n {
-    width: 1.35rem;
-    height: 1.35rem;
-    font-size: 0.625rem;
-  }
-  .bz-bubble,
-  .bz-replies {
-    max-width: 84%;
-  }
-  .bz-caps__list {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .bz-steps {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1rem;
-  }
-  .bz-steps::before {
-    top: 0.8rem;
-    bottom: 1.2rem;
-    left: 0.8rem;
-    right: auto;
-    border-top: 0;
-    border-left: 1.5px solid var(--line);
-  }
-  .bz-steps li {
-    padding: 0.15rem 0 0 2.5rem;
-  }
-  .bz-align {
-    grid-template-columns: minmax(0, 1fr);
+  .wa__tabs {
+    gap: 0 1.1rem;
   }
   .bz-table tbody th {
     width: 38%;

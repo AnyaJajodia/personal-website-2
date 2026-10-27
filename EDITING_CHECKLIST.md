@@ -18,7 +18,7 @@ Per your request, uncertain end dates show **2027** in the preview. Replace with
 | Buzzworks | May 2025–May 2026 | Resolved by buzzworks.md (25 Oct 2026) |
 | TMU research tooling | 2025 | Shown as "2025" (tmu-citation-tooling.md). The end month, September or October 2025, is still to be settled |
 | ADI mentorship | Spring–Fall 2026 | Resolved by adi-mentorship.md (25 Oct 2026) |
-| Inteli-lens | *(period hidden)* | Start date not supplied. `end: "2027"` is stored but the period is hidden until a start is added (no invented dates) |
+| Inteli-lens | 2022 | Resolved by the revised inteli-lens.md (26 Oct 2026) |
 | GVI · South Africa | Summer 2024 · Four-week program | Resolved by gvi-conservation.md (25 Oct 2026); certificate issued July 2024, exact attendance dates not established |
 
 Confirmed and unchanged: ESP Jan 2024–Dec 2024; both publications 2022.
@@ -39,7 +39,7 @@ The homepage takes its roles and dates from the revised `handoff/content/home.md
 | Crackd.ai | 2025 | September 2025–May 2026 (crackd-ai.md) — update home.md to match? |
 | Buzzworks | 2025–2026 | May 2025–May 2026 (buzzworks.md) — consistent |
 | TMU research tooling | 2025 | 2025 (tmu-citation-tooling.md) — consistent |
-| Inteli-lens | 2023 | period hidden (no start date) |
+| Inteli-lens | 2022 (updated 26 Oct 2026 from inteli-lens.md; home.md still says 2023) | 2022 (inteli-lens.md) — consistent |
 | Conservation fieldwork · South Africa | 2024 | Summer 2024 (gvi-conservation.md) — consistent |
 | Research publications | 2022–2024 | both papers 2022 |
 | Teaching & mentorship | 2024–2026 | ESP Fall 2024–Spring 2025 (taken Spring 2024); ADI Spring–Fall 2026 — consistent |
@@ -56,7 +56,8 @@ The homepage takes its roles and dates from the revised `handoff/content/home.md
 | Résumé PDF | `contact.links` in `site.ts` | `url: null` → shows "Updated PDF to come". Add the PDF to `public/` and set `url` |
 | PMMY paper | `src/content/research.ts` → `pmmy.publication.paperLink` | No verified URL supplied, so none is shown (no placeholder). Add `paperLink: { label, url }` once a publisher URL or public PDF exists |
 | Teenage pregnancy paper | `src/content/research.ts` | **Linked** (supplied in the Markdown, checked live: IJSHRE PDF), with Project Ārogya’s page |
-| Crackd.ai repositories | `src/content/crackd.ts` → `apps[].repo` | One per application, each linked from its own application (all three checked public). Not shown: the demo URLs (crackdspring2026 / crackd-admin-panel / crackdmatrix on vercel.app) — crackd-ai.md says their status still needs confirmation. Add them to `apps[]` once confirmed |
+| Crackd.ai repositories | `src/content/crackd.ts` → `apps[].repo` | One per application, each linked from its own application (all three checked public, 26 Oct) |
+| Crackd.ai live apps | `src/content/crackd.ts` → `apps[].live` | Checked 26 Oct. **User app** (crackdspring2026.vercel.app) answered with Google sign-in, labelled "Sign-in limited to Columbia, Barnard, and Stanford email addresses" (from the notes). **Matrix** (crackdmatrix.vercel.app) redirected to sign-in, labelled "Requires sign-in"; confirm any domain restriction. **Admin** (crackd-admin-panel.vercel.app) returned **404**, so no link is shown; add `live` once the address works |
 | GitHub profile | `site.ts` | Live: https://github.com/AnyaJajodia |
 | Other repo/demo URLs | `links` on any entry | Optional |
 
@@ -83,7 +84,7 @@ The homepage takes its roles and dates from the revised `handoff/content/home.md
 - Graduation date is intentionally **not** shown (unconfirmed).
 - The More section items (Writing / Wildlife photography / Experiments) are non-clickable placeholders with no routes. Add pages when ready.
 - Selected-work panel colours (`LOOKS` in `src/components/WorkPanels.tsx`) are portfolio colours, not official brand tokens. Teaching was deepened to #07757A for text contrast. Keep text at ≥ 4.5:1 if you change them.
-- Panel dates come from `period` in `src/content/work.ts`. GVI and Inteli-lens show **no date** until a start date is added there. Teaching shows the ESP + ADI span (Jan 2024–2027).
+- Panel dates come from `period` in `src/content/work.ts`. (Inteli-lens now shows 2022, from its revised inteli-lens.md.) Teaching shows the ESP + ADI span (Jan 2024–2027).
 - The photo plate in More is a drawn contact sheet printed "Photographs to come". Replace it with real photographs only.
 - Section labels ("About", "Currently", …) are no longer shown above headings; they remain in the header nav. The labels are still in `src/content/site.ts` if you want them back.
 - The homepage line's tail calibration (`A_TAIL` in `src/lib/home-route.ts`) is specific to Cormorant Garamond 500. If the hero font or weight changes, re-run `node qa/measure-tail.mjs` and update it.
@@ -100,9 +101,9 @@ The homepage takes its roles and dates from the revised `handoff/content/home.md
 
 ## Crackd.ai page — content and assets to come (25 Oct 2026)
 The page follows `handoff/content/work/crackd-ai.md`; its implementation notes are not rendered. Everything below is deliberately absent, not shown as a placeholder:
-- [ ] Demo links for the three applications (status to confirm; see §2)
-- [ ] Application screenshots, for the planned screenshot walkthrough dialogs (not built yet, by design)
-- [ ] Pipeline / output examples
+- [x] Demo links: user app and matrix shown; admin 404 (see §2)
+- [x] Walkthroughs built from the supplied screenshots (26 Oct; see below)
+- [ ] The matrix experiment (goal, chain stages, what changed, outputs, assessment, phase). The staging paragraph is omitted until it's ready
 - [ ] The system architecture map — its connections must come from the actual implementations
 - [ ] Precise frameworks, languages, model providers, hosting and MCP tools (the Tools section lists only confirmed capabilities)
 - [ ] Michael Roger's preferred name and affiliation before adding the longer biography (the short credit is used)
@@ -156,3 +157,61 @@ Both pages follow `handoff/content/work/pmmy-research.md` and `teenage-pregnancy
 - The Buzzworks header uses `public/logos/buzzworks-minimal.png` beside "Buzzworks" set in the site serif. This is page typography, not the official wordmark.
 
 - GVI: Taba's caption deliberately doesn't name the prey species. Add it to `content/gvi-photos.ts` once confirmed.
+
+## Content to reconcile (26 Oct 2026, from the design pass)
+- `handoff/content/home.md` lists Crackd as (2025) and Research publications as (2022-2024). The homepage now shows 2025–2026 and 2022, matching the detail pages. Update home.md if those are right.
+- ESP/ADI revised text: integrated (26 Oct).
+
+## Evidence still missing (26 Oct 2026, content pass)
+- **Buzzworks — Manage leave:** the reconstruction stops at balances and a sample policy. The actual leave-request sequence needs confirming before it can be shown (notes).
+- **Buzzworks — references:** the notes mention private reference screenshots. None are in the repo, so the reconstruction follows the interaction types the notes describe (buttons, lists, document cards, confirmations).
+- **PMMY:** no verified publisher link or PDF was supplied, so none is shown. The financial figures still need checking before any financial chart.
+- **Teen:** the hospital and outreach photographs are optional, and no placeholder is shown.
+- **GVI:** confirm the prey species for Taba's caption (unchanged).
+
+## Crackd.ai walkthrough assets (26 Oct 2026)
+- Originals: `handoff/assets/crackd-source/` (never served). Prepared copies: `public/assets/crackd/` via `node scripts/build-crackd-walkthroughs.mjs`. Edit a rule and rerun to change any crop or blur.
+- **Balloon photograph:** obscured in user 03/05/06 and admin 01/02. The admin app marks its record Private, and it is the account's own upload. If it may be published, set `PERSONAL_PHOTO = false` and rerun.
+- **Admin step 2 ("Inspect image context"):** the record is private, so its photo, IDs and generated description are blurred. The screen shows only the panel layout and labels. **Flag: replace with a capture of a public record.**
+- **User step 2 ("Rate a caption"):** shows a person's face from the platform's voting content (not private-marked); left as supplied. Confirm it may be shown.
+- **User step 3:** the upload filename ("WhatsApp Image…") is visible; the thumbnail is blurred.
+- **Sequence:** tours are presented as selected screens. The user results aren't claimed as the pictured upload's outcome, and the matrix gallery subtitle says it shows a different image from the test-set step.
+
+## Inteli-lens page (26 Oct 2026)
+Page: `components/inteli/InteliPage.tsx` + `inteli.css`; copy: `content/inteli.ts` (verbatim from the revised `inteli-lens.md`).
+- [ ] **Homepage summary changed.** The homepage card now uses the Markdown's own summary ("An independent computer-vision experiment exploring whether walking patterns and body language could help identify possible intoxication.") and 2022. `handoff/content/home.md` still has 2023 and the old drunk-driving line, so update it if you want the handoff to match. The drawer shows no dates; its label stays "Prototype".
+- [ ] **Illustration.** `public/assets/inteli-lens/mockup.png` is a generated reconstruction, captioned "Illustrative reconstruction of the early prototype." Its own corner label is kept: nothing is cropped. The page serves `mockup-960.webp` / `mockup-1600.webp`, made with `cwebp -q 84 -resize 960 0` and `cwebp -q 86`, and "View full size" opens the PNG. Rerun both commands if you replace the PNG. On phones the notebook text is too small to read inline, which is why the full-size link is there.
+- [ ] **Archival screenshot not used.** The blurry Jupyter screenshot described in the notes was not supplied in the repo. If you add it, crop its black border and caption it "An early video-detection experiment in Jupyter." Don't present its labels as results.
+- [ ] **Unconfirmed tools still unconfirmed.** PyQt5, FFmpeg, SQLite, preprocessing and augmentation are from older résumés and are not on the page. Add them only once they're checked against the original project.
+- [ ] "More details to come as I revisit the original project materials." stays until you have those materials.
+
+
+## Wildlife photography page (26 Oct 2026, final selection)
+Page: `/wildlife-photography` (`components/wildlife/`). The collection, its copy and its order are in `content/wildlife-photos.json`. The homepage plate shows `highlights/homepage.png`.
+
+**The photographs are served exactly as supplied.** There are no resized or re-encoded copies; checksums were identical before and after this pass. `scripts/build-wildlife-photos.mjs` only reads them, for pixel size and a loading colour, and it fails on any of these:
+- a missing file
+- a file in the folders that isn't in the collection
+- a photograph listed twice
+
+**To add, swap or reorder:**
+1. Put the file in `highlights/`, `main-gallery/` or `secondary-gallery/`. The folder sets its size on the page: main photos are larger, secondary ones smaller.
+2. Edit the JSON (`photos`, plus a place in `rows`).
+3. Run the script.
+
+Photos in a row share one height. A row of one or two main photos reads large; a row of three secondary photos reads small. `"width": 0.8` narrows a row; `"space"` is `tight`, `normal` or `wide`.
+
+**Sequence:** the opening photo, then six rows:
+1. Golden hour lion + Elephant among trees
+2. Hornbill · Perched raptor · Feeding giraffe
+3. Collared cheetah + Walking leopard
+4. Jacana · Elephant family · Elephant profile (at 80% width, with the photographer beside them)
+5. Sunset giraffes + African fish eagle
+6. Twilight hippos
+
+That's 14 photographs.
+
+- [ ] **Page weight.** The originals are PNGs of 1.5–5.1 MB, about 44 MB for the whole page and 3 MB more on the homepage for the preview. They load lazily, a few at a time as you scroll, with a soft colour in each place until they arrive. On slow connections they appear late. If you want, smaller WebP copies could be served with the originals kept as the master files (a scripted, reversible step), but only with your go-ahead, since this pass was told not to resize or regenerate.
+- [ ] **Titles** come from your filenames. Two files had no name, so I titled them from what they show: `hero.png` → “Lion” (walking away down a dirt road; it may be a young lion) and `homepage.png` → “Jacana”. Please confirm both.
+- [ ] Captions are factual one-liners in the JSON; edit them freely.
+- [ ] The earlier temporary files (`1.png`–`7.png`, `IMG_…`, the screenshot, and their renamed copies) are gone from the folder, so the old filename mapping no longer applies.

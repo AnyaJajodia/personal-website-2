@@ -1,0 +1,364 @@
+/* =====================================================================
+   Inteli-lens — a short project note (InteliPage.tsx)
+   The portfolio's own background, serif and thread. Lavender and plum
+   accents only mark and annotate (light: lavender #8B78A2, deep plum
+   #51415E; dark: lavender #C4AFD4). Plum carries text in Light (lavender
+   is too pale on paper for words); lavender draws the thread, the rules
+   and the detection-box brackets. Scoped to .theme-inteli.
+   ===================================================================== */
+
+.theme-inteli {
+  --il-lavender: #8b78a2;
+  --il-plum: #51415e;
+  --il-ink: #51415e; /* accent text on paper (AA) */
+  --il-soft: rgba(139, 120, 162, 0.14);
+  --il-measure: 64ch;
+  --accent: #51415e;
+  --selection: rgba(139, 120, 162, 0.3);
+}
+:root[data-theme="dark"] .theme-inteli {
+  --il-lavender: #c4afd4;
+  --il-ink: #c4afd4;
+  --il-soft: rgba(196, 175, 212, 0.12);
+  --accent: #c4afd4;
+  --selection: rgba(196, 175, 212, 0.28);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .theme-inteli {
+    --il-lavender: #c4afd4;
+    --il-ink: #c4afd4;
+    --il-soft: rgba(196, 175, 212, 0.12);
+    --accent: #c4afd4;
+    --selection: rgba(196, 175, 212, 0.28);
+  }
+}
+.theme-inteli ::selection {
+  background: var(--selection);
+}
+.theme-inteli a:focus-visible {
+  outline: 2px solid var(--il-ink);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+/* the thread in lavender (links and labels keep the deeper plum) */
+.theme-inteli .detail-line path {
+  stroke: var(--il-lavender) !important;
+}
+
+/* The detection box: corner brackets drawn from eight strokes, sized in em
+   so they scale with whatever they frame. Never a label or a verdict. */
+.il-box,
+.il-figure__frame {
+  position: relative;
+}
+.il-box::before,
+.il-figure__frame::before {
+  content: "";
+  position: absolute;
+  inset: var(--box-inset);
+  pointer-events: none;
+  background:
+    linear-gradient(var(--il-lavender) 0 0) top left / var(--box-l) var(--box-w),
+    linear-gradient(var(--il-lavender) 0 0) top left / var(--box-w) var(--box-l),
+    linear-gradient(var(--il-lavender) 0 0) top right / var(--box-l) var(--box-w),
+    linear-gradient(var(--il-lavender) 0 0) top right / var(--box-w) var(--box-l),
+    linear-gradient(var(--il-lavender) 0 0) bottom left / var(--box-l) var(--box-w),
+    linear-gradient(var(--il-lavender) 0 0) bottom left / var(--box-w) var(--box-l),
+    linear-gradient(var(--il-lavender) 0 0) bottom right / var(--box-l) var(--box-w),
+    linear-gradient(var(--il-lavender) 0 0) bottom right / var(--box-w) var(--box-l);
+  background-repeat: no-repeat;
+}
+
+/* ------------------------------------------------------------ opening */
+.il-id {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--serif);
+  font-size: 1.45rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.il-mark {
+  width: 2.15rem;
+  height: 2.15rem;
+  flex: none;
+  fill: none;
+  stroke: var(--il-lavender);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+}
+.il-hero__year {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--il-ink);
+}
+.il-hero__year::before {
+  content: "";
+  width: 1.4rem;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--il-lavender);
+}
+/* two lines on wide screens, like the other case-study openings */
+.theme-inteli .il-hero__title {
+  max-width: 20ch;
+  text-wrap: balance;
+}
+.theme-inteli .il-hero__subtitle {
+  max-width: 40ch;
+}
+/* "movement", framed: the brackets settle onto the word once, like a
+   detector locking on; with reduced motion they are simply there */
+.il-box {
+  display: inline-block;
+  /* room for the brackets, so they never touch the neighbouring words */
+  margin-inline: 0.1em;
+  --box-inset: 0.08em -0.13em -0.04em;
+  --box-l: 0.2em;
+  --box-w: max(2px, 0.034em);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .il-box::before {
+    animation: il-lock 0.95s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+  }
+}
+@keyframes il-lock {
+  from {
+    opacity: 0;
+    transform: scale(1.32, 1.6);
+  }
+  45% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* the facts beside the title, hung from the thread */
+.il-facts {
+  margin: 0;
+  border-top: 1px solid var(--rule-strong);
+}
+.il-facts__item {
+  padding-block: 0.8rem;
+}
+.il-facts__item + .il-facts__item {
+  border-top: 1px solid var(--rule);
+}
+.il-facts dt {
+  color: var(--il-ink);
+}
+.il-facts dd {
+  margin: 0.3rem 0 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.il-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.1rem 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* the separator ends its line, so a wrapped list never starts with one */
+.il-tools li:not(:last-child)::after {
+  content: "·";
+  margin-inline: 0.45em;
+  color: var(--muted);
+}
+
+/* ------------------------------------------------------------ the note */
+/* each heading in the margin beside its text; the illustration spans both */
+.il-section {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  column-gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+  padding-block: clamp(2.75rem, 5.5vw, 4.25rem);
+  border-top: 1px solid var(--rule);
+  scroll-margin-top: calc(var(--header-h) + 1.5rem);
+}
+.il-h2 {
+  grid-column: 1;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(1.9rem, 3vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.il-prose,
+.il-back {
+  grid-column: 2;
+  max-width: var(--il-measure);
+}
+.il-prose p {
+  margin: 0;
+  text-wrap: pretty;
+}
+.il-prose p + p {
+  margin-top: 1.1em;
+}
+
+/* the illustration: the full width of the note, at its own proportions,
+   nothing cropped; brackets frame it like a viewfinder */
+.il-figure {
+  grid-column: 1 / -1;
+  margin: clamp(2.25rem, 4.5vw, 3.25rem) 0 0;
+}
+.il-figure__frame {
+  --box-inset: -0.75rem;
+  --box-l: 1.5rem;
+  --box-w: 1.5px;
+  max-width: 66rem;
+  margin-inline: auto;
+}
+.il-figure__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1597 / 985;
+  border-radius: 6px;
+  background: var(--il-soft); /* only while it loads */
+  box-shadow:
+    0 0 0 1px rgb(36 35 33 / 0.08),
+    0 24px 44px -34px rgb(var(--shade) / 0.6);
+}
+.il-figure__cap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem 1.5rem;
+  max-width: 66rem;
+  margin: 1.4rem auto 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+.il-figure__cap > span::before {
+  /* the motif in miniature: an open box before the caption */
+  content: "";
+  display: inline-block;
+  width: 0.62em;
+  height: 0.62em;
+  margin-right: 0.6em;
+  border: 1.5px solid var(--il-lavender);
+  border-radius: 1px;
+  vertical-align: 0.02em;
+}
+.il-figure__full {
+  flex: none;
+  font-weight: 600;
+  color: var(--il-ink);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--il-lavender) 60%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color 0.2s var(--ease);
+}
+.il-figure__full:hover {
+  text-decoration-color: currentColor;
+}
+
+/* the data problem, led by its own first sentence */
+.il-limit {
+  margin-top: clamp(2.25rem, 4.5vw, 3rem);
+}
+.il-limit__lead {
+  display: block;
+  margin-bottom: 0.55rem;
+  font-family: var(--serif);
+  font-size: clamp(1.45rem, 2.2vw, 1.8rem);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--il-ink);
+}
+
+/* looking back: the reflection in the serif, then the note still open */
+.il-lead {
+  margin: 0;
+  max-width: 36ch;
+  font-family: var(--serif);
+  font-size: clamp(1.45rem, 2.3vw, 1.85rem);
+  line-height: 1.25;
+  text-wrap: pretty;
+}
+.il-more {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65em;
+  margin: clamp(1.75rem, 3.5vw, 2.25rem) 0 0;
+  font-size: 0.9375rem;
+  font-style: italic;
+  color: var(--muted);
+}
+.il-more::before {
+  /* a box still being drawn: the details to come */
+  content: "";
+  flex: none;
+  width: 0.62em;
+  height: 0.62em;
+  border: 1.5px dashed var(--il-lavender);
+  border-radius: 1px;
+  transform: translateY(0.02em);
+}
+.il-section--back {
+  padding-bottom: clamp(3.5rem, 7vw, 5rem);
+}
+/* standing on the closing rule, in the space right of the text */
+.avatar--il-think {
+  right: clamp(0rem, 3vw, 2.5rem);
+  bottom: 0;
+  width: clamp(5rem, 6.4vw, 6rem);
+  transform: translateY(var(--sink));
+}
+
+@media (max-width: 899.98px) {
+  .il-section {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .il-h2,
+  .il-prose,
+  .il-back,
+  .il-limit {
+    grid-column: 1;
+  }
+  .il-h2 + .il-prose,
+  .il-h2 + .il-back {
+    margin-top: 1.1rem;
+  }
+  /* below the text, still standing on the rule */
+  .il-section--back {
+    padding-bottom: 0;
+  }
+  .avatar--il-think {
+    position: relative;
+    right: auto;
+    justify-self: end;
+    margin-top: 1.5rem;
+    width: 4.75rem;
+  }
+}
+@media (max-width: 599.98px) {
+  .il-figure__frame {
+    --box-inset: -0.45rem;
+    --box-l: 1rem;
+  }
+  .il-figure__cap {
+    font-size: 0.875rem;
+  }
+}

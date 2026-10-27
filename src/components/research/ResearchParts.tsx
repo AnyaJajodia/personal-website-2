@@ -6,7 +6,7 @@ import AvatarStage from "@/components/AvatarStage";
 import WorkDrawer from "@/components/WorkDrawer";
 import OnThisPage, { type TocItem } from "@/components/OnThisPage";
 import { getNeighbours } from "@/content/work";
-import { companion, type Paper, type Link as LinkT } from "@/content/research";
+import { companion, type Paper, type Publication, type Link as LinkT } from "@/content/research";
 import "../case/case.css";
 import "./research.css";
 
@@ -53,35 +53,40 @@ export function Section({ id, heading, className = "", children }: { id: string;
 /** opening: the year, the page's name, the headline, its description, the facts */
 export function Hero({ paper }: { paper: Paper }) {
   return (
-    <header className="detail-hero rs-hero" data-line="top">
+    <header className="detail-hero case-hero rs-hero" data-line="top">
       <div className="container" data-line="content">
         <nav aria-label="Breadcrumb" className="breadcrumb label" data-line="crumb">
           <Link href="/#work">Work</Link>
           <span aria-hidden="true"> / </span>
           <span aria-current="page">{paper.name}</span>
         </nav>
-        <p className="rs-hero__kind">
-          <span className="rs-hero__year">{paper.year}</span>
-        </p>
-        <h1 className="detail-hero__title rs-hero__title">
-          <span data-line="title">{paper.title}</span>
-        </h1>
-        <p className="detail-hero__subtitle rs-hero__subtitle">{paper.subtitle}</p>
-        <dl className="rs-facts">
-          {paper.facts.map((m) => (
-            <div key={m.label} className="rs-facts__item">
-              <dt className="label">{m.label}</dt>
-              <dd>{m.value}</dd>
-            </div>
-          ))}
-        </dl>
+        <div className="case-hero__grid rs-hero__grid">
+          <div className="rs-hero__main">
+            <p className="rs-hero__kind">
+              <span className="rs-hero__year">{paper.year}</span>
+            </p>
+            <h1 className="detail-hero__title rs-hero__title">
+              <span data-line="title">{paper.title}</span>
+            </h1>
+            <p className="detail-hero__subtitle rs-hero__subtitle">{paper.subtitle}</p>
+          </div>
+          {/* the paper's masthead, hung from the thread like a tag (DetailLine) */}
+          <dl className="rs-facts" data-line="flourish" data-flourish="tag">
+            {paper.facts.map((m) => (
+              <div key={m.label} className="rs-facts__item">
+                <dt className="label">{m.label}</dt>
+                <dd>{m.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       </div>
     </header>
   );
 }
 
 /** the paper itself: its exact title, authors, where and when, and how to read it */
-export function PaperCard({ paper }: { paper: Paper }) {
+export function PaperCard({ paper }: { paper: Paper & { publication: Publication } }) {
   const p = paper.publication;
   return (
     <section className="rs-section rs-paper" id={p.id} aria-labelledby={`${p.id}-title`}>

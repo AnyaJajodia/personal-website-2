@@ -12,68 +12,54 @@ Institution: Columbia University
 
 The Emerging Scholars Program is a one-credit, student-taught introduction to the breadth of computer science at Columbia.
 
-Each week introduces a different area, such as algorithms, computer vision, or UI/UX design. Small classes of around 15 students combine explanations, collaborative activities, and conversations about where those interests could lead.
-
-The atmosphere is informal and exploratory: a place to ask questions, try something unfamiliar, and discover that computer science contains more possibilities than a single introductory course can show.
+In weekly, hour-long sessions, classes of around 15 students explore areas such as algorithms, computer vision, and UI/UX design through explanations, collaborative activities, and conversations about where to go next.
 
 ## From student to teacher
 
-### Spring 2024 · Exploring
+### Spring 2024 · Student
 
-I took ESP during my freshman spring while deciding whether to pursue computer science.
+I took ESP during my freshman spring while deciding whether to pursue computer science. It helped me see the different directions the field could take.
 
-It gave me a way to explore different parts of the field before knowing which direction I wanted to take.
+### Fall 2024 · Teaching assistant
 
-### Fall 2024 · Supporting
-
-The following semester, I returned as a teaching assistant, helping support the class and its activities.
-
-Having recently been in the students’ position helped me understand the uncertainty that can come with getting started.
+I returned the following semester to support the class and its activities, with a recent student’s perspective on what could feel unfamiliar or intimidating.
 
 ### Spring 2025 · Teaching
 
-I went on to teach the course the next semester.
+I went on to teach the course, adapting the previous year’s slides and changing the material and emphasis to reflect the direction I wanted to take the sessions.
 
-I adapted slides from the previous year, changing the material and emphasis to reflect the direction I wanted to take the sessions.
+## Inside a session
 
-The aim was to make unfamiliar areas approachable and give students something they could explore further.
+Each session paired an introduction to an area of CS with an activity students could work through together. An algorithms session, for example, used a chocolate-based logic and strategy game to make the ideas tangible.
 
-## A different part of CS each week
+Alongside the concepts, we discussed relevant Columbia classes, professors, and opportunities so students had somewhere to take a new interest.
 
-Sessions paired an introduction to a topic with an activity that let students work through an idea together.
-
-An algorithms session, for example, could use a chocolate-based logic and strategy game. Design activities asked students to reconsider familiar experiences and work collaboratively on alternatives.
-
-We also discussed relevant Columbia classes, professors, and ways to continue exploring each area.
-
-The program included guest conversations with students studying different topics, an opportunities-focused session, and an ESP research fair where professors presented their work.
+The wider program included guest conversations with students studying different areas, an opportunities-focused session, and an ESP research fair where professors presented their work.
 
 ## What I value
 
-I first joined ESP looking for a clearer picture of computer science. Returning to teach meant helping create that opportunity for someone else.
+I joined ESP looking for a clearer picture of computer science. Returning to teach meant helping create that opportunity for someone else.
 
-I wanted students to leave with a useful starting point: a concept that made sense, a class they wanted to take, or a question they felt comfortable asking.
-
----
+I wanted students to leave with something they could act on: a concept that made sense, a class they wanted to take, or a question they felt comfortable asking.
 
 <!-- INTERNAL IMPLEMENTATION NOTES — DO NOT RENDER
 
 ROLE AND DATES
-Anya took ESP in Spring 2024, was a TA in Fall 2024, and taught in Spring 2025.
-"Peer Instructor" is a descriptive label, not an official appointment title.
-Do not imply she held a faculty position.
-Separate participation history from the teaching-role dates.
+Spring 2024: student.
+Fall 2024: teaching assistant.
+Spring 2025: taught the course.
+"Peer Instructor" is descriptive, not an official appointment title.
+Separate participation history from teaching-role dates.
 
 RESPONSIBILITIES
-Anya adapted existing slides and taught the final semester.
-Guest speakers, the opportunities session, and research fair are program features.
-Do not claim she independently organized them without further confirmation.
-Do not invent additional teaching activities or student outcomes.
+Anya adapted existing slides and taught in the final semester.
+Guest conversations, the opportunities session, and the research fair are program features.
+Do not imply she independently organized all of them.
+Do not invent teaching activities or student outcomes.
 
 DESIGN
-Keep this page short.
-Show the three-stage progression prominently.
-Use readable editorial sections and one small activity/example treatment.
+Keep the three-stage progression prominent.
+Use one compact activity example.
 No image placeholders, fabricated classroom photographs, or testimonials needed.
 
 END INTERNAL NOTES -->

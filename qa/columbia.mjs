@@ -93,27 +93,27 @@ for (const pg of [
     ok("ADI pill: every white letter clears the rounded ends with padding to spare", outside === 0, `${outside} letter pixels near the edge`);
     ok("ADI pill: the original ADI.png is preserved", existsSync("public/logos/ADI.png") && (await sharp("public/logos/ADI.png").metadata()).width === 800);
     const cohorts = await page.$$eval(".cu-cohorts__dots", (d) => d.map((x) => x.children.length));
-    ok("ADI: two cohorts of three, six in all (anonymous)", cohorts.join() === "3,3" && text.includes("six in all"));
-    ok("ADI: four mentorship themes as an editorial index", (await page.$$eval(".cu-theme", (t) => t.length)) === 4);
+    ok("ADI: two cohorts of three, six in all (anonymous marks, no names)", cohorts.join() === "3,3" && text.includes("six mentees") && text.includes("three different students in each"));
+    ok("ADI: the three guidance themes; continued contact with earlier mentees", (await page.$$eval(".cu-theme", (t) => t.length)) === 3 && text.includes("i stayed in touch with earlier mentees"));
   } else {
     const stages = await page.$$eval(".cu-stage", (s) => s.map((x) => x.querySelector(".cu-stage__semester").textContent + "|" + x.querySelector(".cu-stage__role").textContent));
     ok("ESP: the progression with real semesters — Spring 2024 student → Fall 2024 TA → Spring 2025 teaching", stages.join(" → ") === "Spring 2024|Student → Fall 2024|Teaching assistant → Spring 2025|Teaching", stages.join(" → "));
-    ok("ESP: one activity example; program-wide offerings set apart from her teaching", (await page.$$eval(".cu-example", (e) => e.length)) === 1 && /Across the program/i.test(await page.$eval(".cu-program", (e) => e.innerText)));
+    ok("ESP: one activity example; program-wide offerings set apart from her teaching", (await page.$$eval(".cu-example", (e) => e.length)) === 1 && /^The wider program included/.test(await page.$eval(".cu-program", (e) => e.innerText)));
     ok("ESP: teaching period kept apart from participation (Fall 2024–Spring 2025 in the facts)", (await page.$eval(".cu-hero__dates", (e) => e.textContent)) === "Fall 2024–Spring 2025");
   }
   const outline = await page.$$eval("main h1, main h2, main h3", (hs) => hs.map((h) => +h.tagName[1]));
   ok(`${pg.tag}: headings — one h1, no skipped levels`, outline.filter((l) => l === 1).length === 1 && outline.every((lv, i) => !i || lv - outline[i - 1] <= 1), outline.join(""));
   ok(`${pg.tag}: no photo placeholders, buttons, external links or downloads`, (await page.$$eval("main [class*='photo'], main button, main a[href^='http'], main [download]", (x) => x.length)) === 0);
   ok(`${pg.tag}: no console errors`, errors.length === 0, errors.join(" | "));
-  // anchors + focus
-  const ids = await page.$$eval(".toc__link", (as) => as.map((a) => a.hash.slice(1)));
-  const landed = [];
-  for (const id of ids) {
-    await page.click(`.toc__link[href="#${id}"]`);
-    await page.waitForTimeout(1000);
-    landed.push(await page.evaluate((id) => ({ id, gap: Math.round(document.getElementById(id).getBoundingClientRect().top - document.querySelector(".site-header").getBoundingClientRect().bottom), bottom: document.documentElement.scrollHeight - innerHeight - scrollY < 2, focused: document.activeElement?.id === id }), id));
-  }
-  ok(`${pg.tag}: On this page lands under the header and moves focus`, landed.every((l) => ((l.gap >= 4 && l.gap <= 40) || (l.bottom && l.gap >= 4)) && l.focused), JSON.stringify(landed.map((l) => [l.id, l.gap, l.focused])));
+  // iteration 24: a short story gets one reading column — no "On this page" rail; the
+  // sections start at the opening's left edge, and each section id still works as a link target
+  const col = await page.evaluate(() => {
+    const first = document.querySelector(".cu-content section").getBoundingClientRect().left;
+    const crumb = document.querySelector(".breadcrumb").getBoundingClientRect().left;
+    const ids = [...document.querySelectorAll(".cu-content section[id]")].map((s) => s.id);
+    return { toc: document.querySelectorAll(".toc, .case-rail").length, aligned: Math.abs(first - crumb) < 2, ids: ids.length };
+  });
+  ok(`${pg.tag}: one reading column aligned with the opening, no rail; sections keep their ids`, col.toc === 0 && col.aligned && col.ids >= 3, JSON.stringify(col));
   await page.click(".site-header .sheet-trigger");
   await page.waitForTimeout(450);
   const dr = await page.evaluate(() => ({
@@ -178,6 +178,8 @@ for (const pg of [
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(400);
     const box = await page.$eval(".panel--teaching .panel__logo", (e) => { const r = e.getBoundingClientRect(); return { x: r.left, y: r.top + scrollY, w: r.width, h: r.height }; });
+    // a later, intended change: the Wildlife photography plate now shows a photograph (iteration 29)
+    const plate = await page.$eval(".bento__card--photo", (e) => { const r = e.getBoundingClientRect(); return { x: r.left, y: r.top + scrollY, w: r.width, h: r.height }; });
     const now = await page.screenshot({ fullPage: true, animations: "disabled" });
     const [a, b] = await Promise.all([sharp(base1440).raw().toBuffer({ resolveWithObject: true }), sharp(now).raw().toBuffer({ resolveWithObject: true })]);
     let outside = 0, inside = 0;
@@ -189,6 +191,7 @@ for (const pg of [
           if (Math.abs(a.data[i] - b.data[i]) + Math.abs(a.data[i + 1] - b.data[i + 1]) + Math.abs(a.data[i + 2] - b.data[i + 2]) > 40) {
             const pad = 4;
             if (x >= box.x - pad && x <= box.x + box.w + pad && y >= box.y - pad && y <= box.y + box.h + pad) inside++;
+            else if (x >= plate.x - 24 && x <= plate.x + plate.w + 24 && y >= plate.y - 24 && y <= plate.y + plate.h + 24) continue;
             else outside++;
           }
         }

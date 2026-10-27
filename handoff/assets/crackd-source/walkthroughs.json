@@ -1,0 +1,98 @@
+[
+  {
+    "app": "user-app",
+    "image": "user-app/01-home.png",
+    "title": "Choose a starting point",
+    "subtitle": "The signed-in home screen offers caption rating and image-based generation."
+  },
+  {
+    "app": "user-app",
+    "image": "user-app/02-voting.png",
+    "title": "Rate a caption",
+    "subtitle": "Users evaluate image-caption pairs with voting controls and round progress."
+  },
+  {
+    "app": "user-app",
+    "image": "user-app/03-upload.png",
+    "title": "Start a generation request",
+    "subtitle": "An image is selected and ready to submit for caption generation."
+  },
+  {
+    "app": "user-app",
+    "image": "user-app/04-generation-progress.png",
+    "title": "Follow generation progress",
+    "subtitle": "The interface distinguishes upload preparation, image registration, and caption generation."
+  },
+  {
+    "app": "user-app",
+    "image": "user-app/05-caption-results.png",
+    "title": "Review generated captions",
+    "subtitle": "The personal caption viewer presents an image and lets users move between captions."
+  },
+  {
+    "app": "user-app",
+    "image": "user-app/06-highlights.png",
+    "title": "Explore highlights",
+    "subtitle": "A highlights view presents ranked image-caption pairs with display-count controls."
+  },
+  {
+    "app": "matrix",
+    "image": "matrix/01-flavor-library.png",
+    "title": "Find a humor flavor",
+    "subtitle": "The searchable library provides access to humor-flavor configurations."
+  },
+  {
+    "app": "matrix",
+    "image": "matrix/02-prompt-chain.png",
+    "title": "Inspect the prompt chain",
+    "subtitle": "Ordered steps expose prompts, model selections, and input/output types."
+  },
+  {
+    "app": "matrix",
+    "image": "matrix/03-test-set.png",
+    "title": "Choose a test set",
+    "subtitle": "A flavor can be tested against an existing image set."
+  },
+  {
+    "app": "matrix",
+    "image": "matrix/04-run-progress.png",
+    "title": "Monitor a batch run",
+    "subtitle": "Per-image states and overall counts make batch progress visible."
+  },
+  {
+    "app": "matrix",
+    "image": "matrix/05-caption-gallery.png",
+    "title": "Inspect caption outputs",
+    "subtitle": "A caption gallery allows generated examples to be reviewed. This screen shows a different image from the preceding test-set selection."
+  },
+  {
+    "app": "admin-app",
+    "image": "admin-app/01-caption-inspection.png",
+    "title": "Inspect caption records",
+    "subtitle": "Search, filters, and expanded records expose caption metadata and associated identifiers."
+  },
+  {
+    "app": "admin-app",
+    "image": "admin-app/02-image-details.png",
+    "title": "Inspect image context",
+    "subtitle": "An expanded image record displays its description and additional context."
+  },
+  {
+    "app": "admin-app",
+    "image": "admin-app/03-opener-statistics.png",
+    "title": "Analyze recurring openers",
+    "subtitle": "A chart compares vote distributions for recurring caption-opening phrases."
+  },
+  {
+    "app": "admin-app",
+    "image": "admin-app/04-caption-popularity.png",
+    "title": "Compare caption popularity",
+    "subtitle": "Ranked captions show net scores and underlying upvote/downvote counts."
+  },
+  {
+    "app": "admin-app",
+    "image": "admin-app/05-flavor-step-details.png",
+    "title": "Inspect flavor-step configuration",
+    "subtitle": "Expanded step details expose model metadata, prompts, and references to earlier outputs."
+  }
+]

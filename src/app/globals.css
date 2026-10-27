@@ -1336,61 +1336,35 @@ section[id] {
   fill: #2f2a25;
 }
 
-/* Wildlife photography: a contact sheet of drawn frames, honestly a placeholder */
+/* Wildlife photography: one of the photographs, whole — scaled to fit the
+   space above the name at its own proportions (container units: the smaller
+   of the width and the height × its ratio), never cropped */
 .scene-photo {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  padding: 1.25rem 1.4rem 0;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1.25rem 1.25rem 5.75rem;
+  container-type: size;
 }
-.contact-sheet {
-  width: min(100%, 17.5rem);
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-auto-rows: auto;
-  gap: 0.5rem;
-  padding: 0.6rem;
-  background: #2b2723;
-  border-radius: 3px;
-  transform: rotate(1.6deg);
-  box-shadow:
-    0 0 0 1px var(--sheet-edge),
-    0 18px 30px -22px rgba(36, 35, 33, 0.6);
+.photo-preview {
+  position: relative;
+  width: min(100cqw, 100cqh * var(--ar));
+  aspect-ratio: var(--ar);
   transition: transform 0.6s var(--ease);
 }
-.bento__card--photo:hover .contact-sheet {
-  transform: rotate(0.4deg) translateY(-4px);
-}
-.contact-sheet__frame {
+.photo-preview__img {
   display: block;
   width: 100%;
-  height: auto;
-  background: #efe8da;
+  height: 100%;
+  border-radius: 4px;
+  box-shadow:
+    0 0 0 1px rgb(var(--shade) / 0.08),
+    0 18px 30px -22px rgb(var(--shade) / 0.6);
+  user-select: none;
+  -webkit-user-drag: none;
 }
-.contact-sheet__frame:nth-child(even) {
-  background: #e6dcc8;
-}
-.contact-sheet__edge {
-  fill: none;
-  stroke: #2b2723;
-  stroke-width: 1;
-}
-.contact-sheet__drawing {
-  fill: none;
-  stroke: #3a352f;
-  stroke-width: 1.3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.contact-sheet__note {
-  grid-column: 1 / -1;
-  padding: 0.15rem 0 0;
-  text-align: center;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: #ece4d4;
+.bento__card--photo:is(:hover, :focus-visible, :has(.bento__link:focus-visible)) .photo-preview {
+  transform: translateY(-3px);
 }
 
 /* Experiments: nothing yet — an empty plate with a reserved, dashed frame */
@@ -1415,21 +1389,10 @@ section[id] {
   .bento__card--experiments {
     grid-column: span 1;
   }
-  /* shorter cards: the contact sheet sits to the right of the name */
+  /* shorter cards: the photograph sits to the right of the name */
   .scene-photo {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-  }
-  .contact-sheet {
-    width: 54%;
-  }
-  .contact-sheet__frame:nth-child(n + 5) {
-    display: none;
-  }
-  .contact-sheet__note {
-    font-size: 0.6rem;
-    letter-spacing: 0.12em;
+    justify-content: flex-end;
+    padding: 0.9rem 0.9rem 0.9rem 48%;
   }
   .bento__card--photo .bento__content {
     max-width: 46%;
@@ -3045,6 +3008,37 @@ body::before {
 .bento__card:focus-visible {
   transform: translateY(-2px);
 }
+/* a plate with a page: its name is the link, stretched over the whole plate */
+/* the content stays above the drawing as a flex item with a z-index, but is
+   not positioned, so the link's overlay measures against the whole plate */
+.bento__card--link .bento__content {
+  position: static;
+  z-index: 3;
+}
+/* no lift for the text here: a transform would make it the overlay's box */
+.bento__card--link:hover .bento__content {
+  transform: none;
+}
+.bento__link {
+  color: inherit;
+  text-decoration: none;
+  pointer-events: auto;
+}
+.bento__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: inherit;
+}
+.bento__link:focus-visible {
+  outline: none;
+}
+.bento__card:has(.bento__link:focus-visible) {
+  outline: 2px dashed var(--accent);
+  outline-offset: 4px;
+  transform: translateY(-2px);
+}
 .viewfinder {
   position: absolute;
   inset: -0.95rem;
@@ -3060,7 +3054,7 @@ body::before {
     transform 0.55s cubic-bezier(0.3, 0.7, 0.3, 1),
     opacity 0.25s var(--ease);
 }
-.bento__card--photo:is(:hover, :focus-visible) .viewfinder i {
+.bento__card--photo:is(:hover, :focus-visible, :has(.bento__link:focus-visible)) .viewfinder i {
   opacity: 1;
 }
 @media (max-width: 899.98px) {
@@ -3088,16 +3082,16 @@ body::before {
   bottom: 0;
   border-width: 0 2px 2px 0;
 }
-.bento__card--photo:is(:hover, :focus-visible) .viewfinder i:nth-child(1) {
+.bento__card--photo:is(:hover, :focus-visible, :has(.bento__link:focus-visible)) .viewfinder i:nth-child(1) {
   transform: translate(0.55rem, 0.55rem);
 }
-.bento__card--photo:is(:hover, :focus-visible) .viewfinder i:nth-child(2) {
+.bento__card--photo:is(:hover, :focus-visible, :has(.bento__link:focus-visible)) .viewfinder i:nth-child(2) {
   transform: translate(-0.55rem, 0.55rem);
 }
-.bento__card--photo:is(:hover, :focus-visible) .viewfinder i:nth-child(3) {
+.bento__card--photo:is(:hover, :focus-visible, :has(.bento__link:focus-visible)) .viewfinder i:nth-child(3) {
   transform: translate(0.55rem, -0.55rem);
 }
-.bento__card--photo:is(:hover, :focus-visible) .viewfinder i:nth-child(4) {
+.bento__card--photo:is(:hover, :focus-visible, :has(.bento__link:focus-visible)) .viewfinder i:nth-child(4) {
   transform: translate(-0.55rem, -0.55rem);
 }
 

@@ -11,24 +11,11 @@ Publication: International Journal of Software & Hardware Research in Engineerin
 
 ## The question
 
-What can financial-program data and public discussion tell us about an initiative intended to support women’s entrepreneurship?
+What could lending data and public discussion reveal about an initiative intended to support women’s entrepreneurship?
 
-This research examined Pradhan Mantri Mudra Yojana (PMMY), an Indian government initiative supporting access to credit for micro-enterprises.
+I examined Pradhan Mantri Mudra Yojana (PMMY), an Indian government initiative supporting access to credit for micro-enterprises. The study combined exploratory analysis of financial-program data with NLP-based sentiment analysis of Twitter discussion.
 
-I brought together two approaches: exploratory analysis of lending data and NLP-based sentiment analysis of Twitter discussion. The aim was to investigate the scheme’s reach and reception while considering the wider barriers surrounding women’s financial independence.
-
-## About the publication
-
-Published title: Analyzing The Impact Of Financial Schemes In Boosting The Lives Of Female Rural Population In India
-
-Authors: Anya Jajodia and Reetu Jain
-Journal: IJSHRE
-Volume: 10
-Issue: 9
-Published: September 2022
-Pages: 93–101
-
-I led the research with mentorship from Reetu Jain, who is also credited as a co-author.
+I led the research, including data preparation, analysis, visualization, and writing, with guidance from my mentor and co-author, Reetu Jain. The work brought programming into a broader investigation of financial inclusion and the barriers surrounding women’s economic independence.
 
 ## Two sources of evidence
 
@@ -36,59 +23,28 @@ I led the research with mentorship from Reetu Jain, who is also credited as a co
 
 I examined secondary data covering financial years 2015–16 through 2021–22, drawing on PMMY sources and existing research.
 
-The analysis considered loan accounts and sanctioned, disbursed, and outstanding amounts across the scheme’s Shishu, Kishore, and Tarun categories as they were defined during the study period.
-
-Looking at the categories separately helped reveal differences that an overall total could obscure.
+The analysis compared loan accounts and sanctioned, disbursed, and outstanding amounts across the scheme’s Shishu, Kishore, and Tarun categories as defined during the study period. These comparisons examined how lending activity varied across categories and years.
 
 ### Public discussion
 
-I also analyzed a sample of 1,000 recent PMMY-related tweets to explore how the initiative was discussed online.
+I used Tweepy to collect a sample of 1,000 PMMY-related tweets. The Python workflow used NLTK for text preparation and TF-IDF to represent the relative importance of terms.
 
-This provided a different kind of evidence: expressed sentiment in a particular social-media sample, rather than a direct measurement of borrowers’ experiences or policy outcomes.
+A sentiment model trained on movie-review data was then applied to classify the tweets as positive, neutral, or negative. This provided a view of expressed sentiment alongside the financial analysis.
 
-## My contribution
-
-I led the study, carried out the exploratory data analysis and Python-based sentiment-analysis work, developed visualizations, and wrote the paper with guidance from my mentor.
-
-The project involved working across quantitative program data, text collected from Twitter, and literature on financial inclusion and barriers to women’s entrepreneurship.
-
-## From tweets to sentiment
-
-### 01 · Collect
-
-I used Tweepy to collect PMMY-related tweets for analysis.
-
-The study considered a sample of 1,000 recent tweets rather than a representative survey of the population.
-
-### 02 · Prepare the text
-
-The NLP workflow used Python’s NLTK library. The paper describes preprocessing through segmentation, lemmatization, and chunking to prepare the text for analysis.
-
-### 03 · Represent the language
-
-TF-IDF converted text into numerical features, representing the relative importance of terms within the collection.
-
-### 04 · Classify
-
-A sentiment model trained using movie-review data was applied to the PMMY tweet sample, classifying sentiment as positive, neutral, or negative.
-
-### 05 · Interpret
-
-I examined the resulting distribution alongside the financial-program analysis, considering what each source could contribute to the research question.
+<!-- INSERT TWO-STRAND METHODS DIAGRAM HERE.
+Use the specifications in the internal notes. -->
 
 ## What the study found
 
-### Different lending categories followed different trajectories
+### Lending activity changed over time
 
-The financial analysis showed variation across loan categories and years.
+The paper reports an overall increase in disbursement across the study period, with a decline in financial year 2020–21 followed by recovery in 2021–22.
 
-Reported overall disbursement increased across the study period, with a decline in financial year 2020–21 followed by a recovery in 2021–22.
-
-The paper discusses the pandemic as a possible context for the decline. The descriptive analysis does not isolate its causal effect.
+It discusses the pandemic as possible context for the decline, rather than establishing its causal effect.
 
 ### The sampled discussion was predominantly positive
 
-The paper reports the following sentiment classifications:
+The paper reports these sentiment classifications within the collected tweet sample:
 
 | Classification | Share of the 1,000-tweet sample |
 | --- | --- |
@@ -96,118 +52,115 @@ The paper reports the following sentiment classifications:
 | Neutral | 12% |
 | Negative | 10% |
 
-These figures describe classifications within the collected sample. They are not population-wide approval ratings or model-accuracy scores.
+These percentages describe the model’s classifications of the sampled tweets, not population-wide approval or classifier accuracy.
 
-### Access involves more than the availability of credit
+<!-- RENDER THE SENTIMENT CHART HERE.
+Use the table above as its data source; preserve an accessible table equivalent. -->
 
-The paper also discusses barriers surrounding education, skills, social expectations, mobility, household responsibilities, and confidence.
+### Credit was one part of a wider question
 
-These considerations helped frame the financial data within a broader question: what conditions allow someone to make use of an opportunity?
+Alongside the analysis, the paper discussed barriers identified in the surrounding literature, including education, skills, mobility, household responsibilities, social expectations, and confidence.
 
-The lending analysis and sentiment results offered partial perspectives on that question, rather than a complete measurement of empowerment.
+These considerations framed the interpretation: access to a financial scheme does not, by itself, explain whether someone can make use of it.
+
+## Reading the results in context
+
+Twitter users did not necessarily represent the rural women the initiative aimed to serve, particularly those without reliable internet access. The sentiment model also crossed domains, moving from movie-review training material to financial-policy discussion.
+
+The two analyses therefore offered partial perspectives. Lending figures described program activity; tweet classifications described sampled discussion. Neither independently established a causal improvement in financial literacy, independence, or wellbeing.
 
 ## Beyond the paper
-### Community education with Saksharta
 
-Through a partnership with Saksharta spanning both of my research projects, I helped provide educational sessions for interested girls and young women in underserved communities in Mumbai.
+Through a partnership with Saksharta spanning both of my research projects, I helped deliver educational sessions for interested girls and young women in underserved communities in Mumbai.
 
-Alongside classes, we offered assistance, mentoring sessions on request, and practical support for participation and learning.
-
-This work created another way to engage with the topics behind the research, through conversation, education, and ongoing guidance.
-
-The outreach was related community work, separate from the paper’s datasets and research findings.
-
-## What the evidence could—and couldn’t—tell us
-
-The paper explicitly recognizes that Twitter discussion may not represent the rural population the initiative aims to serve. People without reliable internet access are less likely to appear in the sample.
-
-The sentiment model also moved between domains: it was trained on movie reviews and applied to discussion of a financial policy. That difference matters when interpreting its classifications.
-
-Lending figures describe program activity. Online sentiment describes a sample of public discussion. Neither independently establishes a causal improvement in financial literacy, independence, or long-term wellbeing.
-
-Keeping those distinctions clear is important to understanding the study’s scope.
-
-## Tools and methods
-
-| Area | Tools and approach |
-| --- | --- |
-| Programming | Python |
-| Financial analysis | Exploratory data analysis of secondary data |
-| Text collection | Tweepy |
-| Language processing | NLTK |
-| Text representation | TF-IDF |
-| Sentiment analysis | Positive, neutral, and negative classification |
-| Training material | Movie-review sentiment dataset |
-| Visualization | Matplotlib |
+Alongside classes, we offered assistance, mentoring on request, and practical support for participation and learning. This was related community work, separate from the research datasets and findings.
 
 ## What I took from it
 
-This project gave me an early opportunity to use programming to investigate a question beyond the software itself.
+This was an early opportunity to use programming to investigate a question beyond the software itself.
 
-It also made the limits of a dataset tangible. A large amount of available information can still leave out the people whose experiences matter most to the question.
+Working on the analysis alongside community education made me more attentive to who appears in a dataset, who is missing, and what additional understanding comes from speaking with people directly.
 
-Working on the analysis alongside community education encouraged me to think more carefully about the relationship between measurable activity, expressed opinion, and lived experience.
+## Tools and methods
+
+Python · Tweepy · NLTK · TF-IDF · Sentiment classification · Matplotlib · Exploratory analysis of secondary financial data
 
 ## Publication reference
 
 Jajodia, A., and Jain, R. (2022). Analyzing The Impact Of Financial Schemes In Boosting The Lives Of Female Rural Population In India. International Journal of Software & Hardware Research in Engineering, 10(9), 93–101.
-
----
 
 <!-- INTERNAL IMPLEMENTATION NOTES — DO NOT RENDER
 
 PUBLICATION AND ATTRIBUTION
 Preserve the exact published title and both authors.
 Anya was lead researcher; Reetu Jain was mentor and co-author.
-Do not imply sole authorship or university affiliation for this 2022 work.
+Do not imply sole authorship or a university affiliation for this 2022 work.
+Keep one complete publication reference.
+Do not restore a separate, repetitive publication-metadata section.
 
 PAPER ACCESS
-Use a verified publisher URL if supplied or independently verified.
-A public PDF link may be added once the paper is placed in the site's assets.
+Add a verified publisher link if available.
+A public PDF may be linked once supplied and placed in the site's assets.
 Do not invent a DOI, URL, repository, or download path.
-Do not display TODO links or nonfunctional buttons.
+Do not render TODO links or nonfunctional buttons.
 
-VISUALS — NO ADDITIONAL IMAGES REQUIRED
-Build the methods diagram and sentiment chart using accessible HTML/SVG
-or the site's existing chart tools. Do not use AI-generated images for graphs.
+METHODS DIAGRAM
+Retain or refine the existing two-strand diagram:
+1. Secondary PMMY data → exploratory analysis → category/year comparisons.
+2. Twitter collection → text preparation → TF-IDF → sentiment classification.
 
-Sentiment data:
+Show movie-review data separately as the sentiment model's training material.
+Do not imply that PMMY financial records trained the sentiment model.
+The strands support interpretation alongside one another; do not depict a
+dataset merge, causal inference, or combined predictive model.
+
+Text preparation reported in the paper includes segmentation, lemmatization,
+and chunking. Keep detailed labels concise.
+Do not invent a classifier algorithm, evaluation score, or collection dates.
+The diagram replaces a separate five-subsection methods walkthrough.
+
+SENTIMENT FIGURE
+Use accessible HTML/SVG or the site's existing chart tools.
+Do not use AI-generated imagery for charts.
+
+Data:
 Positive: 78%
 Neutral: 12%
 Negative: 10%
 Sample: 1,000 PMMY-related tweets.
 
-Chart caption:
+Use directly labeled horizontal bars.
+
+Caption:
 "Sentiment classifications reported in the paper for a sample of 1,000
 PMMY-related tweets. Results describe the collected sample, not the wider population."
 
-Use directly labeled horizontal bars and retain an accessible data table.
-Do not represent percentages as classifier accuracy.
+Preserve an accessible table equivalent.
+Avoid rendering the chart and table as two equally prominent, repetitive blocks.
+Never label these values as model accuracy or population approval.
 
-METHODS DIAGRAM
-Show two analysis strands:
-1. Secondary PMMY data → exploratory analysis → category/year comparisons.
-2. Twitter collection → text preparation → TF-IDF → sentiment classification.
-Explain that movie-review data supplied the sentiment model's training material.
-Do not invent a classifier algorithm, evaluation score, or data-collection dates.
-
-FINANCIAL FIGURES
+FINANCIAL FINDINGS
 Some category values and totals in the published tables appear inconsistent.
-Do not redraw a financial trend chart until the figures have been checked.
-Do not silently correct or combine inconsistent values.
+The retained trend is a qualitative summary reported by the paper.
+Do not add precise financial values or redraw financial charts until checked.
+If verification contradicts the summary, flag it for revision.
+Do not silently correct, combine, or extrapolate inconsistent values.
+
+INTERPRETATION
+Distinguish analytical findings from barriers discussed through literature.
+Do not imply the study directly measured every barrier listed.
+Keep qualifications concentrated in the figure caption and scope section.
+Do not add repeated disclaimers throughout the page.
 
 OUTREACH
-Use Saksharta as the community partner across both research projects.
-Activities: classes, assistance, mentoring on request, and practical support.
-Do not restore the earlier claim of securing loans for 50+ women.
-Do not invent participant counts or measured outreach outcomes.
+Community partner: Saksharta, spanning both research projects.
+Activities: educational sessions, assistance, mentoring on request,
+and practical support.
+Do not restore claims of securing loans for 50+ women.
+Do not import Project Ārogya's participant count or session-leadership claims.
+Do not invent measured outreach outcomes.
+A concise link to the companion research page may connect the partnership.
 
 DESIGN
-Present a readable research case study, with methods, findings, limitations,
-contribution, and publication details.
-Preserve the portfolio's typography, thread motif, theme controls, and work drawer.
-Use restrained research/publication accents and purposeful figures.
-No stock photographs of beneficiaries or fabricated outreach photographs.
-Any later supplied community images must be appropriate for public sharing.
-
-END INTERNAL NOTES -->
+Retain the existing research accent palette, shared typography, thread motif,
+theme controls, work drawer, and companion-paper navigation

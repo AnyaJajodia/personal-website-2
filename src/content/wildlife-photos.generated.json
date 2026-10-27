@@ -1,0 +1,128 @@
+{
+  "highlights/hero.png": {
+    "width": 2048,
+    "height": 1365,
+    "bytes": 2696355,
+    "tone": {
+      "light": "#dfc5b0",
+      "dark": "#412f1f"
+    }
+  },
+  "highlights/homepage.png": {
+    "width": 1570,
+    "height": 1725,
+    "bytes": 3272403,
+    "tone": {
+      "light": "#b9cbed",
+      "dark": "#26334a"
+    }
+  },
+  "main-gallery/Golden_Hour_Lion.png": {
+    "width": 1999,
+    "height": 1496,
+    "bytes": 5315097,
+    "tone": {
+      "light": "#e0c6a7",
+      "dark": "#412f18"
+    }
+  },
+  "main-gallery/Elephant_Among_Trees.png": {
+    "width": 1251,
+    "height": 1866,
+    "bytes": 3891891,
+    "tone": {
+      "light": "#d2cbad",
+      "dark": "#38331d"
+    }
+  },
+  "main-gallery/Collared_Cheetah.png": {
+    "width": 1868,
+    "height": 1401,
+    "bytes": 3363642,
+    "tone": {
+      "light": "#e1c4b1",
+      "dark": "#422e20"
+    }
+  },
+  "main-gallery/Walking_Leopard.png": {
+    "width": 1980,
+    "height": 1271,
+    "bytes": 3557977,
+    "tone": {
+      "light": "#dcc6b6",
+      "dark": "#3f2f24"
+    }
+  },
+  "main-gallery/Sunset_Giraffes.png": {
+    "width": 2047,
+    "height": 1494,
+    "bytes": 2564931,
+    "tone": {
+      "light": "#ddc7a8",
+      "dark": "#3f3019"
+    }
+  },
+  "main-gallery/African_Fish_Eagle.png": {
+    "width": 1983,
+    "height": 1263,
+    "bytes": 1648694,
+    "tone": {
+      "light": "#dfc5b4",
+      "dark": "#412e22"
+    }
+  },
+  "main-gallery/Twilight_Hippos.png": {
+    "width": 2048,
+    "height": 1161,
+    "bytes": 1541312,
+    "tone": {
+      "light": "#e9c0b7",
+      "dark": "#462a25"
+    }
+  },
+  "secondary-gallery/Hornbill.png": {
+    "width": 1935,
+    "height": 1364,
+    "bytes": 3671132,
+    "tone": {
+      "light": "#e3c59f",
+      "dark": "#432e11"
+    }
+  },
+  "secondary-gallery/Perched_Raptor.png": {
+    "width": 1938,
+    "height": 1344,
+    "bytes": 2670805,
+    "tone": {
+      "light": "#b7cbf3",
+      "dark": "#25324e"
+    }
+  },
+  "secondary-gallery/Feeding_Giraffe.png": {
+    "width": 1928,
+    "height": 1295,
+    "bytes": 1963359,
+    "tone": {
+      "light": "#bbcbea",
+      "dark": "#283348"
+    }
+  },
+  "secondary-gallery/Elephant_Family.png": {
+    "width": 1976,
+    "height": 1324,
+    "bytes": 4519401,
+    "tone": {
+      "light": "#ddc6b1",
+      "dark": "#402f20"
+    }
+  },
+  "secondary-gallery/Elephant_Profile.png": {
+    "width": 1297,
+    "height": 1946,
+    "bytes": 3150196,
+    "tone": {
+      "light": "#dfc6a7",
+      "dark": "#412f18"
+    }
+  }
+}

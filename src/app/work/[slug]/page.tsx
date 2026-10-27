@@ -18,6 +18,7 @@ import PmmyPage from "@/components/research/PmmyPage";
 import TeenPage from "@/components/research/TeenPage";
 import EspPage from "@/components/columbia/EspPage";
 import AdiPage from "@/components/columbia/AdiPage";
+import InteliPage from "@/components/inteli/InteliPage";
 import WorkDrawer from "@/components/WorkDrawer";
 
 export const dynamicParams = false;
@@ -91,12 +92,14 @@ export default async function WorkPage({ params }: Params) {
   const { slug } = await params;
   const entry = getWork(slug);
   if (!entry) notFound();
-  // Crackd, Buzzworks, TMU, GVI and the two research papers have their own pages
-  // (content/crackd.ts, buzzworks.ts, tmu.ts, gvi.ts, research.ts);
+  // Crackd, Buzzworks, TMU, Inteli-lens, GVI, the two research papers and the
+  // Columbia pages have their own pages (content/crackd.ts, buzzworks.ts, tmu.ts,
+  // inteli.ts, gvi.ts, research.ts, columbia.ts);
   // every other entry uses the template below
   if (slug === "crackd-ai") return <CrackdPage />;
   if (slug === "buzzworks") return <BuzzworksPage />;
   if (slug === "tmu-citation-tooling") return <TmuPage />;
+  if (slug === "inteli-lens") return <InteliPage />;
   if (slug === "gvi-conservation") return <GviPage />;
   if (slug === "pmmy-research") return <PmmyPage />;
   if (slug === "teenage-pregnancy-research") return <TeenPage />;

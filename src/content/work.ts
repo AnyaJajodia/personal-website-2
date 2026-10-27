@@ -245,53 +245,19 @@ export const work: WorkEntry[] = [
     description: "Toronto Metropolitan University: Turning a manuscript’s tangled references into in-text citations, organized bibliographies, and reviewable results.",
   },
   {
+    // The Inteli-lens page has its own layout and full copy (content/inteli.ts,
+    // from handoff/content/work/inteli-lens.md). This record supplies its name,
+    // the page <title>/description and its place in the pager.
     slug: "inteli-lens",
     name: "Inteli-lens",
     theme: "default",
-    title: "From footage to a working prototype.",
-    subtitle: "A computer-vision experiment in identifying potentially intoxicated behavior.",
+    title: "Could movement reveal signs of impairment?",
+    subtitle: "An independent computer-vision experiment exploring whether walking patterns and body language could help identify possible intoxication.",
     role: { label: "Type", value: "Independent project" },
-    period: {
-      label: "Period",
-      start: null,
-      end: "2027",
-      needsReview: true,
-      reviewNote: "No start date supplied — period hidden until confirmed.",
-    },
-    meta: [{ label: "Tools", value: "Python · OpenCV · TensorFlow · PyQt5 · FFmpeg · SQLite" }],
-    figure: {
-      kind: "flow",
-      caption: "The prototype pipeline, from decoded footage to a logged result.",
-      steps: [
-        { title: "Decode", note: "CCTV footage via FFmpeg" },
-        { title: "Prepare", note: "Preprocessing and augmentation for lighting and camera angle" },
-        { title: "Classify", note: "OpenCV and TensorFlow CNNs" },
-        { title: "Review", note: "PyQt5 interface with SQLite logging" },
-      ],
-    },
-    sections: [
-      {
-        heading: "Overview",
-        paragraphs: [
-          "Inteli-lens is a Python desktop prototype built to explore behavior detection in CCTV footage using OpenCV and TensorFlow CNNs.",
-        ],
-      },
-      {
-        heading: "My contribution",
-        paragraphs: [
-          "I developed preprocessing and augmentation pipelines with NumPy and scikit-image to address lighting and camera-angle variation, built a PyQt5 GUI prototype, and integrated FFmpeg decoding and SQLite logging.",
-          "I validated the model on a labeled dataset and improved precision and recall.",
-        ],
-      },
-      {
-        heading: "Scope",
-        paragraphs: [
-          "This was a prototype exploring a behavior-classification task. It was not a clinical assessment of intoxication.",
-          "The desktop prototype was deployed as a prototype, not as a production rollout.",
-        ],
-      },
-    ],
-    description: "Inteli-lens: a computer-vision prototype for identifying potentially intoxicated behavior in CCTV footage.",
+    period: { label: "Year", start: "2022", end: null },
+    meta: [{ label: "Tools", value: "Python · JupyterLab · OpenCV · TensorFlow" }],
+    sections: [],
+    description: "Inteli-lens (2022): an independent computer-vision experiment exploring whether walking patterns and body language could help identify possible intoxication.",
   },
   {
     // The GVI page has its own layout and full copy (content/gvi.ts, from

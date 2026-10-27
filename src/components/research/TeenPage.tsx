@@ -1,7 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import Avatar from "@/components/Avatar";
-import { teen, teenSections, companion, arogyaPhoto } from "@/content/research";
+import { teen, teenSections, companion } from "@/content/research";
 import { ResearchShell, Hero, PaperCard, Question, Section, Prose, Steps, Table, Reference, Out } from "./ResearchParts";
 
 /**
@@ -66,13 +65,7 @@ export default function TeenPage() {
   return (
     <ResearchShell slug={t.slug} accent="teen" sections={teenSections} hero={<Hero paper={t} />}>
       <PaperCard paper={t} />
-      <Question paper={t}>
-        <ul className="rs-chips" aria-label="Dimensions compared">
-          {t.question.dimensions.map((d) => (
-            <li key={d}>{d}</li>
-          ))}
-        </ul>
-      </Question>
+      <Question paper={t} />
 
       {/* part one: the study */}
       <Section id={t.study.id} heading={t.study.heading}>
@@ -121,53 +114,29 @@ export default function TeenPage() {
         <h3 className="rs-h3 rs-h3--sub">{a.subheading}</h3>
         <div className="rs-arogya__grid">
           <div>
-            <Prose paragraphs={[a.paragraphs[0]]} />
-            <p className="rs-reach">
-              <span className="rs-reach__value">200+</span>
-              <span className="rs-reach__text">{a.paragraphs[1]}</span>
+            <Prose paragraphs={a.paragraphs} />
+            <p className="rs-separate">{a.separate}</p>
+            <p className="rs-arogya__link">
+              <Out link={a.link} className="rs-out--primary" />
+              <span className="rs-arogya__also">
+                Saksharta’s partnership also spanned{" "}
+                <Link href={`/work/${other.slug}`} className="rs-inline">
+                  my PMMY research
+                </Link>
+                .
+              </span>
             </p>
-            <Prose paragraphs={a.paragraphs.slice(2)} />
           </div>
-          <div className="rs-arogya__side">
-            <ul className="rs-roles" aria-label="My part in Project Ārogya">
-              {a.roles.map((r) => (
-                <li key={r}>{r}</li>
-              ))}
-            </ul>
-            {/* one optional photograph; a quiet placeholder until a shareable one is supplied */}
-            <figure className="rs-photo">
-              {arogyaPhoto.src ? (
-                <Image className="rs-photo__img" src={arogyaPhoto.src} alt={arogyaPhoto.alt} width={arogyaPhoto.width} height={arogyaPhoto.height} unoptimized />
-              ) : (
-                <div className="rs-photo__empty">
-                  <span className="rs-photo__label">Photograph to come</span>
-                  <span className="rs-photo__wanted">{arogyaPhoto.wanted}</span>
-                  <span className="rs-photo__care">{arogyaPhoto.care}</span>
-                </div>
-              )}
-            </figure>
-          </div>
+          {/* the documented reach, beside the section: participation, kept apart from the study's measures */}
+          <figure className="rs-reach" aria-label="Project Ārogya’s documented reach">
+            <p className="rs-reach__value">{a.reach.value}</p>
+            <figcaption className="rs-reach__text">{a.reach.text}</figcaption>
+          </figure>
         </div>
-        <p className="rs-separate">{a.separate}</p>
-        <p className="rs-arogya__link">
-          <Out link={a.link} className="rs-out--primary" />
-          <span className="rs-arogya__also">
-            Saksharta’s partnership also spanned{" "}
-            <Link href={`/work/${other.slug}`} className="rs-inline">
-              my PMMY research
-            </Link>
-            .
-          </span>
-        </p>
       </Section>
 
       <Section id={t.limits.id} heading={t.limits.heading} className="rs-limits">
-        <ol className="rs-limits__list">
-          {t.limits.paragraphs.map((x) => (
-            <li key={x}>{x}</li>
-          ))}
-        </ol>
-        <p className="rs-limits__close">{t.limits.close}</p>
+        <Prose paragraphs={t.limits.paragraphs} />
       </Section>
 
       <Section id={t.tools.id} heading={t.tools.heading}>

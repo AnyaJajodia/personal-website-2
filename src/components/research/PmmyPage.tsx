@@ -1,19 +1,21 @@
 import Avatar from "@/components/Avatar";
 import { pmmy, pmmySections, companion } from "@/content/research";
 import Link from "next/link";
-import { ResearchShell, Hero, PaperCard, Question, Section, Prose, Steps, Table, Reference } from "./ResearchParts";
+import { ResearchShell, Hero, Question, Section, Prose, Reference } from "./ResearchParts";
 
 /**
- * PMMY & women’s financial empowerment. Two strands of evidence — lending data
- * and a sample of tweets — shown as a methods diagram that keeps the sentiment
- * model's training material (movie reviews) apart from the PMMY sample, and
- * the paper's sentiment result as a directly labelled bar chart with its table.
- * No financial trend chart: the published figures need checking first.
+ * PMMY & women’s financial empowerment, in the revised, concise structure: the
+ * question, two strands of evidence (with the methods diagram that replaces the
+ * old step-by-step walkthrough and keeps the sentiment model's movie-review
+ * training material apart from the PMMY sample), the findings — the sentiment
+ * result as directly labelled bars, its table as the screen-reader equivalent —
+ * the results in context, the outreach, and one complete reference. No
+ * financial chart: the published figures need checking first.
  */
 
 function MethodsDiagram() {
   return (
-    <figure className="rs-methods" aria-labelledby="pmmy-methods-cap">
+    <figure className="rs-methods" aria-label="The study’s two strands: financial-program analysis and Twitter sentiment, read alongside each other">
       <div className="rs-methods__lanes">
         <div className="rs-lane">
           <p className="rs-lane__name">Financial-program analysis</p>
@@ -64,9 +66,6 @@ function MethodsDiagram() {
         <span className="rs-node__name">Interpret</span>
         <span className="rs-node__note">Each strand read alongside the other, as partial evidence</span>
       </p>
-      <figcaption id="pmmy-methods-cap" className="rs-caption">
-        The study’s two strands. The sentiment model’s training material (movie reviews) is separate from the PMMY tweet sample it was applied to.
-      </figcaption>
     </figure>
   );
 }
@@ -75,7 +74,7 @@ function SentimentChart() {
   const s = pmmy.findings.sentiment;
   return (
     <figure className="rs-chart" aria-labelledby="pmmy-chart-cap">
-      {/* the bars repeat the table beside them, so assistive tech reads the table */}
+      {/* the bars are directly labelled; assistive tech reads the equivalent table instead */}
       <div className="rs-chart__plot" aria-hidden="true">
         <div className="rs-chart__scale">
           {[0, 25, 50, 75, 100].map((t) => (
@@ -96,6 +95,7 @@ function SentimentChart() {
           </div>
         ))}
       </div>
+      <div className="visually-hidden">
       <table className="rs-chart__table">
         <caption className="visually-hidden">{s.caption}</caption>
         <thead>
@@ -116,6 +116,7 @@ function SentimentChart() {
           ))}
         </tbody>
       </table>
+      </div>
       <figcaption id="pmmy-chart-cap" className="rs-caption">
         {s.caption}
       </figcaption>
@@ -127,9 +128,9 @@ export default function PmmyPage() {
   const p = pmmy;
   const f = p.findings;
   const other = companion[p.slug];
+  const [before, after] = p.outreach.paragraphs[0].split("spanning both of my research projects");
   return (
     <ResearchShell slug={p.slug} accent="pmmy" sections={pmmySections} hero={<Hero paper={p} />}>
-      <PaperCard paper={p} />
       <Question paper={p} />
 
       <Section id={p.sources.id} heading={p.sources.heading} className="rs-sources">
@@ -147,75 +148,55 @@ export default function PmmyPage() {
         <MethodsDiagram />
       </Section>
 
-      <Section id={p.contribution.id} heading={p.contribution.heading} className="rs-contribution">
-        <div className="rs-contribution__grid">
-          <Prose paragraphs={p.contribution.paragraphs} />
-          <Avatar pose="readingSeated" role="rs-reader" />
-        </div>
-      </Section>
-
-      <Section id={p.pipeline.id} heading={p.pipeline.heading}>
-        <Steps steps={p.pipeline.steps} label="From tweets to sentiment, step by step" />
-      </Section>
-
       <Section id={f.id} heading={f.heading} className="rs-findings">
         <div className="rs-finding">
           <h3 className="rs-h3">{f.lending.heading}</h3>
           <Prose paragraphs={f.lending.paragraphs} />
-          <p className="rs-note">{f.lending.note}</p>
         </div>
         <div className="rs-finding rs-finding--wide">
           <h3 className="rs-h3">{f.sentiment.heading}</h3>
           <p className="rs-finding__lead">{f.sentiment.lead}</p>
           <SentimentChart />
-          <p className="rs-note">{f.sentiment.note}</p>
+          <Prose paragraphs={[f.sentiment.after]} />
         </div>
         <div className="rs-finding">
           <h3 className="rs-h3">{f.access.heading}</h3>
-          <Prose paragraphs={[f.access.paragraphs[0]]} />
-          <ul className="rs-chips" aria-label="Barriers the paper discusses">
-            {f.access.barriers.map((b) => (
-              <li key={b}>{b}</li>
-            ))}
-          </ul>
-          <Prose paragraphs={f.access.paragraphs.slice(1)} />
+          <Prose paragraphs={f.access.paragraphs} />
+        </div>
+      </Section>
+
+      <Section id={p.context.id} heading={p.context.heading} className="rs-context">
+        <div className="rs-contribution__grid">
+          <Prose paragraphs={p.context.paragraphs} />
+          <Avatar pose="readingSeated" role="rs-reader" />
         </div>
       </Section>
 
       <Section id={p.outreach.id} heading={p.outreach.heading} className="rs-outreach">
-        <h3 className="rs-h3 rs-h3--sub">{p.outreach.subheading}</h3>
         <div className="rs-prose">
           <p>
-            {p.outreach.paragraphs[0].split("spanning both of my research projects")[0]}
+            {before}
             {/* the partnership spanned both papers: the other one, a click away */}
             <Link href={`/work/${other.slug}`} className="rs-inline">
               spanning both of my research projects
             </Link>
-            {p.outreach.paragraphs[0].split("spanning both of my research projects")[1]}
+            {after}
           </p>
-          {p.outreach.paragraphs.slice(1).map((x) => (
-            <p key={x}>{x}</p>
-          ))}
+          <p>{p.outreach.paragraphs[1]}</p>
         </div>
-        <p className="rs-separate">{p.outreach.separate}</p>
-      </Section>
-
-      <Section id={p.limits.id} heading={p.limits.heading} className="rs-limits">
-        <ol className="rs-limits__list">
-          {p.limits.paragraphs.map((x) => (
-            <li key={x}>{x}</li>
-          ))}
-        </ol>
-        <p className="rs-limits__close">{p.limits.close}</p>
-      </Section>
-
-      <Section id={p.tools.id} heading={p.tools.heading}>
-        <Table columns={p.tools.columns} rows={p.tools.rows} />
       </Section>
 
       <Section id={p.takeaways.id} heading={p.takeaways.heading} className="rs-takeaways">
         <p className="rs-lead">{p.takeaways.paragraphs[0]}</p>
         <Prose paragraphs={p.takeaways.paragraphs.slice(1)} />
+      </Section>
+
+      <Section id={p.tools.id} heading={p.tools.heading} className="rs-tools">
+        <ul className="rs-runlist">
+          {p.tools.items.map((t) => (
+            <li key={t}>{t}</li>
+          ))}
+        </ul>
       </Section>
 
       <Reference paper={p} />

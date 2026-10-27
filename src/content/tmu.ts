@@ -92,7 +92,6 @@ export const tmu = {
       ],
       note: "Selected explanatory notes were retained instead of being forced into an author-date format.",
       /** the source types the paragraph names */
-      tags: ["academic publications", "books", "legal cases", "statutes", "online material"],
     },
     {
       id: "replace",
@@ -146,8 +145,6 @@ export const tmu = {
       "I checked the chapter bibliographies and master bibliography for consistency, making sure the references were appropriate in both format and scope.",
       "The final workflow combined automated processing with editorial review. The code handled repeated transformations; direct review addressed the cases that required closer interpretation.",
     ],
-    /** the editorial tasks the second paragraph names, as a proofreader's checklist */
-    tasks: ["reviewing citations we were uncertain about", "cleaning bibliography entries", "correcting formatting and headings", "cross-checking the generated material against the original sources"],
   },
 
   engineering: {
@@ -158,8 +155,6 @@ export const tmu = {
       "Parallel processing supported the larger conversion workload, while unit tests covered individual components. Targeted reruns and manual overrides allowed problematic references to be corrected without treating every output as final.",
       "The work involved both building the pipeline and refining it against the manuscript’s exceptions.",
     ],
-    /** the stages the first paragraph names */
-    modules: ["extraction", "matching", "citation generation", "cleanup", "export"],
   },
 
   outputs: {

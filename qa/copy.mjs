@@ -67,7 +67,11 @@ const browser = await chromium.launch({ channel: "chrome" });
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
   await page.goto(base + "/", { waitUntil: "networkidle" });
   const text = norm(await page.evaluate(() => document.querySelector("main").textContent + " " + document.querySelector(".site-footer").textContent));
-  const missing = expected.filter((e) => !text.includes(norm(e)));
+  // the two dates corrected to match the detail pages (iteration 24) are checked on their own below
+  // (iteration 27: Inteli-lens's date and summary follow its revised inteli-lens.md — checked below)
+  const inteliOld = "A computer-vision prototype exploring walking patterns and body language for signs of intoxication, with the goal of helping reduce drunk-driving incidents in the US.";
+  const corrected = new Set(["2025", "2023", "2022–2024", "2022-2024", inteliOld]);
+  const missing = expected.filter((e) => !corrected.has(e.trim()) && !text.includes(norm(e)));
   ok(`every approved home.md line is on the page (${expected.length} strings)`, missing.length === 0, missing.join(" | "));
   const stale = retired.filter((r) => text.includes(r) || 0);
   const head = await page.evaluate(() => document.title + " " + document.querySelector('meta[name="description"]').content);
@@ -77,7 +81,14 @@ const browser = await chromium.launch({ channel: "chrome" });
   const metas = await page.$$eval(".feature__meta", (ms) => ms.map((m) => m.innerText.replace(/\s*,\s*/g, " ").replace(/\s+/g, " ").trim()));
   ok("Currently: role and dates in the caption metadata", metas[0] === "Chief Technology Officer 2026–now" && metas[1] === "Volunteer 2026–now", metas.join(" | "));
   const dates = await page.$$eval(".panel__date", (d) => d.map((x) => x.textContent));
-  ok("Selected work: each panel's date from home.md", dates.join(",") === "2025,2025–2026,2025,2023,2024,2022–2024,2024–2026", dates.join(","));
+  // home.md's dates, except where the completed detail pages corrected them (iteration 24):
+  // Crackd spans 2025–2026 (Sept 2025–May 2026); both displayed papers are from 2022;
+  // Inteli-lens is from 2022 (its revised inteli-lens.md)
+  ok("Selected work: each panel's date (home.md, with Crackd and the publications corrected to match their detail pages)", dates.join(",") === "2025–2026,2025–2026,2025,2022,2024,2022,2024–2026", dates.join(","));
+  ok(
+    "Inteli-lens panel: 2022 and the revised inteli-lens.md summary (not the retired drunk-driving line)",
+    text.includes("An independent computer-vision experiment exploring whether walking patterns and body language could help identify possible intoxication.") && !text.includes(inteliOld),
+  );
   const contact = await page.$$eval(".contact-list__row", (rs) => rs.map((r) => [r.tagName, r.getAttribute("href"), r.textContent.trim()]));
   ok(
     "Contact: LinkedIn and GitHub link out; Résumé stays a “to come” placeholder (no dead link)",

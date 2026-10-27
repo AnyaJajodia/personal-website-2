@@ -112,7 +112,7 @@ export const selectedWork = {
   rows: [
     {
       title: "Crackd.ai",
-      date: "2025",
+      date: "2025–2026",
       description:
         "Building a complete AI humor platform: user-facing apps, admin tools, and an internal LLM chaining matrix for developing humor styles and emulating different voices, supported by prompt research and data workflows.",
       category: "Engineering",
@@ -136,9 +136,10 @@ export const selectedWork = {
     },
     {
       title: "Inteli-lens",
-      date: "2023",
+      // 2022 and this summary from the revised inteli-lens.md (home.md still has 2023)
+      date: "2022",
       description:
-        "A computer-vision prototype exploring walking patterns and body language for signs of intoxication, with the goal of helping reduce drunk-driving incidents in the US.",
+        "An independent computer-vision experiment exploring whether walking patterns and body language could help identify possible intoxication.",
       category: "Prototype",
       links: [{ slug: "inteli-lens", label: "Inteli-lens" }],
     },
@@ -152,7 +153,7 @@ export const selectedWork = {
     },
     {
       title: "Research publications",
-      date: "2022–2024",
+      date: "2022",
       description:
         "Published research examining the effectiveness of women’s financial empowerment initiatives and relationships between socioeconomic factors, teenage pregnancy, and fertility rates.",
       category: "Publications",
@@ -179,8 +180,9 @@ export const more = {
   label: "More",
   heading: "There are other things.",
   intro: "Writing, wildlife photography, and a few experiments that don’t fit neatly under “work.”",
-  /** Non-clickable placeholders — no routes exist for these yet. */
   items: ["Writing", "Wildlife photography", "Experiments"],
+  /** the items that have a page; the rest are non-clickable placeholders */
+  links: { "Wildlife photography": "/wildlife-photography" } as Record<string, string>,
   note: "This part is still taking shape.",
 };
 

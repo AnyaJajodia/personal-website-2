@@ -1,6 +1,7 @@
 /**
  * The two research-publication pages — approved copy, verbatim, from
- * handoff/content/work/pmmy-research.md and teenage-pregnancy-research.md.
+ * handoff/content/work/pmmy-research.md (revised 26 Oct 2026) and
+ * teenage-pregnancy-research.md.
  * Their internal notes are not rendered (the PMMY chart caption is the one the
  * notes prescribe). Links are only those the documents supply, checked live:
  * the teenage-pregnancy paper (IJSHRE PDF) and Saksharta's Project Ārogya page.
@@ -15,6 +16,21 @@ export type Link = { label: string; url: string };
 export type Step = { n: string; heading: string; paragraphs: string[] };
 export type Finding = { heading: string; paragraphs: string[]; note?: string };
 
+export type Publication = {
+  id: string;
+  heading: string;
+  publishedTitle: string;
+  authors: string;
+  journal: string;
+  journalFull: string;
+  volume: string;
+  issue: string;
+  published: string;
+  pages: string;
+  credit: string;
+  paperLink?: Link;
+};
+
 export type Paper = {
   slug: string;
   name: string;
@@ -22,20 +38,8 @@ export type Paper = {
   subtitle: string;
   year: string;
   facts: { label: string; value: string }[];
-  publication: {
-    id: string;
-    heading: string;
-    publishedTitle: string;
-    authors: string;
-    journal: string;
-    journalFull: string;
-    volume: string;
-    issue: string;
-    published: string;
-    pages: string;
-    credit: string;
-    paperLink?: Link;
-  };
+  /** at least the exact title and month (the companion link); the full details where the page shows them */
+  publication: Pick<Publication, "publishedTitle" | "published"> & Partial<Publication>;
   question: { id: string; heading: string; ask: string; paragraphs: string[] };
   reference: { id: string; heading: string; text: string; links: Link[] };
 };
@@ -56,146 +60,99 @@ export const pmmy = {
     { label: "Mentor and co-author", value: "Reetu Jain" },
     { label: "Publication", value: JOURNAL },
   ],
+  /** the full publication details live in the one reference at the end (no separate metadata section) */
   publication: {
-    id: "about-the-publication",
-    heading: "About the publication",
     publishedTitle: "Analyzing The Impact Of Financial Schemes In Boosting The Lives Of Female Rural Population In India",
-    authors: "Anya Jajodia and Reetu Jain",
-    journal: "IJSHRE",
-    journalFull: JOURNAL,
-    volume: "10",
-    issue: "9",
     published: "September 2022",
-    pages: "93–101",
-    credit: "I led the research with mentorship from Reetu Jain, who is also credited as a co-author.",
   },
   question: {
     id: "the-question",
     heading: "The question",
-    ask: "What can financial-program data and public discussion tell us about an initiative intended to support women’s entrepreneurship?",
+    ask: "What could lending data and public discussion reveal about an initiative intended to support women’s entrepreneurship?",
     paragraphs: [
-      "This research examined Pradhan Mantri Mudra Yojana (PMMY), an Indian government initiative supporting access to credit for micro-enterprises.",
-      "I brought together two approaches: exploratory analysis of lending data and NLP-based sentiment analysis of Twitter discussion. The aim was to investigate the scheme’s reach and reception while considering the wider barriers surrounding women’s financial independence.",
+      "I examined Pradhan Mantri Mudra Yojana (PMMY), an Indian government initiative supporting access to credit for micro-enterprises. The study combined exploratory analysis of financial-program data with NLP-based sentiment analysis of Twitter discussion.",
+      "I led the research, including data preparation, analysis, visualization, and writing, with guidance from my mentor and co-author, Reetu Jain. The work brought programming into a broader investigation of financial inclusion and the barriers surrounding women’s economic independence.",
     ],
   },
   sources: {
-    id: "two-sources",
+    id: "two-sources-of-evidence",
     heading: "Two sources of evidence",
     strands: [
       {
         heading: "Financial-program data",
         paragraphs: [
           "I examined secondary data covering financial years 2015–16 through 2021–22, drawing on PMMY sources and existing research.",
-          "The analysis considered loan accounts and sanctioned, disbursed, and outstanding amounts across the scheme’s Shishu, Kishore, and Tarun categories as they were defined during the study period.",
-          "Looking at the categories separately helped reveal differences that an overall total could obscure.",
+          "The analysis compared loan accounts and sanctioned, disbursed, and outstanding amounts across the scheme’s Shishu, Kishore, and Tarun categories as defined during the study period. These comparisons examined how lending activity varied across categories and years.",
         ],
       },
       {
         heading: "Public discussion",
         paragraphs: [
-          "I also analyzed a sample of 1,000 recent PMMY-related tweets to explore how the initiative was discussed online.",
-          "This provided a different kind of evidence: expressed sentiment in a particular social-media sample, rather than a direct measurement of borrowers’ experiences or policy outcomes.",
+          "I used Tweepy to collect a sample of 1,000 PMMY-related tweets. The Python workflow used NLTK for text preparation and TF-IDF to represent the relative importance of terms.",
+          "A sentiment model trained on movie-review data was then applied to classify the tweets as positive, neutral, or negative. This provided a view of expressed sentiment alongside the financial analysis.",
         ],
       },
     ],
   },
-  contribution: {
-    id: "my-contribution",
-    heading: "My contribution",
-    paragraphs: [
-      "I led the study, carried out the exploratory data analysis and Python-based sentiment-analysis work, developed visualizations, and wrote the paper with guidance from my mentor.",
-      "The project involved working across quantitative program data, text collected from Twitter, and literature on financial inclusion and barriers to women’s entrepreneurship.",
-    ],
-  },
-  pipeline: {
-    id: "tweets-to-sentiment",
-    heading: "From tweets to sentiment",
-    steps: [
-      { n: "01", heading: "Collect", paragraphs: ["I used Tweepy to collect PMMY-related tweets for analysis.", "The study considered a sample of 1,000 recent tweets rather than a representative survey of the population."] },
-      { n: "02", heading: "Prepare the text", paragraphs: ["The NLP workflow used Python’s NLTK library. The paper describes preprocessing through segmentation, lemmatization, and chunking to prepare the text for analysis."] },
-      { n: "03", heading: "Represent the language", paragraphs: ["TF-IDF converted text into numerical features, representing the relative importance of terms within the collection."] },
-      { n: "04", heading: "Classify", paragraphs: ["A sentiment model trained using movie-review data was applied to the PMMY tweet sample, classifying sentiment as positive, neutral, or negative."] },
-      { n: "05", heading: "Interpret", paragraphs: ["I examined the resulting distribution alongside the financial-program analysis, considering what each source could contribute to the research question."] },
-    ] satisfies Step[],
-  },
   findings: {
-    id: "findings",
+    id: "what-the-study-found",
     heading: "What the study found",
     lending: {
-      heading: "Different lending categories followed different trajectories",
+      heading: "Lending activity changed over time",
       paragraphs: [
-        "The financial analysis showed variation across loan categories and years.",
-        "Reported overall disbursement increased across the study period, with a decline in financial year 2020–21 followed by a recovery in 2021–22.",
+        "The paper reports an overall increase in disbursement across the study period, with a decline in financial year 2020–21 followed by recovery in 2021–22.",
+        "It discusses the pandemic as possible context for the decline, rather than establishing its causal effect.",
       ],
-      note: "The paper discusses the pandemic as a possible context for the decline. The descriptive analysis does not isolate its causal effect.",
-    } satisfies Finding,
+    },
     sentiment: {
       heading: "The sampled discussion was predominantly positive",
-      lead: "The paper reports the following sentiment classifications:",
+      lead: "The paper reports these sentiment classifications within the collected tweet sample:",
       columns: ["Classification", "Share of the 1,000-tweet sample"],
       rows: [
         { label: "Positive", value: 78 },
         { label: "Neutral", value: 12 },
         { label: "Negative", value: 10 },
       ],
+      after: "These percentages describe the model’s classifications of the sampled tweets, not population-wide approval or classifier accuracy.",
       /** the caption the notes prescribe */
       caption: "Sentiment classifications reported in the paper for a sample of 1,000 PMMY-related tweets. Results describe the collected sample, not the wider population.",
-      note: "These figures describe classifications within the collected sample. They are not population-wide approval ratings or model-accuracy scores.",
     },
     access: {
-      heading: "Access involves more than the availability of credit",
+      heading: "Credit was one part of a wider question",
       paragraphs: [
-        "The paper also discusses barriers surrounding education, skills, social expectations, mobility, household responsibilities, and confidence.",
-        "These considerations helped frame the financial data within a broader question: what conditions allow someone to make use of an opportunity?",
-        "The lending analysis and sentiment results offered partial perspectives on that question, rather than a complete measurement of empowerment.",
+        "Alongside the analysis, the paper discussed barriers identified in the surrounding literature, including education, skills, mobility, household responsibilities, social expectations, and confidence.",
+        "These considerations framed the interpretation: access to a financial scheme does not, by itself, explain whether someone can make use of it.",
       ],
-      barriers: ["education", "skills", "social expectations", "mobility", "household responsibilities", "confidence"],
     },
+  },
+  context: {
+    id: "reading-the-results-in-context",
+    heading: "Reading the results in context",
+    paragraphs: [
+      "Twitter users did not necessarily represent the rural women the initiative aimed to serve, particularly those without reliable internet access. The sentiment model also crossed domains, moving from movie-review training material to financial-policy discussion.",
+      "The two analyses therefore offered partial perspectives. Lending figures described program activity; tweet classifications described sampled discussion. Neither independently established a causal improvement in financial literacy, independence, or wellbeing.",
+    ],
   },
   outreach: {
     id: "beyond-the-paper",
     heading: "Beyond the paper",
-    subheading: "Community education with Saksharta",
     paragraphs: [
-      "Through a partnership with Saksharta spanning both of my research projects, I helped provide educational sessions for interested girls and young women in underserved communities in Mumbai.",
-      "Alongside classes, we offered assistance, mentoring sessions on request, and practical support for participation and learning.",
-      "This work created another way to engage with the topics behind the research, through conversation, education, and ongoing guidance.",
+      "Through a partnership with Saksharta spanning both of my research projects, I helped deliver educational sessions for interested girls and young women in underserved communities in Mumbai.",
+      "Alongside classes, we offered assistance, mentoring on request, and practical support for participation and learning. This was related community work, separate from the research datasets and findings.",
     ],
-    separate: "The outreach was related community work, separate from the paper’s datasets and research findings.",
-  },
-  limits: {
-    id: "limits",
-    heading: "What the evidence could—and couldn’t—tell us",
-    paragraphs: [
-      "The paper explicitly recognizes that Twitter discussion may not represent the rural population the initiative aims to serve. People without reliable internet access are less likely to appear in the sample.",
-      "The sentiment model also moved between domains: it was trained on movie reviews and applied to discussion of a financial policy. That difference matters when interpreting its classifications.",
-      "Lending figures describe program activity. Online sentiment describes a sample of public discussion. Neither independently establishes a causal improvement in financial literacy, independence, or long-term wellbeing.",
-    ],
-    close: "Keeping those distinctions clear is important to understanding the study’s scope.",
-  },
-  tools: {
-    id: "tools",
-    heading: "Tools and methods",
-    columns: ["Area", "Tools and approach"],
-    rows: [
-      ["Programming", "Python"],
-      ["Financial analysis", "Exploratory data analysis of secondary data"],
-      ["Text collection", "Tweepy"],
-      ["Language processing", "NLTK"],
-      ["Text representation", "TF-IDF"],
-      ["Sentiment analysis", "Positive, neutral, and negative classification"],
-      ["Training material", "Movie-review sentiment dataset"],
-      ["Visualization", "Matplotlib"],
-    ] as [string, string][],
   },
   takeaways: {
     id: "what-i-took-from-it",
     heading: "What I took from it",
     paragraphs: [
-      "This project gave me an early opportunity to use programming to investigate a question beyond the software itself.",
-      "It also made the limits of a dataset tangible. A large amount of available information can still leave out the people whose experiences matter most to the question.",
-      "Working on the analysis alongside community education encouraged me to think more carefully about the relationship between measurable activity, expressed opinion, and lived experience.",
+      "This was an early opportunity to use programming to investigate a question beyond the software itself.",
+      "Working on the analysis alongside community education made me more attentive to who appears in a dataset, who is missing, and what additional understanding comes from speaking with people directly.",
     ],
+  },
+  tools: {
+    id: "tools-and-methods",
+    heading: "Tools and methods",
+    items: ["Python", "Tweepy", "NLTK", "TF-IDF", "Sentiment classification", "Matplotlib", "Exploratory analysis of secondary financial data"],
   },
   reference: {
     id: "publication-reference",
@@ -241,7 +198,6 @@ export const teen = {
       "The study combined exploratory data analysis with linear regression, examining patterns across age, residence, marital status, schooling, religion, and caste and tribe.",
       "The work continued beyond publication. I presented the research to doctors and gynecologists at Chirayu Hospital in Bhopal and developed a community education program with Saksharta.",
     ],
-    dimensions: ["age", "residence", "marital status", "schooling", "religion", "caste and tribe"],
   },
   study: {
     id: "building-the-study",
@@ -329,14 +285,13 @@ export const teen = {
     subheading: "Turning research into educational material",
     paragraphs: [
       "Through Saksharta, I developed Project Ārogya’s teaching material and was the sole leader of its teenage-pregnancy awareness sessions.",
-      "The program reached more than 200 girls through sessions in rural communities and centers operated by Saksharta.",
       "I translated the research into lessons about early pregnancy, motherhood, and the importance of education. The work also included mentoring on request and practical assistance and support.",
       "Saksharta’s project page records 9 September 2022 as the first in a series of awareness sessions.",
     ],
+    /** the documented reach, set beside the section as its figure (participation, not a research metric) */
+    reach: { value: "200+", text: "The program reached more than 200 girls through sessions in rural communities and centers operated by Saksharta." },
     separate: "The outreach was an extension of my engagement with the subject, separate from the survey analysis. Its documented reach describes participation, rather than a measured change in pregnancy rates or health outcomes.",
     link: AROGYA,
-    /** what Anya did, in the copy's own words */
-    roles: ["developed Project Ārogya’s teaching material", "sole leader of its teenage-pregnancy awareness sessions", "mentoring on request", "practical assistance and support"],
   },
   limits: {
     id: "scope",
@@ -345,8 +300,8 @@ export const teen = {
       "The study used secondary survey data and examined patterns across groups and survey rounds.",
       "Associations between schooling, marriage, residence, and pregnancy do not independently establish causation. The findings also should not be used to characterize every person within a demographic group.",
       "The regression results describe the model used in the paper. They do not establish clinical validity or make the system suitable for individual medical decisions.",
+      "Similarly, the hospital presentation and internal retention of the paper should not be confused with adoption into clinical practice.",
     ],
-    close: "Similarly, the hospital presentation and internal retention of the paper should not be confused with adoption into clinical practice.",
   },
   tools: {
     id: "tools",
@@ -390,16 +345,13 @@ export const companion = {
 };
 
 export const pmmySections = [
-  { id: pmmy.publication.id, label: "About the publication" },
   { id: pmmy.question.id, label: "The question" },
   { id: pmmy.sources.id, label: "Two sources of evidence" },
-  { id: pmmy.contribution.id, label: "My contribution" },
-  { id: pmmy.pipeline.id, label: "From tweets to sentiment" },
   { id: pmmy.findings.id, label: "What the study found" },
+  { id: pmmy.context.id, label: "Reading the results in context" },
   { id: pmmy.outreach.id, label: "Beyond the paper" },
-  { id: pmmy.limits.id, label: "What the evidence could\u2060—and couldn’t\u2060—tell us" },
-  { id: pmmy.tools.id, label: "Tools and methods" },
   { id: pmmy.takeaways.id, label: "What I took from it" },
+  { id: pmmy.tools.id, label: "Tools and methods" },
   { id: pmmy.reference.id, label: "Publication reference" },
 ];
 
@@ -416,14 +368,3 @@ export const teenSections = [
   { id: teen.takeaways.id, label: "What I took from it" },
   { id: teen.reference.id, label: "Publication reference" },
 ];
-
-/** the one optional outreach photograph (Project Ārogya). Set `src` (a file in
- * public/work/research/) when a suitable, shareable image is supplied. */
-export const arogyaPhoto = {
-  src: null as string | null,
-  alt: "",
-  width: 1200,
-  height: 900,
-  wanted: "A Project Ārogya session",
-  care: "Only an image suitable for public sharing",
-};

@@ -324,8 +324,8 @@ for (const [w, h] of [[375, 812], [768, 1024], [1440, 900]]) {
   ok("panels: every destination present, no nested interactive elements", dests === 9 && nested === 0, `${dests} links, ${nested} nested`);
   const exp = await page.$eval(".bento__card--experiments", (c) => ({ graphics: c.querySelectorAll("svg, img, canvas").length, text: c.textContent.trim() }));
   ok("More: Experiments is an empty, clearly forthcoming plate (no graphic)", exp.graphics === 0 && /Later/.test(exp.text), JSON.stringify(exp));
-  const fake = await page.$$eval(".bento a, .bento button", (x) => x.length);
-  ok("bento: placeholders are not links", fake === 0);
+  const links = await page.$$eval(".bento a, .bento button", (x) => x.map((a) => a.getAttribute("href")));
+  ok("bento: only Wildlife photography (which has a page) is a link; the placeholders are not", links.length === 1 && links[0] === "/wildlife-photography", JSON.stringify(links));
   await page.context().close();
 
   const phone = await newPage({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
@@ -674,8 +674,9 @@ for (const [w, h] of [[1440, 900], [1024, 768], [768, 1024], [390, 844]]) {
   // project pages: one or two contextual figures, standing on a section rule, clear of text
   const page = await newPage();
   const res = [];
-  // (the bespoke pages have their own layouts; their figures are checked separately below)
-  for (const slug of slugs.filter((s) => !["crackd-ai", "buzzworks", "tmu-citation-tooling", "gvi-conservation", "pmmy-research", "teenage-pregnancy-research", "esp-teaching", "adi-mentorship"].includes(s))) {
+  // (the bespoke pages have their own layouts; their figures are checked separately below,
+  // Inteli-lens's in qa/inteli.mjs — feet on its closing rule at five widths)
+  for (const slug of slugs.filter((s) => !["crackd-ai", "buzzworks", "tmu-citation-tooling", "gvi-conservation", "pmmy-research", "teenage-pregnancy-research", "esp-teaching", "adi-mentorship", "inteli-lens"].includes(s))) {
     await page.goto(`${base}/work/${slug}`, { waitUntil: "networkidle" });
     const r = await page.evaluate(() =>
       [...document.querySelectorAll("[data-avatar]")].map((el) => {
@@ -689,49 +690,32 @@ for (const [w, h] of [[1440, 900], [1024, 768], [768, 1024], [390, 844]]) {
   }
   ok("project pages: 1–2 figures each, standing on the rule under their section", res.every((x) => /:(1|2):true$/.test(x)), res.join(" "));
   ok("project pages: two for Lynxster and AMNH", res.some((x) => x === "lynxster:2:true") && res.some((x) => x === "amnh:2:true"));
-  // Crackd: one sits on the phase-02 sheet's top edge, one stands on the last question's rule
+  // Crackd: one sits on the phase-02 sheet's top edge (iteration 26: the questions, and the figure on them, are gone)
   await page.goto(`${base}/work/crackd-ai`, { waitUntil: "networkidle" });
   const ck = await page.evaluate(() => {
     const foot = (el) => { const b = el.getBoundingClientRect(); return b.bottom - b.height * (1 - parseFloat(getComputedStyle(el).getPropertyValue("--base"))); };
-    const build = document.querySelector(".avatar--ck-build"), think = document.querySelector(".avatar--ck-think");
+    const build = document.querySelector(".avatar--ck-build");
     const sheet = document.querySelector(".ck-sheet").getBoundingClientRect();
-    const lastQ = [...document.querySelectorAll(".ck-questions__list li")].pop().getBoundingClientRect();
-    return { n: document.querySelectorAll("[data-avatar]").length, build: Math.round(foot(build) - sheet.top), think: Math.round(foot(think) - lastQ.bottom) };
+    return { n: document.querySelectorAll("[data-avatar]").length, build: Math.round(foot(build) - sheet.top) };
   });
-  ok("Crackd: two figures, seated on the phase-02 sheet and standing on the last question's rule", ck.n === 2 && Math.abs(ck.build) < 3 && Math.abs(ck.think) < 3, JSON.stringify(ck));
-  // Buzzworks: one, standing on the rule under "What I owned"
-  await page.goto(`${base}/work/buzzworks`, { waitUntil: "networkidle" });
-  const bz = await page.evaluate(() => {
-    const el = document.querySelector(".avatar--bz-desk"), b = el.getBoundingClientRect();
-    const foot = b.bottom - b.height * (1 - parseFloat(getComputedStyle(el).getPropertyValue("--base")));
-    return { n: document.querySelectorAll("[data-avatar]").length, gap: Math.round(foot - document.getElementById("what-i-owned").getBoundingClientRect().bottom) };
-  });
-  ok("Buzzworks: one figure, standing on the rule under its section", bz.n === 1 && Math.abs(bz.gap) < 3, JSON.stringify(bz));
-  // TMU: one, the reader, standing on the rule under "Beyond the code"
-  await page.goto(`${base}/work/tmu-citation-tooling`, { waitUntil: "networkidle" });
-  const tm = await page.evaluate(() => {
-    const el = document.querySelector(".avatar--tmu-reader"), b = el.getBoundingClientRect();
-    const foot = b.bottom - b.height * (1 - parseFloat(getComputedStyle(el).getPropertyValue("--base")));
-    return { n: document.querySelectorAll("[data-avatar]").length, gap: Math.round(foot - document.getElementById("beyond-the-code").getBoundingClientRect().bottom) };
-  });
-  ok("TMU: one figure, standing on the rule under its section", tm.n === 1 && Math.abs(tm.gap) < 3, JSON.stringify(tm));
-  // GVI: one, watching with binoculars, standing on the rule under "In the field"
-  await page.goto(`${base}/work/gvi-conservation`, { waitUntil: "networkidle" });
-  const gv = await page.evaluate(() => {
-    const el = document.querySelector(".avatar--gvi-watch"), b = el.getBoundingClientRect();
-    const foot = b.bottom - b.height * (1 - parseFloat(getComputedStyle(el).getPropertyValue("--base")));
-    return { n: document.querySelectorAll("[data-avatar]").length, gap: Math.round(foot - document.getElementById("in-the-field").getBoundingClientRect().bottom) };
-  });
-  ok("GVI: one figure, standing on the rule under its section", gv.n === 1 && Math.abs(gv.gap) < 3, JSON.stringify(gv));
-  // the research pages: one reader each, on the rule under "My contribution"
-  for (const slug of ["pmmy-research", "teenage-pregnancy-research"]) {
+  ok("Crackd: one figure, seated on the phase-02 sheet's top edge", ck.n === 1 && Math.abs(ck.build) < 3, JSON.stringify(ck));
+  // the other case studies (iteration 25 renamed their sections): one decorative figure per page,
+  // standing on its own section's closing rule, overlapping no text
+  for (const [slug, sel] of [["buzzworks", ".avatar--bz-desk"], ["tmu-citation-tooling", ".avatar--tmu-reader"], ["gvi-conservation", ".avatar--gvi-watch"], ["pmmy-research", ".avatar--rs-reader"], ["teenage-pregnancy-research", ".avatar--rs-reader"]]) {
     await page.goto(`${base}/work/${slug}`, { waitUntil: "networkidle" });
-    const rs = await page.evaluate(() => {
-      const el = document.querySelector(".avatar--rs-reader"), b = el.getBoundingClientRect();
+    const r = await page.evaluate((sel) => {
+      const el = document.querySelector(sel);
+      if (!el) return { missing: true };
+      el.scrollIntoView({ block: "center", behavior: "instant" });
+      const b = el.getBoundingClientRect(), sec = el.closest("section")?.getBoundingClientRect();
       const foot = b.bottom - b.height * (1 - parseFloat(getComputedStyle(el).getPropertyValue("--base")));
-      return { n: document.querySelectorAll("[data-avatar]").length, gap: Math.round(foot - document.getElementById("my-contribution").getBoundingClientRect().bottom) };
-    });
-    ok(`${slug}: one figure, standing on the rule under its section`, rs.n === 1 && Math.abs(rs.gap) < 3, JSON.stringify(rs));
+      const hits = [...document.querySelectorAll("main p, main h2, main h3, main li")].filter((t) => {
+        const q = t.getBoundingClientRect();
+        return q.width && !(q.right <= b.left + 4 || q.left >= b.right - 4 || q.bottom <= b.top + 4 || q.top >= b.bottom - 4) && !el.contains(t);
+      }).length;
+      return { n: document.querySelectorAll("[data-avatar]").length, hidden: el.closest("[aria-hidden='true']") !== null || el.getAttribute("aria-hidden") === "true", inside: !!sec && b.top >= sec.top - 2 && Math.abs(foot - sec.bottom) < 3, hits };
+    }, sel);
+    ok(`${slug}: one decorative figure, standing on its section's rule, over no text`, r.n === 1 && r.hidden && r.inside && r.hits === 0, JSON.stringify(r));
   }
   await page.context().close();
 }

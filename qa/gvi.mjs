@@ -34,7 +34,7 @@ for (const raw of md.split("\n")) {
   }
   lines.push(l);
 }
-const forbidden = [/INTERNAL/, /DO NOT RENDER/, /2027/, /aerial/i, /ultramarathon/i, /\braised\b/i, /\$\s?\d/, /accuracy/i, /deployed/i, /darted (the|her)/i, /I darted/i, /veterinar/i, /\bkm run\b/i, /completed (the|a) 50/i];
+const forbidden = [/INTERNAL/, /DO NOT RENDER/, /2027/, /aerial/i, /ultramarathon/i, /\braised\b/i, /\$\s?\d/, /accuracy/i, /(?<!rather than a )deployed (?!monitoring system)/i, /darted (the|her)/i, /I darted/i, /veterinar/i, /\bkm run\b/i, /completed (the|a) 50/i];
 
 const browser = await chromium.launch({ channel: "chrome" });
 
@@ -52,7 +52,8 @@ const browser = await chromium.launch({ channel: "chrome" });
   const leaked = forbidden.filter((f) => f.test(text) || f.test(html));
   ok("content: nothing from the internal notes; no embellished model, relocation, run, fundraising or aerial claims", leaked.length === 0, leaked.join(", "));
   ok("content: the lion relocation observed (not performed); the run helped organize and participated in", text.includes("i observed the darting and relocation process") && text.includes("helped organize and participated in a 50 km running event"));
-  ok("content: the early working model, and the later ideas kept apart under their own label", text.includes("an early working model") && (await page.$eval(".gvi-after__k", (e) => e.textContent)) === "After the internship");
+  ok("content: an early functioning model, exploratory rather than deployed; individual identification only as a later question", text.includes("an early functioning model") && text.includes("rather than a deployed monitoring system") && text.includes("questions i continued exploring afterward, including identifying individual animals"));
+  ok("content: observed and attended kept apart from her own contributions", (await page.$$eval(".gvi-observed__k", (k) => k.map((x) => x.textContent).join())) === "Observed,Attended");
   ok("content: the certificate is readable text, with no file link", (await page.$$eval(".gvi-cert li", (l) => l.length)) === 3 && (await page.$$eval(".gvi-cert a, main a[href$='.pdf']", (a) => a.length)) === 0);
   // the lower two load lazily: bring each into view (as a reader would) first
   for (const f of await page.$$(".gvi-photo")) {

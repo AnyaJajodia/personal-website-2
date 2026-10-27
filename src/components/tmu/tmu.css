@@ -55,11 +55,10 @@
 }
 
 /* ------------------------------------------------------------ opening */
-.theme-tmu .tmu-hero {
-  padding-bottom: clamp(2.5rem, 5vw, 3.75rem);
-}
-/* one column: the thread's flourish has the right of the title to itself,
-   and the facts sit beneath, clear of it */
+/* a manuscript's title page: one column, the facts beneath as its colophon.
+   The thread makes a small loop after the title — its footnote mark — and
+   runs back out to the margin (DetailLine), so the right of the title is the
+   footnote's path rather than an empty field */
 .tmu-hero__grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -86,11 +85,11 @@
 }
 .tmu-logo {
   width: fit-content;
-  margin: clamp(1rem, 2vw, 1.4rem) 0 clamp(1.25rem, 2.4vw, 1.75rem);
+  margin: 0;
 }
 .tmu-logo__img {
   display: block;
-  width: clamp(7.5rem, 10vw, 9rem);
+  width: clamp(6.5rem, 8.5vw, 7.75rem);
   height: auto;
 }
 .theme-tmu .tmu-hero__title {
@@ -98,7 +97,7 @@
   text-wrap: balance;
 }
 .theme-tmu .tmu-hero__subtitle {
-  max-width: 36ch;
+  max-width: 44ch;
 }
 .tmu-facts {
   display: grid;
@@ -554,31 +553,6 @@
   line-height: 1.35;
   color: var(--text);
 }
-/* the source types: one run of names in the accent, thin dots between */
-.tmu-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.2rem 0.6rem;
-  margin: 0;
-  padding: 0.85rem 0 0;
-  border-top: 1px solid var(--rule);
-  list-style: none;
-}
-.tmu-tags li {
-  font-size: 0.9375rem;
-  font-weight: 550;
-  color: var(--tmu-blue-ink);
-}
-.tmu-tags li:not(:last-child)::after {
-  content: "·";
-  margin-left: 0.6rem;
-  color: var(--muted);
-  font-weight: 400;
-}
-.tmu-tags li::first-letter {
-  text-transform: uppercase;
-}
-
 /* output panels: a document's page, a shade off the paper, flat */
 .tmu-out {
   margin: 0;
@@ -722,52 +696,11 @@
 
 /* -------------------------------------------------- beyond the code */
 .tmu-editorial__grid {
+  /* the prose, with the reader standing on the section's rule beside it */
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(15rem, 19rem);
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: clamp(1.5rem, 4vw, 3rem);
   margin-top: 1.4rem;
-}
-.tmu-proof {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 1.5rem;
-}
-/* the editorial work: an open list under a rule */
-.tmu-proof__list {
-  display: grid;
-  margin: 0;
-  padding: 0;
-  border-top: 1px solid var(--rule-strong);
-  list-style: none;
-}
-.tmu-proof__list li {
-  display: grid;
-  grid-template-columns: 0.85rem minmax(0, 1fr);
-  align-items: baseline;
-  gap: 0.75rem;
-  padding: 0.65rem 0;
-  font-size: 0.9375rem;
-  line-height: 1.4;
-}
-.tmu-proof__list li + li {
-  border-top: 1px solid var(--rule);
-}
-/* a short stroke of the highlighter for each task */
-.tmu-proof__list li::before {
-  content: "";
-  width: 0.85rem;
-  height: 3px;
-  border-radius: 2px;
-  background: var(--tmu-gold);
-  translate: 0 -0.25em;
-}
-.tmu-proof__list li::first-letter {
-  text-transform: uppercase;
-}
-.tmu-proof__list svg {
-  display: none;
 }
 .avatar--tmu-reader {
   position: relative;
@@ -775,40 +708,6 @@
   width: clamp(4.75rem, 6vw, 5.4rem); /* standing figures share one height across the case studies */
   margin-bottom: calc(-1 * clamp(3rem, 6vw, 4.75rem));
   transform: translateY(var(--sink));
-}
-
-/* ------------------------------------------------- engineering the workflow */
-.tmu-modules {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: clamp(0.6rem, 1.6vw, 1rem);
-  margin: clamp(1.5rem, 3vw, 2rem) 0;
-  padding: 0;
-  list-style: none;
-}
-.tmu-modules li {
-  position: relative;
-  padding: 0.7rem 0.75rem;
-  border: 1px solid var(--tmu-blue-line);
-  border-radius: 6px;
-  background: transparent;
-  font-family: var(--serif);
-  font-size: 1.12rem;
-  font-weight: 600;
-  line-height: 1.15;
-  text-align: center;
-}
-.tmu-modules li::first-letter {
-  text-transform: uppercase;
-}
-.tmu-modules li + li::before {
-  content: "";
-  position: absolute;
-  right: 100%;
-  top: 50%;
-  width: clamp(0.6rem, 1.6vw, 1rem);
-  border-top: 1.5px solid var(--tmu-blue-line);
 }
 
 /* --------------------------------------------------------- tables */
@@ -895,32 +794,8 @@
   .tmu-facts__item + .tmu-facts__item {
     border-top: 1px solid var(--rule);
   }
-  .tmu-modules {
-    grid-template-columns: minmax(0, 1fr);
-    max-width: 20rem;
-  }
-  .tmu-modules li {
-    text-align: left;
-  }
-  .tmu-modules li + li::before {
-    right: auto;
-    left: 1.25rem;
-    top: auto;
-    bottom: 100%;
-    width: 0;
-    height: clamp(0.6rem, 1.6vw, 1rem);
-    border-top: 0;
-    border-left: 1.5px solid var(--tmu-blue-line);
-  }
   .tmu-editorial__grid {
     grid-template-columns: minmax(0, 1fr);
-  }
-  .tmu-proof {
-    flex-direction: row;
-    align-items: flex-end;
-  }
-  .tmu-proof__list {
-    flex: 1;
   }
 }
 @media (max-width: 759.98px) {
@@ -1011,10 +886,6 @@
     letter-spacing: 0.07em;
     text-transform: uppercase;
     color: var(--muted);
-  }
-  .tmu-proof {
-    flex-direction: column;
-    align-items: stretch;
   }
   .avatar--tmu-reader {
     align-self: flex-end;

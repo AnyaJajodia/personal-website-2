@@ -10,158 +10,144 @@ Location: Karongwe Private Game Reserve, Limpopo, South Africa
 
 ## Where the threads started meeting
 
-Before South Africa, I wasn’t sure how my interest in animals and my interest in technology would fit together.
+Through GVI’s wildlife research program at Karongwe, I participated in wildlife monitoring, biological surveys, conservation data work, and community teaching.
 
-During a wildlife research internship with GVI, I worked with field observations, camera-trap imagery, movement data, and conservation teams. I began to see how much those interests could inform each other—and how many questions I wanted to keep exploring.
+Before the placement, I wasn’t sure how my interests in animals and technology could fit together. Working between field observations and the information collected about them gave me a way to start exploring that connection.
 
-The experience influenced the classes I chose afterward, the research I became interested in, and eventually the work I pursued at the American Museum of Natural History.
+<!-- OPENING PHOTOGRAPH
+Preserve the existing lioness relocation photograph and intentionally shorter crop.
+File: public/assets/gvi/gvi-lioness-relocation.JPG
+Caption: "A tranquilized lioness being transported for relocation to another reserve."
+-->
 
-It opened a direction I hadn’t previously known how to follow.
+## Field observations and conservation data
 
-## The placement
+### Collecting the observations
 
-My internship took place at Karongwe Private Game Reserve in Limpopo, South Africa.
+I helped collect wildlife behavior and movement data through cheetah monitoring, bird surveys, vegetation surveys, and prey counts. Camera traps and radio tracking provided additional ways to follow animals beyond a single sighting.
 
-Through GVI’s wildlife research program, I participated in biological surveys, wildlife monitoring, data processing, practical reserve work, and community teaching.
+The work required attention to the animal, its surroundings, and how an observation was recorded. A sighting became part of a longer record that could be compared with observations from other days and locations.
 
-The placement brought together several parts of conservation: observing animals, understanding the information collected about them, maintaining the environment in which the work happens, and engaging with people beyond the reserve.
+<!-- FIELDWORK PHOTOGRAPH
+Preserve the existing portrait crop.
+File: public/assets/gvi/gvi-cheetah-observation.png
+Caption: "Taba, one of the reserve’s two female cheetahs, carrying her prey."
+-->
 
-## In the field
-### An observation becomes useful when you record it carefully
+### Working across formats
 
-I helped collect data on wildlife behavior and movement, including cheetah monitoring, bird surveys, vegetation surveys, and prey counts.
+I processed information from field surveys, camera traps, movement records, heat maps, and GIS-based analysis, contributing to data analysis, visualizations, and reporting.
 
-Camera traps and radio tracking added other ways to observe animals beyond a single sighting. Each method offered a different piece of information, and each required attention to how that information was collected and interpreted.
-
-The work encouraged me to look beyond the most immediately noticeable animal or event. Patterns also depended on the surrounding habitat, other species, and observations accumulated over time.
-
-## Working with conservation data
-### Different formats, connected questions
-
-I worked with information from field surveys, camera traps, movement records, heat maps, and GIS-based analysis.
-
-Processing those different formats helped me understand the relationship between an observation in the field and the patterns someone could investigate afterward.
-
-I contributed to data analysis, visualizations, and reporting, learning to consider both the individual record and the wider ecological context.
-
-This was also where I started noticing connections across disciplines. A technical question about organizing data could lead to questions about animal behavior, habitat, monitoring practices, or the decisions that information supported.
+Working across those formats helped me connect individual observations with wider patterns. It also made the relationship between computing and conservation tangible: organizing and interpreting information was part of understanding what was happening on the reserve.
 
 ## Exploring AI-assisted identification
 
-Camera-trap imagery made the connection between conservation and computing particularly tangible.
+I also worked on an early functioning model for AI-driven wildlife identification, exploring how computer vision could support the review of wildlife imagery.
 
-Identifying animals and reviewing imagery involved substantial manual work. I explored AI-driven wildlife identification and worked on an early working model, using the field experience to think about where computer vision could be useful.
+The work was exploratory, rather than a deployed monitoring system. It gave me a practical starting point for thinking about conservation applications of AI and questions I continued exploring afterward, including identifying individual animals through distinctive markings.
 
-The scope was exploratory. It gave me practical experience with a possible conservation application and a clearer understanding of the questions that would matter beyond a demonstration: variation in images, distinguishing animals, and knowing when an identification needs closer review.
+## Conservation in practice
 
-That interest continued after the internship, including ideas for identifying individual animals through distinctive markings and making camera-trap records easier to work with.
+I observed the darting and relocation process for a female lioness. Staff explained that she had reached sexual maturity and that the resident male was her father; moving her to another reserve was connected to breeding management.
 
-## The work around the research
+Seeing the process brought questions about breeding, animal movement, and reserve boundaries into focus. Conservation involved active decisions about animals’ lives, alongside the monitoring work that helped inform them.
 
-Conservation also involved practical work that did not end in a dataset.
+I also attended a talk at Kruger National Park on elephant and rhino conservation, including issues surrounding ivory and horn.
 
-As part of the internship, I organized a road-clearing activity on the reserve. We removed overhanging branches and vegetation encroaching on access routes, using hand tools to clear the roads.
+## Supporting the reserve and community
 
-It was a different kind of contribution, but part of the same environment that supported monitoring and daily reserve work.
+### Practical reserve work
 
-## Beyond the reserve
-### Teaching and community involvement
+I organized a road-clearing activity, working with the team to remove overhanging branches and vegetation encroaching on access routes using hand tools.
 
-Every two weeks, we visited a local village to work with children.
+### Teaching beyond the reserve
 
-With older pupils, we taught short conservation lessons, including topics such as arachnids and camera-trapping technology. With preschoolers, we worked on English through simple lessons and activities.
+Every two weeks, our team visited a local village to work with children. With older pupils, we taught conservation lessons covering topics such as arachnids and camera-trapping technology. With preschoolers, we worked on English through simple lessons and activities.
 
-Teaching required another way of understanding the material: deciding what would be meaningful to the group, explaining it clearly, and adapting to the people in front of us.
+These visits were a regular part of the placement alongside the field research.
 
-The community work became an important part of the placement alongside the field research.
+<!-- COMMUNITY PHOTOGRAPH
+Preserve every existing edit obscuring children's faces.
+File: public/assets/gvi/gvi-community-learning.JPG
+Caption: "The local preschool, where our team visited every other week to help teach lessons."
+-->
 
-### Supporting anti-poaching work
+### Supporting anti-poaching resources
 
-I also helped organize and participated in a 50 km running event supporting anti-poaching resources.
+I helped organize and participated in a 50 km running event supporting anti-poaching resources, contributing to the collective effort behind conservation work on the ground.
 
-It added another perspective on conservation: the organization, fundraising, and collective effort needed to support the work on the ground.
+## What stayed with me
 
-## Conservation involves decisions
+The biggest change was in what I could imagine doing next. I had treated animals and technology as interests I might eventually have to choose between. This experience showed me that I could pursue both—and that the connections between them were worth investigating.
 
-Some of the most memorable experiences exposed me to the active management behind a reserve.
+I returned to college wanting to follow that direction. It influenced my decision to take Conservation Biology and helped lead me toward museum-based digitization and research at the American Museum of Natural History.
 
-I observed the darting and relocation process for a female lion. Staff explained that moving her was connected to breeding management: she had reached sexual maturity, and the resident male was her father.
-
-Seeing that process made questions about animal movement, breeding, and reserve boundaries much more concrete.
-
-I also attended a talk at Kruger National Park on elephant and rhino conservation, including issues surrounding ivory, tusks, and horns.
-
-These experiences gave me more to think about than a simple distinction between protecting animals and leaving them alone. Conservation involved decisions, constraints, and consequences that I wanted to understand more deeply.
+I still enjoy building software in very different settings. South Africa expanded the kinds of questions I wanted to bring those skills to.
 
 ## Training and completion
 
-I completed GVI’s four-week program, with a certificate issued in July 2024 covering:
+I completed the four-week program, with a certificate issued in July 2024 covering:
 
 - GVI South African Wildlife Research Expedition Internship.
 - GVI Leading Teams for Impact.
 - GVI Biological Survey Techniques Certificate.
 
-## What stayed with me
-
-The biggest change was in what I could imagine doing next.
-
-Working with animals, field observations, and conservation data showed me a direction in which my technical interests could become useful to questions I cared deeply about.
-
-I returned to college wanting to explore that connection further. It helped lead me toward Conservation Biology, further questions about animals and their behavior, and museum-based digitization and research.
-
-I still work on software in very different settings. This experience expanded the kinds of problems I wanted to spend time on—and gave me a reason to keep following them.
-
----
-
 <!-- INTERNAL CONTENT AND DESIGN NOTES — DO NOT RENDER
 
 DATES AND TITLE
 Use Summer 2024 and four-week program.
-The certificate was issued in July 2024; exact attendance dates are not established.
-Public role label: Wildlife Research Intern.
-Full program names are included in the training section.
+Certificate issued July 2024; exact attendance dates are not established.
+Public role: Wildlife Research Intern.
 Do not restore the placeholder end year 2027.
 
+FIELDWORK AND DATA
+Do not invent numerical impact, software packages, or additional responsibilities.
+Aerial-survey involvement remains omitted pending clarification.
+Keep direct contributions distinct from activities Anya observed or attended.
+
 AI WORK
-Anya confirms an early working AI-driven identification model.
-Do not describe it as a large deployed system or claim measured accuracy,
-species coverage, individual-identification capability, or operational adoption.
-Distinguish internship model work from later individual-animal identification ideas.
+Anya confirms an early functioning AI-driven wildlife identification model.
+Do not claim measured accuracy, species coverage, operational deployment,
+or demonstrated individual-animal identification.
+Individual-identification ideas continued afterward; they are not established
+capabilities of the internship model.
 
-FIELDWORK
-Do not add numerical impact claims or named software packages without confirmation.
-Aerial-survey involvement appeared in earlier descriptions but is omitted pending
-clarification of Anya's exact participation.
-
-COMMUNITY
-Use the current clarification of fortnightly visits.
-Older descriptions suggesting daily teaching should not override it.
-Teaching topics include conservation, arachnids, camera-trapping technology,
-and preschool English.
+COMMUNITY AND PRACTICAL WORK
+Visits were fortnightly, not daily.
+Older pupils: conservation, arachnids, and camera-trapping technology.
+Preschoolers: English lessons and activities.
+Anya organized the road-clearing activity.
+Do not invent teaching outcomes or independent responsibility for all lessons.
 
 ANTI-POACHING EVENT
 The event covered 50 km.
-Anya helped organize and participated in the run.
-Do not claim she individually completed an ultramarathon or give fundraising totals.
+Anya helped organize and participated.
+Do not claim she individually completed the full distance or give fundraising totals.
 
-LION RELOCATION
-Describe Anya as observing the process.
-Do not imply she performed veterinary work, darted the animal, or directed relocation.
-Do not name a management program or present the anecdote as a general policy
-without additional information.
+LIONESS RELOCATION
+Anya observed the process.
+Do not imply she darted the animal, performed veterinary procedures,
+or directed the relocation.
+Do not name an unconfirmed management program.
 
-PHOTOGRAPHY
-Use Anya's own photographs where supplied.
-Preferred opening: animal within the wider bushveld, or documentary fieldwork image.
-Do not use stock/generated imagery as evidence of the internship.
-Do not make the darting video the hero or autoplay it.
-Teaching images require appropriate permission and obscured children's faces.
-Avoid publishing sensitive wildlife locations or tracking details.
+EXISTING PHOTOGRAPHS
+Retain the three supplied photographs and captions specified above.
+Preserve the intentionally shorter opening image and the portrait cheetah crop.
+Keep captions adjacent to their images and visible without interaction.
+Preserve natural photographic colors in both themes.
+Preserve all edits obscuring children's faces.
+Do not reconstruct obscured faces.
+Do not add stock/generated evidence, image placeholders, or an autoplay video.
+Do not publish precise wildlife tracking information.
 
-DESIGN DIRECTION
-A field-notebook/editorial treatment, grounded in real photography.
-Preserve portfolio typography, thread motif, shared navigation, and theme controls.
-Use captions to connect images to actual activities.
-Keep the personal turning point prominent without letting it replace the work.
+LAYOUT
+The photo comments identify intended image placements, not additional visible copy.
+Move existing image components as needed; do not duplicate them.
+Use a photographic, editorial field-journal treatment within the shared portfolio.
+Keep field observations and data processing distinguishable without repeating
+their full method lists as extra decorative summaries.
+Treat training credentials as compact supporting information.
+Keep the personal turning point concentrated in the opening and final reflection.
+Preserve shared navigation, typography, thread motif, and theme controls.
 
 END INTERNAL NOTES -->

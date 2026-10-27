@@ -1,7 +1,10 @@
 // The Crackd.ai page and the work drawer, in Chrome.
 //   content: every approved line of handoff/content/work/crackd-ai.md is on the
-//     page; nothing from its implementation notes (or retired claims) is; the
-//     only external links are the three repositories, each in its own app
+//     page (bar the paragraph the notes mark as staging); nothing from its
+//     implementation notes (or retired claims) is; the external links are the
+//     three repositories and the two live apps that answered, each in its own
+//     application, with no screenshots on the page itself
+//   (the walkthrough dialogs: qa/crackd-tour.mjs)
 //   drawer: opens from the header's "Work" button; focus starts on Crackd (marked current)
 //     and is trapped; arrows move; Escape / overlay / close button dismiss and
 //     return focus; background scroll is locked and restored; every entry is a
@@ -27,36 +30,30 @@ const norm = (s) => s.replace(/\s+/g, " ").trim();
    or bare URLs (the URLs are checked as links below) */
 const md = readFileSync("handoff/content/work/crackd-ai.md", "utf8").split("<!--")[0];
 const lines = [];
+// iteration 26: the notes mark this paragraph as editorial staging — omitted
+const staging = /^The application walkthrough shows chain configuration/;
 for (const raw of md.split("\n")) {
   let l = raw.trim();
-  if (!l || l === "---" || /^\|\s*-/.test(l) || /^https?:\/\//.test(l) || /\.vercel\.app$/.test(l)) continue;
-  if (/^\|/.test(l)) {
-    l.split("|").map((c) => c.trim()).filter(Boolean).forEach((c) => lines.push(c));
-    continue;
-  }
-  l = l.replace(/^#+\s*/, "").replace(/^-\s+/, "");
-  // "Role: …" / "- Collaboration: …" → label and value are set separately
+  if (!l || l === "---" || /^https?:\/\//.test(l) || staging.test(l)) continue;
+  l = l.replace(/^#+\s*/, "").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+  // "Role: …" → label and value are set separately
   const kv = l.match(/^([A-Z][A-Za-z ]+): (.+)$/);
-  if (kv && !/questions were practical/.test(l)) {
+  if (kv) {
     lines.push(kv[1], kv[2]);
     continue;
   }
-  // the questions paragraph is set as a lead and a list of its questions
-  if (l.startsWith("The questions were practical:")) {
-    lines.push("The questions were practical:", ...l.replace("The questions were practical: ", "").match(/[^?]+\?/g).map((q) => q.trim()));
-    continue;
-  }
-  // "September–December 2025: Contributions…" (credits)
-  const dated = l.match(/^((?:September–December 2025)|(?:January–May 2026)): (.+)$/);
-  if (dated) {
-    lines.push(dated[1], dated[2]);
+  // "September–December 2025 · Contributing within a team" → dates beside the heading
+  const ph = l.match(/^((?:September–December 2025)|(?:January–May 2026)) · (.+)$/);
+  if (ph) {
+    lines.push(ph[1], ph[2]);
     continue;
   }
   lines.push(l);
 }
-const forbidden = ["IMPLEMENTATION NOTES", "DO NOT RENDER", "CONTENT STATUS", "TensorFlow", "40%", "35%", "self-critique", "vercel.app", "TODO", "Placeholder", "anchoring bias", "walkthrough"];
+const forbidden = ["IMPLEMENTATION NOTES", "DO NOT RENDER", "CONTENT STATUS", "TensorFlow", "40%", "35%", "self-critique", "TODO", "Placeholder", "anchoring bias", "detailed experiment comparison", "will be added", "crackd-admin-panel.vercel.app", "Explore the applications"];
 const repos = ["https://github.com/AnyaJajodia/caption_voting_user_interface", "https://github.com/AnyaJajodia/crackd-spring2026-admin-panel", "https://github.com/AnyaJajodia/llm_chaining_matrix"];
-const appOf = { [repos[0]]: "user-application", [repos[1]]: "admin-application", [repos[2]]: "chaining-matrix" };
+const lives = ["https://crackdspring2026.vercel.app/", "https://crackdmatrix.vercel.app/"];
+const appOf = { [repos[0]]: "user-application", [repos[1]]: "admin-application", [repos[2]]: "llm-chaining-matrix", [lives[0]]: "user-application", [lives[1]]: "llm-chaining-matrix" };
 
 const browser = await chromium.launch({ channel: "chrome" });
 
@@ -76,8 +73,8 @@ const browser = await chromium.launch({ channel: "chrome" });
   ok("content: both phase dates as given", text.includes("September–December 2025") && text.includes("January–May 2026"));
   const ext = await page.$$eval("main a[href^='http']", (as) => as.map((a) => ({ href: a.href, app: a.closest("article")?.id ?? null, blank: a.target === "_blank" && /noopener/.test(a.rel) })));
   ok(
-    "links: only the three repositories, each inside its own application, opening safely",
-    ext.length === 3 && ext.every((e) => appOf[e.href] === e.app && e.blank),
+    "links: the three repositories and two live apps, each inside its own application, opening safely",
+    ext.length === 5 && ext.every((e) => appOf[e.href] === e.app && e.blank),
     JSON.stringify(ext.map((e) => [e.href.split("/").pop(), e.app])),
   );
   const outline = await page.$$eval("main h1, main h2, main h3", (hs) => hs.map((h) => +h.tagName[1]));
@@ -87,13 +84,19 @@ const browser = await chromium.launch({ channel: "chrome" });
   const order = await page.evaluate(() => {
     const d = document.querySelector(".ck-hero__dates"), l = document.querySelector(".ck-plate"), h = document.querySelector("h1");
     const pos = (a, b) => !!(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
-    return { order: pos(d, l) && pos(l, h), dates: (document.querySelector(".ck-hero").innerText.match(/September 2025–May 2026/gi) ?? []).length };
+    // iteration 24: the logo and its dates share one line, above the question
+    const same = Math.abs(d.getBoundingClientRect().top + d.offsetHeight / 2 - (l.getBoundingClientRect().top + l.offsetHeight / 2)) < 12;
+    return { order: pos(l, d) && pos(d, h) && same, dates: (document.querySelector(".ck-hero").innerText.match(/September 2025–May 2026/gi) ?? []).length };
   });
-  ok("hero: September 2025–May 2026 above the logo and the question, shown once", order.order && order.dates === 1, JSON.stringify(order));
-  const jumps = await page.$$eval(".ck-table a", (as) => as.map((a) => [a.getAttribute("href"), a.textContent.includes("on this page"), !!document.querySelector(a.getAttribute("href"))]));
-  ok("table: application names are in-page jumps, labelled as such, to entries that exist", jumps.length === 3 && jumps.every(([h, lab, ex]) => h.startsWith("#") && lab && ex), JSON.stringify(jumps));
+  ok("hero: the logo with September 2025–May 2026 beside it, above the question, shown once", order.order && order.dates === 1, JSON.stringify(order));
+  const live = await page.$$eval(".ck-live", (as) => as.map((a) => [a.closest("article").id, a.querySelector(".ck-live__access")?.textContent]));
+  ok("live apps: labelled with their access requirement; none for the admin app (its address returned 404)", live.length === 2 && live.every(([, acc]) => /sign-in/i.test(acc ?? "")) && !live.some(([id]) => id === "admin-application"), JSON.stringify(live));
+  const apps = await page.$$eval(".ck-app", (as) => as.map((a) => ({ id: a.id, tour: a.querySelectorAll(".ck-tour-btn").length, primary: a.querySelector(".ck-tour-btn")?.textContent.startsWith("View walkthrough"), repo: a.querySelectorAll(".ck-repo").length, screens: a.querySelectorAll(".ck-screen").length })));
+  ok("applications: three entries, each with one “View walkthrough” button, one repository link and its named screens (6 / 5 / 5)", apps.length === 3 && apps.every((a) => a.tour === 1 && a.primary && a.repo === 1) && apps.map((a) => a.screens).join() === "6,5,5", JSON.stringify(apps));
+  ok("no table, and no screenshots or thumbnails on the page itself", (await page.$$eval("main table, main .ck-app img, main img[src*='/assets/crackd/']", (x) => x.length)) === 0 && (await page.$$eval("img", (x) => x.filter((i) => i.src.includes("/assets/crackd/") && !i.closest("dialog")).length)) === 0);
+  ok("walkthrough images load only when a tour opens", !(await page.evaluate(() => performance.getEntriesByType("resource").some((r) => r.name.includes("/assets/crackd/")))));
   ok("figures: at most two avatars, decorative", (await page.$$eval("main .avatar", (a) => a.length)) <= 2 && (await page.$$eval("main .avatar", (a) => a.every((x) => x.getAttribute("aria-hidden") === "true"))));
-  ok("no walkthrough dialogs, videos or embeds", (await page.$$eval("main dialog:not(#work-sheet), main video, main iframe", (x) => x.length)) === 0);
+  ok("one walkthrough dialog, closed; no videos or embeds", (await page.$$eval("main dialog.ck-tour", (x) => x.length)) === 1 && (await page.$$eval("main dialog.ck-tour[open], main video, main iframe", (x) => x.length)) === 0);
   ok("no console errors", errors.length === 0, errors.join(" | "));
   await page.context().close();
 }
@@ -240,7 +243,7 @@ await drawerChecks({ width: 390, height: 844 }, "390");
   // every target sits just below the header (or the page has run out of scroll)
   ok("On this page: every link lands its section just below the fixed header", landed.every((l) => (l.gap >= 4 && l.gap <= 40) || (l.bottom && l.gap >= 4)), JSON.stringify(landed.map((l) => [l.id, l.gap])));
   ok("On this page: the section being read is marked", landed.every((l) => l.cur === l.id || l.bottom), JSON.stringify(landed.map((l) => [l.id, l.cur])));
-  ok("On this page: 7 sections, phases numbered 01 / 02", ids.length === 7 && (await page.$$eval(".toc__n", (n) => n.map((x) => x.textContent).filter(Boolean).join())) === "01,02");
+  ok("On this page: 6 sections (the revised headings), phases numbered 01 / 02", ids.join() === "what-is-crackd,contributing-within-a-team,building-complete-applications,inside-the-chaining-matrix,what-i-took-from-it,tools-and-workflow" && (await page.$$eval(".toc__n", (n) => n.map((x) => x.textContent).filter(Boolean).join())) === "01,02");
   await page.context().close();
 }
 
@@ -271,7 +274,7 @@ for (const vp of [
     if (theme === "dark") ok(`${tag}: the deeper Crackd night (#1a1816)`, lay.bg === "rgb(26, 24, 22)", lay.bg);
     // section screenshots for viewing (viewport frames, scrolled so scroll-drawn marks have drawn)
     if (vp.width === 1440 || vp.width === 390 || (vp.width === 1024 && theme === "light") || (vp.width === 768 && theme === "light")) {
-      for (const sel of [".ck-hero", ".ck-intro", "#phase-1", "#phase-2", ".ck-app--admin", ".ck-app--matrix", ".ck-matrix", ".ck-takeaways", ".ck-table-section", ".ck-colophon"]) {
+      for (const sel of [".ck-hero", "#what-is-crackd", "#contributing-within-a-team", "#building-complete-applications", "#user-application", "#admin-application", "#llm-chaining-matrix", "#inside-the-chaining-matrix", "#what-i-took-from-it", "#tools-and-workflow"]) {
         // instant: the page scrolls smoothly for its own anchors
         await page.evaluate((s) => {
           const y = document.querySelector(s).getBoundingClientRect().top + scrollY - 90;

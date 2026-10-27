@@ -53,9 +53,6 @@
 }
 
 /* ------------------------------------------------------------ opening */
-.theme-gvi .gvi-hero {
-  padding-bottom: clamp(2.5rem, 5vw, 3.5rem);
-}
 .gvi-hero__dates {
   display: flex;
   width: fit-content;
@@ -77,28 +74,28 @@
 }
 .gvi-logo {
   width: fit-content;
-  margin: clamp(1rem, 2vw, 1.4rem) 0 clamp(1.25rem, 2.4vw, 1.75rem);
+  margin: 0;
 }
 .gvi-logo__mark {
-  width: clamp(3.75rem, 5vw, 4.5rem);
+  width: clamp(3.25rem, 4.2vw, 3.85rem);
 }
 .theme-gvi .gvi-hero__title {
-  max-width: 11ch;
+  max-width: 17ch;
   text-wrap: balance;
 }
 .theme-gvi .gvi-hero__subtitle {
-  max-width: 36ch;
+  max-width: 42ch;
 }
+/* the field entry's facts beside the title, hung from the thread */
 .gvi-facts {
-  display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
-  gap: 0 clamp(1.25rem, 3vw, 2.25rem);
-  max-width: 46rem;
-  margin: clamp(1.75rem, 3.5vw, 2.5rem) 0 0;
+  margin: 0;
   border-top: 1px solid var(--rule-strong);
 }
 .gvi-facts__item {
-  padding-top: 0.85rem;
+  padding-block: 0.8rem;
+}
+.gvi-facts__item + .gvi-facts__item {
+  border-top: 1px solid var(--rule);
 }
 .gvi-facts dt {
   color: var(--gvi-earth-ink);
@@ -227,15 +224,15 @@
   text-wrap: balance;
 }
 .gvi-h3 {
-  margin-top: 0.7rem;
   font-family: var(--serif);
-  font-style: italic;
-  font-size: clamp(1.35rem, 2vw, 1.65rem);
-  font-weight: 500;
-  line-height: 1.25;
-  color: var(--ink-2);
+  font-size: clamp(1.4rem, 2vw, 1.65rem);
+  font-weight: 600;
+  line-height: 1.15;
   max-width: 34ch;
   text-wrap: balance;
+}
+.gvi-h2--quiet {
+  font-size: clamp(1.6rem, 2.4vw, 2rem);
 }
 .gvi-lead {
   margin-top: clamp(1.2rem, 2.2vw, 1.6rem);
@@ -268,17 +265,17 @@
   text-wrap: pretty;
 }
 
-/* the turn, given its moment: a short pencilled rule, then the line itself */
+/* the turn, given its moment: a short pencilled rule, then the paragraph
+   in the serif, a step above the prose (it is a full paragraph, not a line) */
 .gvi-turn {
-  margin-top: clamp(2.25rem, 4.5vw, 3rem);
-  max-width: 22ch;
+  margin-top: clamp(1.75rem, 3.5vw, 2.5rem);
+  max-width: 36ch;
   font-family: var(--serif);
-  font-size: clamp(2rem, 3.8vw, 3rem);
+  font-size: clamp(1.45rem, 2.3vw, 1.85rem);
   font-weight: 500;
-  line-height: 1.1;
-  letter-spacing: -0.012em;
+  line-height: 1.26;
   color: var(--gvi-forest-ink);
-  text-wrap: balance;
+  text-wrap: pretty;
 }
 .gvi-turn::before {
   content: "";
@@ -290,130 +287,53 @@
   background: var(--gvi-sage);
 }
 
-/* the placement: a journal entry heading */
-.gvi-placement__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem);
-  gap: clamp(1.5rem, 4vw, 3rem);
-  margin-top: 1.4rem;
-  align-items: start;
-}
-/* the placement's facts: an open field-notebook entry under a rule */
-.gvi-entry {
-  margin: 0;
+/* journal entries: a sage rule, a heading, the note itself */
+.gvi-part {
+  padding-top: 1rem;
   border-top: 1px solid var(--gvi-sage);
 }
-.gvi-entry div {
-  padding-block: 0.6rem;
+.gvi-h2 + .gvi-part,
+.gvi-h2 + .gvi-field__grid,
+.gvi-h2 + .gvi-teach {
+  margin-top: clamp(1.5rem, 3vw, 2rem);
 }
-.gvi-entry div + div {
-  border-top: 1px solid var(--rule);
+.gvi-part .gvi-prose {
+  margin-top: 0.85rem;
 }
-.gvi-entry dt,
-.gvi-log__title,
-.gvi-observed__k,
-.gvi-after__k {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-  color: var(--gvi-earth-ink);
-}
-.gvi-entry dd {
-  margin: 0.15rem 0 0;
-  font-family: var(--serif);
-  font-size: 1.12rem;
-  line-height: 1.3;
-}
-
-/* the four parts of the story */
-.gvi-chapter {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  margin: 0;
-  padding-top: clamp(3rem, 6vw, 4.25rem);
-  border-top: 1px solid var(--rule);
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--gvi-forest-ink);
-}
-.gvi-chapter__n {
-  display: grid;
-  place-items: center;
-  min-width: 2.2rem;
-  height: 2.2rem;
-  padding: 0 0.4rem;
-  border: 1.5px solid var(--gvi-forest);
-  border-radius: 999px;
-  font-family: var(--serif);
-  font-size: 1.05rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-.gvi-chapter::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, var(--gvi-sage), transparent);
-}
-
-/* field logs: the things a paragraph names, written up under a sage rule */
-.gvi-log {
-  padding: 0.75rem 0 0;
-  border-top: 1px solid var(--gvi-sage);
-}
-.gvi-log__list {
-  display: grid;
-  gap: 0.15rem;
-  margin: 0.5rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-.gvi-log__list li {
-  position: relative;
-  padding: 0.3rem 0 0.3rem 1.2rem;
-  font-family: var(--serif);
-  font-size: 1.15rem;
-  line-height: 1.25;
-}
-.gvi-log__list li::first-letter {
-  text-transform: uppercase;
-}
-.gvi-log__list li::before {
-  /* an observation tick */
-  content: "";
-  position: absolute;
-  left: 0.1rem;
-  top: 0.78rem;
-  width: 0.5rem;
-  height: 0.5rem;
-  border: 1.5px solid var(--gvi-forest);
-  border-radius: 50%;
-}
-
-/* in the field: the text beside a supporting photograph; the logs beneath */
+/* the field: Taba beside the first entry; the second runs on with the figure on its rule */
 .gvi-field__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 20rem);
   gap: clamp(1.5rem, 4vw, 3rem);
   align-items: start;
 }
-.gvi-field__logs {
-  position: relative;
+.gvi-part--formats {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 15rem)) 1fr;
-  gap: 1rem;
-  align-items: stretch;
-  margin-top: clamp(1.75rem, 3.5vw, 2.5rem);
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  margin-top: clamp(2rem, 4vw, 2.75rem);
+}
+/* two short entries, set narrower than a full journal page */
+.gvi-part--short {
+  max-width: 44rem;
+}
+.gvi-part--short + .gvi-teach,
+.gvi-teach + .gvi-part--short {
+  margin-top: clamp(2rem, 4vw, 2.75rem);
+}
+/* teaching beyond the reserve, with the preschool photograph beside it */
+.gvi-teach {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
 }
 .avatar--gvi-watch {
   position: relative;
   align-self: end;
   justify-self: end;
   width: clamp(5rem, 6.5vw, 6.25rem);
+  /* standing on the section's closing rule */
   margin-bottom: calc(-1 * clamp(3rem, 6vw, 4.75rem));
   transform: translateY(var(--sink));
 }
@@ -434,60 +354,10 @@
 }
 
 /* data: formats beside the prose */
-.gvi-data__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(13rem, 16rem);
-  gap: clamp(1.5rem, 4vw, 3rem);
-  align-items: start;
-  margin-top: 1.3rem;
-}
-.gvi-log--questions {
-  max-width: 40rem;
-  margin-top: clamp(1.5rem, 3vw, 2rem);
-}
-.gvi-after {
-  display: grid;
-  grid-template-columns: minmax(8rem, 10rem) minmax(0, 1fr);
-  gap: 0.75rem 1.5rem;
-  max-width: 50rem;
-  margin-top: clamp(1.75rem, 3.5vw, 2.5rem);
-  padding-top: 1rem;
-  border-top: 1px solid var(--rule);
-}
-.gvi-after__text {
-  max-width: 54ch;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 1.2rem;
-  line-height: 1.38;
-  color: var(--ink-2);
-}
-
-/* beyond the reserve */
-.gvi-beyond__teach {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
-  gap: clamp(1.5rem, 4vw, 3rem);
-  align-items: start;
-  margin-top: 0.5rem;
-}
-.gvi-photo--teach {
-  margin-top: 1rem;
-}
-.gvi-run {
-  max-width: 50rem;
-  margin-top: clamp(2.25rem, 4.5vw, 3rem);
-  padding-top: clamp(1.5rem, 3vw, 2rem);
-  border-top: 1px dashed var(--rule-strong);
-}
-
 /* training and completion: the certificate, as text set between two rules */
 .gvi-cert {
   max-width: 44rem;
-  margin-top: 1.4rem;
-  padding: 1rem 0 1.1rem;
-  border-top: 1px solid var(--gvi-sage);
-  border-bottom: 1px solid var(--rule);
+  margin-top: 1rem;
 }
 .gvi-cert__lead {
   font-size: 1rem;
@@ -562,17 +432,16 @@
 
 /* =================================================== narrower screens */
 @media (max-width: 899.98px) {
-  .gvi-placement__grid,
-  .gvi-data__grid,
-  .gvi-beyond__teach {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .gvi-field__grid {
+  .gvi-field__grid,
+  .gvi-teach {
     grid-template-columns: minmax(0, 1fr);
   }
   .gvi-photo--field {
     max-width: 24rem;
     justify-self: start;
+  }
+  .gvi-photo--teach {
+    max-width: 34rem;
   }
 }
 @media (max-width: 759.98px) {
@@ -583,20 +452,14 @@
     margin-top: 0.2rem;
     border-top: 1px solid var(--rule);
   }
-  .gvi-field__logs {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-  .gvi-field__logs .gvi-log + .gvi-log {
-    grid-column: 1;
-  }
-  .avatar--gvi-watch {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-  }
   .gvi-observed {
     grid-template-columns: minmax(0, 1fr);
   }
-  .gvi-after {
+  .gvi-part--formats {
     grid-template-columns: minmax(0, 1fr);
+    row-gap: 0;
+  }
+  .avatar--gvi-watch {
+    width: 4.75rem;
   }
 }

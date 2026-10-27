@@ -29,19 +29,23 @@ function approved(file, fields) {
       out.push(kv[1], kv[2]);
       continue;
     }
-    out.push(l);
+    // a run of names ("Python · Tweepy · …") may be set as a list
+    if (/ · /.test(l) && !/[.!?]$/.test(l)) l.split(" · ").forEach((c) => out.push(c));
+    else out.push(l);
   }
   return [...new Set(out)];
 }
 
 const PAPER = "https://ijournals.in/wp-content/uploads/2022/08/12.IJSHRE-100413-Anya.pdf";
 const AROGYA = "https://www.saakshartaa.com/project-%C4%81rogya";
-const forbidden = [/INTERNAL/, /DO NOT RENDER/, /50\+ women/i, /secur(ed|ing) (startup )?loans/i, /annual/i, /85\.37/, /0\.8537/, /\bMAE\b/, /\bRMSE\b/, /accura(te|cy)\b(?! scores)/i, /total fertility rate/i, /\bDOI\b/, /doi\.org/i, /clinical adoption/i, /testimonial/i];
+// (the revised PMMY copy itself says the percentages are "not … classifier accuracy",
+// so accuracy is banned only as a claim: "N% accura…")
+const forbidden = [/INTERNAL/, /DO NOT RENDER/, /50\+ women/i, /secur(ed|ing) (startup )?loans/i, /annual/i, /85\.37/, /0\.8537/, /\bMAE\b/, /\bRMSE\b/, /\d+(\.\d+)?%\s*accura/i, /\baccurate\b/i, /total fertility rate/i, /\bDOI\b/, /doi\.org/i, /clinical adoption/i, /testimonial/i, /Photograph to come/i];
 
 const browser = await chromium.launch({ channel: "chrome" });
 
 for (const pg of [
-  { slug: "pmmy-research", file: "handoff/content/work/pmmy-research.md", fields: ["Role", "Year", "Mentor and co-author", "Publication", "Published title", "Authors", "Journal", "Volume", "Issue", "Published", "Pages"], links: [], other: "teenage-pregnancy-research" },
+  { slug: "pmmy-research", file: "handoff/content/work/pmmy-research.md", fields: ["Role", "Year", "Mentor and co-author", "Publication"], links: [], other: "teenage-pregnancy-research" },
   { slug: "teenage-pregnancy-research", file: "handoff/content/work/teenage-pregnancy-research.md", fields: ["Role", "Year", "Mentor and co-author", "Publication", "Community partner", "Published title", "Authors", "Journal", "Volume", "Issue", "Published", "Pages"], links: [PAPER, AROGYA], other: "pmmy-research" },
 ]) {
   const tag = pg.slug.startsWith("pmmy") ? "PMMY" : "Teen";
@@ -58,12 +62,15 @@ for (const pg of [
   const html = (await page.content()).replace(/<script[\s\S]*?<\/script>/g, "");
   const leaked = forbidden.filter((f) => f.test(text) || f.test(html));
   ok(`${tag}: nothing from the notes, no retired claims, metrics-as-accuracy, DOIs or adoption claims`, leaked.length === 0, leaked.join(", "));
-  ok(`${tag}: exact published title, both authors, lead role, Reetu Jain as mentor and co-author, near the top`, await page.evaluate(() => {
-    const card = document.querySelector(".rs-paper");
-    const order = document.querySelector(".rs-paper").compareDocumentPosition(document.querySelector("#the-question")) & Node.DOCUMENT_POSITION_FOLLOWING;
+  // attribution: lead role and mentor/co-author in the opening; the exact title and both
+  // authors in the publication card (teen) or the one complete reference (PMMY, by its notes)
+  ok(`${tag}: exact published title, both authors, lead role, Reetu Jain as mentor and co-author`, await page.evaluate((tag) => {
     const facts = document.querySelector(".rs-facts").innerText;
-    return !!order && /Anya Jajodia and Reetu Jain/.test(card.innerText) && /Lead Researcher/.test(facts) && /Mentor and co-author/i.test(facts) && /Reetu Jain/.test(facts);
-  }));
+    const ref = document.querySelector("#publication-reference").innerText;
+    const card = document.querySelector(".rs-paper");
+    const authors = tag === "PMMY" ? /Jajodia, A\., and Jain, R\./.test(ref) && !card : /Anya Jajodia and Reetu Jain/.test(card.innerText);
+    return authors && /Lead Researcher/.test(facts) && /Mentor and co-author/i.test(facts) && /Reetu Jain/.test(facts);
+  }, tag));
   const ext = await page.$$eval("main a[href^='http']", (as) => [...new Set(as.map((a) => a.href))]);
   ok(`${tag}: only the documents' own verified links (${pg.links.length || "none"}), opening safely`, ext.length === pg.links.length && pg.links.every((l) => ext.includes(l)) && (await page.$$eval("main a[href^='http']", (as) => as.every((a) => a.target === "_blank" && /noopener/.test(a.rel)))), ext.join(" "));
   const cross = await page.$$eval(`main a[href="/work/${pg.other}"]`, (as) => as.length);
@@ -84,8 +91,9 @@ for (const pg of [
       return { bars, rows, hidden: plot.getAttribute("aria-hidden"), caption: document.querySelector(".rs-chart figcaption").textContent, tcap: document.querySelector(".rs-chart__table caption")?.textContent };
     });
     ok("PMMY chart: bars drawn to the reported values, directly labelled (78 / 12 / 10)", JSON.stringify(chart.bars) === JSON.stringify([{ label: "Positive", value: "78%", share: 78 }, { label: "Neutral", value: "12%", share: 12 }, { label: "Negative", value: "10%", share: 10 }]), JSON.stringify(chart.bars));
-    ok("PMMY chart: accessible table (the data assistive tech reads), plot hidden from AT", chart.hidden === "true" && JSON.stringify(chart.rows) === JSON.stringify([["Positive", "78%"], ["Neutral", "12%"], ["Negative", "10%"]]) && !!chart.tcap);
-    ok("PMMY chart: captioned as classifications within the 1,000-tweet sample, not the population", /sample of 1,000 PMMY-related tweets/.test(chart.caption) && /not the wider population/.test(chart.caption) && text.includes("not population-wide approval ratings or model-accuracy scores"));
+    const tvis = await page.$eval(".rs-chart__table", (t) => { const w = t.closest(".visually-hidden"); return !!w && w.getBoundingClientRect().width <= 1 && getComputedStyle(w).overflow === "hidden"; });
+    ok("PMMY chart: the table is its accessible equivalent (read by AT, not a second visible block); plot hidden from AT", chart.hidden === "true" && tvis && JSON.stringify(chart.rows) === JSON.stringify([["Positive", "78%"], ["Neutral", "12%"], ["Negative", "10%"]]) && !!chart.tcap);
+    ok("PMMY chart: captioned as classifications within the 1,000-tweet sample, not the population; never as accuracy", /sample of 1,000 PMMY-related tweets/.test(chart.caption) && /not the wider population/.test(chart.caption) && text.includes("not population-wide approval or classifier accuracy"));
     const methods = await page.evaluate(() => ({
       lanes: [...document.querySelectorAll(".rs-lane__name")].map((l) => l.textContent),
       training: document.querySelector(".rs-training")?.innerText,
@@ -104,8 +112,14 @@ for (const pg of [
     ok("Teen figure: preparation → exploratory analysis / regression → interpretation", fig.flow.join(" → ") === "Preparation → Exploratory analysis → Linear regression → Interpretation", fig.flow.join(" → "));
     ok("Teen: three distinct narrative parts — study, hospital discussion, Project Ārogya", ["#building-the-study", "#hospital-discussion", "#project-arogya"].every((id) => text.length) && (await page.$$eval("#building-the-study, #hospital-discussion, #project-arogya", (s) => s.length)) === 3);
     ok("Teen hospital: one 2022 presentation, a discussion she led, retained internally (not adoption)", text.includes("in 2022, i presented the research") && text.includes("i led a discussion of the findings") && text.includes("retained in the hospital’s internal database for internal use") && text.includes("should not be confused with adoption into clinical practice"));
-    const ar = await page.evaluate(() => ({ reach: document.querySelector(".rs-reach__value")?.textContent, roles: document.querySelectorAll(".rs-roles li").length, photos: document.querySelectorAll(".rs-photo").length, imgs: document.querySelectorAll(".rs-photo img").length }));
-    ok("Teen Ārogya: 200+ girls, the four roles (materials, sole leadership, mentoring, support), one optional photo slot", ar.reach === "200+" && ar.roles === 4 && ar.photos === 1 && ar.imgs === 0 && text.includes("sole leader"), JSON.stringify(ar));
+    const ar = await page.evaluate(() => {
+      const reach = document.querySelector(".rs-reach");
+      const sec = document.querySelector("#project-arogya");
+      const prose = sec.querySelector(".rs-prose").getBoundingClientRect();
+      const r = reach.getBoundingClientRect();
+      return { inSection: sec.contains(reach), beside: innerWidth < 760 || r.left > prose.right, value: reach.querySelector(".rs-reach__value").textContent, photos: document.querySelectorAll(".rs-photo, [class*='photo__empty']").length, inStudy: !!document.querySelector("#building-the-study .rs-reach, #findings .rs-reach") };
+    });
+    ok("Teen Ārogya: 200+ set beside that section, apart from the research findings; no photo placeholder", ar.inSection && ar.beside && ar.value === "200+" && !ar.inStudy && ar.photos === 0 && text.includes("sole leader"), JSON.stringify(ar));
     ok("Teen: findings stay in words (no chart of invented values)", (await page.$$eval("#findings svg, #findings .rs-chart", (x) => x.length)) === 0);
   }
 
@@ -123,7 +137,7 @@ for (const pg of [
   }
   ok(`${tag}: all ${ids.length} On-this-page links land under the header and move focus`, landed.every((l) => ((l.gap >= 4 && l.gap <= 40) || (l.bottom && l.gap >= 4)) && l.focused), JSON.stringify(landed.filter((l) => !(((l.gap >= 4 && l.gap <= 40) || (l.bottom && l.gap >= 4)) && l.focused))));
   // reach it by keyboard, as :focus-visible requires
-  await page.focus(".rs-paper a");
+  await page.focus("main .rs-out, main .rs-inline");
   await page.keyboard.press("Shift+Tab");
   await page.keyboard.press("Tab");
   const ring = await page.evaluate(() => getComputedStyle(document.activeElement).outlineStyle);
@@ -144,7 +158,8 @@ for (const pg of [
       await p2.goto(`${base}/work/${pg.slug}`, { waitUntil: "networkidle" });
       const lay = await p2.evaluate(() => {
         const over = document.documentElement.scrollWidth - innerWidth;
-        const clipped = [...document.querySelectorAll("main h1, main h2, main h3, main p, main li, main dd, main td, main th")].filter((e) => {
+        // screen-reader-only content (the chart's table) is clipped by design
+        const clipped = [...document.querySelectorAll("main h1, main h2, main h3, main p, main li, main dd, main td, main th")].filter((e) => !e.closest(".visually-hidden")).filter((e) => {
           const r = e.getBoundingClientRect();
           return r.width && (r.right > innerWidth + 1 || r.left < -1 || e.scrollWidth > e.clientWidth + 2);
         }).map((e) => e.className || e.tagName);

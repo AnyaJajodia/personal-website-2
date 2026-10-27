@@ -39,8 +39,8 @@ for (const raw of md.split("\n")) {
   }
   lines.push(l);
 }
-const forbidden = [/INTERNAL/, /DO NOT RENDER/, /FastAPI/i, /Kubernetes/i, /autoscal/i, /\bS3\b/, /sub-200/i, /200\s?ms/i, /10K/i, /\bRAG\b/, /confidence score/i, /escalat/i, /retry/i, /duplicate/i, /nominee/i, /2027/, /encrypt/i, /\bcompleted? (bank )?rollout/i];
-const caption = "Illustrative conversation reconstructed to explain the workflow. No employee data or proprietary application screens shown.";
+const forbidden = [/INTERNAL/, /DO NOT RENDER/, /FastAPI/i, /Kubernetes/i, /autoscal/i, /\bS3\b/, /sub-200/i, /200\s?ms/i, /10K/i, /\bRAG\b/, /confidence score/i, /escalat/i, /retry/i, /duplicate/i, /nominee/i, /2027/, /encrypt/i, /\bcompleted? (bank )?rollout/i, /vector/i, /embedding/i, /pagination/i, /load more/i, /two-agent/i];
+const caption = "Illustrative workflows reconstructed using fictional information. No employee data or proprietary application screens are shown.";
 
 const browser = await chromium.launch({ channel: "chrome" });
 
@@ -59,27 +59,25 @@ const browser = await chromium.launch({ channel: "chrome" });
   ok("content: nothing from the internal notes or unconfirmed claims", leaked.length === 0, leaked.join(", "));
   ok("content: role, May 2025–May 2026, and the rollout as being prepared (not completed)", text.includes("full stack software development intern") && text.includes("may 2025–may 2026") && text.includes("was being prepared for integration into icici bank"));
   const chat = await page.evaluate(() => {
-    const f = document.querySelector(".bz-chat");
+    const f = document.querySelector(".wa");
     return {
       caption: f.querySelector("figcaption").innerText.replace(/\s+/g, " "),
-      label: f.querySelector("ol").getAttribute("aria-label"),
-      speakers: [...f.querySelectorAll(".bz-bubble .visually-hidden")].map((s) => s.textContent).slice(0, 2),
+      tabs: [...f.querySelectorAll("[role=tab]")].map((t) => t.textContent),
       img: f.querySelectorAll("img, iframe, video").length,
-      notes: [...f.querySelectorAll(".bz-chat__note")].map((a) => [a.getAttribute("href"), !!document.querySelector(a.getAttribute("href"))]),
     };
   });
-  ok("conversation: captioned with the notes' wording as an illustration, list marked fictional", chat.caption.includes(caption) && /illustration/i.test(chat.caption) && /fictional/.test(chat.label ?? ""), chat.caption);
-  ok("conversation: accessible HTML (speakers named for screen readers), no screenshots or embeds", chat.speakers.length === 2 && chat.speakers.every(Boolean) && chat.img === 0, JSON.stringify(chat.speakers));
-  ok("conversation: each margin note jumps to a documented flow on this page", chat.notes.length >= 4 && chat.notes.every(([, exists]) => exists), JSON.stringify(chat.notes));
-  ok("diagram: labelled conceptual and simplified", /conceptual diagram/i.test(await page.$eval(".bz-system figcaption", (e) => e.textContent)));
+  ok("reconstruction: four scenarios (form first), captioned with the notes' wording as an illustration", chat.tabs.join("|") === "Complete a form|Ask about a policy|Manage leave|Review an offer" && chat.caption.includes(caption) && /illustration/i.test(chat.caption), chat.caption);
+  ok("reconstruction: accessible HTML, no screenshots or embeds (interactions: qa/buzzworks-recon.mjs)", chat.img === 0);
+  const figs = await page.$$eval(".bz-system figcaption", (f) => f.map((x) => x.textContent));
+  ok("diagrams: the conceptual architecture, and the two-stage policy workflow with processed content from the content API", figs.length === 2 && /conceptual diagram/i.test(figs[0]) && /content API/.test(figs[1]) && (await page.$$eval(".bz-policy .bz-node__stage", (s) => s.map((x) => x.textContent).join())) === "Stage 1 · Claude,Stage 2 · Claude");
   const ext = await page.$$eval("main a[href^='http']", (as) => as.map((a) => a.href));
-  ok("no external links, demo buttons, embeds or dialogs in the page", ext.length === 0 && (await page.$$eval("main iframe, main video, main dialog:not(#work-sheet), main button", (x) => x.length)) === 0, ext.join(" "));
+  ok("no external links, demo buttons, embeds or dialogs in the page", ext.length === 0 && (await page.$$eval("main iframe, main video, main dialog:not(#work-sheet), main button:not(.wa button)", (x) => x.length)) === 0, ext.join(" "));
   const outline = await page.$$eval("main h1, main h2, main h3", (hs) => hs.map((h) => +h.tagName[1]));
   ok("headings: one h1, no skipped levels", outline.filter((l) => l === 1).length === 1 && outline.every((lv, i) => !i || lv - outline[i - 1] <= 1), outline.join(""));
   ok("logo: the supplied minimal Buzzworks symbol (unfiltered) with the name in page type", await page.$eval(".bz-brand", (b) => { const i = b.querySelector("img"); return i.complete && i.naturalWidth > 0 && i.getAttribute("src").includes("/logos/buzzworks-minimal.png") && i.alt === "" && getComputedStyle(i).filter === "none" && b.querySelector(".bz-brand__name").textContent === "Buzzworks"; }));
   ok("figures: one decorative avatar", (await page.$$eval("main .avatar", (a) => a.length)) === 1);
   const green = await page.evaluate(() => {
-    const els = [...document.querySelectorAll("main *")].filter((e) => !e.closest(".bz-chat"));
+    const els = [...document.querySelectorAll("main *")].filter((e) => !e.closest(".wa"));
     return els.filter((e) => /rgb\(0, 128, 105\)|rgb\(217, 253, 211\)/.test(getComputedStyle(e).backgroundColor + getComputedStyle(e).color)).length;
   });
   ok("WhatsApp green stays inside the conversation", green === 0, `${green} elements outside`);
@@ -98,14 +96,6 @@ const browser = await chromium.launch({ channel: "chrome" });
     }, id));
   }
   ok("On this page: every link lands its section just below the fixed header", landed.every((l) => (l.gap >= 4 && l.gap <= 40) || (l.bottom && l.gap >= 4)), JSON.stringify(landed.map((l) => [l.id, l.gap])));
-  // a note → its flow, marked as the target
-  await page.evaluate(() => scrollTo({ top: document.querySelector(".bz-chat").getBoundingClientRect().top + scrollY - 100, behavior: "instant" }));
-  await page.click('.bz-chat__note[href="#cap-kyc"]');
-  await page.waitForTimeout(1100);
-  const tgt = await page.evaluate(() => ({ target: document.querySelector(":target")?.id, gap: Math.round(document.getElementById("cap-kyc").getBoundingClientRect().top - document.querySelector(".site-header").getBoundingClientRect().bottom) }));
-  ok("a conversation note lands on its flow, which is marked", tgt.target === "cap-kyc" && tgt.gap >= 4 && tgt.gap <= 40, JSON.stringify(tgt));
-  await page.screenshot({ path: `${out}/target-cap-kyc.png` });
-
   // the drawer here marks Buzzworks
   await page.click(".site-header .sheet-trigger");
   await page.waitForTimeout(500);
@@ -161,7 +151,8 @@ for (const vp of [
     await page.goto(url, { waitUntil: "networkidle" });
     const lay = await page.evaluate(() => {
       const over = document.documentElement.scrollWidth - innerWidth;
-      const clipped = [...document.querySelectorAll("main h1, main h2, main h3, main p, main li, main dd, main td, main th")].filter((e) => {
+      // screen-reader-only text is clipped by design, not a layout fault
+      const clipped = [...document.querySelectorAll("main h1, main h2, main h3, main p, main li, main dd, main td, main th")].filter((e) => !e.closest(".visually-hidden") && !e.classList.contains("visually-hidden")).filter((e) => {
         const r = e.getBoundingClientRect();
         return r.width && (r.right > innerWidth + 1 || r.left < -1 || e.scrollWidth > e.clientWidth + 2);
       }).map((e) => e.className || e.tagName);

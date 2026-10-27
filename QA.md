@@ -1,3 +1,182 @@
+# QA report — iteration 29: Wildlife photography, final selection (26 Oct 2026)
+
+Route `/wildlife-photography`; homepage plate in “Other things”. Playwright with Chrome against the production build on :3100.
+
+| Command | Result |
+|---|---|
+| `npx tsc --noEmit` / `npx eslint .` / `npx next build` | clean / clean / succeeded (page prerendered as static) |
+| `node scripts/build-wildlife-photos.mjs` | 14 photographs read; no files written in `public/` |
+| `md5` of all 14 supplied files, before vs after | identical |
+| `node qa/wildlife.mjs` | **107/107** |
+| check · interact · copy · consistency · pass24 · refine | 190/190 · 33/33 · 94/94 · 18/18 · 34/34 · 30/30 |
+| inteli · gvi · research · columbia · buzzworks · buzzworks-recon · crackd · crackd-tour | 38/38 · 38/38 · 56/56 · 53/53 · 34/34 · 33/33 · 75/75 · 231/231 (columbia’s whole-homepage pixel snapshot now also excludes the Wildlife plate, an intended change) |
+| Impeccable detector | 0 findings |
+
+What `qa/wildlife.mjs` covers:
+- **Files:** each one served is byte-identical to the original on disk; 14 photographs, none listed twice, none shown twice.
+- **Layout** at 1440, 1024, 768, 390 and 320:
+  - all images load and keep their proportions (max error 0.01%, so nothing stretched or cropped)
+  - no overlaps, no horizontal overflow
+  - photos in a row share one height (≤ 0.02 px)
+  - main photos get 3.2× the area of secondary ones on desktop, 1.8× on phones
+- **Copy:** no “final edits” or group names on the page; the count is 14.
+- **Homepage plate:** shows `homepage.png` whole and inside the plate (ratio 0.910 vs 0.910), says “14 photographs”, the whole plate is clickable, and navigating to the page logs no console errors.
+- **Interaction (both themes):** captions on hover and focus, with contrast; the keyboard open/close/←/→/wrap/Tab-trap; focus returns to the right tile; the view shows the entire photograph on screen; the close button, scrim click, drag-to-dismiss, swipe, and settle-back all work; no console errors.
+- **Reduced motion:** a fade only.
+- **Phone with touch:** tap to open, caption below the photo, 44 px close target.
+
+Screenshots (viewed): `qa/screenshots/wildlife/` covers top, full, hover, focus, open-mid, open and open-next at desktop and phone in both themes, plus `home-more-light` and `home-more-dark`. Row 4 and tablet views were reviewed separately.
+
+Remaining limitations:
+- About 44 MB of original PNGs (see EDITING_CHECKLIST.md).
+- Tested in Chrome only.
+- Full-page captures sometimes show a late-decoding PNG as its loading colour; the suite confirms every image loads.
+
+---
+
+# QA report — iteration 28: Wildlife photography page (26 Oct 2026)
+
+Route: `/wildlife-photography` (static). Homepage link: the Wildlife photography plate in “Other things”. Browser: Playwright with Chrome (`channel: "chrome"`) against the production build on :3100. The Claude in Chrome extension was not connected.
+
+## Commands and results
+| Command | Result |
+|---|---|
+| `npx tsc --noEmit` | clean |
+| `npx eslint .` | clean (exit 0) |
+| `npx next build` | succeeded; `/wildlife-photography` prerendered as static |
+| `node scripts/build-wildlife-photos.mjs` | 18 photographs → 72 WebP copies (480/960/1600/2400 w, 8.8 MB in all) + `wildlife-photos.generated.json` |
+| `node qa/wildlife.mjs` (new) | **99/99** |
+| `node qa/check.mjs` | 190/190 (bento assertion updated: only the Wildlife plate is a link) |
+| `node qa/interact.mjs` | 33/33 (photography focus check now targets the link) |
+| `copy` / `consistency` / `pass24` / `refine` | 94/94 · 18/18 · 34/34 · 30/30 |
+| `inteli` / `gvi` / `research` / `columbia` | 38/38 · 38/38 · 56/56 · 53/53 |
+| `buzzworks` / `buzzworks-recon` / `crackd` / `crackd-tour` | 34/34 · 33/33 · 75/75 · 231/231 |
+| Impeccable detector (`detect.mjs` on the new files) | 0 findings |
+
+`qa/wildlife.mjs` checks:
+- **Homepage link:** there is one link and the whole plate is clickable; the old placeholder text is gone; focus outlines the plate; navigation works with no console errors.
+- **Images:** all 72 web copies are served as WebP.
+- **Layout at 1440, 1024, 768, 390 and 320:** all 18 images load; each tile keeps its photo's proportions within 1.2% (actual ≤ 0.45%); no overlaps; the grid height fits its tallest column; there is no horizontal overflow; the column count is right (3, 3, 2, 2, 1).
+- **Captions:** hidden at rest, shown on hover and on keyboard focus, with label contrast ≥ 6:1 in both themes.
+- **Keyboard (both themes):** Tab reaches the tiles; Enter opens the view and focuses Close; the page scroll is locked; the tile lifts out; the large source is sharp; caption and counter contrast is ≥ 7.9:1; ←/→ move and wrap; Tab stays in the view; Escape closes, unlocks and returns focus to the tile of the photo last shown.
+- **Mouse and touch:** the close button, a click on the scrim, drag-down to dismiss (mid-drag the photo moves and the scrim thins), swipe left for next, and a short drag that settles back. No console errors.
+- **Reduced motion:** a fade only (no flight or scale), a crossfade between photos, Escape works, and tiles don't lift on hover.
+- **Phone with touch:** a tap opens the photo across the screen, the caption shows below it, the close target is 44 px, and tapping close closes.
+
+## Screenshots (viewed)
+`qa/screenshots/wildlife/` (via `node qa/wildlife-shots.mjs`):
+- `top-*`, `full-*`: desktop 1440×900 and phone 390×844, light and dark.
+- `hover-d-*`, `focus-d-*`: captions on hover and on focus.
+- `open-mid-*`, `open-*`, `open-next-*`: the view mid-flight, settled, and after →.
+- `home-more-*`: the homepage plate.
+
+An open/close filmstrip was also captured and reviewed during the pass. Suite logs are in `qa/screenshots/wildlife/logs/`.
+
+## Remaining limitations
+- Tested in Chrome only. The masonry uses container-query units (`cqi`) and `@container` (Safari 16+, Firefox 110+). The animations use the Web Animations API with `linear()` easing (Safari 17.2+, Firefox 112+); older browsers get the same transforms with no spring. Not tested in Safari, Firefox, or on real touch devices (touch was emulated).
+- Pinch-zoom inside the larger view is left to the browser (`touch-action: pinch-zoom`); there is no in-view zoom.
+- The photographs are temporary and still to be edited and colour-graded. Species names come from the images and need confirming (see EDITING_CHECKLIST.md).
+
+---
+
+# QA report — iteration 27: Inteli-lens page (26 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build, rebuilt and restarted; the ngrok link points at it). Iterated on the dev server on :3101. Chrome was driven by Playwright (`channel: "chrome"`).
+
+| Command | Result |
+|---------|--------|
+| `npx tsc --noEmit` / `npx eslint .` / `npx next build` | 0 / 0 / 0 (build prints the Next.js security notice) |
+| `node qa/inteli.mjs` (new) | **38/38**. Covers: every public Markdown line (18 strings) present; no notes, unconfirmed tools, validation/BAC or retired copy in the page, title or description; three sections and no TOC; facts and 2022; breadcrumb, skip link and pager; one WebP fetched, never the PNG; illustration loaded, uncropped (1.621 vs 1.622) with its corner label present, captioned, alt text, full-size link returns 200 image/png; Light and Dark accents on the shared backgrounds; every text node ≥ 4.5:1 in both themes; avatar decorative and on the rule (±3px); no overflow at 1440/1024/768/390/320 in both themes; brackets settle once and rest exactly on the word (none with reduced motion); homepage card 2022 + summary; drawer focus, current and Escape; theme control |
+| `pass24` / `copy` / `check` | **34/34** / **94/94** / **190/190**. Stale expectations updated: Inteli-lens now joins the tag-flourish case openings; homepage date 2022 and the revised summary; its figure is checked in `inteli.mjs` |
+| `refine` / `consistency` / `crackd` / `crackd-tour` | **30/30** / **18/18** / **75/75** / **231/231** |
+| `buzzworks` / `buzzworks-recon` / `columbia` / `gvi` / `research` | **34/34** / **33/33** / **53/53** / **38/38** / **56/56** |
+| `unchanged.mjs compare` vs the iteration-26 snapshots | Markup identical for all nine other detail pages. The homepage differs only in the Inteli-lens card's date and summary |
+| impeccable detector (`InteliPage.tsx`, `inteli.css`) | 0 findings |
+
+**Screenshots viewed:** in `qa/screenshots/inteli/`:
+- `qa-1440-{light,dark}.png` and `qa-390-{light,dark}.png` (full page);
+- `full-1024-light.png` and `full-768-dark.png`;
+- `inteli-lens-top-*` and `title-1440.png`;
+- `home-card-1440-light.png` and `home-card-390-dark.png`.
+
+**Routes checked:** /work/inteli-lens (5 widths × 2 themes), / (Inteli-lens card), the drawer, and all other routes via the suites above.
+
+**Limitations:**
+- Claude in Chrome was not connected; Playwright drove installed Chrome instead.
+- Chrome fetches `loading="lazy"` images within about 1,250px of the viewport, so on a 900px desktop screen the illustration loads with the page. Either way only one WebP copy (47 or 109 KB) is fetched.
+
+---
+
+# QA report — iteration 26: Crackd.ai completed (26 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build, rebuilt and restarted; the ngrok link points at it). Iterated on the dev server on :3101. Chrome was driven by Playwright (`channel: "chrome"`).
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 |
+| `node qa/crackd-tour.mjs` (new) | **231/231**. All 16 steps × 6 viewport/theme combinations (1440 L/D, 1024 L, 390 L/D, 360 D). Covers: image loaded, prepared WebP only, proportions kept, supplied titles/subtitles, fits stage, controls fixed, Next disabled at end; ←/→, named step, Enlarge (2048, scrollable, same dialog), Escape twice, Tab trap, focus return, close button, backdrop, page-screen opener; full screen on phones; no images before opening; reduced motion; ≤350ms motion; no autoplay; no console errors |
+| `node qa/crackd.mjs` (rewritten for the new structure) | **75/75**. Every approved line present, staging paragraph absent; 3 repos + 2 live links in their own entries; no table, no page screenshots; 6 TOC anchors land; drawer; 6 widths × 2 themes with no overflow or clipping |
+| `node qa/contrast-audit.mjs light,dark /work/crackd-ai` | 117 text runs, 0 below AA (smallest 6.29 light / 7.01 dark) |
+| impeccable detector (`crackd.css`, `CrackdApps.tsx`, `CrackdPage.tsx`) | 0 findings |
+| `refine` / `check` / `consistency` / `pass24` / `copy` | **30/30** / **190/190** / **18/18** / **32/32** / **93/93**. Stale expectations updated: refine checked the old app boxes and matrix thread; check expected a second Crackd figure on the removed questions, and its other-page avatar checks used section IDs renamed in iteration 25 (now: feet on the figure's own section rule, no text overlap); consistency required ≥7 TOC entries (Crackd now has 6) |
+| `buzzworks` / `buzzworks-recon` / `columbia` / `gvi` / `research` | **34/34** / **33/33** / **53/53** / **38/38** / **56/56**. Other pages intact |
+| `node qa/unchanged.mjs compare --skip=crackd-ai --mask-header` | Lynxster, AMNH and Inteli-lens are pixel- and markup-identical. The homepage pixels match (0.05%). The other seven differ from a baseline that predates iterations 24–25. Files modified this pass: only `src/content/crackd.ts`, `src/components/crackd/*`, `public/assets/crackd/*`, `scripts/build-crackd-walkthroughs.mjs`, and QA scripts |
+
+**Screenshots viewed:**
+- `qa/screenshots/crackd26/` (apps 1440/390 L/D; tours; zoom)
+- `qa/screenshots/crackd-tour/` (every step at 1440 and 390, both themes; zoom)
+- `qa/screenshots/crackd/` (sections at 6 widths)
+
+**Limitation:** Claude in Chrome was not connected; Playwright drove installed Chrome instead.
+
+---
+
+# QA report — iteration 25: revised content, seven pages (26 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build; also behind the ngrok link). Chrome was driven by Playwright.
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 |
+| `node qa/buzzworks-recon.mjs` (new) | **33/33**. Covers four tabs (form first) with arrow/Home/End keys; only the path's option active; the form's summary → edit → updated summary → submit; Back and Restart; policy, leave (no request sequence) and offer (generic signature); one window height; zero network requests; caption; no overflow; reduced motion. Run at 1440 Light and 390 Dark |
+| `node qa/buzzworks.mjs` / `gvi.mjs` / `research.mjs` / `columbia.mjs` / `tmu.mjs` | **34/34** / **38/38** / **56/56** / **53/53** / **33/33**. Every approved Markdown line present; no notes |
+| `node qa/crackd.mjs` / `pass24.mjs` / `refine.mjs` / `consistency.mjs` / `theme.mjs` / `interact.mjs` / `copy.mjs` / `check.mjs` | **72/72** / **32/32** / **30/30** / **18/18** / **19/19** / **33/33** / **93/93** / 0 fails |
+| Test updates | Suites now follow the revised structures. The forbidden-word lists allow the approved qualifications ("not … classifier accuracy", "rather than a deployed monitoring system"); screen-reader-only content is excluded from clip checks |
+| `node qa/contrast-audit.mjs light,dark` (7 pages) | 0 runs below AA (smallest 4.65 light / 4.68 dark, inside the reconstruction) |
+| `node qa/unchanged.mjs compare --skip=<8 pages> --mask-header` | Lynxster, AMNH and Inteli-lens are pixel- and markup-identical |
+| Files changed this pass | Only the seven pages' own content and component files (no shared component, Crackd or homepage file) |
+| impeccable detector (5 page folders) | 0 findings |
+
+**Screenshots viewed:**
+- `qa/screenshots/pass25/` (all seven, 1440 Light full height, 390 Dark sheets)
+- `pass25/recon/` (form summary, updated summary and done; policy; offer at 390 Dark)
+- `pass25b/` (GVI, ESP and ADI after fixes)
+
+---
+
+# QA report — iteration 24: detail-page design pass (26 Oct 2026)
+
+**Preview:** http://localhost:3100 (production build, also behind the ngrok preview link). Iterated on the dev server on :3101. Chrome was driven by Playwright.
+
+| Command | Result |
+|---------|--------|
+| `npm run typecheck` / `lint` / `build` | 0 / 0 / 0 |
+| `node qa/pass24.mjs` (new) | **32/32**. All 8 pages × Light/Dark: opening ≤ 720px, two-line title, the right flourish kind, the thread crossing no opening text, no overflow. Template pages untouched. Drawer: opens from Work, focus on the current entry with a visible ring, the list scrolls in the sheet, TMU/GVI identifiable, Escape closes and returns focus. Anchors land 4–40px under the sticky header; Back restores the scroll position. Phones + reduced motion: everything visible without animation, tables scroll in their own frame |
+| `node qa/crackd.mjs` / `buzzworks.mjs` / `tmu.mjs` / `gvi.mjs` / `research.mjs` | **72/72** / **36/36** / **33/33** / **37/37** / **56/56** |
+| `node qa/columbia.mjs` | **51/53**. The 2 failures are content: the ESP/ADI Markdown was revised today and isn't integrated yet (deferred to the content pass). The rail test is replaced with a "one reading column" check |
+| `node qa/refine.mjs` / `consistency.mjs` / `theme.mjs` / `interact.mjs` / `copy.mjs` / `check.mjs` | **30/30** / **18/18** / **19/19** / **33/33** / **93/93** / 0 fails |
+| Test updates (deliberate design changes) | crackd: logo and dates on one line. copy: the two corrected homepage dates |
+| `node qa/contrast-audit.mjs light,dark` (all 8 pages) | 0 runs below AA |
+| `node qa/unchanged.mjs compare --skip=<8 pages> --mask-header` | Lynxster, AMNH and Inteli-lens: markup and pixels identical. Homepage markup diff: the two dates (plus the crown tile approved in iteration 22) |
+| impeccable detector (14 changed files) | 0 findings |
+
+**Screenshots viewed:**
+- `qa/screenshots/heroes-before/` and `heroes-r1/` (1440 Light, before/after), `pass24/heroes/` (1440 Dark)
+- `pass24/*-d*.png` (full pages, 1440 Light) and `pass24/*-m*.png` (phone sheets, 390 Dark)
+- `pass24/drawer-{light,dark}.png` (keyboard focus)
+
+---
+
 # QA report — iteration 23: GVI photographs (25 Oct 2026)
 
 | Command | Result |
@@ -393,6 +572,7 @@ The dev overlay pill seen in the early captures is absent from the production ru
 
 **Preview:** http://localhost:3100 (production build).
 **Browser:** Google Chrome through Playwright. The Claude in Chrome extension again reported "Browser extension is not connected". Motion was checked per animation frame, plus frozen-frame captures of the matcha plume and frame strips of the edge peeker.
+
 
 ## Commands and results (production build)
 

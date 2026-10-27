@@ -1,5 +1,194 @@
 # Visual & functional review
 
+## Iteration 29 — Wildlife photography, final selection (26 Oct 2026)
+
+The temporary set was replaced by the final selection: highlights, main gallery and secondary gallery. The masonry was replaced with a sequence of rows that keep each photo's proportions and share a height:
+- the opening photograph sits beside the introduction (tried as a distinct opening; the first view holds it whole at 1440×900)
+- main photographs get rows of one or two
+- secondary photographs get rows of three, or a narrower row
+- the light runs from day to dusk to twilight
+
+Files are served untouched.
+
+| # | P | Found | Fix |
+|---|---|---|---|
+| 1 | P2 | A full-width opening image put the lion below the fold at 1440×900. | The opening became photo + introduction columns, with the photo's height capped to the first view. |
+| 2 | P2 | `Tile` was declared as a component inside the gallery, so it would remount every image on each open or swap. | Changed to a render function, so tiles keep their identity. |
+| 3 | P3 | On phones, the alternating supporting photos left the photographer aiming at empty space. | Alternation starts on the left, so the elephant profile is on the left with the photographer to its right. |
+| 4 | P3 | The screenshot script captured before the large originals had arrived. | It now waits for every image (the functional suite already did). |
+
+## Iteration 28 — Wildlife photography page (26 Oct 2026)
+
+Direction: a masonry collection at the photographs' own proportions, adapting the shared-element gallery at https://21st.dev/@jahed/components/shared-element-gallery. The 21st.dev source needs a login, so the adaptation follows its description and screenshots of its live preview. A first carousel direction (after the crafterui hero-carousel) was stopped at the user's request before any page was built; only its photo renaming and image pipeline were kept.
+
+| # | Priority | Defect (found in screenshots / checks) | Fix | Evidence |
+|---|---|---|---|---|
+| 1 | P1 | The homepage plate link only covered its text, so a click on the drawing did nothing. On hover the content's `transform` made it the overlay's containing block. | The content stays above the drawing via a flex-item `z-index` and is not positioned; no text lift on linked plates. | `qa/wildlife.mjs` “whole plate is clickable” + click test |
+| 2 | P2 | Navigating from deep on the homepage logged NaN SVG errors: HomeScribble's ResizeObserver rebuilt after the DOM had gone, before cleanup. | Guard: `rebuild` returns once the root is disconnected. | 0 console errors (wildlife.mjs) |
+| 3 | P2 | The hero aside (count and note) sat in the thread's path, and the avatar's head covered “come.” | The count and note moved into the rule row; the acacia is now the thread's tag anchor (it loops above the tree); the photographer has her own space on the rule. | `top-d-*` |
+| 4 | P3 | The lede wrapped to leave “it.” alone on a line (two paragraphs at 34ch). | One paragraph at 38ch, `text-wrap: pretty`. | `top-d-*`, `top-m-*` |
+| 5 | P3 | Cormorant's old-style “1” made 18 read like “I8”. | `font-variant-numeric: lining-nums`. | `top-d-*` |
+| 6 | P3 | The acacia's ground line ran into the photographer's hair. | Tree moved left of her (`margin-right`). | `top-d-*` |
+| 7 | P3 | Lint: a module-level mutation inside the component (scroll lock). | Lock/unlock moved to module functions. | eslint clean |
+
+Not changed:
+- The masonry's last column can end shorter than the others; that's inherent to masonry with these proportions.
+- The open spring overshoots very slightly (ζ ≈ 0.82) on purpose; closing is critically damped.
+
+## Iteration 27 — Inteli-lens page (26 Oct 2026)
+
+**Source of truth:** the revised `handoff/content/work/inteli-lens.md`. Its public copy is used word for word (`content/inteli.ts`); its internal notes never render. Files changed: the new `components/inteli/*` and `content/inteli.ts`; the route switch; the Inteli-lens record in `work.ts` (metadata/pager only); the homepage card in `site.ts` (2022 + the Markdown's summary); a comment in `avatars.ts`; the mockup's WebP copies; QA scripts.
+
+**Defects found and fixed (prioritised):**
+1. *Content (high):* the old template claimed a PyQt5 desktop app, FFmpeg/SQLite, CCTV footage, a pipeline figure and "validated the model… improved precision and recall". All of it was replaced by the revised copy: an independent 2022 experiment in JupyterLab with a small dataset, "rather than a validated tool". No accuracy, dataset size, architecture or BAC claim.
+2. *Homepage card (high):* said 2023 and "with the goal of helping reduce drunk-driving incidents in the US". It now shows 2022 and the Markdown's summary. The drawer has no dates, and its "Prototype" label is unchanged.
+3. *Opening (medium):* the brackets on "movement" touched "Could"; fixed with an inline margin. The title wrapped to three lines at 1440px; it is now two, matching the other case-study openings.
+4. *Facts (low):* the tools list could wrap with "·" at the start of a line; the separators now end their line.
+5. *Avatar (low):* stood 16–24px above the closing rule because of an extra container padding; it now stands on the rule at every width.
+
+**Design:**
+- The shared paper, serif, thread, header, drawer and theme control.
+- Lavender #8B78A2 draws the thread, the lens mark and the detection-box brackets; plum #51415E carries accent text in Light. In Dark, #C4AFD4 does both.
+- The detection box is the single motif:
+  - it settles once onto "movement" in the question title (0.95s; static with reduced motion);
+  - it frames the illustration like a viewfinder;
+  - it appears in miniature before the caption, and dashed before "More details to come".
+- Three sections with their headings in the margin; no "On this page".
+- The data limitation is led by its own first sentence; the reflection is set in the serif.
+- The `lookingUp` figure stands on the closing rule beside "Looking back".
+
+**Illustration:**
+- `mockup.png`, shown whole (its "Illustrative reconstruction" corner label is kept), right after the prototype paragraph.
+- The visible caption reads "Illustrative reconstruction of the early prototype."
+- The alt text describes it as an illustration.
+- Lazy WebP copies are served (47 KB / 109 KB instead of 1.6 MB); "View full size" opens the PNG.
+
+**Remaining:** on phones the notebook text inside the illustration is too small to read inline; the full-size link covers it. The archival screenshot mentioned in the notes is not in the repo.
+
+## Iteration 26 — Crackd.ai completed (26 Oct 2026)
+
+**Source of truth:** the revised `handoff/content/work/crackd-ai.md`, its internal notes, `walkthroughs.json` and the asset README. Only Crackd's own files changed (`content/crackd.ts`, `components/crackd/*`), plus a new preparation script and QA scripts. The homepage, the other ten pages and the shared components are untouched.
+
+**Content:**
+- Verbatim revised copy. Sections: What is Crackd? · 01 Contributing within a team (September–December 2025) · 02 Building complete applications (January–May 2026) · Inside the chaining matrix · What I took from it · Tools and workflow.
+- Removed:
+  - the application table, the questions list and the old notes/credits blocks;
+  - the staging paragraph ("A detailed experiment comparison will be added…");
+  - the second avatar, which stood on the removed questions.
+- "On this page" and the anchors follow the new headings.
+- No architecture map, metrics or experiment comparison.
+
+**Applications (no screenshots on the page):**
+- Three open entries on the phase-02 sheet, each with:
+  - a letter (A/B/C) with a short yellow rule, the name, the italic one-line description, and the build paragraph;
+  - the tour's named screens as a contents list, each opening the walkthrough at that screen;
+  - a primary "View walkthrough · N screens" button;
+  - a secondary GitHub link, plus the live app where it answered, with its access requirement.
+- Dark mode keeps the near-black panel with yellow accents.
+
+**Walkthroughs (`CrackdApps.tsx`):**
+- **Dialog:** a single native modal `<dialog>` holding:
+  - application name, step count + title, subtitle;
+  - the prepared screenshot at its own proportions on a neutral stage;
+  - named-step list and the note "Selected screens… not one continuous session. Account details and private records are obscured.";
+  - Enlarge / Fit to window (the 2048px copy, scrollable, same dialog), Previous / Next.
+- **Keyboard and focus:**
+  - Escape leaves the enlarged view first, then closes.
+  - ←/→ move between steps.
+  - Tab is trapped; the backdrop closes the dialog; focus returns to the opener; the page behind is locked.
+- **Layout:** large on desktop (94vw × 92dvh max). Below 900px the step list becomes a scrolling row that follows the current step. Below 600px the dialog is full screen and the zoom button is icon only (labelled).
+- **Motion:** a 320ms rise and an image fade; none under reduced motion; no autoplay.
+- **Loading:** images load only when a tour opens; the next step is preloaded.
+
+**Assets (`scripts/build-crackd-walkthroughs.mjs`):**
+- Originals moved to `handoff/assets/crackd-source/`, never served. Prepared WebPs (1280/2048) are in `public/assets/crackd/`.
+- Deterministic rules, each with a reason:
+  - crops remove the macOS capture thumbnails (user 03, matrix 04);
+  - blurs cover account IDs/emails/names and private-marked records;
+  - one personal photo is obscured everywhere (`PERSONAL_PHOTO` toggle).
+
+**Defects found in inspection and fixed:**
+1. With three columns inside the narrow sheet, the descriptions squeezed to ~200px. The screens list moved under the body as a 2-column list.
+2. "Live app ↗" split its arrow onto its own line.
+3. On phones, the dialog's app label broke into flex columns.
+4. On phones, the current step was scrolled out of view in the step row.
+5. "Fit to window" wrapped on phones, changing the button's height.
+
+**Unresolved (see EDITING_CHECKLIST.md):**
+- Admin step 2's description is obscured (private record). Its feature is conveyed only by the layout and labels; a non-private capture would be better.
+- The admin live URL returned 404.
+
+## Iteration 25 — revised content for seven pages (26 Oct 2026)
+
+**Source of truth:** the current Markdown for Buzzworks, TMU, GVI, PMMY, teenage pregnancy, ESP and ADI (Buzzworks, GVI and PMMY revised this morning; ESP and ADI on 26 Oct). Copy is verbatim; no HTML comments or internal notes render. Crackd, Lynxster, AMNH, Inteli-lens and the homepage are untouched, as are all shared components (only each page's own files changed).
+
+**Buzzworks:**
+- New structure: intro, Explore the experience, Designing within WhatsApp, Behind the conversation, Engineering decisions, Deployment and delivery, Tools, What I took from it.
+- **Reconstruction (`Reconstruction.tsx`):** four fictional journeys in one window, as the notes specify.
+  - Scenarios: Complete a form (default), Ask about a policy, Manage leave, Review an offer.
+  - Accessible tabs: arrow keys, Home and End.
+  - Guided steps: the path's quick reply or list choice, or a prepared reply or sample attachment sent from the composer, plus Next, Back and Restart.
+  - The form flow demonstrates summary → edit one field → updated summary → submit.
+  - Leave shows the menu, sample balances and a sample policy. No request sequence, since it isn't confirmed.
+  - Offer: document card → accept → a generic signature → confirmation.
+  - Nothing live: no network, typing, uploads or AI. One window height across scenarios, a polite live region, and no motion under reduced motion.
+- **Diagrams:**
+  - The architecture is refined, with the three application services framed as "AWS EC2 · packaged with Docker".
+  - New two-stage policy diagram: question + titles and descriptions → Stage 1 Claude selects → the content API returns processed, chunked content → Stage 2 Claude answers → WhatsApp.
+- The three UX decisions are set as a prominent index.
+- Removed: the single annotated chat, the capabilities list, "Personalized beyond the greeting", the alignment layers, the document-steps strip and "Performance considerations".
+
+**GVI:** the shorter narrative. The opening section now has a turn paragraph; Field observations and conservation data has two journal entries, with Taba beside the first; then the AI work, Conservation in practice (Observed / Attended), Supporting the reserve and community (three entries, with the preschool photograph), What stayed with me, and the certificate as compact supporting information. All three photographs are kept as approved, with the 16:9 opening, the portrait crop and the face-obscuring edits. The chapter markers, placement card, field logs and "After the internship" block are removed.
+
+**PMMY:**
+- Concise structure: question, two sources (with the methods diagram, which replaces the five-step walkthrough), findings, Reading the results in context, Beyond the paper, What I took from it, Tools (one line), and one complete reference.
+- The sentiment chart stays directly labelled (78 / 12 / 10) with the prescribed caption. Its table is now the screen-reader equivalent rather than a second visible block.
+- The separate publication-metadata card is removed, as the notes ask.
+
+**Teenage pregnancy:** the content is unchanged apart from removed duplicates (the dimension chips, the roles list, the 200+ inline panel). Project Ārogya's 200+ now sits beside that section as its own figure, apart from the research findings, and the empty photo placeholder is removed. The limitations read as prose.
+
+**ESP/ADI:**
+- **ESP:** the revised copy, with ESP first. The progression (semester on the thread, role as heading) is followed by one session with its single activity example, and the program's offerings set apart.
+- **ADI:** three guidance themes, and Beyond the semester as the close. The two cohorts are anonymous marks, with a thread showing the earlier cohort's continued contact.
+
+**TMU:** every Markdown line was already on the page. Redundant visual summaries are removed: the source-type run, the editorial checklist and the module strip. The walkthrough, outputs, bibliography and review-matrix examples are kept, labelled illustrative, and nothing confidential is linked.
+
+**Found and fixed while verifying:**
+
+| # | Pri | Defect | Fix |
+|---|-----|--------|-----|
+| 1 | P1 | Reconstruction: the flex log shrank the rows, so options overlapped and couldn't be clicked | `flex-shrink: 0` on rows |
+| 2 | P2 | Contrast: the reconstruction's context options, status and idle hint were at 3.9:1 | raised to ≥ 4.65 |
+| 3 | P2 | GVI phones: the binoculars figure squeezed "Working across formats" | stacks beneath on phones |
+| 4 | P3 | GVI's turn paragraph was set at display size | one step above prose |
+| 5 | P3 | ESP semester labels took the heading serif | sans, lining numerals |
+
+## Iteration 24 — detail-page design pass (26 Oct 2026)
+
+**Scope:** the eight completed case studies, design only. No content Markdown or wording changed. Lynxster, AMNH and Inteli-lens are untouched (markup and pixels identical); the homepage changed only in two dates.
+
+**Openings** (the new `.case-hero` in `case.css`, used only by these eight pages):
+- **Height:** 860–920px → 500–720px at 1440×900; the first section, or GVI's photograph, now begins within the first screen. Every title fits on two lines at 76px (was 102px, up to four lines), with per-page measures.
+- **Identity line:** the logo or wordmark and the dates share one line.
+- **Thread (DetailLine):** it now has a job instead of a loop in empty space. A page marks an element with `data-line="flourish"`; pages without one, including the three template pages, draw exactly as before.
+  - **Crackd, Buzzworks, GVI, PMMY, teen:** the facts sit beside the title, and the thread drops from the header and ties a loop over them, like a field tag.
+  - **TMU:** the thread makes a small loop after "Following the footnotes.", a footnote mark, and runs out to the margin. The facts stay beneath as a colophon.
+  - **ESP and ADI:** a lighter opening, with a smaller title, the facts as one quiet row, and a small knot off the end of the wordmark-and-dates row.
+- **Research pages:** the facts become the paper's masthead (a 2px accent rule, then Role / Mentor / Publication).
+- **GVI:** the shorter 16:9 photograph now starts about 520px down instead of 1,000px. It isn't enlarged.
+
+**Bodies:**
+- **Crackd:** the two tape strips on the sheet and the orphan plate-tape styles are removed. The phase-01 team notes use fine solid rules and lighter titles, so the raised sheet of phase 02 (my own three applications) reads as the step up.
+- **ESP/ADI:** the sticky "On this page" rail is removed. One reading column (max 64rem) starts at the opening's left edge; the sections keep their ids.
+
+**Homepage dates (only):** Crackd 2025 → 2025–2026, Research publications 2022–2024 → 2022, matching the detail pages (Sept 2025–May 2026; both papers 2022). The drawer shows no dates.
+
+**Drawer:** the TMU and GVI entries now name their organisations ("TMU · Research", "GVI · Fieldwork"). Spacing, the current-page wash and label, focus rings, in-sheet scrolling and the 500ms/320ms motion are as refined in iteration 22, re-checked here.
+
+**Content discrepancies (not changed — for the content pass):**
+- `home.md` still lists Crackd (2025) and Research publications (2022–2024).
+- `esp-teaching.md` and `adi-mentorship.md` were revised at 09:40 today. Their new wording isn't on the pages yet (`columbia.mjs` reports the missing lines).
+
 ## Iteration 23 — GVI photographs (25 Oct 2026)
 
 **Photographs:** Anya's three files from `public/assets/gvi/` replace the placeholders. The originals are untouched; `scripts/build-gvi-photos.mjs` makes resized WebP copies in `public/assets/gvi/web/` (480–2400 px, never upscaled, nothing cropped or retouched). `PhotoSlot` serves them through `next/image` with a loader that picks the right size for each screen, with dimensions reserved so nothing shifts. The placeholder viewfinder, labels and wording are gone.

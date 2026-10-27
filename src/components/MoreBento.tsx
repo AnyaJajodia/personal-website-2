@@ -2,11 +2,13 @@
  * "More" as three drawn plates in a varied-span grid (the grid structure
  * follows Magic UI's BentoGrid: https://magicui.design/docs/components/bento-grid).
  * Writing has a nib that has just written the site's line; Wildlife
- * photography a drawn contact sheet labelled "Photographs to come".
- * Experiments is deliberately empty — a reserved plate with nothing in it, so
- * it claims no experiment. None of these have pages yet, so nothing here is a
- * link; the drawings are aria-hidden and claim no work.
+ * photography shows one of the photographs, whole. Experiments is deliberately empty — a
+ * reserved plate with nothing in it, so it claims no experiment. A plate with
+ * a page (`links`) is one link, stretched over the whole plate; the others
+ * are not links. The drawings are aria-hidden and claim no work.
  */
+import Link from "next/link";
+import { homepagePhoto, sequence } from "@/content/wildlife";
 
 /** Writing: a nib that has just written a flourish in the site's own line. */
 function WritingScene() {
@@ -34,40 +36,22 @@ function WritingScene() {
   );
 }
 
-/** Photography: a contact sheet of drawn bushveld frames — explicitly a placeholder. */
+/** Photography: one of the photographs — the supplied file, whole, scaled to
+ * fit the plate at its own proportions (never cropped) — with the viewfinder
+ * corners that close in on hover / focus. */
 function PhotoScene() {
-  const frames = [
-    // acacia on the horizon
-    "M8 64h104M70 64v-18M52 46c6-8 30-8 38 0-6 3-32 3-38 0z M24 64c4-6 8-6 12 0",
-    // grass and a low sun
-    "M8 66h104M86 40m-8 0a8 8 0 1 0 16 0a8 8 0 1 0-16 0M20 66l4-10 3 10M34 66l3-8 3 8M96 66l3-9 3 9",
-    // two trees and a far ridge
-    "M8 62c20-8 40-8 60-2s30 4 44-2M36 62v-14M24 48c4-6 20-6 24 0-4 2-20 2-24 0zM88 60v-12M78 48c3-5 17-5 20 0-3 2-17 2-20 0z",
-    // a waterhole
-    "M8 60h104M30 70c16-6 44-6 60 0-16 5-44 5-60 0zM50 60v-14M40 46c5-7 15-7 20 0-5 3-15 3-20 0z",
-    // a kopje against the sky
-    "M8 66h104M30 66c6-14 14-22 24-22s16 10 22 22M64 30m-6 0a6 6 0 1 0 12 0a6 6 0 1 0-12 0",
-    // grass seed heads close up
-    "M8 70h104M30 70c2-16 6-28 10-36M54 70c-1-18 2-30 8-40M80 70c1-14 4-24 10-32M40 34l-4-6M62 30l4-7M90 38l5-5",
-  ];
+  const p = homepagePhoto;
   return (
     <div className="bento__scene scene-photo" aria-hidden="true">
-      <div className="contact-sheet">
-        {/* viewfinder corners: they close in on the sheet on hover / focus */}
+      <div className="photo-preview" style={{ "--ar": p.width / p.height } as React.CSSProperties}>
         <span className="viewfinder" aria-hidden="true">
           <i />
           <i />
           <i />
           <i />
         </span>
-        {frames.map((d, i) => (
-          <svg key={i} className="contact-sheet__frame" viewBox="0 0 120 90" focusable="false">
-            <rect x="0.5" y="0.5" width="119" height="89" className="contact-sheet__edge" />
-            <path d={d} className="contact-sheet__drawing" />
-          </svg>
-        ))}
-        {/* printed on the sheet's own border, like frame text on film */}
-        <span className="contact-sheet__note">Photographs to come</span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="photo-preview__img" src={p.src} width={p.width} height={p.height} alt="" loading="lazy" decoding="async" draggable={false} />
       </div>
     </div>
   );
@@ -86,23 +70,43 @@ const KEYS: Record<string, string> = {
   Experiments: "experiments",
 };
 
-export default function MoreBento({ items }: { items: string[] }) {
+export default function MoreBento({ items, links = {} }: { items: string[]; links?: Record<string, string> }) {
   return (
-    <ul className="bento" aria-label="Coming later">
-      {items.map((item) => (
-        <li
-          key={item}
-          className={`bento__card bento__card--${KEYS[item] ?? "other"}`}
-          // Writing and Photography respond to focus as well as hover (nothing in them is a link)
-          {...(item !== "Experiments" ? { tabIndex: 0, role: "group", "aria-label": `${item} — later` } : {})}
-        >
-          {SCENES[item] ?? null}
-          <div className="bento__content">
-            <h3 className="bento__name">{item}</h3>
-            <span className="label bento__soon">Later</span>
-          </div>
-        </li>
-      ))}
+    <ul className="bento" aria-label="Other things">
+      {items.map((item) => {
+        const href = links[item];
+        return (
+          <li
+            key={item}
+            className={`bento__card bento__card--${KEYS[item] ?? "other"}${href ? " bento__card--link" : ""}`}
+            // Writing responds to focus as well as hover (nothing in it is a link yet)
+            {...(!href && item !== "Experiments" ? { tabIndex: 0, role: "group", "aria-label": `${item} — later` } : {})}
+          >
+            {SCENES[item] ?? null}
+            <div className="bento__content">
+              <h3 className="bento__name">
+                {href ? (
+                  <Link href={href} className="bento__link">
+                    {item}
+                  </Link>
+                ) : (
+                  item
+                )}
+              </h3>
+              <span className="label bento__soon">
+                {href ? (
+                  <>
+                    {item === "Wildlife photography" ? `${sequence.length} photographs` : "View"}
+                    <span aria-hidden="true"> →</span>
+                  </>
+                ) : (
+                  "Later"
+                )}
+              </span>
+            </div>
+          </li>
+        );
+      })}
     </ul>
   );
 }

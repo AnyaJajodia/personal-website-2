@@ -2,7 +2,7 @@
 
 ## Working through it together.
 
-Mentoring six students through classes, projects, recruiting, and finding their own direction in computer science.
+Mentoring students through classes, projects, recruiting, and finding their own direction in computer science.
 
 Role: Mentor
 Period: Spring–Fall 2026
@@ -11,51 +11,29 @@ Cohorts: Two · Six mentees
 
 ## What is ADI?
 
-The Application Development Initiative is Columbia’s student technology community, bringing people together through educational resources, events, projects, and mentorship.
+The Application Development Initiative is Columbia’s student technology community. Its peer mentorship program connects students with more experienced peers for guidance around their interests, questions, and goals.
 
-Its mentorship program connects students with more experienced peers for guidance shaped around their individual interests and questions.
-
-## How the mentorship worked
-
-I applied to become a mentor and participated in the Spring and Fall 2026 cohorts, with three different mentees each semester.
-
-The program began with short introductory conversations between mentors and prospective mentees. Participants then submitted preferences to help inform the matching process.
-
-Once matched, the conversations followed what each student needed rather than a fixed curriculum.
+I mentored three different students in each of the Spring and Fall 2026 cohorts. After introductory conversations and preference-based matching, we shaped the mentorship around what each student needed.
 
 ## What we worked through
 
-### Finding a place in CS
+### Finding a direction
 
-I helped students explore the transition into computer science, understand different directions within the field, and think through their academic and career interests.
+For students exploring or transitioning into computer science, I helped them consider different areas of the field and how those might connect to their academic and career interests.
 
-### Navigating Columbia
+### Classes and opportunities
 
-We discussed classes, professors, course planning, and opportunities, drawing on my experience of studying CS at Columbia.
+We worked through course planning, choosing professors, finding opportunities, and approaching recruiting—drawing on what I had learned navigating CS at Columbia.
 
-### Getting projects started
+### Moving an idea forward
 
-I guided students through choosing an idea, defining a manageable scope, planning the work, and moving toward implementation.
-
-### Preparing for what comes next
-
-Our conversations also covered recruiting, job searches, skill development, and possible career paths.
-
-Sometimes a student needed practical information. Other times, they needed someone to help organize the questions before deciding what to do.
+I helped mentees choose project ideas, define a manageable scope, plan the work, and figure out how to begin building. Sometimes that meant technical guidance; other times, it meant breaking an overwhelming idea into a useful next step.
 
 ## Beyond the semester
 
-I stayed in touch with mentees from the earlier cohort as the year continued.
+I stayed in touch with earlier mentees as the year continued, following up as they started classes, developed projects, and encountered new questions.
 
-That continuity mattered: the next question often appeared after the initial decision, once someone had started a class, attempted a project, or begun exploring an opportunity.
-
-## What I value
-
-I like helping someone reach the point where they can see a useful next step and feel ready to take it.
-
-Mentoring gives me a chance to share what I have learned while paying attention to the fact that someone else’s path may look very different from mine.
-
----
+What I enjoy is helping someone find their footing while leaving room for their direction to be different from mine.
 
 <!-- INTERNAL IMPLEMENTATION NOTES — DO NOT RENDER
 
@@ -66,14 +44,13 @@ Anya maintained contact with earlier mentees.
 Do not restore January 2024, 2027, or "10+ students."
 
 SCOPE
-This was the individual mentorship program.
-Do not conflate it with ADI Labs team mentorship.
-Do not attribute club-wide events or projects to Anya.
-Do not claim specific internship placements or recruiting outcomes.
+Individual peer mentorship, not ADI Labs team mentorship.
+Do not attribute club-wide activities or specific internship placements to Anya.
+Do not invent outcomes, testimonials, or mentee examples.
 
-PRIVACY AND DESIGN
-Keep mentee examples anonymous.
-Keep the page short, with clear guidance themes and a brief reflection.
-No invented testimonials, mentee portraits, chat screenshots, or image placeholders.
+DESIGN
+Keep the three guidance themes concise.
+Preserve mentee anonymity.
+No image placeholders or fabricated screenshots needed.
 
 END INTERNAL NOTES -->

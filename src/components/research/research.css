@@ -78,15 +78,12 @@
 }
 
 /* ------------------------------------------------------------ opening */
-.theme-research .rs-hero {
-  padding-bottom: clamp(2.5rem, 5vw, 3.5rem);
-}
 .rs-hero__kind {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.4rem 0.9rem;
-  margin-bottom: clamp(1rem, 2vw, 1.4rem);
+  margin-bottom: clamp(1.25rem, 2.4vw, 1.75rem);
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -111,20 +108,22 @@
   color: var(--ink-2);
 }
 .theme-research .rs-hero__title {
-  max-width: 13ch;
+  max-width: 19ch;
   text-wrap: balance;
 }
 .theme-research .rs-hero__subtitle {
-  max-width: 40ch;
+  max-width: 42ch;
 }
+/* the paper's masthead beside the title: role, mentor, journal — hung from the thread */
 .rs-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem clamp(1.5rem, 4vw, 3rem);
-  max-width: 50rem;
-  margin: clamp(1.75rem, 3.5vw, 2.5rem) 0 0;
-  padding-top: 0.9rem;
-  border-top: 1px solid var(--rule-strong);
+  margin: 0;
+  border-top: 2px solid var(--rs-mark);
+}
+.rs-facts > div {
+  padding-block: 0.8rem;
+}
+.rs-facts > div + div {
+  border-top: 1px solid var(--rule);
 }
 .rs-facts dt {
   color: var(--rs-ink);
@@ -333,31 +332,6 @@
   color: var(--rs-ink);
   text-wrap: balance;
 }
-/* a short run of named factors in the accent, thin dots between */
-.rs-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.2rem 0.6rem;
-  margin: 1.25rem 0;
-  padding: 0.85rem 0 0;
-  border-top: 1px solid var(--rule);
-  list-style: none;
-}
-.rs-chips li {
-  font-size: 0.9375rem;
-  font-weight: 550;
-  color: var(--rs-ink);
-}
-.rs-chips li:not(:last-child)::after {
-  content: "·";
-  margin-left: 0.6rem;
-  font-weight: 400;
-  color: var(--muted);
-}
-.rs-chips li::first-letter {
-  text-transform: uppercase;
-}
-
 /* steps: numbered, on one thread */
 .rs-steps {
   position: relative;
@@ -409,7 +383,7 @@
   max-width: 54rem;
   margin-top: clamp(2rem, 4vw, 2.75rem);
   padding-top: clamp(1.25rem, 2.5vw, 1.75rem);
-  border-top: 1px dashed var(--rule-strong);
+  border-top: 1px solid var(--rule);
 }
 .rs-finding:first-of-type {
   border-top: 0;
@@ -461,42 +435,6 @@
 /* standing figures share one height across the case studies */
 .theme-research--teen .avatar--rs-reader {
   width: clamp(4.75rem, 6vw, 5.6rem);
-}
-
-/* limitations: numbered points, then the close */
-.rs-limits__list {
-  display: grid;
-  gap: 1rem;
-  max-width: 60ch;
-  margin: 1.4rem 0 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: lim;
-}
-.rs-limits__list li {
-  position: relative;
-  padding-left: 2rem;
-  line-height: 1.6;
-  counter-increment: lim;
-  text-wrap: pretty;
-}
-.rs-limits__list li::before {
-  content: counter(lim) ".";
-  position: absolute;
-  left: 0;
-  top: -0.05rem;
-  font-family: var(--serif);
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--rs-ink);
-}
-.rs-limits__close {
-  max-width: 40ch;
-  margin-top: clamp(1.5rem, 3vw, 2rem);
-  font-family: var(--serif);
-  font-size: clamp(1.35rem, 2.1vw, 1.65rem);
-  line-height: 1.28;
-  text-wrap: pretty;
 }
 
 /* tables */
@@ -751,12 +689,14 @@
 
 /* PMMY: the sentiment chart — directly labelled bars, with the table beside */
 .rs-chart {
+  /* the directly labelled bars carry the figure; its table is the
+     screen-reader equivalent (visually hidden), not a second block */
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(12rem, 15rem);
+  grid-template-columns: minmax(0, 46rem);
   grid-template-areas:
-    "plot table"
-    "cap cap";
-  gap: 1rem clamp(1.5rem, 4vw, 3rem);
+    "plot"
+    "cap";
+  gap: 1rem;
   margin: 1.25rem 0 0;
   padding: 1.1rem 0 1.2rem;
   border-top: 1px solid var(--rule-strong);
@@ -828,7 +768,6 @@
   white-space: nowrap;
 }
 .rs-chart__table {
-  grid-area: table;
   align-self: center;
   border-collapse: collapse;
   font-size: 0.9375rem;
@@ -856,9 +795,8 @@
 }
 .rs-chart .rs-caption {
   grid-area: cap;
+  max-width: 62ch;
   margin-top: 0.25rem;
-  padding-top: 0.85rem;
-  border-top: 1px dashed var(--rule-strong);
 }
 
 /* teenage pregnancy: the data, then the workflow */
@@ -989,108 +927,37 @@
   text-wrap: pretty;
 }
 
-/* Project Ārogya */
+/* Project Ārogya: the prose, and beside it the documented reach as the
+   section's one figure — participation, set apart from the study's measures */
 .rs-arogya__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem);
-  gap: clamp(1.5rem, 4vw, 3rem);
+  grid-template-columns: minmax(0, 1fr) minmax(13rem, 16rem);
+  gap: clamp(1.75rem, 5vw, 4rem);
   margin-top: 1.25rem;
   align-items: start;
 }
-/* the documented reach: the figure set into the text, a rule above and below */
 .rs-reach {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: 0.4rem 1.25rem;
-  max-width: 44rem;
-  margin: 1.5rem 0;
-  padding: 0.9rem 0;
-  border-top: 1px solid var(--rule-strong);
-  border-bottom: 1px solid var(--rule);
+  position: sticky;
+  top: calc(var(--header-h) + 2rem);
+  margin: 0.35rem 0 0;
+  padding-top: 0.9rem;
+  border-top: 2px solid var(--rs-mark);
 }
 .rs-reach__value {
   font-family: var(--serif);
-  font-size: clamp(2.8rem, 5vw, 3.8rem);
+  font-size: clamp(3.75rem, 7vw, 5.25rem);
   font-weight: 600;
-  line-height: 1;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
   color: var(--rs-ink);
   font-variant-numeric: lining-nums;
 }
 .rs-reach__text {
-  font-size: 1rem;
+  margin-top: 0.7rem;
+  font-size: 0.9688rem;
   line-height: 1.5;
-}
-.rs-arogya__side {
-  display: grid;
-  gap: 1.25rem;
-}
-.rs-roles {
-  display: grid;
-  margin: 0;
-  padding: 0;
-  border-top: 1px solid var(--rule-strong);
-  list-style: none;
-}
-.rs-roles li {
-  position: relative;
-  padding: 0.6rem 0 0.6rem 1.4rem;
-  font-size: 0.9375rem;
-  line-height: 1.4;
-}
-.rs-roles li + li {
-  border-top: 1px solid var(--rule);
-}
-.rs-roles li::first-letter {
-  text-transform: uppercase;
-}
-.rs-roles li::before {
-  content: "";
-  position: absolute;
-  left: 0.1rem;
-  top: 0.95rem;
-  width: 0.55rem;
-  height: 0.55rem;
-  border-radius: 50%;
-  background: var(--rs-note);
-}
-.rs-photo {
-  margin: 0;
-}
-.rs-photo__empty,
-.rs-photo__img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  border-radius: 10px;
-  object-fit: cover;
-}
-.rs-photo__empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-  padding: 1rem;
-  border: 1px dashed var(--rule-strong);
-  background: color-mix(in srgb, var(--rs-soft) 60%, transparent);
-  text-align: center;
-}
-.rs-photo__label {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-  color: var(--rs-ink);
-}
-.rs-photo__wanted {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 1.05rem;
-}
-.rs-photo__care {
-  font-size: 0.75rem;
-  color: var(--muted);
+  color: var(--ink-2);
+  text-wrap: pretty;
 }
 .rs-arogya__link {
   display: flex;
@@ -1128,10 +995,6 @@
   }
   .rs-chart {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "plot" "table" "cap";
-  }
-  .rs-chart__table {
-    justify-self: start;
   }
 }
 @media (max-width: 759.98px) {
@@ -1176,12 +1039,29 @@
   .rs-table td {
     font-size: 0.9375rem;
   }
-  .rs-arogya__side {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .rs-photo {
+  .rs-reach {
+    position: static;
+    order: -1;
     max-width: 22rem;
   }
+}
+
+/* PMMY's tools: the one line the copy gives, as a run of names */
+.rs-runlist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.6rem;
+  max-width: 60ch;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+}
+.rs-runlist li:not(:last-child)::after {
+  content: "·";
+  margin-left: 0.6rem;
+  color: var(--muted);
 }
 
 /* a little room before a link's arrow */

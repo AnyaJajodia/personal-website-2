@@ -301,9 +301,9 @@ const scrollTo = async (page, sel, at = 0.35) => {
   ok("photography: viewfinder corners close in on hover", c0 === "none" && c1 !== "none", `${c0} → ${c1}`);
   await page.mouse.move(5, 5);
   await page.waitForTimeout(700);
-  await page.focus(".bento__card--photo");
+  await page.focus(".bento__card--photo .bento__link");
   await page.waitForTimeout(700);
-  ok("photography: and on keyboard focus; still a placeholder", (await corner()) !== "none" && (await page.$eval(".bento__card--photo", (e) => e.textContent.includes("Photographs to come"))));
+  ok("photography: and on keyboard focus; the plate links to the photographs", (await corner()) !== "none" && (await page.$eval(".bento__card--photo .bento__link", (e) => e.getAttribute("href"))) === "/wildlife-photography");
   const pen = () => page.evaluate(() => ({ pen: getComputedStyle(document.querySelector(".writing__pen")).transform, ink: getComputedStyle(document.querySelector(".writing__ink")).strokeDashoffset }));
   const p0 = await pen();
   await (await page.$(".bento__card--writing")).hover();

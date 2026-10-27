@@ -1,0 +1,29 @@
+{
+  "$comment": "The Wildlife photography collection. Files are Anya's final selection in public/assets/wildlife-photography/ and are served exactly as supplied (never resized, re-encoded or cropped). The folder a photograph sits in sets its visual weight: main-gallery → larger placements, secondary-gallery → smaller ones; the page never names these groups. `hero` opens the page; `homepage` is also the homepage's preview. `rows` is the viewing sequence: each row's photographs share one height and keep their own proportions. Titles follow the supplied filenames; captions are factual. After adding or replacing a file, run `node scripts/build-wildlife-photos.mjs` (it only reads the files: dimensions and a loading colour).",
+  "hero": "lion-on-the-road",
+  "homepage": "jacana",
+  "photos": {
+    "lion-on-the-road": { "file": "highlights/hero.png", "title": "Lion", "caption": "Walking away down a dirt road.", "alt": "A young lion walking away down a dusty dirt road lined with bare trees, under a hazy pink sky." },
+    "jacana": { "file": "highlights/homepage.png", "title": "Jacana", "caption": "Walking across lily pads.", "alt": "A chestnut-bodied wading bird with long toes walking across lily pads, reflected in dark blue water." },
+    "golden-hour-lion": { "file": "main-gallery/Golden_Hour_Lion.png", "title": "Golden hour lion", "caption": "Resting in long grass.", "alt": "A male lion with a pale mane lying in tall golden grass, looking towards the camera." },
+    "elephant-among-trees": { "file": "main-gallery/Elephant_Among_Trees.png", "title": "Elephant among trees", "caption": "Reaching up into the branches.", "alt": "An elephant seen from below, its trunk stretched straight up into the leaves of a tree, tusks showing." },
+    "collared-cheetah": { "file": "main-gallery/Collared_Cheetah.png", "title": "Collared cheetah", "caption": "Sitting beside a sandy track.", "alt": "A cheetah wearing a tracking collar, sitting upright in dry grass at the edge of a sandy track." },
+    "walking-leopard": { "file": "main-gallery/Walking_Leopard.png", "title": "Walking leopard", "caption": "Crossing open ground.", "alt": "A leopard walking across open, bare ground in front of a tangle of dry bushes." },
+    "sunset-giraffes": { "file": "main-gallery/Sunset_Giraffes.png", "title": "Sunset giraffes", "caption": "Silhouetted against an orange sky.", "alt": "Two giraffes in black silhouette between dark trees, against an orange sky." },
+    "african-fish-eagle": { "file": "main-gallery/African_Fish_Eagle.png", "title": "African fish eagle", "caption": "Perched on a bare branch.", "alt": "An African fish eagle, white head and dark body, perched on a curving bare branch against a pale pink sky." },
+    "twilight-hippos": { "file": "main-gallery/Twilight_Hippos.png", "title": "Twilight hippos", "caption": "Heads just above the water.", "alt": "Two hippos with only their heads above still water that reflects a pink and purple sky, a dark treeline behind." },
+    "hornbill": { "file": "secondary-gallery/Hornbill.png", "title": "Hornbill", "caption": "Among sunlit branches.", "alt": "A hornbill with a large curved yellow bill perched among sunlit branches and leaves against a blue sky." },
+    "perched-raptor": { "file": "secondary-gallery/Perched_Raptor.png", "title": "Perched raptor", "caption": "At the top of a dead branch.", "alt": "A brown bird of prey perched at the top of a bare, dead branch against a clear blue sky." },
+    "feeding-giraffe": { "file": "secondary-gallery/Feeding_Giraffe.png", "title": "Feeding giraffe", "caption": "Reaching over a thorny bush.", "alt": "A giraffe's head and neck reaching over the top of a thorny bush to feed, against a blue sky." },
+    "elephant-family": { "file": "secondary-gallery/Elephant_Family.png", "title": "Elephant family", "caption": "Adults with young beneath them.", "alt": "Adult elephants standing together in dry bush, with young elephants sheltering in the shade beneath them." },
+    "elephant-profile": { "file": "secondary-gallery/Elephant_Profile.png", "title": "Elephant profile", "caption": "Head and tusk, side-on.", "alt": "A close, upright view of an elephant's head, ear and long tusk against green bush." }
+  },
+  "rows": [
+    { "photos": ["golden-hour-lion", "elephant-among-trees"] },
+    { "photos": ["hornbill", "perched-raptor", "feeding-giraffe"], "space": "tight" },
+    { "photos": ["collared-cheetah", "walking-leopard"], "space": "wide" },
+    { "photos": ["jacana", "elephant-family", "elephant-profile"], "width": 0.8, "space": "tight" },
+    { "photos": ["sunset-giraffes", "african-fish-eagle"], "space": "wide" },
+    { "photos": ["twilight-hippos"], "space": "wide" }
+  ]
+}

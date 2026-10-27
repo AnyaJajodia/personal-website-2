@@ -31,12 +31,14 @@ export type DrawerEntry = {
   links: DrawerLink[];
 };
 
-const LOOKS: Record<string, { key: string; tone: string; logo: DrawerLogo }> = {
+// `who`: the organisation, for entries whose name alone doesn't say where the
+// work happened ("Research tooling", "Conservation fieldwork"); shown before the category
+const LOOKS: Record<string, { key: string; tone: string; logo: DrawerLogo; who?: string }> = {
   "crackd-ai": { key: "crackd", tone: "#f8d74d", logo: { kind: "img", src: "/logos/crackd-minimal.png", w: 148, h: 178, dark: true } },
   buzzworks: { key: "buzzworks", tone: "#e8b28d", logo: { kind: "img", src: "/logos/buzzworks-minimal.png", w: 162, h: 152 } },
-  "tmu-citation-tooling": { key: "tmu", tone: "#a9c1d9", logo: { kind: "img", src: "/logos/tmu.png", w: 256, h: 140 } },
+  "tmu-citation-tooling": { key: "tmu", tone: "#a9c1d9", logo: { kind: "img", src: "/logos/tmu.png", w: 256, h: 140 }, who: "TMU" },
   "inteli-lens": { key: "inteli", tone: "#b9a4be", logo: { kind: "mark", mark: "lens" } },
-  "gvi-conservation": { key: "gvi", tone: "#a5bdb0", logo: { kind: "img", src: "/logos/gvi.webp", w: 300, h: 237 } },
+  "gvi-conservation": { key: "gvi", tone: "#a5bdb0", logo: { kind: "img", src: "/logos/gvi.webp", w: 300, h: 237 }, who: "GVI" },
   "pmmy-research": { key: "pubs", tone: "#d3a1ad", logo: { kind: "mark", mark: "pages" } },
   // the Columbia crown, deep blue: its tile keeps the lavender tone in both themes
   "esp-teaching": { key: "teaching", tone: "#b0b9da", logo: { kind: "img", src: "/logos/columbia-crown-light.png", w: 300, h: 300 } },
@@ -56,7 +58,7 @@ export const drawerSelected: DrawerEntry[] = selectedWork.rows.map((row) => {
     key: look.key,
     // one visible name, as on the homepage panels: the short name for single projects
     title: row.links.length === 1 ? row.links[0].label : row.title,
-    note: row.category,
+    note: look.who ? `${look.who} · ${row.category}` : row.category,
     tone: look.tone,
     logo: look.logo,
     links: row.links,

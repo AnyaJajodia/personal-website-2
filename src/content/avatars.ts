@@ -56,6 +56,10 @@ export const poses = {
   turningPage: p("reading-05", 300, 590, 0.985),
   raisedFinger: p("idea-01", 300, 514, 0.985),
   cheers: p("matcha-04", 300, 547, 0.985),
+
+  // wildlife photography page
+  /** 08.2 kneeling, camera raised to her eye, lens pointing left */
+  kneelingCamera: p("photography-02", 340, 427, 0.97),
 } satisfies Record<string, Pose>;
 
 export type PoseName = keyof typeof poses;
@@ -81,7 +85,8 @@ export const detailAvatars: Record<string, { section: string; pose: PoseName }[]
   buzzworks: [{ section: "My contribution", pose: "laptopFloor" }],
   // not used: the TMU page places its own figure (components/tmu/TmuPage.tsx)
   "tmu-citation-tooling": [{ section: "My contribution", pose: "standingBook" }],
-  "inteli-lens": [{ section: "My contribution", pose: "lookingUp" }],
+  // not used: the Inteli-lens page places its own figure (components/inteli/InteliPage.tsx)
+  "inteli-lens": [{ section: "Looking back", pose: "lookingUp" }],
   // not used: the GVI page places its own figure (components/gvi/GviPage.tsx)
   "gvi-conservation": [{ section: "Overview", pose: "binoculars" }],
   // not used: the research pages place their own figures (components/research/)

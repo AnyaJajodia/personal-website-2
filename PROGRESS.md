@@ -304,3 +304,52 @@ Decisions (keep through compaction):
 ## Iteration 23 — GVI photographs (25 Oct 2026)
 - `scripts/build-gvi-photos.mjs` → `public/assets/gvi/web/*.webp`. `content/gvi-photos.ts` (files, widths, captions, alt, sizes, `overlay`); `PhotoSlot.tsx` is a client component with a width-picking loader; the photo styles and the container-query overlay live in gvi.css.
 - **Follow-up:** the GVI opening photograph is 16:9, anchored to the bottom (gvi.css `.gvi-photo--opening`).
+
+## Iteration 24 — detail-page design pass (26 Oct 2026)
+- `.case-hero` / `.case-hero__id` / `.case-hero__grid` / `.case-hero__mark` in `components/case/case.css`. DetailLine follows an optional `data-line="flourish"` anchor (`data-flourish="tag|mark"`, `data-flourish-scale`).
+- ColumbiaShell has no rail (`.cu-content`). Crackd tapes removed. Drawer `who` labels live in `work-index.ts`. Homepage dates are set in `site.ts`.
+- QA: `qa/pass24.mjs`, `qa/hero-shots.mjs`; crackd, copy and columbia assertions updated.
+
+## Iteration 25 — revised content, seven pages (26 Oct 2026)
+- Content from the current Markdown in `content/{buzzworks,gvi,research,columbia,tmu}.ts`; the Buzzworks scenarios live in `content/buzzworks.ts` (`scenarios`) and `components/buzzworks/Reconstruction.tsx`.
+- PMMY has no publication card (`Publication` type split in research.ts); teen `arogya.reach`; ESP `session`, ADI `what.cohorts`.
+- QA: new `qa/buzzworks-recon.mjs`; buzzworks, gvi, research, columbia, refine and pass24 updated.
+
+## Iteration 26 — Crackd.ai completed (26 Oct 2026)
+- Content: `content/crackd.ts` (revised Markdown; apps with steps from walkthroughs.json). Page: `components/crackd/CrackdPage.tsx`. Apps and the walkthrough dialog: `components/crackd/CrackdApps.tsx`. Styles: `crackd.css`.
+- Assets: `scripts/build-crackd-walkthroughs.mjs` reads `handoff/assets/crackd-source/` and writes `public/assets/crackd/*-{1280,2048}.webp`.
+- QA: new `qa/crackd-tour.mjs` and `qa/crackd-shots.mjs`; `crackd.mjs`, `refine.mjs` and `check.mjs` updated.
+
+## Iteration 27 — Inteli-lens page (26 Oct 2026)
+- Content: `content/inteli.ts` (revised inteli-lens.md, verbatim; notes not copied). Page: `components/inteli/InteliPage.tsx` + `inteli.css`, routed in `app/work/[slug]/page.tsx`. `work.ts` entry reduced to name/metadata/pager (Year 2022; old PyQt5/CCTV/validation copy and flow figure removed).
+- Design: case-hero opening (lens mark + "Inteli-lens — 2022", question title, facts tag on the thread); three sections with headings in the margin, no TOC; mockup full-width with viewfinder brackets; data limitation led by its first sentence; reflection in the serif; dashed "more details" box; `lookingUp` avatar on the closing rule. Lavender #8B78A2 draws thread/brackets/mark, plum #51415E carries accent text (light); #C4AFD4 both (dark). Brackets settle once onto "movement" (0.95s; none under reduced motion).
+- Homepage card: 2022 + the Markdown's summary (`site.ts`). Drawer unchanged (no dates; "Prototype").
+- QA: new `qa/inteli.mjs` (38 checks), `qa/inteli-shots.mjs`; `pass24.mjs` (Inteli-lens joins the tag-flourish openings) and `copy.mjs` (Inteli date/summary) updated.
+
+
+## Iteration 28 — Wildlife photography page (26 Oct 2026)
+- Route `app/wildlife-photography/page.tsx` → `components/wildlife/WildlifePage.tsx`.
+  - Hero: breadcrumb “Other things”, the h1, a one-paragraph lede, and the acacia as the thread's tag anchor.
+  - A rule row with the count, the note, the hint, and the `kneelingCamera` avatar (photography-02, newly exported).
+  - The gallery comes from `WildlifeGallery.tsx`.
+- Masonry (`masonry.ts`): shortest-column placement precomputed for 1, 2 and 3 columns as CSS variables (`--cN/--aN/--kN`). Positions are scaled by container-query units, so the server renders it, there's no JS measuring, and DOM order = photo order.
+- Larger view: a native `<dialog>`.
+  - Open and close are a FLIP with the Web Animations API: spring `linear()` easing, radius matched to the tile, and a frosted scrim in the page colour.
+  - Drag down to dismiss, swipe to change photo, ←/→ keys, Escape and scrim click.
+  - Focus moves to Close and returns to the tile; scroll is locked with the drawer's lock.
+  - Reduced motion is a fade.
+- Photos: renamed in `public/assets/wildlife-photography/`. The manifest is `content/wildlife-photos.json` (with `was`). `scripts/build-wildlife-photos.mjs` builds `web/*.webp` and `wildlife-photos.generated.json` (sizes plus a loading tone per theme).
+- Accent: moss #4B6540 for text and leaf #7E9667 for lines (dark: #B9CB9E / #94AA7E). Corners are 14 px on tiles and 18 px on the view; a leaf mark sits before each caption title.
+- Homepage: `MoreBento` takes `links` (`site.ts` `more.links`). The Wildlife plate is one stretched link reading “View →”, and its sheet says “18 photographs”. The `globals.css` bento link rules were added, and the photo-plate focus selectors were extended to the link.
+- `HomeScribble`: added a guard for a detached root (NaN errors after navigating away from deep in the page).
+- QA: new `qa/wildlife.mjs` (99 checks) and `qa/wildlife-shots.mjs`; `check.mjs` and `interact.mjs` updated for the link.
+
+
+## Iteration 29 — Wildlife photography, final selection (26 Oct 2026)
+- Photos are served as supplied from `public/assets/wildlife-photography/{highlights,main-gallery,secondary-gallery}/`. No derivatives; the old `web/` copies and temporary files are gone.
+- `scripts/build-wildlife-photos.mjs` is now read-only: it writes sizes and loading tones to `wildlife-photos.generated.json` and validates the collection.
+- `content/wildlife-photos.json` holds `hero`, `homepage`, `photos` (id → file, title, caption, alt) and `rows` (photos, width, space). `content/wildlife.ts` exports `hero`, `rows`, `sequence` and `homepagePhoto`; weight comes from the folder.
+- `WildlifeGallery` renders the opening (introduction + hero tile) and justified rows: each item is `flex: <aspect> 1 0%`, so a row shares one height. The page passes `intro` and `asides` (the avatar beside row 4). `masonry.ts` was removed. The expanded view uses the same file as the tile.
+- Phones get a single column, with supporting photos at 74% on alternating sides.
+- Homepage: `MoreBento`'s photo plate shows `homepage.png` whole (container units: `min(100cqw, 100cqh × ratio)`) with viewfinder corners. The label reads “14 photographs →”. The contact-sheet CSS was removed.
+- QA: `qa/wildlife.mjs` (107) and `qa/wildlife-shots.mjs` updated for the new collection.

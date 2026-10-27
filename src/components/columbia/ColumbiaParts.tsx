@@ -5,7 +5,6 @@ import SiteFooter from "@/components/SiteFooter";
 import DetailLine from "@/components/DetailLine";
 import AvatarStage from "@/components/AvatarStage";
 import WorkDrawer from "@/components/WorkDrawer";
-import OnThisPage, { type TocItem } from "@/components/OnThisPage";
 import ThemeLogo from "@/components/ThemeLogo";
 import { getNeighbours } from "@/content/work";
 import { COLUMBIA_WORDMARK, ADI_MARK } from "@/content/columbia";
@@ -42,22 +41,25 @@ export function Section({ id, heading, className = "", children }: { id: string;
 
 export function Hero({ name, dates, title, subtitle, facts, adi = false }: { name: string; dates: string; title: string; subtitle: string; facts: { label: string; value: string }[]; adi?: boolean }) {
   return (
-    <header className="detail-hero cu-hero" data-line="top">
+    <header className="detail-hero case-hero cu-hero" data-line="top">
       <div className="container" data-line="content">
         <nav aria-label="Breadcrumb" className="breadcrumb label" data-line="crumb">
           <Link href="/#work">Work</Link>
           <span aria-hidden="true"> / </span>
           <span aria-current="page">{name}</span>
         </nav>
-        <div className="cu-marks">
-          <ThemeLogo className="cu-wordmark" light={COLUMBIA_WORDMARK.light} dark={COLUMBIA_WORDMARK.dark} width={COLUMBIA_WORDMARK.width} height={COLUMBIA_WORDMARK.height} label="Columbia University" />
-          {adi ? (
-            <span className="cu-pill" role="img" aria-label="ADI">
-              <Image src={ADI_MARK.src} alt="" width={ADI_MARK.width} height={ADI_MARK.height} unoptimized preload />
-            </span>
-          ) : null}
+        {/* the wordmark (and ADI's pill) with the dates; the thread knots off the end of the row (DetailLine) */}
+        <div className="case-hero__id" data-line="flourish" data-flourish="mark" data-flourish-scale="0.55">
+          <div className="cu-marks">
+            <ThemeLogo className="cu-wordmark" light={COLUMBIA_WORDMARK.light} dark={COLUMBIA_WORDMARK.dark} width={COLUMBIA_WORDMARK.width} height={COLUMBIA_WORDMARK.height} label="Columbia University" />
+            {adi ? (
+              <span className="cu-pill" role="img" aria-label="ADI">
+                <Image src={ADI_MARK.src} alt="" width={ADI_MARK.width} height={ADI_MARK.height} unoptimized preload />
+              </span>
+            ) : null}
+          </div>
+          <p className="cu-hero__dates">{dates}</p>
         </div>
-        <p className="cu-hero__dates">{dates}</p>
         <h1 className="detail-hero__title cu-hero__title">
           <span data-line="title">{title}</span>
         </h1>
@@ -75,7 +77,12 @@ export function Hero({ name, dates, title, subtitle, facts, adi = false }: { nam
   );
 }
 
-export function ColumbiaShell({ slug, sections, hero, children }: { slug: string; sections: TocItem[]; hero: React.ReactNode; children: React.ReactNode }) {
+/**
+ * The Columbia pages are short (four or five sections), so they skip the
+ * case-study rail: one reading column, aligned with the opening, no sticky
+ * "On this page" index.
+ */
+export function ColumbiaShell({ slug, hero, children }: { slug: string; hero: React.ReactNode; children: React.ReactNode }) {
   const { prev, next } = getNeighbours(slug);
   return (
     <div className="detail theme-default theme-columbia" data-line-root>
@@ -86,13 +93,8 @@ export function ColumbiaShell({ slug, sections, hero, children }: { slug: string
       <DetailLine theme="default" />
       <main id="main" className="detail__main">
         {hero}
-        <div className="container case-layout">
-          <div className="case-rail">
-            <div className="case-rail__inner">
-              <OnThisPage items={sections} />
-            </div>
-          </div>
-          <div className="case-content">{children}</div>
+        <div className="container">
+          <div className="case-content cu-content">{children}</div>
         </div>
         <nav className="container pager" aria-label="More work" data-line="end">
           <Link href="/#work" className="pager__back label">
