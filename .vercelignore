@@ -1,0 +1,12 @@
+# Not needed to build or serve the site (kept in the repo, not uploaded to Vercel)
+handoff/
+scripts/
+qa/
+.local-references/
+.impeccable/
+QA.md
+REVIEW.md
+PROGRESS.md
+EDITING_CHECKLIST.md
+CLAUDE.md
+AGENTS.md

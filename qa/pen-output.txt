@@ -1,3 +1,0 @@
-{"size":"1440x900","max":4278,"samples":73,"startDrawn":0.1247,"endDrawn":1,"monotonic":true,"reversible":true,"bigJumps":[],"tipOffscreen":[]}
-{"size":"768x1024","max":4576,"samples":78,"startDrawn":0.074,"endDrawn":1,"monotonic":true,"reversible":true,"bigJumps":[],"tipOffscreen":[]}
-{"size":"390x844","max":6636,"samples":112,"startDrawn":0.0326,"endDrawn":1,"monotonic":true,"reversible":true,"bigJumps":[],"tipOffscreen":[]}

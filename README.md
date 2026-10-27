@@ -2,13 +2,17 @@
 
 Next.js 16 (App Router) + TypeScript, static output. The design and content handoff lives in `handoff/` (unchanged).
 
+Requires Node 22 (`.nvmrc`; Node 20.9+ works). Dependencies are pinned in `package.json` / `package-lock.json`.
+
 ```bash
 npm install
 npm run dev     # http://localhost:3100
 npm run check   # typecheck + lint + build
 npm run start   # production preview on :3100
-node qa/check.mjs   # browser QA suite (server must be running)
+node qa/check.mjs   # browser QA suite (server must be running; qa/ is local-only, not in git)
 ```
+
+Deploying: Vercel detects Next.js and runs `next build`; no environment variables are needed. `.vercelignore` keeps `handoff/`, `scripts/` and the working notes out of the upload. The site is `noindex` (`src/app/layout.tsx`) until it is published.
 
 - Edit copy, dates, metrics, and links in `src/content/site.ts` and `src/content/work.ts`.
 - The scroll-linked line: `src/lib/line-geometry.ts`, `src/lib/home-route.ts` (route + scroll schedule), `src/components/HomeScribble.tsx`, `src/components/DetailLine.tsx`.

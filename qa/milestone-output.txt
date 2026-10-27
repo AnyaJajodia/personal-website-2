@@ -1,2 +1,0 @@
-active milestone by scroll: 288→none  688→1  808→2  848→3  888→4  928→5
-layout unchanged by emphasis: true

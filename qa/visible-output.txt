@@ -1,4 +1,0 @@
-1440x900 pass True minVis 597 rev True
-1024x768 pass True minVis 498 rev True
-768x1024 pass True minVis 687 rev True
-390x844 pass True minVis 504 rev True

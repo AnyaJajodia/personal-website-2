@@ -12,3 +12,19 @@ qa/screenshots/
 # Local-only design references (real product screens): never commit or serve
 .local-references/
 public/**/*-mode-reference.png
+
+# QA scripts, logs and captures (local only)
+qa/
+
+# Environment, Vercel, logs, keys
+.env*
+!.env.example
+.vercel/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.pem
+
+# iCloud duplicate copies ("file 2.ext", "folder 2/")
+* 2.*
+* 2/
