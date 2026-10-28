@@ -188,12 +188,15 @@ class Margin {
  * the thread hangs from it down behind her (beside the strands she is holding)
  * and leaves past her heels, along the card's top edge, back to the margin.
  */
-function throughFist(P: Pen, T: NonNullable<HomeLayout["thread"]>, gx: number, cardTop: number, yAt: (y: number) => number) {
+function throughFist(P: Pen, T: NonNullable<HomeLayout["thread"]>, gx: number, cardTop: number, yAt: (y: number) => number, heading?: Rect) {
   const { fist, foot, figure: G } = T;
   const drop = foot.y - fist.y;
+  // on the narrowest phones she stands close beside the heading: the hanging
+  // thread keeps clear of its words (behind her, never through the full stop)
+  const clear = heading && heading.bottom > fist.y && heading.top < foot.y ? heading.right + 8 : -Infinity;
   P.to(pt(gx - 14, fist.y - 64), pt(G.left + G.width * 0.62, fist.y - 30)).at(yAt(fist.y - 30));
-  P.to(pt(fist.x + 12, fist.y - 10), pt(fist.x + 1, fist.y + 2));
-  P.to(pt(fist.x - 5, fist.y + drop * 0.32), pt(fist.x - 3, fist.y + drop * 0.66), pt(foot.x, foot.y)).at(yAt(fist.y + drop * 0.66));
+  P.to(pt(fist.x + 12, fist.y - 10), pt(Math.max(fist.x + 1, clear), fist.y + 2));
+  P.to(pt(Math.max(fist.x - 5, clear), fist.y + drop * 0.32), pt(Math.max(fist.x - 3, clear), fist.y + drop * 0.66), pt(Math.max(foot.x, clear), foot.y)).at(yAt(fist.y + drop * 0.66));
   P.to(pt(G.left + G.width * 0.55, cardTop - 4), pt(G.right + 16, cardTop - 6), pt(gx - 6, cardTop + 4)).at(yAt(cardTop + 4));
 }
 
@@ -296,7 +299,7 @@ function wideRoute(L: HomeLayout): Route {
   const F = L.featureRow;
   if (L.thread) {
     M.run(ly + 80, Math.min(C.top - 50, L.thread.fist.y - 90));
-    throughFist(P, L.thread, gx, F.top, yAt);
+    throughFist(P, L.thread, gx, F.top, yAt, C);
   } else {
     M.run(ly + 80, C.top - 50);
     const r = 22;
@@ -439,7 +442,7 @@ function narrowRoute(L: HomeLayout): Route {
   const F = L.featureRow;
   if (L.thread) {
     M.run(exitY + 30, Math.min(C.top - 40, L.thread.fist.y - 80));
-    throughFist(P, L.thread, gx, F.top, yAt);
+    throughFist(P, L.thread, gx, F.top, yAt, C);
   } else {
     const ky = C.top + C.height * 0.5;
     const kr = 13;

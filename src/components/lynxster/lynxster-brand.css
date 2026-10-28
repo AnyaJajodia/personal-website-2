@@ -72,16 +72,32 @@
 }
 
 /* ------------------------------------------------ 01 · floating (homepage) */
-/* on the homepage in dark, the plate meets the page's warm night: a deep
-   teal-charcoal centre fading out to the page's own colour at the edges */
+/* On the homepage the plate sits beside AMNH's notebook on the portfolio's
+   warm paper, so its ground is warm too; the mark keeps Lynxster's own
+   colour (navy by day, teal at night), as the card's pill and link do.
+     light  a linen a step deeper than the page, the navy mark and glow
+     dark   an umber a step lighter and warmer than the page's night, so the
+            plate still reads as an object; the teal mark, its glow softened */
+.lxb-float {
+  --lxb-bg-1: #f7f3eb;
+  --lxb-bg-2: #e6dfd2;
+  --lxb-glow: rgb(36 70 124 / 0.3);
+  --lxb-glow-soft: rgb(36 70 124 / 0.1);
+}
 :root[data-theme="dark"] .lxb-float {
-  --lxb-bg-1: #121918;
-  --lxb-bg-2: #1d1b19;
+  --lxb-mark: #86d2c6;
+  --lxb-glow: rgb(76 199 188 / 0.38);
+  --lxb-glow-soft: rgb(127 214 204 / 0.09);
+  --lxb-bg-1: #33302a;
+  --lxb-bg-2: #26231f;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) .lxb-float {
-    --lxb-bg-1: #121918;
-    --lxb-bg-2: #1d1b19;
+    --lxb-mark: #86d2c6;
+    --lxb-glow: rgb(76 199 188 / 0.38);
+    --lxb-glow-soft: rgb(127 214 204 / 0.09);
+    --lxb-bg-1: #33302a;
+    --lxb-bg-2: #26231f;
   }
 }
 .lxb-float {
@@ -300,19 +316,16 @@
   border: 2px solid var(--lxb-accent);
   opacity: 0;
 }
-/* AssemblyPlayer runs it: data-play="wait" holds the pieces apart (faintly)
-   until the whole visual is in view, then "run" plays the sequence once.
-   Without JavaScript, or with reduced motion, there is no data-play and the
-   finished composition simply shows. */
+/* AssemblyPlayer runs it. data-play="wait" is a finished composition of its
+   own: the three records laid out side by side at full presence, unsealed.
+   As the page loads, "run" gathers them behind the centre record and
+   stamps the seal — "gather and seal", once. Without JavaScript,
+   or with reduced motion, there is no data-play and the sealed composition
+   simply shows. */
 @media (prefers-reduced-motion: no-preference) {
   .lxb-assembly[data-play="wait"] .lxb-sheet--l,
   .lxb-assembly[data-play="wait"] .lxb-sheet--r {
-    opacity: 0.25;
-    transform: translateX(var(--x)) translateY(8cqh) rotate(var(--r));
-  }
-  .lxb-assembly[data-play="wait"] .lxb-sheet--c {
-    opacity: 0.25;
-    transform: translateY(8cqh);
+    transform: translateX(var(--x)) rotate(var(--r));
   }
   .lxb-assembly[data-play="wait"] .lxb-seal {
     opacity: 0;
@@ -320,26 +333,23 @@
   }
   .lxb-assembly[data-play="run"] .lxb-sheet--l,
   .lxb-assembly[data-play="run"] .lxb-sheet--r {
-    /* the fan holds its spread until the gather (listed later, so it wins
-       while running) takes over and keeps the gathered end state */
-    animation:
-      lxb-fan 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) both,
-      lxb-gather 0.6s cubic-bezier(0.6, 0, 0.3, 1) 0.85s forwards;
+    animation: lxb-gather 0.7s cubic-bezier(0.6, 0, 0.3, 1) 0.1s backwards;
   }
   .lxb-assembly[data-play="run"] .lxb-sheet--r {
-    animation-delay: 0.12s, 0.85s;
+    animation-delay: 0.18s;
   }
+  /* the centre record takes the seal's weight as it lands */
   .lxb-assembly[data-play="run"] .lxb-sheet--c {
-    animation: lxb-rise 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) 0.24s backwards;
+    animation: lxb-press 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.78s;
   }
   .lxb-assembly[data-play="run"] .lxb-seal {
-    animation: lxb-stamp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 1.25s backwards;
+    animation: lxb-stamp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.6s backwards;
   }
   .lxb-assembly[data-play="run"] .lxb-seal__ring {
-    animation: lxb-ring 1.2s ease-out 1.7s;
+    animation: lxb-ring 1.2s ease-out 1.05s;
   }
   .lxb-assembly[data-play="run"] .lxb-seal__ring + .lxb-seal__ring {
-    animation-delay: 1.95s;
+    animation-delay: 1.3s;
   }
   /* on hover, just the last beat: the seal's two ripples (their own keyframes
      name, so switching to them always starts a fresh animation) */
@@ -350,16 +360,6 @@
     animation-delay: 0.25s;
   }
 }
-@keyframes lxb-fan {
-  from {
-    opacity: 0.25;
-    transform: translateX(var(--x)) translateY(8cqh) rotate(var(--r));
-  }
-  to {
-    opacity: 1;
-    transform: translateX(var(--x)) rotate(var(--r));
-  }
-}
 @keyframes lxb-gather {
   from {
     transform: translateX(var(--x)) rotate(var(--r));
@@ -368,10 +368,9 @@
     transform: translateX(calc(var(--x) * 0.5)) translateY(-1cqh) rotate(calc(var(--r) * 0.75));
   }
 }
-@keyframes lxb-rise {
-  from {
-    opacity: 0.25;
-    transform: translateY(8cqh);
+@keyframes lxb-press {
+  40% {
+    transform: scale(0.985);
   }
 }
 @keyframes lxb-stamp {

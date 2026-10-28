@@ -1,3 +1,129 @@
+# QA report — iterations 33–34: Now/Work drawers, supplied icons, AMNH colours (28 Oct 2026)
+
+Playwright with Chrome. Claude in Chrome was still not connected. Most suites were run against a **production build** (`next start -p 3101`, stopped afterwards); a few were checked on `next dev` :3100. Every screenshot listed was viewed.
+
+| Command | Result |
+|---|---|
+| typecheck · lint · `next build` | exit 0; 16 static pages |
+| transitions (Now and Work drawers, nav, journeys, theme) | 22/22 |
+| crackd · crackd-tour · buzzworks · columbia · refine · pass24 · tmu · interact · theme · research · gvi · inteli · lynxster · consistency · copy | 75/75 · 237/237 · 34/34 · 52/52 · 30/30 · 33/33 · 33/33 · 32/32 · 18/18 · 56/56 · 38/38 · 38/38 · 103/103 · 18/18 · 94/94 |
+| check (production) | 183/191. Every failure is avatar/line alignment: the fist ~10px against a <4 limit, the greeter ~15px against a <8 limit. See REVIEW.md iteration 34, finding 3. On dev: 184–188/191, with the same checks near their thresholds. |
+| Header fit (320–1024px, detail page and homepage) | no overlap, no overflow; links ≥44px wide from 360px, 38–40px wide (44 tall) below |
+| Impeccable detector | Inter and the hero grid background (existing site choices). The two overshoot easings I added are fixed. |
+
+**Updated tests (intended changes):**
+- **Drawer selectors:** scoped to `#work-sheet`, with triggers `[data-part=work|now]`.
+- **Anchors and labels:** `#now` / `#selected-work`; the Work drawer has 9 links and the title "Selected work"; Lynxster and AMNH are marked in the Now drawer.
+- **Navigation:** the homepage journey replaces the instant jump.
+- **Colours:** AMNH's link and tape are now AMNH blue/lime.
+
+**Screenshots** (`/private/tmp/claude-501/-Users-anyajajodia-Desktop-personal-website-2/4b9469c2-f6b5-4405-b7a8-a5eed965618a/scratchpad`):
+- `v/*`: the four drawer candidates (desktop and 390); the header at 320/360/390
+- `f/*`: the final drawers, light, dark and phone
+- `icons/sheet.png` and `icons/fl-test.png`: your icon sheet, and the simplified Lynxster fill at 640px
+- `amnh/amnh-home.png`: amnh.org, for its colours
+- `amnh-before/*` and `amnh-after/*`: the AMNH page, the homepage card and the drawers, light and dark
+
+---
+
+# QA report — iteration 32: Contents redesign, page transitions, homepage journeys (27 Oct 2026)
+
+Claude in Chrome was still not connected, so this used Playwright with Chrome against `next dev` on :3100, plus a production build. Every screenshot listed was viewed.
+
+| Command | Result |
+|---|---|
+| `npm run typecheck` · `npm run lint` · `npm run build` | exit 0; 16 static pages |
+| **`qa/transitions.mjs`** (new) | 16/16: drawer vignettes and inking at 1440 and 390, one view transition per navigation, header group, journeys (desktop, phone, reduced motion, wheel takeover), theme reveal with the header folded in |
+| crackd-tour · crackd · buzzworks · columbia · refine · pass24 · tmu · interact · theme · research · gvi · inteli | 237/237 · 75/75 · 34/34 · 52/52 · 30/30 · 33/33 · 33/33 · 32/32 · 18/18 · 56/56 · 38/38 · 38/38 |
+| `check` | 187/190. The three failures are "line runs into the untangler's fist" at 4.0–4.9px against a <4px tolerance. A standalone measurement gave 3.6px with the page transition and 4.4px without it, so this is noise near the threshold, not this pass. |
+| Impeccable detector (drawer, vignettes, transitions, anchors) | 0 findings |
+
+**Flaky:** `research` failed 2 checks on its first run (Teen anchors, drawer focus) and passed 56/56 on a rerun.
+
+**Updated tests:** `columbia` now expects the inked teaching vignette, and no ADI pill, in the drawer.
+
+**Screenshots** (`/private/tmp/claude-501/-Users-anyajajodia-Desktop-personal-website-2/4b9469c2-f6b5-4405-b7a8-a5eed965618a/scratchpad`):
+- `d2/*`: drawer at rest and on hover (Crackd, TMU, Lynxster, AMNH) in light, dark and at 390
+- `t3/drawer-hover-buzz.png` and `t3/drawer-final.png`: after the underline fix
+- `t3/pt-60|200|380.png`: Crackd → Buzzworks transition frames
+- `t3/journey-start|mid|end.png`
+- `t3/home-98.png`: comparison frame
+
+**Limitations:**
+- The page transitions and theme reveal need View Transitions; without them, pages swap as before.
+- On touch screens there is no hover, so vignettes stay pencil apart from this page's.
+- In dev, a journey starts about 1.4s after the click, including route compile; it is quicker in production.
+
+---
+
+# QA report — iteration 31: walkthrough motion, theme reveal, drawer entries (27 Oct 2026)
+
+Claude in Chrome was not connected this session ("Browser extension is not connected"), so Playwright with Chrome (system channel) was used against `next dev` on :3100, plus a production build. Every screenshot listed was viewed.
+
+| Command | Result |
+|---|---|
+| `npm run typecheck` · `npm run lint` · `npm run build` | exit 0; 16 static pages |
+| crackd-tour · crackd · tmu · pass24 · buzzworks · columbia · gvi · inteli · refine · research · lynxster | 237/237 · 75/75 · 33/33 · 33/33 · 34/34 · 52/52 · 38/38 · 38/38 · 30/30 · 56/56 · 103/103 |
+| Impeccable detector (ThemeToggle, CrackdApps, WorkDrawer + CSS, crackd.css) | 0 findings |
+| Frame sampling of Next (rAF, 1440 and 390) | 0 frames without a loaded, visible screen; two screens cross, then one remains |
+| Theme reveal | light → dark → light at 1440 and 390; `data-theme-reveal` cleared afterwards; no console errors |
+
+**Updated tests (intended changes):**
+- `crackd-tour`: no Enlarge. A new crossing check (two decoded screens, never an empty stage, settles on one) and a single step highlight. Waits allow for the decode gate. Reduced motion ignores the global 0.01 ms transitions.
+- `crackd`: AMNH is two section links (12 drawer links).
+- `buzzworks`: the header check counts a page's section links once.
+- `pass24` and `tmu`: TMU's note is "TMU · Engineering", and the name is "Citation tooling".
+
+**Screenshots** (`/private/tmp/claude-501/-Users-anyajajodia-Desktop-personal-website-2/4b9469c2-f6b5-4405-b7a8-a5eed965618a/scratchpad`):
+- `before/drawer.png` and `before/tour.png`
+- `after/d-*` and `after/m-*`: drawer on Crackd and AMNH, tour step 1, mid-Next, step 2, after fast Nexts; theme reveal mid-way and after; icons in both states
+- `after/icons.png`
+- `qa/screenshots/crackd-tour/*`: every step of every tour at 1440/390, light and dark
+
+**Limitations:** the theme reveal needs View Transitions with `clip-path: path()`. Chrome was checked. Elsewhere, and under reduced motion, it falls back to the earlier colour ease or an instant change. Safari and Firefox were not tested.
+
+---
+
+# QA report — iteration 30: design pass and targeted edits (27 Oct 2026)
+
+Playwright with Chrome (system channel) against `next dev` on :3100, plus a production build. Every screenshot listed was viewed.
+
+| Command | Result |
+|---|---|
+| `npm run check` (typecheck · lint · build) | exit 0; 16 static pages (`/`, `/wildlife-photography`, 11 × `/work/[slug]`, `/_not-found`, `/icon.svg`) |
+| check · copy · interact · refine · theme · consistency · hero-rig | 190/190 · 94/94 · 32/32 · 30/30 · 18/18 · 18/18 · 16/16 |
+| crackd · lynxster · columbia · pass24 · gvi · tmu · research · buzzworks · inteli · wildlife | 75/75 · 103/103 · 52/52 · 33/33 · 38/38 · 33/33 · 56/56 · 34/34 · 38/38 · 141/141 |
+| dots · join · pen · milestone · visible · layout · sections · hold · drawer-motion · contrast-audit · av-* (9) · detail-amnh | exit 0 (report-style suites, earlier full run) |
+| Impeccable detector on every changed UI file | 0 findings |
+| CLS (A1's script) | 1440×900 0.002–0.004 · 1280×720 0.003–0.006 · 390 phone 0 · 390 desktop window 0.09–0.10 |
+
+**Updated tests (intended changes):**
+- Selected work is a fixed grid: summaries at rest, no reflow on hover, sub-links ≥44px.
+- The drawer is now Contents: its label, its unroll and roll-up timings, the paper under the navigation, and the overview link last; on phones, the header strip closes it.
+- ESP and ADI use the `tag` flourish, and the dates show once.
+- Lynxster: its tape colours, the dark preview mark #86d2c6, and the assembly playing on load.
+- The theme control is one press, swapping Light and Dark.
+- The brand's announced text ignores the `aria-hidden` initials.
+
+**`qa/unchanged.mjs`:** it compares against a snapshot from before this pass, so every route differs by design. Its base would need refreshing to be useful again.
+
+**Screenshots** (scratchpad, `/private/tmp/claude-501/-Users-anyajajodia-Desktop-personal-website-2/61a917ec-bf02-4ca3-a0df-cf7caf817165/scratchpad`):
+- `t3/before/*`, then `t3/v1`–`v6`: Columbia openings at 1440, 1920, 1024 and 390, light and dark; the drawer at 60–900 ms, with hover and scrolled states, on the GVI, Lynxster and ESP pages, desktop and phone, light and dark; the Lynxster card in both themes at desktop and phone.
+- `lxv/sheet-light.png`, `lxv/sheet-dark.png`: the palette exploration.
+- `plate/*`: the plate options.
+- `lxload/t100`, `t2600`: the assembly at load.
+- `glow/a–c`: the band glow into the stage.
+- `tog/*`: the theme button.
+
+**Routes checked:** `/` · all 11 `/work/*` · `/wildlife-photography`.
+
+**Remaining limitations:**
+- Chrome only.
+- The CLS in a 390-wide desktop window sits near 0.1. Its source is the Cormorant name and the lede re-wrapping as the fonts load; a full fix would mean moving the fonts to `next/font`.
+- Nothing is committed or deployed.
+
+---
+
 # QA report — iteration 29: Wildlife photography, final selection (26 Oct 2026)
 
 **Composition revision:**

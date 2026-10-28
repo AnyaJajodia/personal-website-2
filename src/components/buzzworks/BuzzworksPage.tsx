@@ -3,13 +3,13 @@ import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import DetailLine from "@/components/DetailLine";
+import WorkPager from "@/components/WorkPager";
 import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
 import WorkDrawer from "@/components/WorkDrawer";
 import OnThisPage from "@/components/OnThisPage";
 import Reconstruction from "./Reconstruction";
 import { buzzworks, buzzworksSections } from "@/content/buzzworks";
-import { getNeighbours } from "@/content/work";
 import "../case/case.css";
 import "./buzzworks.css";
 
@@ -112,7 +112,6 @@ function PolicyDiagram() {
 }
 
 export default function BuzzworksPage() {
-  const { prev, next } = getNeighbours("buzzworks");
   const b = buzzworks;
   const period = b.meta.find((m) => m.label === "Period")!;
   const facts = b.meta.filter((m) => m.label !== "Period");
@@ -130,7 +129,7 @@ export default function BuzzworksPage() {
         <header className="detail-hero case-hero bz-hero" data-line="top">
           <div className="container" data-line="content">
             <nav aria-label="Breadcrumb" className="breadcrumb label" data-line="crumb">
-              <Link href="/#work">Work</Link>
+              <Link href="/#selected-work">Work</Link>
               <span aria-hidden="true"> / </span>
               <span aria-current="page">{b.name}</span>
             </nav>
@@ -316,29 +315,7 @@ export default function BuzzworksPage() {
           </div>
         </div>
 
-        <nav className="container pager" aria-label="More work" data-line="end">
-          <Link href="/#work" className="pager__back label">
-            <span aria-hidden="true">←</span> Back to work
-          </Link>
-          <div className="pager__grid">
-            {prev ? (
-              <Link href={`/work/${prev.slug}`} className="pager__link pager__link--prev">
-                <span className="label">
-                  <span aria-hidden="true">← </span>Previous
-                </span>
-                <span className="pager__title">{prev.name}</span>
-              </Link>
-            ) : null}
-            {next ? (
-              <Link href={`/work/${next.slug}`} className="pager__link pager__link--next">
-                <span className="label">
-                  Next<span aria-hidden="true"> →</span>
-                </span>
-                <span className="pager__title">{next.name}</span>
-              </Link>
-            ) : null}
-          </div>
-        </nav>
+        <WorkPager slug={"buzzworks"} />
       </main>
       <SiteFooter />
       <AvatarStage />

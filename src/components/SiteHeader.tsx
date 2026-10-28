@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { cloneElement, isValidElement, useEffect, useRef, useState } from "react";
 import { nav, person } from "@/content/site";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -10,14 +11,24 @@ type Props = {
   variant: "home" | "detail";
   /** Start dark (Lynxster opening). Switches to light once the dark band has scrolled under the header. */
   darkUntilSelector?: string;
-  /** detail pages: the "Work" item opens this (the work drawer) instead of linking home */
+  /** detail pages: the "Now" and "Work" items each open this drawer (WorkDrawer),
+   * given its `part`, instead of linking home */
   workMenu?: React.ReactNode;
 };
+
+/** "Anya Jajodia" → "AJ": the brand on the narrowest phones (see globals.css "header") */
+const initials = person.name
+  .split(/\s+/)
+  .map((w) => w[0])
+  .join("");
 
 export default function SiteHeader({ variant, darkUntilSelector, workMenu }: Props) {
   const ref = useRef<HTMLElement>(null);
   const [settled, setSettled] = useState(variant === "detail");
   const [dark, setDark] = useState(Boolean(darkUntilSelector));
+  const pathname = usePathname() ?? "";
+  // the section this page belongs to (Work for /work/*, More for the wildlife page)
+  const section = variant === "detail" ? nav.find((item) => item.routes?.some((r) => pathname.startsWith(r)))?.hash : undefined;
 
   useEffect(() => {
     const header = ref.current;
@@ -44,7 +55,17 @@ export default function SiteHeader({ variant, darkUntilSelector, workMenu }: Pro
     };
   }, [variant, darkUntilSelector]);
 
-  const brandHref = variant === "home" ? "#top" : "/";
+  // the full name, and (on the narrowest phones, so every target keeps a
+  // 44px hit area) its initials; the full name is always what is announced
+  const brand = (
+    <>
+      <span className="site-header__brand-name">{person.name}</span>
+      <span className="site-header__brand-mono" aria-hidden="true">
+        {initials}
+      </span>
+      .
+    </>
+  );
 
   return (
     <header
@@ -53,34 +74,45 @@ export default function SiteHeader({ variant, darkUntilSelector, workMenu }: Pro
       data-settled={settled ? "true" : "false"}
       data-tone={dark ? "dark" : "light"}
       data-variant={variant}
+      // its own view-transition group: it holds still while pages change
+      style={{ viewTransitionName: "site-header" }}
     >
       <div className="site-header__inner container">
         {variant === "home" ? (
-          <a className="site-header__brand" href={brandHref} tabIndex={settled ? 0 : -1} aria-hidden={!settled}>
-            {person.name}.
+          <a className="site-header__brand" href="#top" tabIndex={settled ? 0 : -1} aria-hidden={!settled}>
+            {brand}
           </a>
         ) : (
           <Link className="site-header__brand" href="/">
-            {person.name}.
+            {brand}
           </Link>
         )}
         <nav aria-label="Primary">
           <ul className="site-nav">
-            {nav.map((item) =>
-              variant === "home" ? (
-                <li key={item.hash}>
-                  <a href={`#${item.hash}`}>{item.label}</a>
-                </li>
-              ) : item.hash === "work" && workMenu ? (
-                <li key={item.hash}>{workMenu}</li>
-              ) : (
-                <li key={item.hash}>
-                  <Link href={`/#${item.hash}`} className={item.hash === "work" ? "is-current" : undefined}>
-                    {item.label}
+            {nav.map((item) => {
+              const label = <span className="site-nav__label">{item.label}</span>;
+              const current = item.hash === section;
+              if (variant === "home")
+                return (
+                  <li key={item.hash}>
+                    <a href={`#${item.hash}`}>{label}</a>
+                  </li>
+                );
+              const part = item.hash === "now" ? "now" : item.hash === "selected-work" ? "work" : null;
+              if (part && isValidElement<{ part?: "now" | "work" }>(workMenu))
+                return (
+                  <li key={item.hash} data-current={current ? "true" : undefined}>
+                    {cloneElement(workMenu, { part })}
+                  </li>
+                );
+              return (
+                <li key={item.hash} data-current={current ? "true" : undefined}>
+                  <Link href={`/#${item.hash}`} aria-current={current ? "true" : undefined}>
+                    {label}
                   </Link>
                 </li>
-              ),
-            )}
+              );
+            })}
           </ul>
         </nav>
         <ThemeToggle />

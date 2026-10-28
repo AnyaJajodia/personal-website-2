@@ -3,21 +3,27 @@ import Link from "next/link";
 import type { SelectedRow } from "@/content/site";
 
 /**
- * Selected work as compact expanding panels in two rows.
+ * Selected work as coloured paper laid out in a fixed editorial grid.
  *
- * Every panel keeps a stable left column — logo (or a small drawn mark where
- * no logo was supplied), name and the homepage date — and opening it (hover or keyboard
- * focus) reveals a right column with the existing summary and the way in.
- * Expansion changes width only. A single-project panel is one link; a grouped
- * panel holds one link per page (no nested interactive elements). Touch and
- * narrow screens get stacked cards with everything visible (CSS).
+ * Sizes follow the work, not the pointer: the two current builds (Crackd,
+ * Buzzworks) lead at half width; three single projects share the next row;
+ * the two bodies of work with two pages each close it at half width, their
+ * pages listed as tall, separate links. Every panel shows its logo (or a
+ * small drawn mark where no logo was supplied), its name, date and its
+ * whole summary at rest. Hover and keyboard focus never change a panel's
+ * size, so nothing moves under the pointer: the paper lifts a little and
+ * the arrow nudges.
  *
- * Panels are flat coloured paper: muted, distinct hues (Crackd's yellow,
- * sampled from its symbol, sets the softness), one charcoal ink throughout.
- * These are portfolio colours, not official brand tokens.
+ * A single-project panel is one link over the whole panel; a grouped panel
+ * holds one link per page (no nested interactive elements).
+ *
+ * Panels are muted coloured paper (Crackd's yellow, sampled from its symbol,
+ * sets the softness), charcoal ink in light; in dark they sink into the
+ * night page as deep paper of the same hues with cream ink. These are
+ * portfolio colours, not official brand tokens.
  *
  * Every identifier uses the same three layers:
- *   1. the muted panel surface;
+ *   1. the panel surface;
  *   2. a small square container whose BACKGROUND alone is translucent (light
  *      paper, or charcoal behind Crackd's yellow symbol so it stays visible);
  *   3. the logo artwork, fully opaque, on its own transparent background.
@@ -47,32 +53,32 @@ const LOOKS: Record<string, Look> = {
     key: "crackd",
     tone: "#f8d74d",
     backing: "dark",
-    logo: { kind: "img", src: "/logos/crackd-minimal.png", w: 148, h: 178, art: 156 / 178, size: 32 },
+    logo: { kind: "img", src: "/logos/crackd-minimal.png", w: 148, h: 178, art: 156 / 178, size: 30 },
   },
   buzzworks: {
     key: "buzzworks",
     tone: "#e8b28d",
-    logo: { kind: "img", src: "/logos/buzzworks-minimal.png", w: 162, h: 152, art: 124 / 152, size: 33 },
+    logo: { kind: "img", src: "/logos/buzzworks-minimal.png", w: 162, h: 152, art: 124 / 152, size: 30 },
   },
   "tmu-citation-tooling": {
     key: "tmu",
     tone: "#a9c1d9",
-    logo: { kind: "img", src: "/logos/tmu.png", w: 256, h: 140, art: 138 / 140, size: 28 },
+    logo: { kind: "img", src: "/logos/tmu.png", w: 256, h: 140, art: 138 / 140, size: 24 }, // 24 keeps its width (43.9px) inside the tile's 44px cap, undistorted
   },
   "inteli-lens": { key: "inteli", tone: "#b9a4be", logo: { kind: "mark", mark: "lens" } },
   "gvi-conservation": {
     key: "gvi",
     tone: "#a5bdb0",
-    logo: { kind: "img", src: "/logos/gvi.webp", w: 300, h: 237, art: 1, size: 27 },
+    logo: { kind: "img", src: "/logos/gvi.webp", w: 300, h: 237, art: 1, size: 25 },
   },
   "pmmy-research": { key: "pubs", tone: "#d3a1ad", logo: { kind: "mark", mark: "pages" } },
-  // the Columbia crown, in the same translucent tile as every other card. The
-  // card stays light lavender in both themes, so its deep-blue artwork is the
-  // legible variant in both.
+  // the Columbia crown, in the same translucent tile as every other card;
+  // the tile stays light paper in both themes, so its deep-blue artwork is
+  // the legible variant in both.
   "esp-teaching": {
     key: "teaching",
     tone: "#b0b9da",
-    logo: { kind: "img", src: "/logos/columbia-crown-light.png", w: 300, h: 300, art: 239 / 300, size: 32 },
+    logo: { kind: "img", src: "/logos/columbia-crown-light.png", w: 300, h: 300, art: 239 / 300, size: 29 },
   },
 };
 
@@ -127,7 +133,10 @@ function LogoBlock({ logo, backing }: { logo: Logo; backing?: "dark" }) {
   );
 }
 
-function Panel({ row }: { row: SelectedRow }) {
+/** where each panel sits in the grid, in reading order: lead, three, two */
+const SIZES = ["lead", "lead", "third", "third", "third", "half", "half"] as const;
+
+function Panel({ row, size }: { row: SelectedRow; size: string }) {
   const single = row.links.length === 1;
   const look = LOOKS[row.links[0].slug];
   const short = single ? row.links[0].label : row.title;
@@ -136,8 +145,8 @@ function Panel({ row }: { row: SelectedRow }) {
 
   // one visible name per panel: the short name; the full title (e.g. with the
   // university or country the logo already shows) stays in the heading for AT
-  const id = (
-    <span className="panel__id">
+  const head = (
+    <span className="panel__head">
       <LogoBlock logo={look.logo} backing={look.backing} />
       <span className="panel__label">
         <span className="panel__name" role="heading" aria-level={3}>
@@ -155,59 +164,53 @@ function Panel({ row }: { row: SelectedRow }) {
           )}
         </span>
       </span>
+      {single ? (
+        <span className="panel__go" aria-hidden="true">
+          →
+        </span>
+      ) : null}
     </span>
   );
-  const more = <span className="panel__desc">{row.description}</span>;
+  const desc = <span className="panel__desc">{row.description}</span>;
 
   return (
-    <li className={`panel panel--${look.key}`} style={{ "--tone": look.tone } as React.CSSProperties}>
+    <li
+      className={`panel panel--${look.key} panel--${size}${single ? "" : " panel--group"}`}
+      style={{ "--tone": look.tone } as React.CSSProperties}
+    >
       {single ? (
         <Link href={`/work/${row.links[0].slug}`} className="panel__inner panel__link">
-          {id}
-          <span className="panel__more">
-            {more}
-            <span className="panel__go" aria-hidden="true">
-              →
-            </span>
-          </span>
+          {head}
+          {desc}
         </Link>
       ) : (
         <div className="panel__inner">
-          {id}
-          <div className="panel__more">
-            {more}
-            <ul className="panel__links">
-              {row.links.map((l) => (
-                <li key={l.slug}>
-                  <Link href={`/work/${l.slug}`} className="panel__sublink">
-                    {l.label}
-                    {"\u00a0"}
-                    <span aria-hidden="true">→</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {head}
+          {desc}
+          <ul className="panel__links">
+            {row.links.map((l) => (
+              <li key={l.slug}>
+                <Link href={`/work/${l.slug}`} className="panel__sublink">
+                  <span>{l.label}</span>
+                  <span className="panel__sublink-go" aria-hidden="true">
+                    →
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </li>
   );
 }
 
-/** first row: built things; second: fieldwork, publications, teaching */
-const FIRST_ROW = 4;
-
 export default function WorkPanels({ rows }: { rows: SelectedRow[] }) {
-  const groups = [rows.slice(0, FIRST_ROW), rows.slice(FIRST_ROW)];
   return (
-    <div className="panels" data-line="panels">
-      {groups.map((g, gi) => (
-        <ul key={gi} className={`panels__row panels__row--${g.length}`}>
-          {g.map((row) => (
-            <Panel key={row.title} row={row} />
-          ))}
-        </ul>
+    <ul className="panels" data-line="panels">
+      {rows.map((row, i) => (
+        <Panel key={row.title} row={row} size={SIZES[i] ?? "third"} />
       ))}
-    </div>
+    </ul>
   );
 }

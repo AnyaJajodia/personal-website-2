@@ -22,9 +22,19 @@ export const person = {
 export const hero = {
   nameLines: ["Anya", "Jajodia."],
   tagline: "Building ideas. Exploring possibilities. Asking better questions.",
+  /** What she does, in facts already on the page (About + Currently): the
+   * tagline's concrete twin, three plain sentences that only ever break
+   * between each other. A `link` part is a quiet in-page link to Work. */
+  identity: [
+    ["Computer science senior at Barnard."],
+    ["CTO & co-founder of ", { label: "Lynxster", href: "#now" }, "."],
+    ["Digitizing dragonfly records at the ", { label: "American Museum of Natural History", href: "#now" }, "."],
+  ] satisfies (string | { label: string; href: string })[][],
   intro:
     "I build end-to-end software, explore what technology could do differently, and follow the threads that pique my curiosity—occasionally into the backrooms of a museum.",
   location: "Based in New York.",
+  /** the first screen's one way to act: the ending's heading, as a link to it */
+  hello: { label: "Say hello", href: "#contact" },
   scrollCue: "Scroll to follow the thread",
 };
 
@@ -205,9 +215,14 @@ export const contact = {
   footer: "Anya Jajodia · New York",
 };
 
-export const nav = [
+/** `routes`: the pages that belong to a section, so their header marks it
+ * current (the first match wins). Work is split as the homepage is: Now is
+ * Currently (Lynxster, AMNH), Work is Selected work; on detail pages each
+ * opens its own drawer (WorkDrawer). */
+export const nav: { label: string; hash: string; routes?: string[] }[] = [
   { label: "About", hash: "about" },
-  { label: "Work", hash: "work" },
-  { label: "More", hash: "more" },
+  { label: "Now", hash: "now", routes: ["/work/lynxster", "/work/amnh"] },
+  { label: "Work", hash: "selected-work", routes: ["/work/"] },
+  { label: "More", hash: "more", routes: ["/wildlife-photography"] },
   { label: "Contact", hash: "contact" },
 ];

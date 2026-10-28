@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { claimMoment } from "./moment-queue";
 
 /**
  * Cues the page's avatars. CSS owns how things move (transitions, so any new
@@ -15,8 +16,10 @@ import { useEffect } from "react";
  *   been drawn under its feet (HomeScribble sets `data-line-reached`). With
  *   `data-enter-on` (a selector), the cue is that element reaching the entry
  *   line instead of the figure itself — for a tall figure that should be
- *   settled before the content beside it is read. An entrance waits for any other figure still moving on screen
- *   (never for ones already scrolled away), so one thing moves at a time.
+ *   settled before the content beside it is read. An entrance waits for any
+ *   other figure still moving on screen (never for ones already scrolled
+ *   away), and for a heading mark being drawn (moment-queue), so one thing
+ *   moves at a time.
  *
  * With prefers-reduced-motion every figure is simply shown in place. Without JavaScript the CSS never hides them.
  */
@@ -59,8 +62,10 @@ export default function AvatarStage() {
       if (el.dataset.in) return;
       el.dataset.in = "queued";
       const now = performance.now();
-      // a figure at the screen's edge (data-solo) competes with nothing: it never waits
-      const wait = el.dataset.solo ? 0 : Math.min(MAX_WAIT_MS, busyFor(now));
+      // a figure at the screen's edge (data-solo) competes with nothing: it never
+      // waits; any other takes its turn after figures still moving on screen and
+      // after a heading's pen mark being drawn (moment-queue)
+      const wait = el.dataset.solo ? 0 : Math.max(Math.min(MAX_WAIT_MS, busyFor(now)), claimMoment(ENTER_MS, MAX_WAIT_MS));
       moving.set(el, now + wait + ENTER_MS * 0.8);
       timers.push(
         window.setTimeout(() => {

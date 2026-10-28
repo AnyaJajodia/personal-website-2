@@ -89,7 +89,5 @@
   .toc__list {
     grid-template-columns: minmax(0, 1fr);
   }
-  .toc__link {
-    min-height: 40px;
-  }
+  /* a single column keeps the full 44px rows: these are touch targets */
 }

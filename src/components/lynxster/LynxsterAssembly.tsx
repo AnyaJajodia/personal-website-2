@@ -5,9 +5,9 @@ import "./lynxster-brand.css";
  * three abstract records — skeleton lines only, no text, data or interface —
  * drawn together and sealed with the Lynxster mark. It illustrates the
  * approved idea (independently verifiable digital records) and nothing more.
- * The finished composition is its resting state; AssemblyPlayer assembles it
- * once when it is fully in view (under two seconds) and replays the seal's
- * ripples on hover.
+ * The sealed composition is its resting state. AssemblyPlayer starts with the
+ * records laid out and unsealed, gathers and seals them once as the page loads
+ * (under two seconds), and replays the seal's ripples on hover.
  */
 function Sheet({ side }: { side: "l" | "r" | "c" }) {
   return (

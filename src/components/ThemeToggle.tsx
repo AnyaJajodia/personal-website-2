@@ -1,50 +1,120 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 /**
- * System / Light / Dark. The choice is applied before first paint by the
- * script in layout.tsx (data-theme and data-theme-pref on <html>); this
- * control only changes it. "System" follows the OS preference, live; an
- * explicit choice is remembered (localStorage "theme"). Switching changes
- * attributes only — nothing reloads, scroll and any open interaction stay.
+ * One button that swaps Light and Dark. The default is System: until the
+ * button is pressed the site follows the OS preference, live. A press swaps
+ * to the other theme; a swap that lands back on the OS's own theme returns
+ * to following the system (nothing stored), any other is remembered
+ * (localStorage "theme"). The theme is applied before first paint by the
+ * script in layout.tsx (data-theme and data-theme-pref on <html>); switching
+ * changes attributes only — nothing reloads, scroll and any open interaction
+ * stay.
  *
- * The button's icon is chosen in CSS from data-theme-pref, so the server
- * markup never disagrees with the theme already applied. The menu is a
- * small radio menu: arrows move, Enter/Space choose, Escape closes.
+ * The icon names what a press does (a moon in Light, a sun in Dark). Both
+ * are drawn in one glyph and CSS picks between them from data-theme, so the
+ * server markup never disagrees with the theme already applied: the outgoing
+ * one shrinks as its strokes undraw, the incoming one grows and draws itself
+ * in (after 21st.dev's animated-theme-toggle). It is a toggle button:
+ * pressed = Dark.
+ *
+ * A press reveals the new theme from the button outward, inside a soft
+ * many-lobed outline that wobbles as it grows past the corners (after
+ * 21st.dev's "Theme Toggle" organic page reveal), using a view transition.
+ * Without view transitions, or with reduced motion, the colours ease over or
+ * simply change.
  */
 
 type Pref = "system" | "light" | "dark";
-const PREFS: { value: Pref; label: string }[] = [
-  { value: "system", label: "System" },
-  { value: "light", label: "Light" },
-  { value: "dark", label: "Dark" },
-];
 
 const dark = () => window.matchMedia("(prefers-color-scheme: dark)");
 const readPref = (): Pref => {
   const p = document.documentElement.dataset.themePref;
   return p === "light" || p === "dark" ? p : "system";
 };
+const reduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-export function applyTheme(pref: Pref, animate = true) {
+/** Twelve smooth lobes around `o`, in viewport pixels, past every corner at p = 1 */
+function blob(p: number, o: { x: number; y: number }, w: number, h: number, phase: number) {
+  const reach = Math.hypot(Math.max(o.x, w - o.x), Math.max(o.y, h - o.y)) / 0.72;
+  const pts = Array.from({ length: 12 }, (_, k) => {
+    const a = (k * Math.PI) / 6;
+    const r = reach * p * (1 + 0.12 * Math.sin(a * 3 + p * 0.65 + phase) + 0.065 * Math.cos(a * 5 - p * 0.35 - phase * 0.7));
+    return { x: o.x + Math.cos(a) * r, y: o.y + Math.sin(a) * r };
+  });
+  const f = (n: number) => n.toFixed(1);
+  let d = `M${f(pts[0].x)} ${f(pts[0].y)}`;
+  for (let k = 0; k < 12; k++) {
+    const [b, s, e, n] = [pts[(k + 11) % 12], pts[k], pts[(k + 1) % 12], pts[(k + 2) % 12]];
+    d += `C${f(s.x + (e.x - b.x) / 6)} ${f(s.y + (e.y - b.y) / 6)} ${f(e.x - (n.x - s.x) / 6)} ${f(e.y - (n.y - s.y) / 6)} ${f(e.x)} ${f(e.y)}`;
+  }
+  return d + "Z";
+}
+
+/** the button's own disc, kept inside the new view from the first frame */
+const disc = (c: { x: number; y: number; r: number }) =>
+  `M${c.x - c.r} ${c.y}A${c.r} ${c.r} 0 1 1 ${c.x + c.r} ${c.y}A${c.r} ${c.r} 0 1 1 ${c.x - c.r} ${c.y}Z`;
+
+function set(pref: Pref) {
   const root = document.documentElement;
   const resolved = pref === "dark" || (pref === "system" && dark().matches) ? "dark" : "light";
-  const soft = animate && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (soft) root.dataset.themeChanging = "true";
   root.dataset.themePref = pref;
   root.dataset.theme = resolved;
-  if (soft) window.setTimeout(() => delete root.dataset.themeChanging, 420);
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", resolved === "dark" ? "#211E1C" : "#F7F4EE");
 }
 
-export default function ThemeToggle() {
-  const [open, setOpen] = useState(false);
-  const [pref, setPref] = useState<Pref>("system");
-  const btn = useRef<HTMLButtonElement>(null);
-  const menu = useRef<HTMLDivElement>(null);
+/**
+ * `from`: the control that asked, for the reveal's origin. Without it (the
+ * OS changing its theme) the colours just ease over.
+ */
+export function applyTheme(pref: Pref, animate = true, from?: HTMLElement) {
+  const root = document.documentElement;
+  if (!animate || reduced()) return set(pref);
 
-  // follow the OS while "System" is chosen (on every page, via the header)
+  const box = from?.getBoundingClientRect();
+  const canReveal = box && typeof document.startViewTransition === "function" && CSS.supports("clip-path", 'path("M0 0L1 0L1 1Z")');
+  if (!canReveal) {
+    root.dataset.themeChanging = "true";
+    set(pref);
+    window.setTimeout(() => delete root.dataset.themeChanging, 420);
+    return;
+  }
+
+  const w = root.clientWidth;
+  const h = window.innerHeight;
+  const o = { x: box.left + box.width / 2, y: box.top + box.height / 2 };
+  const button = disc({ ...o, r: box.width / 2 + 2 });
+  const phase = Math.random() * Math.PI * 2;
+  // the same commands in every frame, so the browser can tween between them
+  const frames = Array.from({ length: 16 }, (_, k) => ({ clipPath: `path("${blob(k / 15, o, w, h, phase)}${button}")` }));
+
+  root.dataset.themeReveal = "";
+  const vt = document.startViewTransition(() => set(pref));
+  vt.ready
+    .then(() => {
+      root.animate(frames, {
+        duration: 820,
+        easing: "cubic-bezier(0.42, 0, 0.18, 1)",
+        pseudoElement: "::view-transition-new(root)",
+      });
+    })
+    .catch(() => {});
+  vt.finished.finally(() => delete root.dataset.themeReveal);
+}
+
+// whether Dark is showing, kept in step with <html data-theme>
+const subscribe = (cb: () => void) => {
+  const mo = new MutationObserver(cb);
+  mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  return () => mo.disconnect();
+};
+const isDark = () => document.documentElement.dataset.theme === "dark";
+
+export default function ThemeToggle() {
+  const pressed = useSyncExternalStore(subscribe, isDark, () => false);
+
+  // follow the OS while no choice is stored (on every page, via the header)
   useEffect(() => {
     const mq = dark();
     const onChange = () => {
@@ -54,102 +124,42 @@ export default function ThemeToggle() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  const close = useCallback((focusButton: boolean) => {
-    setOpen(false);
-    if (focusButton) btn.current?.focus();
-  }, []);
-
-  useEffect(() => {
-    if (!open) return;
-    const onDown = (e: PointerEvent) => {
-      if (!menu.current?.contains(e.target as Node) && !btn.current?.contains(e.target as Node)) close(false);
-    };
-    document.addEventListener("pointerdown", onDown);
-    // focus the current choice
-    menu.current?.querySelector<HTMLElement>('[aria-checked="true"]')?.focus();
-    return () => document.removeEventListener("pointerdown", onDown);
-  }, [open, close]);
-
-  const choose = (p: Pref) => {
+  const swap = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const next = isDark() ? "light" : "dark";
+    const os = dark().matches ? "dark" : "light";
+    const pref: Pref = next === os ? "system" : next;
     try {
-      if (p === "system") localStorage.removeItem("theme");
-      else localStorage.setItem("theme", p);
+      if (pref === "system") localStorage.removeItem("theme");
+      else localStorage.setItem("theme", pref);
     } catch {
-      /* private mode: the choice still applies for this page */
+      /* private mode: the swap still applies for this page */
     }
-    applyTheme(p);
-    setPref(p);
-    close(true);
-  };
-
-  const onMenuKey = (e: React.KeyboardEvent) => {
-    const items = Array.from(menu.current?.querySelectorAll<HTMLElement>('[role="menuitemradio"]') ?? []);
-    const i = items.indexOf(document.activeElement as HTMLElement);
-    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-      e.preventDefault();
-      items[(i + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length]?.focus();
-    } else if (e.key === "Home" || e.key === "End") {
-      e.preventDefault();
-      items[e.key === "Home" ? 0 : items.length - 1]?.focus();
-    } else if (e.key === "Escape") {
-      e.preventDefault();
-      close(true);
-    } else if (e.key === "Tab") close(false);
+    applyTheme(pref, true, e.currentTarget);
   };
 
   return (
     <div className="theme-toggle">
-      <button
-        ref={btn}
-        type="button"
-        className="theme-toggle__button"
-        aria-haspopup="menu"
-        aria-expanded={open}
-        aria-controls="theme-menu"
-        aria-label="Colour theme"
-        onClick={() => {
-          setPref(readPref());
-          setOpen((o) => !o);
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "ArrowDown" && !open) {
-            e.preventDefault();
-            setPref(readPref());
-            setOpen(true);
-          }
-        }}
-      >
-        {/* which icon shows is decided by CSS from <html data-theme-pref> */}
-        <svg className="theme-toggle__icon theme-toggle__icon--system" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <circle cx="12" cy="12" r="7.2" />
-          <path d="M12 4.8a7.2 7.2 0 0 1 0 14.4z" className="theme-toggle__fill" />
-        </svg>
-        <svg className="theme-toggle__icon theme-toggle__icon--light" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <circle cx="12" cy="12" r="4.2" />
-          <path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7" />
-        </svg>
-        <svg className="theme-toggle__icon theme-toggle__icon--dark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M19.2 14.6A7.6 7.6 0 0 1 9.4 4.8a7.6 7.6 0 1 0 9.8 9.8z" />
+      <button type="button" className="theme-toggle__button" aria-label="Dark theme" aria-pressed={pressed} onClick={swap}>
+        {/* which half shows is decided by CSS from <html data-theme> */}
+        <svg className="theme-toggle__glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <g className="theme-toggle__moon">
+            <path pathLength="1" d="M19.2 14.6A7.6 7.6 0 0 1 9.4 4.8a7.6 7.6 0 1 0 9.8 9.8z" />
+          </g>
+          <g className="theme-toggle__sun">
+            <circle pathLength="1" cx="12" cy="12" r="4.2" />
+            <g className="theme-toggle__rays">
+              <path pathLength="1" d="M12 2.6v2.2" />
+              <path pathLength="1" d="M12 19.2v2.2" />
+              <path pathLength="1" d="M2.6 12h2.2" />
+              <path pathLength="1" d="M19.2 12h2.2" />
+              <path pathLength="1" d="M5.35 5.35l1.55 1.55" />
+              <path pathLength="1" d="M17.1 17.1l1.55 1.55" />
+              <path pathLength="1" d="M5.35 18.65l1.55-1.55" />
+              <path pathLength="1" d="M17.1 6.9l1.55-1.55" />
+            </g>
+          </g>
         </svg>
       </button>
-      {open ? (
-        <div ref={menu} id="theme-menu" className="theme-toggle__menu" role="menu" aria-label="Colour theme" onKeyDown={onMenuKey}>
-          {PREFS.map((p) => (
-            <button
-              key={p.value}
-              type="button"
-              role="menuitemradio"
-              aria-checked={pref === p.value}
-              tabIndex={pref === p.value ? 0 : -1}
-              className="theme-toggle__item"
-              onClick={() => choose(p.value)}
-            >
-              <span className="theme-toggle__check" aria-hidden="true" />
-              {p.label}
-            </button>
-          ))}
-        </div>
-      ) : null}
     </div>
   );
 }

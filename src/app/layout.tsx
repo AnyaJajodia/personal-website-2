@@ -5,6 +5,7 @@ import "@fontsource/cormorant-garamond/latin-600.css";
 import "@fontsource-variable/inter/wght.css";
 import "./globals.css";
 import { hero, person } from "@/content/site";
+import HomeSectionLinks from "@/components/HomeSectionLinks";
 
 // the approved hero copy, verbatim (src/content/site.ts)
 export const metadata: Metadata = {
@@ -34,7 +35,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
-      <body>{children}</body>
+      <body>
+        <HomeSectionLinks />
+        {children}
+      </body>
     </html>
   );
 }

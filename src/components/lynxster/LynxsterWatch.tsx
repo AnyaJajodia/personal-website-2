@@ -9,6 +9,11 @@ import { useEffect, useRef } from "react";
  * cut-outs in the band's own colour. It only sets CSS variables and a flag
  * (lynxster.css draws everything), so the band is complete without it: on
  * touch, without JavaScript and with reduced motion, the mark simply rests.
+ *
+ * The band's colour carries on behind the top of the illustration below it
+ * (.lx-stage). That element can hold its own glow layer
+ * ([data-watch-glow], clipped to the dark part); the pointer is followed
+ * across both, and both glows share one centre, so they meet seamlessly.
  */
 export default function LynxsterWatch({ className, children, ...rest }: React.HTMLAttributes<HTMLElement>) {
   const ref = useRef<HTMLElement>(null);
@@ -16,6 +21,10 @@ export default function LynxsterWatch({ className, children, ...rest }: React.HT
     const band = ref.current;
     if (!band) return;
     const mark = band.querySelector<HTMLElement>("[data-watch-mark]");
+    // the dark top of the next section, if it carries a glow of its own
+    const glow = band.parentElement?.querySelector<HTMLElement>("[data-watch-glow]") ?? null;
+    const extra = glow?.parentElement ?? null;
+    const areas = [band, ...(extra ? [extra] : [])];
     const still = window.matchMedia("(prefers-reduced-motion: reduce)");
     let raf = 0;
     let last: PointerEvent | null = null;
@@ -24,9 +33,12 @@ export default function LynxsterWatch({ className, children, ...rest }: React.HT
       const e = last;
       if (!e) return;
       const r = band.getBoundingClientRect();
-      band.style.setProperty("--spot-x", `${e.clientX - r.left}px`);
-      band.style.setProperty("--spot-y", `${e.clientY - r.top}px`);
-      band.dataset.watching = "true";
+      for (const a of areas) {
+        const q = a.getBoundingClientRect();
+        a.style.setProperty("--spot-x", `${e.clientX - q.left}px`);
+        a.style.setProperty("--spot-y", `${e.clientY - q.top}px`);
+        a.dataset.watching = "true";
+      }
       if (!mark) return;
       const m = mark.getBoundingClientRect();
       const cx = m.left + m.width / 2,
@@ -44,19 +56,25 @@ export default function LynxsterWatch({ className, children, ...rest }: React.HT
       last = e;
       if (!raf) raf = requestAnimationFrame(apply);
     };
-    const leave = () => {
+    const leave = (e: PointerEvent) => {
+      // crossing from the band into the stage's dark top (or back) isn't leaving
+      if (areas.some((a) => a.contains(e.relatedTarget as Node | null))) return;
       last = null;
-      delete band.dataset.watching;
+      for (const a of areas) delete a.dataset.watching;
       band.dataset.eyes = "closed";
       mark?.style.setProperty("--tilt-x", "0deg");
       mark?.style.setProperty("--tilt-y", "0deg");
     };
-    band.addEventListener("pointermove", move);
-    band.addEventListener("pointerleave", leave);
+    for (const a of areas) {
+      a.addEventListener("pointermove", move);
+      a.addEventListener("pointerleave", leave);
+    }
     return () => {
       cancelAnimationFrame(raf);
-      band.removeEventListener("pointermove", move);
-      band.removeEventListener("pointerleave", leave);
+      for (const a of areas) {
+        a.removeEventListener("pointermove", move);
+        a.removeEventListener("pointerleave", leave);
+      }
     };
   }, []);
   return (

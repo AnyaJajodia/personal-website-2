@@ -42,8 +42,18 @@
 }
 
 /* ------------------------------------------------------------ opening */
-/* the shorter stories get a lighter opening: a smaller title, the facts as
-   one quiet line, and the thread knotted off the end of the wordmark row */
+/* the family's opening (as GVI's): the wordmark row, title and subtitle on
+   the left; the facts on the right, hung from the thread like a tag. The
+   grid keeps to the reading column's width, so the facts end where every
+   section rule below ends. */
+.cu-hero__grid {
+  max-width: 64rem;
+}
+@media (min-width: 760px) {
+  .cu-hero__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(14rem, 17.5rem);
+  }
+}
 .cu-marks {
   display: flex;
   flex-wrap: wrap;
@@ -89,20 +99,22 @@
   background: currentColor;
 }
 .case-hero.cu-hero .cu-hero__title {
-  max-width: 18ch;
+  max-width: 15ch;
   font-size: clamp(2.4rem, 4.4vw, 3.9rem);
 }
 .theme-columbia .cu-hero__subtitle {
-  max-width: 44ch;
+  max-width: 34ch;
 }
+/* the facts: a short ruled tag, one fact to a line */
 .cu-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem clamp(1.5rem, 4vw, 3rem);
-  max-width: 50rem;
-  margin: clamp(1.4rem, 2.8vw, 2rem) 0 0;
-  padding-top: 0.9rem;
+  margin: 0;
   border-top: 1px solid var(--rule-strong);
+}
+.cu-facts__item {
+  padding-block: 0.8rem;
+}
+.cu-facts__item + .cu-facts__item {
+  border-top: 1px solid var(--rule);
 }
 .cu-facts dt {
   color: var(--cu-ink);
@@ -111,6 +123,18 @@
   margin: 0.3rem 0 0;
   font-size: 1rem;
   line-height: 1.45;
+}
+/* below the two-column width the facts follow the subtitle, side by side
+   where they fit */
+@media (max-width: 759.98px) {
+  .cu-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 clamp(1.5rem, 6vw, 2.5rem);
+  }
+  .cu-facts__item + .cu-facts__item {
+    border-top: 0;
+  }
 }
 
 /* ------------------------------------------------------------ sections */

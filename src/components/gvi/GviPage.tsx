@@ -2,6 +2,7 @@ import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import DetailLine from "@/components/DetailLine";
+import WorkPager from "@/components/WorkPager";
 import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
 import WorkDrawer from "@/components/WorkDrawer";
@@ -10,7 +11,6 @@ import PhotoSlot from "./PhotoSlot";
 import ThemeLogo from "@/components/ThemeLogo";
 import { gvi, gviSections } from "@/content/gvi";
 import { gviPhotos } from "@/content/gvi-photos";
-import { getNeighbours } from "@/content/work";
 import "../case/case.css";
 import "./gvi.css";
 
@@ -25,7 +25,6 @@ import "./gvi.css";
  */
 
 export default function GviPage() {
-  const { prev, next } = getNeighbours("gvi-conservation");
   const g = gvi;
   const period = g.meta.find((m) => m.label === "Period")!;
   const facts = g.meta.filter((m) => m.label !== "Period");
@@ -42,7 +41,7 @@ export default function GviPage() {
         <header className="detail-hero case-hero gvi-hero" data-line="top">
           <div className="container" data-line="content">
             <nav aria-label="Breadcrumb" className="breadcrumb label" data-line="crumb">
-              <Link href="/#work">Work</Link>
+              <Link href="/#selected-work">Work</Link>
               <span aria-hidden="true"> / </span>
               <span aria-current="page">{g.name}</span>
             </nav>
@@ -222,29 +221,7 @@ export default function GviPage() {
           </div>
         </div>
 
-        <nav className="container pager" aria-label="More work" data-line="end">
-          <Link href="/#work" className="pager__back label">
-            <span aria-hidden="true">←</span> Back to work
-          </Link>
-          <div className="pager__grid">
-            {prev ? (
-              <Link href={`/work/${prev.slug}`} className="pager__link pager__link--prev">
-                <span className="label">
-                  <span aria-hidden="true">← </span>Previous
-                </span>
-                <span className="pager__title">{prev.name}</span>
-              </Link>
-            ) : null}
-            {next ? (
-              <Link href={`/work/${next.slug}`} className="pager__link pager__link--next">
-                <span className="label">
-                  Next<span aria-hidden="true"> →</span>
-                </span>
-                <span className="pager__title">{next.name}</span>
-              </Link>
-            ) : null}
-          </div>
-        </nav>
+        <WorkPager slug={"gvi-conservation"} />
       </main>
       <SiteFooter />
       <AvatarStage />

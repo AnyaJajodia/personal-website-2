@@ -9,6 +9,12 @@ import type { Theme } from "@/content/work";
  * the page (title flourish → right margin), drawn on as the reader scrolls so it
  * keeps pace just ahead of the viewport. Scrolling back retracts it; no
  * scrolling, no motion. Reduced motion shows it fully drawn.
+ *
+ * The drawn end always carries a small nib — the pen still on the paper — so
+ * a line that stops partway down the screen reads as being drawn, not as a
+ * stray hairline; once the line is complete the nib rests as a full stop at
+ * its end. On phones the line is only the flourish beside the breadcrumb: it
+ * comes in from the edge, ties its mark and stops on that dot.
  */
 
 const N = 420;
@@ -53,7 +59,19 @@ function buildPath(theme: Theme, root: HTMLElement): Pt[] | null {
   const s = wide ? 1 : 0.55;
 
   if (!wide && vw < 600) {
-    // phones: a compact flourish beside the breadcrumb that enters and leaves at the edge
+    // phones: a compact flourish beside the breadcrumb that enters and leaves at
+    // the edge. A page whose breadcrumb runs long can offer a roomier row
+    // instead (data-line="phone-flourish"); there the nib also stays clear of
+    // the screen's edge.
+    const row = q("phone-flourish");
+    if (row) {
+      const f = clamp(row.right + 40, vw - 130, vw - 64);
+      const y = row.top + row.height / 2;
+      pts.push(pt(vw + 30, y - 52), pt(vw - 10, y - 34), pt(f + 20, y - 20));
+      pts.push(pt(f - 8, y + 6), ...loop(f, y - 4, 11, 12, { drift: 14 }));
+      pts.push(pt(f + 22, y + 14), pt(f + 40, y + 15));
+      return resample(spline(pts, 14), N);
+    }
     const f = clamp((crumb?.right ?? vw * 0.6) + 46, vw - 110, vw - 34);
     pts.push(pt(vw + 30, fy - 46), pt(vw - 8, fy - 30), pt(f + 18, fy - 18));
     if (theme === "amnh") {
@@ -63,7 +81,8 @@ function buildPath(theme: Theme, root: HTMLElement): Pt[] | null {
     } else {
       pts.push(pt(f - 8, fy + 6), ...loop(f, fy - 4, 11, 12, { drift: 14 }));
     }
-    pts.push(pt(f + 26, fy + 18), pt(vw + 30, fy + 34));
+    // …and stops, on the nib, rather than trailing off the screen
+    pts.push(pt(f + 20, fy + 14), pt(f + 34, fy + 16));
     return resample(spline(pts, 14), N);
   }
   // A page can give the flourish a job instead of a fixed place: an element
@@ -166,22 +185,37 @@ const COLORS: Record<Theme, string> = {
 export default function DetailLine({ theme }: { theme: Theme }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
+  const nibRef = useRef<SVGCircleElement>(null);
 
   useEffect(() => {
     const svg = svgRef.current;
     const path = pathRef.current;
+    const nib = nibRef.current;
     const root = svg?.closest<HTMLElement>("[data-line-root]");
-    if (!svg || !path || !root) return;
+    if (!svg || !path || !nib || !root) return;
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     let pts: Pt[] = [];
     let len = 0;
     let raf = 0;
+
+    /** the nib sits on the drawn end of the line (hidden before any is drawn) */
+    const placeNib = (frac: number) => {
+      if (frac <= 0.004 || !len) {
+        nib.style.opacity = "0";
+        return;
+      }
+      const p = path.getPointAtLength(len * frac);
+      nib.setAttribute("cx", p.x.toFixed(1));
+      nib.setAttribute("cy", p.y.toFixed(1));
+      nib.style.opacity = "1";
+    };
 
     const render = () => {
       raf = 0;
       if (!pts.length) return;
       if (mq.matches) {
         path.style.strokeDashoffset = "0";
+        placeNib(1);
         return;
       }
       const vh = window.innerHeight;
@@ -193,6 +227,7 @@ export default function DetailLine({ theme }: { theme: Theme }) {
       while (i < pts.length && pts[i].y < threshold) i++;
       const frac = atEnd ? 1 : clamp(i / (pts.length - 1), 0, 1);
       path.style.strokeDashoffset = String(len * (1 - frac));
+      placeNib(frac);
     };
 
     const rebuild = () => {
@@ -233,6 +268,7 @@ export default function DetailLine({ theme }: { theme: Theme }) {
   return (
     <svg ref={svgRef} className="detail-line" aria-hidden="true" focusable="false" data-testid="detail-line">
       <path ref={pathRef} d="" style={{ stroke: COLORS[theme] }} />
+      <circle ref={nibRef} className="detail-line__nib" r="3" cx="0" cy="0" style={{ fill: COLORS[theme], opacity: 0 }} />
     </svg>
   );
 }

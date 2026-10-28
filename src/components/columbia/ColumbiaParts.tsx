@@ -3,10 +3,10 @@ import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import DetailLine from "@/components/DetailLine";
+import WorkPager from "@/components/WorkPager";
 import AvatarStage from "@/components/AvatarStage";
 import WorkDrawer from "@/components/WorkDrawer";
 import ThemeLogo from "@/components/ThemeLogo";
-import { getNeighbours } from "@/content/work";
 import { COLUMBIA_WORDMARK, ADI_MARK } from "@/content/columbia";
 import "../case/case.css";
 import "./columbia.css";
@@ -40,38 +40,49 @@ export function Section({ id, heading, className = "", children }: { id: string;
 }
 
 export function Hero({ name, dates, title, subtitle, facts, adi = false }: { name: string; dates: string; title: string; subtitle: string; facts: { label: string; value: string }[]; adi?: boolean }) {
+  // the dates sit once, beside the wordmark; the facts keep everything else
+  const period = facts.find((m) => m.value === dates);
+  const rest = facts.filter((m) => m !== period);
   return (
     <header className="detail-hero case-hero cu-hero" data-line="top">
       <div className="container" data-line="content">
         <nav aria-label="Breadcrumb" className="breadcrumb label" data-line="crumb">
-          <Link href="/#work">Work</Link>
+          <Link href="/#selected-work">Work</Link>
           <span aria-hidden="true"> / </span>
           <span aria-current="page">{name}</span>
         </nav>
-        {/* the wordmark (and ADI's pill) with the dates; the thread knots off the end of the row (DetailLine) */}
-        <div className="case-hero__id" data-line="flourish" data-flourish="mark" data-flourish-scale="0.55">
-          <div className="cu-marks">
-            <ThemeLogo className="cu-wordmark" light={COLUMBIA_WORDMARK.light} dark={COLUMBIA_WORDMARK.dark} width={COLUMBIA_WORDMARK.width} height={COLUMBIA_WORDMARK.height} label="Columbia University" />
-            {adi ? (
-              <span className="cu-pill" role="img" aria-label="ADI">
-                <Image src={ADI_MARK.src} alt="" width={ADI_MARK.width} height={ADI_MARK.height} unoptimized preload />
-              </span>
-            ) : null}
-          </div>
-          <p className="cu-hero__dates">{dates}</p>
-        </div>
-        <h1 className="detail-hero__title cu-hero__title">
-          <span data-line="title">{title}</span>
-        </h1>
-        <p className="detail-hero__subtitle cu-hero__subtitle">{subtitle}</p>
-        <dl className="cu-facts">
-          {facts.map((m) => (
-            <div key={m.label} className="cu-facts__item">
-              <dt className="label">{m.label}</dt>
-              <dd>{m.value}</dd>
+        <div className="case-hero__grid cu-hero__grid">
+          <div className="cu-hero__main">
+            <div className="case-hero__id">
+              {/* on phones the thread's flourish ties off beside this row (DetailLine) */}
+              <div className="cu-marks" data-line="phone-flourish">
+                <ThemeLogo className="cu-wordmark" light={COLUMBIA_WORDMARK.light} dark={COLUMBIA_WORDMARK.dark} width={COLUMBIA_WORDMARK.width} height={COLUMBIA_WORDMARK.height} label="Columbia University" />
+                {adi ? (
+                  <span className="cu-pill" role="img" aria-label="ADI">
+                    <Image src={ADI_MARK.src} alt="" width={ADI_MARK.width} height={ADI_MARK.height} unoptimized preload />
+                  </span>
+                ) : null}
+              </div>
+              <p className="cu-hero__dates">
+                {period ? <span className="visually-hidden">{period.label}: </span> : null}
+                {dates}
+              </p>
             </div>
-          ))}
-        </dl>
+            <h1 className="detail-hero__title cu-hero__title">
+              <span data-line="title">{title}</span>
+            </h1>
+            <p className="detail-hero__subtitle cu-hero__subtitle">{subtitle}</p>
+          </div>
+          {/* the facts beside the title, hung from the thread like a tag (DetailLine) */}
+          <dl className="cu-facts" data-line="flourish" data-flourish="tag">
+            {rest.map((m) => (
+              <div key={m.label} className="cu-facts__item">
+                <dt className="label">{m.label}</dt>
+                <dd>{m.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       </div>
     </header>
   );
@@ -83,7 +94,6 @@ export function Hero({ name, dates, title, subtitle, facts, adi = false }: { nam
  * "On this page" index.
  */
 export function ColumbiaShell({ slug, hero, children }: { slug: string; hero: React.ReactNode; children: React.ReactNode }) {
-  const { prev, next } = getNeighbours(slug);
   return (
     <div className="detail theme-default theme-columbia" data-line-root>
       <a className="skip-link" href="#main">
@@ -96,29 +106,7 @@ export function ColumbiaShell({ slug, hero, children }: { slug: string; hero: Re
         <div className="container">
           <div className="case-content cu-content">{children}</div>
         </div>
-        <nav className="container pager" aria-label="More work" data-line="end">
-          <Link href="/#work" className="pager__back label">
-            <span aria-hidden="true">←</span> Back to work
-          </Link>
-          <div className="pager__grid">
-            {prev ? (
-              <Link href={`/work/${prev.slug}`} className="pager__link pager__link--prev">
-                <span className="label">
-                  <span aria-hidden="true">← </span>Previous
-                </span>
-                <span className="pager__title">{prev.name}</span>
-              </Link>
-            ) : null}
-            {next ? (
-              <Link href={`/work/${next.slug}`} className="pager__link pager__link--next">
-                <span className="label">
-                  Next<span aria-hidden="true"> →</span>
-                </span>
-                <span className="pager__title">{next.name}</span>
-              </Link>
-            ) : null}
-          </div>
-        </nav>
+        <WorkPager slug={slug} />
       </main>
       <SiteFooter />
       <AvatarStage />

@@ -4,8 +4,9 @@ import { notFound } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import DetailLine from "@/components/DetailLine";
+import WorkPager from "@/components/WorkPager";
 import { WorkFigure } from "@/components/Figures";
-import { work, getWork, getNeighbours, formatPeriod, type WorkEntry, type Section } from "@/content/work";
+import { work, getWork, formatPeriod, type WorkEntry, type Section } from "@/content/work";
 import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
 import { detailAvatars, type PoseName } from "@/content/avatars";
@@ -106,7 +107,6 @@ export default async function WorkPage({ params }: Params) {
   if (slug === "teenage-pregnancy-research") return <TeenPage />;
   if (slug === "esp-teaching") return <EspPage />;
   if (slug === "adi-mentorship") return <AdiPage />;
-  const { prev, next } = getNeighbours(slug);
   const theme = entry.theme;
   const eyebrow = entry.eyebrow ?? (theme === "default" ? [entry.name] : []);
   // contextual figures, keyed by section heading ("stream-id/heading" in a stream)
@@ -123,7 +123,7 @@ export default async function WorkPage({ params }: Params) {
         <header className="detail-hero" data-line="top">
           <div className="container" data-line="content">
             <nav aria-label="Breadcrumb" className="breadcrumb label" data-line="crumb">
-              <Link href="/#work">Work</Link>
+              <Link href={slug === "amnh" ? "/#now" : "/#selected-work"}>Work</Link>
               <span aria-hidden="true"> / </span>
               <span aria-current="page">{entry.name}</span>
             </nav>
@@ -236,29 +236,7 @@ export default async function WorkPage({ params }: Params) {
           ) : null}
         </div>
 
-        <nav className="container pager" aria-label="More work" data-line="end">
-          <Link href="/#work" className="pager__back label">
-            <span aria-hidden="true">←</span> Back to work
-          </Link>
-          <div className="pager__grid">
-            {prev ? (
-              <Link href={`/work/${prev.slug}`} className="pager__link pager__link--prev">
-                <span className="label">
-                  <span aria-hidden="true">← </span>Previous
-                </span>
-                <span className="pager__title">{prev.name}</span>
-              </Link>
-            ) : null}
-            {next ? (
-              <Link href={`/work/${next.slug}`} className="pager__link pager__link--next">
-                <span className="label">
-                  Next<span aria-hidden="true"> →</span>
-                </span>
-                <span className="pager__title">{next.name}</span>
-              </Link>
-            ) : null}
-          </div>
-        </nav>
+        <WorkPager slug={slug} />
       </main>
       <SiteFooter />
       <AvatarStage />

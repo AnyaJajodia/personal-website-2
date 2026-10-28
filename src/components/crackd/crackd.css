@@ -617,7 +617,7 @@
   align-items: baseline;
   gap: 0.6rem;
   width: 100%;
-  min-height: 40px;
+  min-height: 44px;
   padding: 0.5rem 0.25rem;
   border: 0;
   background: none;
@@ -940,8 +940,7 @@ html[data-tour-open] {
   cursor: pointer;
   transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease);
 }
-.ck-tour__close svg,
-.ck-tour__zoom svg {
+.ck-tour__close svg {
   width: 18px;
   height: 18px;
   fill: none;
@@ -973,6 +972,7 @@ html[data-tour-open] {
   overflow: hidden;
 }
 .ck-tour__img {
+  grid-area: 1 / 1; /* the outgoing and incoming screens share one cell as they cross */
   display: block;
   max-width: 100%;
   max-height: 100%;
@@ -983,21 +983,6 @@ html[data-tour-open] {
     0 0 0 1px rgb(0 0 0 / 0.1),
     0 14px 30px -18px rgb(0 0 0 / 0.55);
   background: rgb(127 127 127 / 0.12); /* while it loads, its box is already there */
-}
-/* enlarged: the full-resolution copy, scrolled from its top-left corner */
-.ck-tour__panel[data-zoom] .ck-tour__stage {
-  display: block;
-  overflow: auto;
-  overscroll-behavior: contain;
-}
-.ck-tour__panel[data-zoom] .ck-tour__img {
-  width: clamp(100%, 220%, 2048px);
-  max-width: none;
-  max-height: none;
-}
-.ck-tour__stage:focus-visible {
-  outline: 2px solid var(--ck-yellow);
-  outline-offset: -4px;
 }
 
 .ck-tour__steps {
@@ -1014,6 +999,8 @@ html[data-tour-open] {
   list-style: none;
 }
 .ck-tour__step {
+  position: relative;
+  isolation: isolate;
   display: flex;
   align-items: baseline;
   gap: 0.6rem;
@@ -1039,9 +1026,16 @@ html[data-tour-open] {
   font-variant-numeric: tabular-nums;
 }
 .ck-tour__step[aria-current="step"] {
-  background: var(--ck-yellow-soft);
   color: var(--ck-ink);
   font-weight: 600;
+}
+/* the highlight behind the current name; it glides between names (motion layoutId) */
+.ck-tour__step-mark {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 6px;
+  background: var(--ck-yellow-soft);
 }
 .ck-tour__step[aria-current="step"] .ck-tour__step-n {
   color: var(--ck-ink);
@@ -1060,15 +1054,14 @@ html[data-tour-open] {
   color: var(--muted);
 }
 
-/* footer: enlarge, where you are, previous / next — fixed in place */
+/* footer: where you are, previous / next — fixed in place */
 .ck-tour__foot {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem var(--ck-tour-pad);
 }
-.ck-tour__zoom,
 .ck-tour__btn {
   display: inline-flex;
   align-items: center;
@@ -1084,15 +1077,29 @@ html[data-tour-open] {
   font-size: 0.9375rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease), opacity 0.2s var(--ease);
+  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease), opacity 0.2s var(--ease), scale 0.15s var(--ease);
 }
-.ck-tour__zoom {
-  justify-self: start;
-  white-space: nowrap;
+/* the step count over a rail that fills as you go */
+.ck-tour__progress {
+  display: grid;
+  gap: 0.45rem;
+  justify-items: start;
 }
-.ck-tour__zoom[aria-pressed="true"] {
-  border-color: var(--ck-ink);
-  background: var(--ck-yellow-soft);
+.ck-tour__rail {
+  position: relative;
+  width: min(12rem, 100%);
+  height: 3px;
+  border-radius: 2px;
+  background: var(--rule);
+  overflow: hidden;
+}
+.ck-tour__fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--ck-yellow);
+  transform: scaleX(var(--p, 0));
+  transform-origin: left center;
 }
 .ck-tour__pos {
   font-size: 0.875rem;
@@ -1115,7 +1122,6 @@ html[data-tour-open] {
   cursor: default;
 }
 @media (hover: hover) {
-  .ck-tour__zoom:hover,
   .ck-tour__btn:not(:disabled):not(.ck-tour__btn--next):hover {
     border-color: var(--ck-ink);
   }
@@ -1154,8 +1160,11 @@ html[data-tour-open] {
   .ck-tour[open]::backdrop {
     animation: ck-tour-fade 0.32s ease-out;
   }
-  .ck-tour__img {
-    animation: ck-tour-fade 0.22s ease-out;
+  .ck-tour__fill {
+    transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .ck-tour__btn:not(:disabled):active {
+    scale: 0.97;
   }
 }
 @keyframes ck-tour-in {
@@ -1222,24 +1231,14 @@ html[data-tour-open] {
     padding: 0.6rem;
   }
   .ck-tour__foot {
-    grid-template-columns: auto 1fr;
     padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
   }
+  /* the title already counts the steps; the rail alone says how far */
   .ck-tour__pos {
     display: none;
   }
-  /* icon only on phones; the label stays as its accessible name */
-  .ck-tour__zoom {
-    width: 44px;
-    padding: 0;
-  }
-  .ck-tour__zoom-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
+  .ck-tour__rail {
+    width: 100%;
   }
   .ck-tour__btn {
     padding-inline: 0.85rem;
@@ -1316,3 +1315,49 @@ html[data-tour-open] {
   }
 }
 
+
+/* phones: the nesting (thread, sheet, entry letter) gives back its indents so
+   the text keeps a comfortable measure — the sheet's margins narrow, the
+   night panel sits flush with them, and each letter steps up beside its
+   application's name instead of holding a column of its own */
+@media (max-width: 599.98px) {
+  .ck-sheet {
+    padding-inline: 1.1rem;
+  }
+  :root[data-theme="dark"] .ck-apps {
+    padding: 1.25rem 1rem;
+    margin-inline: -0.35rem;
+  }
+  .ck-app {
+    display: block;
+  }
+  .ck-app__n {
+    float: left;
+    margin: 0.05rem 0.6rem 0 0;
+  }
+  .ck-app__lede {
+    clear: left;
+  }
+}
+@media (max-width: 599.98px) and (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .ck-apps {
+    padding: 1.25rem 1rem;
+    margin-inline: -0.35rem;
+  }
+}
+
+/* the close opens with the page's own short yellow rule, and the address is
+   underlined in the highlighter */
+.theme-crackd .pager__close::before {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ck-yellow);
+}
+.theme-crackd .pager__mail {
+  text-decoration-color: var(--ck-yellow);
+  text-decoration-thickness: 2px;
+}
+.theme-crackd .pager__mail:hover,
+.theme-crackd .pager__mail:focus-visible {
+  text-decoration-color: currentColor;
+}

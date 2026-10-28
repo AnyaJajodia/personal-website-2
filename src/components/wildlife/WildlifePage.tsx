@@ -48,7 +48,7 @@ export default function WildlifePage() {
         <header className="detail-hero wl-hero" data-line="top">
           <div className="container" data-line="content">
             <nav aria-label="Breadcrumb" className="breadcrumb label" data-line="crumb">
-              <Link href="/#more">Other things</Link>
+              <Link href="/#more">More</Link>
               <span aria-hidden="true"> / </span>
               <span aria-current="page">{wildlife.name}</span>
             </nav>
@@ -70,7 +70,13 @@ export default function WildlifePage() {
               <p className="wl-intro__count">
                 <span className="wl-intro__num">{sequence.length}</span> photographs
               </p>
-              <p className="wl-intro__hint">{wildlife.hint}</p>
+              <p className="wl-intro__hint">
+                {/* corners opening outward: these open larger */}
+                <svg className="wl-intro__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                  <path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10" />
+                </svg>
+                {wildlife.hint}
+              </p>
             </div>
           </div>
         </header>
@@ -83,7 +89,7 @@ export default function WildlifePage() {
           {/* kneeling on the rule at the end of the collection, lens turned back on it */}
           <Avatar pose="kneelingCamera" role="wl-shoot" />
           <Link href="/#more" className="pager__back label">
-            <span aria-hidden="true">←</span> Back to other things
+            <span aria-hidden="true">←</span> Back to More
           </Link>
         </nav>
       </main>

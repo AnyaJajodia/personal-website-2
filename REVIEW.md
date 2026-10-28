@@ -1,5 +1,119 @@
 # Visual & functional review
 
+## Iteration 34 — supplied icons; AMNH in its own colours (28 Oct 2026)
+
+**Icons** (from `currently-icons-svg.zip`, your picks):
+- **Lynxster:** the Regular cut.
+- **AMNH:** Museum (the facade).
+- **Teaching & mentorship:** Ionic column.
+
+They replace the hand-drawn vignettes for those three in both drawers, and keep the pencil-then-ink behaviour: the lines draw on, the filled parts fade in and the accent nodes pop in turn.
+- Lynxster's coordinates were pre-transformed into the 64×64 frame so its lines can still be drawn on.
+- Its traced fill (eyes and nose) was simplified from 31KB to 1.3KB, and checked at 640px against the original.
+
+**AMNH colours.** Taken from amnh.org in Chrome (one normal visit; a scripted fetch got a CAPTCHA, which was not bypassed). Apart from black and white, the site uses blue `#004BB4` (its buttons) and lime `#D7FA88` (its headline underlines and banner), with teal `#078071` only in small touches. These match the two swatches you sent. Applied about as far as Buzzworks and Lynxster go:
+
+| Where | Light | Dark |
+|---|---|---|
+| AMNH page accent (thread, eyebrows, labels, breadcrumb, nav) | AMNH blue `#004BB4` (6.8:1 on the archive paper) | AMNH lime `#D7FA88`, as on its black site |
+| AMNH page ground | archive paper (unchanged) | near-black `#181918` instead of the warm brown |
+| Title | a lime marker underline | the lime headline underline of amnh.org |
+| Selection | lime | lime |
+| Homepage card | "Explore AMNH" in blue, lime tape | lime link, faint lime tape |
+| Drawer icon | blue | lime |
+
+| # | P | Found | Fix |
+|---|---|---|---|
+| 1 | P2 | The AMNH page never set its own accent: it borrowed the site's navy and, at night, peach. | `.theme-amnh` now sets `--accent` from `--amnh-accent`. |
+| 2 | P3 | A full lime band behind both title lines was louder than Crackd's one-word highlight. | Thinned to a marker underline (76–92%). |
+| 3 | P2 (open) | **Production only:** on first load the homepage line is routed through slightly stale positions. It passes ~10px from the untangler's fist and ~15px under the greeter's feet; dev, with its double effects, lands at 4–6px. Any resize rebuilds it, after which it lands 2px from the fist. Not caused by this pass: identical with the page transitions removed, and the probes sit outside the animated layer. | Not fixed. Rebuilding on each avatar's entrance fixed the alignment but broke the "route never moves while scrolling" rule (and reduced motion), so it was reverted. Next step: find which late layout change escapes the ResizeObserver and rebuild once on it, before any scrolling. |
+
+## Iteration 33 — Now / Work: two nav items, two drawers (27 Oct 2026)
+
+**Names.** The nav is now About · **Now** · **Work** · More · Contact, split as the homepage splits its work. The drawers take the homepage's own section labels as titles ("Currently", "Selected work") and its headings as their line ("Two threads I'm following.", "Other things I've worked on."). No new copy.
+- **Homepage anchors:** `#now` (Currently) and `#selected-work`, with `#work` kept on the wrapper so old links still land.
+- **Links:** breadcrumbs, the pager's "Back to work" and the hero's identity links point at the half they belong to.
+
+**Designs tried** (all four were built as variants of the same markup, screenshotted at 1440 and 390, and the losing two deleted):
+
+| Drawer | Candidate | Verdict |
+|---|---|---|
+| Now | **Field notebook:** an open spread, one page per commitment with its mark drawn large, a soft crease at the fold | **Chosen.** Calm and generous, and it pairs with Work's book contents (notebook and book). The large mark inks on hover; the whole page is the link. |
+| Now | Specimen labels: pinned, double-ruled museum labels with ruled fields | Rejected. Box in box in box, the pins and italics read as costume, and the label frame fights the paper. |
+| Work | **Contents list:** numbered, leaders, vignettes, the margin thread | **Chosen.** With 7 entries it breathes. The thread ties it to the site's line. |
+| Work | Index cards: 2-column grid with coloured top rules | Rejected. Ragged heights (the GVI card is half empty), and the coloured stripes are a generic dashboard pattern. |
+
+| # | P | Found | Fix |
+|---|---|---|---|
+| 1 | P1 | Five items overflowed the phone header: the theme button was cut off at 390. | Below 480px the name folds to "AJ." and the chevrons go on phones. Below 360px the links are 40px wide (still 44px tall) and below 340px the gaps tighten. It fits from 320 to 1440 with no overlaps. |
+| 2 | P2 | The Lynxster page had an empty gap above its link (pushed to the foot). | The link follows its line. |
+| 3 | P3 | Keyboard focus on a Now page drew two rings. | The page-wide ring only. |
+| 4 | P3 | The detector flagged my overshoot easings on the theme icon. | Replaced with ease-out (0.16, 1, 0.3, 1). |
+
+## Iteration 32 — Contents redesign, page transitions, homepage journeys (27 Oct 2026)
+
+| # | P | Found | Fix |
+|---|---|---|---|
+| 1 | P2 | ADI was the only drawer entry with a logo (a raster pill). | Removed. Every numbered entry now ends in a vignette, the work's mark redrawn in a few pen strokes (`ContentsVignettes.tsx`), so all entries are treated the same. |
+| 2 | P2 | The Contents looked plain. | Vignettes are pencil at rest and inked in the mark's own colours on hover, focus or the current page. The pen underlines the name in the same ink, and the thread's stop and the leader take it. Sub-pages are lettered a/b on a hairline. The unroll, number ring and thread are kept. |
+| 3 | P2 | The underline showed in fragments at rest: dashes can't be measured on a stretched, non-scaling stroke. | It is revealed with a `clip-path` wipe instead. |
+| 4 | P3 | The Buzzworks vignette read as a plain circle. | Redrawn as a ribbon ring with its fold. |
+| 5 | P2 | Pages swapped with no transition. | React 19.3 `<ViewTransition>` in `app/template.tsx` and `app/work/template.tsx`: the old page lifts away and fades, and the new one settles in. The header is its own group and holds still, except during the theme reveal. |
+| 6 | P2 | About/More/Contact from a detail page opened the homepage already at the section. | `HomeSectionLinks` hands the section over. The homepage opens at the top, then travels down with Motion's `animate`, re-aiming every frame; the reader can take over. Reduced motion goes straight there. |
+
+Not changed: the homepage header is transparent over the hero, so the avatar shows behind the links near the top. This was already the case.
+
+## Iteration 31 — walkthrough motion, theme reveal, drawer entries (27 Oct 2026)
+
+| # | P | Found | Fix |
+|---|---|---|---|
+| 1 | P1 | The Crackd walkthrough's Next flashed an empty grey box on retina screens. The preload fetched the 1280 copy, but the stage picks 2048 at 2×. The screen also popped in with a 0.22s fade. | The next screen is decoded at the stage's own `srcset`/`sizes` before the swap (capped at 260 ms), and its neighbours are warmed ahead. The screens cross in the direction of travel, the words rise in, and the step highlight glides (motion `layoutId`). A progress rail fills. |
+| 2 | P2 | "Enlarge" (you asked for its removal). | Removed, with its zoom state, its Escape handling and its CSS. The footer is now the step count and rail, then Previous and Next. |
+| 3 | P2 | The theme swap was a flat colour ease. | A sun/moon morph (after the 21st.dev animated-theme-toggle bookmark) and an organic many-lobed reveal growing from the button (after the 21st.dev "Theme Toggle" bookmark), via a view transition. On hover the rays turn and the moon tips. |
+| 4 | P2 | The drawer filed TMU as "Research tooling · TMU · Research", but the work built software. | Drawer only: "Citation tooling", note "TMU · Engineering". |
+| 5 | P2 | AMNH had one drawer entry, but the homepage shows two roles. | Two sub-items into the shared page's sections: "Volunteer · DIODE collections digitization" and "Volunteer research · Mantis behavioral trials". On the AMNH page the group carries "you are here". |
+
+Rechecked after the fixes: 1440 and 390, light and dark (tour), in the drawer on Crackd and AMNH. A click on the mantis sub-item closes the sheet and lands on its section.
+
+## Iteration 30 — design pass (five parallel builders) and targeted edits (27 Oct 2026)
+
+**Part 1: the parallel pass from `analysis.md`.** Five builders worked in parallel:
+- **A1:** the hero's identity line and contact links, and the dot-field layout shift.
+- **A2:** Selected work as a fixed grid; More; Contact.
+- **A3:** heading marks and the trajectory.
+- **A4:** header, nav and drawer hint.
+- **A5:** Crackd, Lynxster and wildlife.
+
+All five were interrupted by the usage limit and resumed. The lead then integrated their work, fixed what is listed here, and updated the tests.
+
+| # | P | Found | Fix |
+|---|---|---|---|
+| 1 | P1 | `next build` typecheck failed on stale generated duplicates (`.next/types/* 2.ts`, a Finder-style copy from 12:48). | Removed the four generated duplicates in `.next/types/`. typecheck, lint and build pass. |
+| 2 | P2 | At 320px the homepage was 333–351px wide: the "Say hello" figure overflowed. | A2 shrank and clamped it below 380px. `scrollWidth` is 320/360/390 at 320/360/390. |
+| 3 | P2 | The hero lede collapsed to one word per line below 512px (`100vw − 32rem` went negative). | A1 limited that max-width to ≥860px. |
+| 4 | P2 | TMU's logo was squashed (1.76:1 instead of 1.83:1) by the tile's 44px cap. | A2 set its size to 24. |
+| 5 | P3 | Body text re-wrapped when Inter loaded (CLS 0.11 in a 390-wide desktop window). | Added a metric-matched "Inter Fallback" (Arial with Inter's overrides). CLS is now 0.09–0.10 there, 0.002–0.003 at 1440/1280, and 0 on phones. |
+| 6 | P3 | Tests asserted the old hover-expanding panels, the old tape colours and raw `textContent` that included hidden initials. | Rewritten to the intended behaviour: fixed grid, summaries at rest, no reflow, and the announced text. |
+
+**Part 2: your targeted requests.**
+
+| # | P | Found (screenshots `t3/before`) | Fix (screenshots `t3/v3–v5`) |
+|---|---|---|---|
+| 7 | P1 | ESP and ADI desktop: the thread dropped from mid-header, knotted against the dates, then sagged across an empty right half. The dates were shown twice, and the facts rule (900px) didn't line up with the section rules (1024px). | The family's two-column opening, as on GVI: wordmark row, title and subtitle on the left; the facts as a ruled tag on the right, ending on the reading column's edge. The thread hangs its loop off the tag's corner (`tag` flourish). The period shows once, beside the wordmark. |
+| 8 | P2 | ESP and ADI phones: the flourish squeezed against the long breadcrumb, and its end dot sat on the screen's edge. | A new optional `data-line="phone-flourish"` anchor in DetailLine. On these pages the flourish ties off beside the wordmark row, with the dot about 40px inside the edge. Other pages are unchanged. |
+| 9 | P1 | The work drawer was a generic right-hand sheet with a logo-tile list (you weren't happy with its form or motion). | Redesigned as **Contents** (your choice of the four forms offered): the page's paper unrolls from under the header, which stays undimmed. Numbered serif entries with dotted leaders. The page's own thread runs down the margin with a stop per entry, and the pen circles the current page's number, with "you are here". A mounted plate on wide screens shows the pointed or focused entry's logo. It rolls back up to close. On reduced motion it fades. |
+| 10 | P2 | First Contents render: rows fell into two columns. | The `.toc` class name collided with the "On this page" index. Renamed to `.contents*`. |
+| 11 | P2 | The drawer's thread was the root blue on every page. | The dialog is portalled into the page's theme wrapper, so it inherits its `--accent` (GVI green, Lynxster navy/teal, Columbia blue). |
+| 12 | P3 | The current-page circle was squeezed to 17px by the global `svg { max-width: 100% }`. | `max-width: none` on the ring. |
+| 13 | P3 | At 1440×900 the list ran past the paper's edge with no cue. | A grouped project's pages run in on one line under its name (stacked on phones), so the whole contents fits. |
+| 14 | P3 | On phones focus started on the current entry, but it sat below the fold (`preventScroll`). | The list scrolls itself to bring that entry into view (never the page). |
+| 15 | P3 | The current sub-entry's circle crowded its label. | A smaller ring for sub-entries. |
+| 16 | P2 | Lynxster's homepage plate: a cool blue-grey in light and a green-black in dark, both against the warm page. | Explored 8 palettes per theme beside the AMNH card (`lxv/sheet-light.png`, `lxv/sheet-dark.png`). Applied: light linen #f7f3eb→#e6dfd2 with the navy mark; dark umber #33302a→#26231f with a softened teal mark #86d2c6. Homepage card only; the detail page keeps its own palette. |
+| 17 | P2 | The Lynxster detail page's assembly waited until the whole illustration was in view (you wanted it to play on load). | AssemblyPlayer starts the sequence on the first frame after hydration, scrolled or not; the hover ripple replay is unchanged, and reduced motion still shows the finished composition. |
+| 18 | P2 | Contents: you disliked the framed logo plate. | Tried three options on screen (`plate/A–F`): no plate, a floating logo, a round stamp. Chose no plate; the paper narrowed to 54rem and now hangs beneath the navigation, its right edge on the page column, so it unrolls from the Work item. The plate's code is removed. |
+| 19 | P2 | Lynxster band: the pointer glow stopped at the band's edge (`overflow: hidden`) while the band colour carried on behind the illustration, leaving a dark "box" with no glow (your screenshots). | A second glow layer clipped to the stage's dark top, driven by the same pointer coordinates (one centre, no seam), and the pointer is followed across both regions; crossing between them doesn't drop the glow. |
+| 20 | P2 | The theme control opened a System / Light / Dark menu. | One button: the default is System; each press swaps Light ↔ Dark (a moon by day, a sun at night, `aria-pressed` = Dark); a swap back to the OS's own theme returns to System (nothing stored). |
+
 ## Iteration 29 — Wildlife photography, final selection (26 Oct 2026)
 
 The temporary set was replaced by the final selection: highlights, main gallery and secondary gallery. The masonry was replaced with a sequence of rows that keep each photo's proportions and share a height:

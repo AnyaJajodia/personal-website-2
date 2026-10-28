@@ -416,3 +416,91 @@ Decisions (keep through compaction):
     - two rows (“From developer to co-founder”, “What I work on”) fill the space above the link and mirror AMNH's;
     - the tapes are swapped (sage on Lynxster, yellow on AMNH).
   - **QA:** `qa/lynxster.mjs` 102.
+
+## Impeccable pass, parallel agents (27 Oct 2026)
+- Driven by `analysis.md`. Five builder agents, each with its own files:
+  - A1: hero, identity line, CTA row, dot-field CLS
+  - A2: Selected work, More, Contact
+  - A3: coherence, type, motion
+  - A4: header, nav, mobile, thread
+  - A5: detail pages, Lynxster, wildlife
+- `src/` and `qa/` were backed up before any edits.
+- All five were interrupted by the usage limit at ~17:51 and resumed after it reset.
+- Still to do once they report: `next build`, every qa/*.mjs suite, a fresh independent design review, one batch of fixes, then update REVIEW.md and QA.md.
+- Integration (lead): all five builders reported.
+  - Tests rewritten for the fixed-grid panels, quieter tapes and announced brand text.
+  - Inter got a metric-matched fallback.
+  - Stale `.next/types/* 2.ts` duplicates removed.
+  - `npm run check` passes.
+
+## Targeted edits (27 Oct 2026, your /goal)
+- **Teaching & mentorship pages (ESP, ADI):**
+  - The opening is now the family's two-column hero: facts on the right as a ruled tag, with the thread's `tag` flourish off its corner. The dates show once.
+  - Phones: a new `data-line="phone-flourish"` anchor (DetailLine) ties the flourish beside the wordmark row.
+- **Work drawer → "Contents"** (your pick):
+  - Paper unrolls from under the undimmed header.
+  - Numbered serif entries with leaders, the page's thread down the margin, and the pen circling the current number.
+  - A logo plate beside the list on wide screens.
+  - It inherits the page theme (portalled into `.detail`) and uses the `.contents*` classes; `.toc` belongs to "On this page".
+- **Lynxster homepage plate:**
+  - Explored 8 palettes per theme.
+  - Applied linen (light) and umber with teal (dark), homepage card only.
+- **QA:** crackd, columbia, pass24, refine and lynxster were updated for the new drawer, opening and palette.
+- Follow-ups (27 Oct 2026):
+  - The Lynxster assembly plays on load.
+  - The Contents plate is gone; the paper hangs under the nav (54rem, right edge on the page column).
+  - The Lynxster band glow continues over the stage's dark top (`.lx-stage__glow`, `[data-watch-glow]`).
+  - The theme control is one Light/Dark swap button, defaulting to System; a swap back to the OS theme clears the stored choice.
+  - All suites and `npm run check` are green.
+
+
+## Iteration 31 (27 Oct 2026, your /goal)
+- **Crackd tour:**
+  - No Enlarge.
+  - The next screen is decoded before the swap (`warm()`, ≤260 ms), and its neighbours are warmed ahead.
+  - The screens cross (AnimatePresence, direction-aware); the words rise in.
+  - The step highlight glides (`layoutId`); a progress rail fills.
+- **Theme:**
+  - The `ThemeToggle` glyph is a CSS sun/moon morph (pathLength draw-on with scale).
+  - `applyTheme(pref, animate, from)` runs a view-transition reveal clipped to a 12-lobe path growing from the button.
+  - Fallbacks: the colour ease, or instant under reduced motion.
+- **Drawer:**
+  - TMU is "Citation tooling", "TMU · Engineering" (drawer-only overrides in `LOOKS`).
+  - AMNH has two hash sub-links (`amnhLinks`), and the group is marked "you are here" on /work/amnh.
+- **QA:** all touched suites are green; build passes.
+
+
+## Iteration 32 (27 Oct 2026, your follow-up)
+- **Contents:**
+  - `ContentsVignettes.tsx`: pen redraws of each mark.
+  - The `data-v` per entry sets `--v1`/`--v2` (light and dark) in WorkDrawer.css.
+  - Pencil at rest; inked on hover, focus or this page.
+  - The swash is a `clip-path` wipe; sub-pages are lettered.
+  - The ADI pill and `drawerSubMarks` are gone.
+- **Page transitions:**
+  - `PageTransition` (React `ViewTransition`, `page-enter`/`page-exit`) via `app/template.tsx` and `app/work/template.tsx`.
+  - The header carries `view-transition-name: site-header`, dropped while `data-theme-reveal` is set.
+- **Homepage journeys:**
+  - `HomeSectionLinks` (in the layout) catches `/#section` links off the homepage and stores `home:to` in sessionStorage.
+  - `SmoothAnchors` then opens at the top, waits 550 ms and travels with motion `animate` (0.8–2.4 s, re-aiming every frame).
+  - The reader takes over on wheel, touch or keys; reduced motion jumps.
+- **QA:** `qa/transitions.mjs` 16/16. See QA.md for the rest.
+
+
+## Iteration 33 (27 Oct 2026, your /goal: two work drawers)
+- **Nav:** About · Now (`#now`, routes /work/lynxster and /work/amnh) · Work (`#selected-work`, other /work/) · More · Contact.
+- **Wiring:** SiteHeader clones the page's `workMenu` (`<WorkDrawer current>`) per item with `part="now" | "work"`, so page call sites are unchanged. Sheet ids are `now-sheet` and `work-sheet`.
+- **Now drawer:** the field-notebook spread (`.now*` in WorkDrawer.css; data `nowEntries` in work-index.ts). **Work drawer:** the contents list (7 entries, 01–07).
+- **Rejected candidates** (specimen labels, index cards) were deleted after screenshots; see REVIEW.md iteration 33.
+- **Phone header:** "AJ." below 480px, no chevrons below 640px, 40px links below 360px and tighter gaps below 340px.
+
+
+## Iteration 34 (28 Oct 2026, your /goal: icons + AMNH colours)
+- **ContentsVignettes:** an `ICONS` map holds the supplied Lynxster, AMNH (facade) and Columbia (column) icons, each with a viewBox crop, strokes, an optional fill and nodes. In WorkDrawer.css `.vignette--icon` sets heavier strokes, `.vignette__fill` and `.vignette__node`.
+- **AMNH theme** (`globals.css`):
+  - variables: `--amnh-accent` is #004bb4 by day and #d7fa88 at night; `--amnh-lime` and `--amnh-mark` added.
+  - the dark ground is #181918.
+  - `.theme-amnh` sets `--accent`, and has the lime selection and title mark.
+  - the homepage AMNH card has its CTA in `--amnh-accent` and a lime tape.
+- **Drawer:** AMNH `--v1` is #004bb4 by day and #d7fa88 at night; Lynxster's `--v2` is #2f9e8c.
+- **Iteration 33 QA, finished:** every older suite now targets the right drawer (Now or Work) and the new anchors (#now, #selected-work).

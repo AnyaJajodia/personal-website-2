@@ -6,11 +6,14 @@
  *   circle     a loose loop around the word, ink
  *   underline  one swooping stroke beneath it, ink
  *   strike     a wobbly line through it (for "straightforward"), ink
- *   highlight  a highlighter swipe behind it, Crackd yellow
+ *   highlight  a highlighter swipe behind it — the page's one highlighter
  *
- * The stroke is drawn once, when the heading scrolls into view (MarkStage
- * sets data-drawn); with reduced motion, or without JavaScript, it is simply
- * there. Decorative: the SVG is aria-hidden and the word reads as normal text.
+ * The three ink marks are the same pen as the homepage line: its colour and
+ * its weight (a non-scaling stroke, so the mark does not thicken or thin as
+ * it stretches to fit the word). Each is drawn once, as its heading scrolls
+ * into view, at the pen's own speed (MarkStage); with reduced motion, or
+ * without JavaScript, it is simply there. Decorative: the SVG is aria-hidden
+ * and the word reads as normal text.
  */
 
 export type MarkKind = "circle" | "underline" | "strike" | "highlight";
@@ -37,10 +40,10 @@ const PATHS: Record<MarkKind, { viewBox: string; d: string }> = {
 export function Mark({ kind, children }: { kind: MarkKind; children: React.ReactNode }) {
   const p = PATHS[kind];
   return (
-    <span className={`mark mark--${kind}`} data-mark="">
+    <span className={`mark mark--${kind}`} data-mark={kind}>
       {children}
       <svg className="mark__ink" viewBox={p.viewBox} preserveAspectRatio="none" aria-hidden="true" focusable="false">
-        <path d={p.d} pathLength={1} />
+        <path d={p.d} />
       </svg>
     </span>
   );

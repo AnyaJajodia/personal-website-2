@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useCallback, useEffect, useId, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion, type Variants } from "motion/react";
 import { crackd, type App } from "@/content/crackd";
 
 /**
@@ -15,15 +16,38 @@ import { crackd, type App } from "@/content/crackd";
  *
  * The walkthrough: one native modal <dialog> shared by all three — application
  * name, step title and subtitle, the prepared screenshot at its own proportions,
- * named-step navigation, Previous/Next and the step count. "Enlarge" shows the
- * screenshot at full resolution inside the same dialog (scrollable; no second
- * dialog). Escape leaves the enlarged view first, then closes; focus is trapped
- * while open and returns to the button that opened it. ←/→ move between steps.
- * Images load only when a tour opens (with the next one preloaded). Reduced
- * motion: no transitions.
+ * named-step navigation, Previous/Next and the step count with a progress rail.
+ * Escape closes; focus is trapped while open and returns to the button that
+ * opened it. ←/→ move between steps.
+ *
+ * Moving between screens: the next screen is decoded before it is shown (its
+ * neighbours are fetched ahead, at the size the stage will use), so a step
+ * never flashes an empty box. The screens then cross: the new one slides in
+ * from the side you are heading towards as the old one leaves the other way,
+ * the step's words rise in, and the highlight in the screens list glides to
+ * its name. Images load only when a tour opens. Reduced motion: no movement.
  */
 
 const src = (stem: string, w: 1280 | 2048) => `${stem}-${w}.webp`;
+const srcSet = (stem: string) => `${src(stem, 1280)} 1280w, ${src(stem, 2048)} 2048w`;
+const SIZES = "(max-width: 760px) 100vw, min(72rem, 92vw)";
+
+/** fetch and decode a screen at the size the stage will pick; resolves either way */
+const warm = (stem: string) => {
+  const img = new Image();
+  img.sizes = SIZES;
+  img.srcset = srcSet(stem);
+  img.src = src(stem, 1280);
+  return img.decode().catch(() => {});
+};
+
+// the screens cross: in from the side you are heading towards, out the other
+const EASE = [0.32, 0.72, 0, 1] as const;
+const screen: Variants = {
+  enter: (dir: number) => ({ opacity: 0, x: dir * 36, scale: 0.985 }),
+  center: { opacity: 1, x: 0, scale: 1, transition: { duration: 0.5, ease: EASE } },
+  exit: (dir: number) => ({ opacity: 0, x: dir * -36, scale: 0.985, transition: { duration: 0.34, ease: EASE } }),
+};
 
 function RepoLink({ app }: { app: App }) {
   return (
@@ -99,19 +123,22 @@ function AppEntry({ app, onOpen }: { app: App; onOpen: (app: App, step: number, 
 
 export default function CrackdApps() {
   const dialog = useRef<HTMLDialogElement>(null);
-  const stage = useRef<HTMLDivElement>(null);
   const opener = useRef<HTMLElement | null>(null);
+  const ticket = useRef(0);
   const [app, setApp] = useState<App | null>(null);
   const [i, setI] = useState(0);
-  const [zoom, setZoom] = useState(false);
+  // which way the last move went: 1 forward, -1 back
+  const [dir, setDir] = useState(1);
   const [nonce, setNonce] = useState(0);
   const uid = useId();
+  const still = useReducedMotion() ?? false;
 
   const open = (a: App, step: number, from: HTMLElement) => {
     opener.current = from;
+    ticket.current++;
     setApp(a);
     setI(step);
-    setZoom(false);
+    setDir(1);
     setNonce((n) => n + 1);
   };
 
@@ -129,28 +156,37 @@ export default function CrackdApps() {
     if (d?.open) d.close();
   }, []);
 
+  // move once the screen is decoded (at most a beat later), so it arrives whole;
+  // only the latest request lands
   const go = useCallback(
     (to: number) => {
       if (!app) return;
-      setI(Math.max(0, Math.min(app.steps.length - 1, to)));
-      setZoom(false);
+      const k = Math.max(0, Math.min(app.steps.length - 1, to));
+      if (k === i) return;
+      const mine = ++ticket.current;
+      const ready = warm(app.steps[k].stem);
+      void Promise.race([ready, new Promise((r) => window.setTimeout(r, 260))]).then(() => {
+        if (ticket.current !== mine) return;
+        setDir(k > i ? 1 : -1);
+        setI(k);
+      });
     },
-    [app],
+    [app, i],
   );
 
-  // dialog wiring: Escape (leave the enlarged view first), arrows, Tab wrap, overlay click, focus return
+  // the neighbours, fetched ahead so Previous and Next are immediate
+  useEffect(() => {
+    if (!app) return;
+    for (const k of [i + 1, i - 1]) if (app.steps[k]) void warm(app.steps[k].stem);
+  }, [app, i]);
+
+  // dialog wiring: Escape, arrows, Tab wrap, overlay click, focus return
   useEffect(() => {
     const d = dialog.current;
     if (!d) return;
-    const onCancel = (e: Event) => {
-      if (zoom) {
-        e.preventDefault();
-        setZoom(false);
-      }
-    };
     const onClose = () => {
       delete document.documentElement.dataset.tourOpen;
-      setZoom(false);
+      ticket.current++;
       opener.current?.focus({ preventScroll: true });
     };
     const onClick = (e: MouseEvent) => {
@@ -159,8 +195,8 @@ export default function CrackdApps() {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement;
       if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
-        // leave arrows alone inside the step list (roving) and inside the zoomed image (scrolling)
-        if (t.closest(".ck-tour__steps") || zoom) return;
+        // leave arrows alone inside the step list (roving)
+        if (t.closest(".ck-tour__steps")) return;
         e.preventDefault();
         go(i + (e.key === "ArrowRight" ? 1 : -1));
         return;
@@ -177,34 +213,32 @@ export default function CrackdApps() {
         first.focus();
       }
     };
-    d.addEventListener("cancel", onCancel);
     d.addEventListener("close", onClose);
     d.addEventListener("click", onClick);
     d.addEventListener("keydown", onKey);
     return () => {
-      d.removeEventListener("cancel", onCancel);
       d.removeEventListener("close", onClose);
       d.removeEventListener("click", onClick);
       d.removeEventListener("keydown", onKey);
     };
-  }, [close, go, i, zoom]);
+  }, [close, go, i]);
 
   // leaving the page with a tour open
   useEffect(() => () => void delete document.documentElement.dataset.tourOpen, []);
 
-  // a new step starts at the top-left of the enlarged image, with its name in view in the screens list
+  // keep the current screen's name in view in the screens list
   useEffect(() => {
-    stage.current?.scrollTo({ top: 0, left: 0 });
     // (scrolled by hand: scrollIntoView could also move the locked page behind the dialog)
     const cur = dialog.current?.querySelector<HTMLElement>('.ck-tour__step[aria-current="step"]');
     const row = cur?.closest("ol");
     if (cur && row && row.scrollWidth > row.clientWidth) {
-      row.scrollTo({ left: cur.offsetLeft - row.offsetLeft - 16 });
+      row.scrollTo({ left: cur.offsetLeft - row.offsetLeft - 16, behavior: still ? "auto" : "smooth" });
     }
-  }, [i, zoom, app]);
+  }, [i, app, still]);
 
   const step = app?.steps[i];
-  const next = app?.steps[i + 1];
+  const words = still ? { duration: 0 } : { duration: 0.42, ease: EASE };
+  const glide = still ? { duration: 0 } : { type: "spring" as const, stiffness: 420, damping: 38 };
 
   return (
     <>
@@ -216,7 +250,7 @@ export default function CrackdApps() {
 
       <dialog ref={dialog} className="ck-tour" aria-labelledby={`${uid}-app`} aria-describedby={`${uid}-sub`}>
         {app && step ? (
-          <div className="ck-tour__panel" data-zoom={zoom ? "true" : undefined}>
+          <div className="ck-tour__panel">
             <header className="ck-tour__head">
               <div className="ck-tour__titles">
                 <p className="ck-tour__app" id={`${uid}-app`}>
@@ -226,11 +260,20 @@ export default function CrackdApps() {
                   <span className="ck-tour__count">
                     {i + 1} / {app.steps.length}
                   </span>
-                  {step.title}
+                  <motion.span key={step.stem} className="ck-tour__words" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={words}>
+                    {step.title}
+                  </motion.span>
                 </h2>
-                <p className="ck-tour__sub" id={`${uid}-sub`}>
+                <motion.p
+                  key={step.stem}
+                  className="ck-tour__sub"
+                  id={`${uid}-sub`}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={still ? words : { ...words, delay: 0.05 }}
+                >
                   {step.subtitle}
-                </p>
+                </motion.p>
               </div>
               <button type="button" className="ck-tour__close" onClick={close} aria-label="Close walkthrough">
                 <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -240,57 +283,58 @@ export default function CrackdApps() {
             </header>
 
             <div className="ck-tour__body">
-              <div
-                ref={stage}
-                className="ck-tour__stage"
-                tabIndex={zoom ? 0 : -1}
-                role={zoom ? "region" : undefined}
-                aria-label={zoom ? "Enlarged screenshot — scroll to explore" : undefined}
-              >
-                {/* the prepared copy, at its own proportions; reserves its box while loading */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  key={step.stem}
-                  className="ck-tour__img"
-                  src={src(step.stem, zoom ? 2048 : 1280)}
-                  srcSet={zoom ? undefined : `${src(step.stem, 1280)} 1280w, ${src(step.stem, 2048)} 2048w`}
-                  sizes={zoom ? undefined : "(max-width: 760px) 100vw, min(72rem, 92vw)"}
-                  width={step.width}
-                  height={step.height}
-                  alt={step.alt}
-                  decoding="async"
-                />
-                {/* the next screen, fetched quietly so Next feels immediate */}
-                {next ? <link rel="preload" as="image" href={src(next.stem, 1280)} /> : null}
+              <div className="ck-tour__stage">
+                {/* the prepared copy, at its own proportions; the outgoing and
+                    incoming screens share the stage's one cell while they cross */}
+                <AnimatePresence initial={false} custom={dir}>
+                  <motion.img
+                    key={step.stem}
+                    className="ck-tour__img"
+                    src={src(step.stem, 1280)}
+                    srcSet={srcSet(step.stem)}
+                    sizes={SIZES}
+                    width={step.width}
+                    height={step.height}
+                    alt={step.alt}
+                    decoding="async"
+                    custom={dir}
+                    variants={screen}
+                    initial={still ? false : "enter"}
+                    animate="center"
+                    exit={still ? undefined : "exit"}
+                    transition={still ? { duration: 0 } : undefined}
+                  />
+                </AnimatePresence>
               </div>
 
-              <nav className="ck-tour__steps" aria-label="Screens in this walkthrough">
-                <ol>
+              <motion.nav className="ck-tour__steps" aria-label="Screens in this walkthrough" layoutScroll>
+                <motion.ol layoutScroll>
                   {app.steps.map((st, k) => (
                     <li key={st.stem}>
                       <button type="button" className="ck-tour__step" aria-current={k === i ? "step" : undefined} onClick={() => go(k)}>
+                        {/* the highlight glides from the last screen's name to this one */}
+                        {k === i ? <motion.span className="ck-tour__step-mark" layoutId={`${uid}-${app.id}-mark`} transition={glide} aria-hidden="true" /> : null}
                         <span className="ck-tour__step-n" aria-hidden="true">
                           {String(k + 1).padStart(2, "0")}
                         </span>
-                        {st.title}
+                        <span className="ck-tour__step-name">{st.title}</span>
                       </button>
                     </li>
                   ))}
-                </ol>
+                </motion.ol>
                 <p className="ck-tour__note">{crackd.tourNote}</p>
-              </nav>
+              </motion.nav>
             </div>
 
             <footer className="ck-tour__foot">
-              <button type="button" className="ck-tour__zoom" aria-pressed={zoom} onClick={() => setZoom((z) => !z)}>
-                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                  {zoom ? <path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" /> : <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />}
-                </svg>
-                <span className="ck-tour__zoom-label">{zoom ? "Fit to window" : "Enlarge"}</span>
-              </button>
-              <p className="ck-tour__pos" aria-hidden="true">
-                Step {i + 1} of {app.steps.length}
-              </p>
+              <div className="ck-tour__progress" aria-hidden="true">
+                <span className="ck-tour__pos">
+                  Step {i + 1} of {app.steps.length}
+                </span>
+                <span className="ck-tour__rail">
+                  <span className="ck-tour__fill" style={{ "--p": (i + 1) / app.steps.length } as React.CSSProperties} />
+                </span>
+              </div>
               <div className="ck-tour__nav">
                 <button type="button" className="ck-tour__btn" onClick={() => go(i - 1)} disabled={i === 0}>
                   <span aria-hidden="true">←</span> Previous

@@ -1,11 +1,17 @@
 /**
- * "More" as three drawn plates in a varied-span grid (the grid structure
- * follows Magic UI's BentoGrid: https://magicui.design/docs/components/bento-grid).
- * Writing has a nib that has just written the site's line; Wildlife
- * photography shows one of the photographs, whole. Experiments is deliberately empty — a
- * reserved plate with nothing in it, so it claims no experiment. A plate with
- * a page (`links`) is one link, stretched over the whole plate; the others
- * are not links. The drawings are aria-hidden and claim no work.
+ * "More" as three loose things laid on the page — not cards: a sheet of
+ * ruled writing paper, a mounted print of one of the photographs, and a slip
+ * of graph paper for experiments. Each sits a touch off-square on its own
+ * short paper shadow with its caption underneath on the page itself, so the
+ * section reads as a different material from the coloured panels above.
+ * On hover / focus a piece straightens and lifts a little.
+ *
+ * Writing's sheet has a nib that has just written the site's line; the
+ * print is the supplied photograph, whole, at its own proportions. The
+ * graph-paper slip is blank, so it claims no experiment. An item with a page
+ * (`links`) is one link, stretched over the whole piece and its caption; the
+ * others are not links (their caption says "Later"). Drawings are
+ * aria-hidden and claim no work.
  */
 import Link from "next/link";
 import { homepagePhoto, sequence } from "@/content/wildlife";
@@ -15,9 +21,6 @@ function WritingScene() {
   return (
     <div className="bento__scene scene-writing" aria-hidden="true">
       <svg viewBox="0 -60 966 240" preserveAspectRatio="xMidYMid meet" focusable="false">
-        <g className="writing__rules">
-          <path d="M20 70H936M20 110H936M20 150H936" />
-        </g>
         <path
           className="writing__ink"
           pathLength={1}
@@ -36,9 +39,9 @@ function WritingScene() {
   );
 }
 
-/** Photography: one of the photographs — the supplied file, whole, scaled to
- * fit the plate at its own proportions (never cropped) — with the viewfinder
- * corners that close in on hover / focus. */
+/** Photography: one of the photographs — the supplied file, whole, at its
+ * own proportions (never cropped), mounted with a paper border — with the
+ * viewfinder corners that close in on hover / focus. */
 function PhotoScene() {
   const p = homepagePhoto;
   return (
@@ -60,8 +63,8 @@ function PhotoScene() {
 const SCENES: Record<string, React.ReactNode> = {
   Writing: <WritingScene />,
   "Wildlife photography": <PhotoScene />,
-  // an empty, reserved plate: a quiet frame and nothing else
-  Experiments: <div className="bento__scene scene-empty" aria-hidden="true" />,
+  // a slip of graph paper: drawn in CSS, nothing on it yet
+  Experiments: <div className="bento__scene scene-graph" aria-hidden="true" />,
 };
 
 const KEYS: Record<string, string> = {
@@ -76,13 +79,8 @@ export default function MoreBento({ items, links = {} }: { items: string[]; link
       {items.map((item) => {
         const href = links[item];
         return (
-          <li
-            key={item}
-            className={`bento__card bento__card--${KEYS[item] ?? "other"}${href ? " bento__card--link" : ""}`}
-            // Writing responds to focus as well as hover (nothing in it is a link yet)
-            {...(!href && item !== "Experiments" ? { tabIndex: 0, role: "group", "aria-label": `${item} — later` } : {})}
-          >
-            {SCENES[item] ?? null}
+          <li key={item} className={`bento__card bento__card--${KEYS[item] ?? "other"}${href ? " bento__card--link" : ""}`}>
+            <div className="bento__piece">{SCENES[item] ?? <div className="bento__scene scene-graph" aria-hidden="true" />}</div>
             <div className="bento__content">
               <h3 className="bento__name">
                 {href ? (
@@ -97,7 +95,10 @@ export default function MoreBento({ items, links = {} }: { items: string[]; link
                 {href ? (
                   <>
                     {item === "Wildlife photography" ? `${sequence.length} photographs` : "View"}
-                    <span aria-hidden="true"> →</span>
+                    {" "}
+                    <span className="bento__go" aria-hidden="true">
+                      →
+                    </span>
                   </>
                 ) : (
                   "Later"

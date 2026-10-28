@@ -2,10 +2,10 @@ import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import DetailLine from "@/components/DetailLine";
+import WorkPager from "@/components/WorkPager";
 import AvatarStage from "@/components/AvatarStage";
 import WorkDrawer from "@/components/WorkDrawer";
 import OnThisPage, { type TocItem } from "@/components/OnThisPage";
-import { getNeighbours } from "@/content/work";
 import { companion, type Paper, type Publication, type Link as LinkT } from "@/content/research";
 import "../case/case.css";
 import "./research.css";
@@ -56,7 +56,7 @@ export function Hero({ paper }: { paper: Paper }) {
     <header className="detail-hero case-hero rs-hero" data-line="top">
       <div className="container" data-line="content">
         <nav aria-label="Breadcrumb" className="breadcrumb label" data-line="crumb">
-          <Link href="/#work">Work</Link>
+          <Link href="/#selected-work">Work</Link>
           <span aria-hidden="true"> / </span>
           <span aria-current="page">{paper.name}</span>
         </nav>
@@ -228,7 +228,6 @@ export function Reference({ paper }: { paper: Paper }) {
 
 /** the page frame: shared header (with the work drawer), thread, rail, pager */
 export function ResearchShell({ slug, accent, sections, hero, children }: { slug: string; accent: "pmmy" | "teen"; sections: TocItem[]; hero: React.ReactNode; children: React.ReactNode }) {
-  const { prev, next } = getNeighbours(slug);
   return (
     <div className={`detail theme-default theme-research theme-research--${accent}`} data-line-root>
       <a className="skip-link" href="#main">
@@ -246,29 +245,7 @@ export function ResearchShell({ slug, accent, sections, hero, children }: { slug
           </div>
           <div className="case-content">{children}</div>
         </div>
-        <nav className="container pager" aria-label="More work" data-line="end">
-          <Link href="/#work" className="pager__back label">
-            <span aria-hidden="true">←</span> Back to work
-          </Link>
-          <div className="pager__grid">
-            {prev ? (
-              <Link href={`/work/${prev.slug}`} className="pager__link pager__link--prev">
-                <span className="label">
-                  <span aria-hidden="true">← </span>Previous
-                </span>
-                <span className="pager__title">{prev.name}</span>
-              </Link>
-            ) : null}
-            {next ? (
-              <Link href={`/work/${next.slug}`} className="pager__link pager__link--next">
-                <span className="label">
-                  Next<span aria-hidden="true"> →</span>
-                </span>
-                <span className="pager__title">{next.name}</span>
-              </Link>
-            ) : null}
-          </div>
-        </nav>
+        <WorkPager slug={slug} />
       </main>
       <SiteFooter />
       <AvatarStage />

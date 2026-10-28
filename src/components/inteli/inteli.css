@@ -273,6 +273,14 @@
 .il-figure__full:hover {
   text-decoration-color: currentColor;
 }
+/* a full-height target on touch, without moving the caption */
+@media (pointer: coarse) {
+  .il-figure__full {
+    display: inline-block;
+    padding-block: 0.7rem;
+    margin-block: -0.7rem;
+  }
+}
 
 /* the data problem, led by its own first sentence */
 .il-limit {

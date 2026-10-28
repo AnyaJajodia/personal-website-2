@@ -2,6 +2,7 @@ import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import DetailLine from "@/components/DetailLine";
+import WorkPager from "@/components/WorkPager";
 import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
 import WorkDrawer from "@/components/WorkDrawer";
@@ -10,7 +11,6 @@ import LynxsterAssembly from "./LynxsterAssembly";
 import InView from "./InView";
 import AssemblyPlayer from "./AssemblyPlayer";
 import { lynxster } from "@/content/lynxster";
-import { getNeighbours } from "@/content/work";
 import "./lynxster-brand.css";
 import "./lynxster.css";
 
@@ -59,7 +59,6 @@ const AREA_ICONS: Record<string, React.ReactNode> = {
 };
 
 export default function LynxsterPage() {
-  const { prev, next } = getNeighbours("lynxster");
   const t = lynxster;
   const [lead, ...rest] = t.problem.paragraphs[0].split(/(?<=\.)\s+/);
 
@@ -75,7 +74,7 @@ export default function LynxsterPage() {
         <LynxsterWatch className="lx-band" data-line="top" data-eyes="closed">
           <div className="container lx-band__inner" data-line="content">
             <nav aria-label="Breadcrumb" className="breadcrumb label" data-line="crumb">
-              <Link href="/#work">Work</Link>
+              <Link href="/#now">Work</Link>
               <span aria-hidden="true"> / </span>
               <span aria-current="page">{t.name}</span>
             </nav>
@@ -121,8 +120,12 @@ export default function LynxsterPage() {
 
         {/* the illustration starts in the band and carries over its edge */}
         <div className="lx-stage">
-          {/* it assembles once the whole illustration is in view; hovering it
-              afterwards replays the seal's ripples */}
+          {/* the band's glow, carried on over the dark top of the stage (LynxsterWatch) */}
+          <div className="lx-stage__glow" data-watch-glow aria-hidden="true">
+            <div className="lx-band__spot" />
+          </div>
+          {/* it assembles as the page loads; hovering it afterwards replays
+              the seal's ripples */}
           <AssemblyPlayer className="container">
             <LynxsterAssembly />
           </AssemblyPlayer>
@@ -227,29 +230,7 @@ export default function LynxsterPage() {
           <p>{t.more.text}</p>
         </section>
 
-        <nav className="container pager" aria-label="More work" data-line="end">
-          <Link href="/#work" className="pager__back label">
-            <span aria-hidden="true">←</span> Back to work
-          </Link>
-          <div className="pager__grid">
-            {prev ? (
-              <Link href={`/work/${prev.slug}`} className="pager__link pager__link--prev">
-                <span className="label">
-                  <span aria-hidden="true">← </span>Previous
-                </span>
-                <span className="pager__title">{prev.name}</span>
-              </Link>
-            ) : null}
-            {next ? (
-              <Link href={`/work/${next.slug}`} className="pager__link pager__link--next">
-                <span className="label">
-                  Next<span aria-hidden="true"> →</span>
-                </span>
-                <span className="pager__title">{next.name}</span>
-              </Link>
-            ) : null}
-          </div>
-        </nav>
+        <WorkPager slug={"lynxster"} />
       </main>
       <SiteFooter />
       <AvatarStage />

@@ -5,6 +5,9 @@ import { useRef, useState } from "react";
 /**
  * A separate control beside the email link: copies the address, says so, and
  * draws a small check. The link itself still opens mail as before.
+ *
+ * Both faces ("Copy email", and the check with "Copied") share one grid
+ * cell, so the button keeps one width and each face is centred in it.
  */
 export default function CopyEmail({ email }: { email: string }) {
   const [copied, setCopied] = useState(false);
@@ -33,10 +36,15 @@ export default function CopyEmail({ email }: { email: string }) {
   return (
     <>
       <button type="button" className="copy-email" data-copied={copied || undefined} onClick={copy}>
-        <span className="copy-email__label">{copied ? "Copied" : "Copy email"}</span>
-        <svg className="copy-email__check" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M4 13c2 1.6 3.6 3.4 5 5.6C12 12 15.6 8 20.5 5" pathLength={1} />
-        </svg>
+        <span className="copy-email__face copy-email__face--idle" aria-hidden={copied || undefined}>
+          Copy email
+        </span>
+        <span className="copy-email__face copy-email__face--done" aria-hidden={!copied || undefined}>
+          <svg className="copy-email__check" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M4 13c2 1.6 3.6 3.4 5 5.6C12 12 15.6 8 20.5 5" pathLength={1} />
+          </svg>
+          Copied
+        </span>
       </button>
       <span className="visually-hidden" role="status">
         {copied ? "Email address copied" : ""}

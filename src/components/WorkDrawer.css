@@ -1,8 +1,10 @@
 /* =====================================================================
-   Work drawer (WorkDrawer.tsx) — a side sheet in the portfolio's shared
-   language: the page's paper and ink, the homepage panels' tones and logo
-   tiles, the serif names. Everything is scoped to .sheet* classes; the only
-   document-level rule applies while a sheet is open.
+   Work drawer (WorkDrawer.tsx) — "Contents": every project set as a
+   book's table of contents, on a sheet of the page's paper that unrolls
+   from beneath the header. The page's own thread (its --accent) runs down
+   the margin, and the pen circles the page you are on. Everything is
+   scoped to .sheet* / .contents* classes; the only document-level rule
+   applies while the sheet is open.
    ===================================================================== */
 
 /* background scroll lock while open, without a layout shift */
@@ -14,10 +16,22 @@ html[data-sheet-open] .site-header {
   padding-right: var(--sheet-scrollbar, 0px);
 }
 
+/* the unroll's progress, 0 (rolled up) → 1 (open); animatable */
+@property --unroll {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+
 /* ------------------------------------------------------------ sheet */
 .sheet {
-  --sheet-out: 320; /* ms, read by the component before it closes */
+  --sheet-out: 260; /* ms, read by the component before it closes */
+  --sheet-top: 4.25rem; /* the header's lower edge, measured on open */
+  --sheet-scrim: rgb(28 22 16 / 0.34);
   --sheet-ink: #242321;
+  --contents-rail: 1.9rem; /* the margin the thread runs down */
+  --contents-n: 2.1rem; /* the number column */
+  --contents-v: 3.1rem; /* the vignette column */
   position: fixed;
   inset: 0;
   width: 100%;
@@ -31,104 +45,59 @@ html[data-sheet-open] .site-header {
   color: var(--text);
   overflow: hidden;
 }
+/* the header stays in view and undimmed: the scrim starts below it */
 .sheet::backdrop {
-  background: rgb(22 19 16 / 0.42);
+  background: transparent;
 }
-.sheet__panel {
+.sheet__scrim {
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  width: min(26rem, calc(100vw - 2.75rem));
-  background: var(--surface);
-  border-left: 1px solid var(--rule);
-  box-shadow: -24px 0 48px -28px rgb(var(--shade) / 0.5);
+  inset: var(--sheet-top) 0 0;
+  background: var(--sheet-scrim);
 }
 
-/* the motion: one plain horizontal slide from the edge the panel belongs to,
-   the overlay fading with it. The open is a long, soft deceleration (500ms,
-   the drawer curve: it leaves the edge without lunging and settles slowly);
-   the panel's contents travel a little less far than the panel (a quiet
-   depth, all of it together, nothing staggered). The close eases both ways
-   (320ms) so it neither snaps away nor slams out at full speed. No overshoot,
-   no scaling, and the page behind never moves. */
-@media (prefers-reduced-motion: no-preference) {
-  .sheet[data-state] .sheet__panel {
-    will-change: transform;
-  }
-  .sheet[data-state="open"] .sheet__panel {
-    animation: sheet-in 0.5s cubic-bezier(0.32, 0.72, 0, 1);
-  }
-  .sheet[data-state="open"] .sheet__panel > * {
-    animation: sheet-content 0.6s cubic-bezier(0.32, 0.72, 0, 1);
-  }
-  .sheet[data-state="open"]::backdrop {
-    animation: sheet-fade 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-  }
-  .sheet[data-state="closing"] .sheet__panel {
-    animation: sheet-out 0.32s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-  .sheet[data-state="closing"]::backdrop {
-    animation: sheet-fade-out 0.32s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .sheet[data-state="open"] .sheet__panel {
-    animation: sheet-fade 0.18s ease-out;
-  }
-}
-@keyframes sheet-in {
-  from {
-    transform: translateX(100%);
-  }
-}
-@keyframes sheet-out {
-  to {
-    transform: translateX(100%);
-  }
-}
-@keyframes sheet-content {
-  from {
-    opacity: 0;
-    transform: translateX(1.75rem);
-  }
-  40% {
-    opacity: 1;
-  }
-}
-@keyframes sheet-fade {
-  from {
-    opacity: 0;
-  }
-}
-@keyframes sheet-fade-out {
-  to {
-    opacity: 0;
-  }
+/* the paper: hung from the header's edge beneath the navigation, its right
+   edge on the page's column (77.5rem), so it unrolls from the Work item;
+   full width on phones */
+.sheet__panel {
+  position: absolute;
+  top: var(--sheet-top);
+  right: max(0px, calc((100% - 77.5rem) / 2));
+  width: min(100%, var(--sheet-w, 54rem));
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100% - var(--sheet-top) - 1.5rem);
+  background:
+    /* tucked under the header: a soft shade where the paper emerges */
+    linear-gradient(rgb(var(--shade) / 0.1), transparent 1.1rem),
+    var(--surface);
+  border: 1px solid var(--rule);
+  border-top: 0;
+  border-radius: 0 0 18px 18px;
+  box-shadow:
+    0 2px 3px -1px rgb(var(--shade) / 0.12),
+    0 34px 60px -34px rgb(var(--shade) / 0.55);
 }
 
 .sheet__head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 1rem;
-  padding: calc(1.4rem + env(safe-area-inset-top, 0px)) 1.25rem 1.15rem 1.5rem;
+  gap: 1.5rem;
+  padding: 1.7rem 2.75rem 1.25rem;
   border-bottom: 1px solid var(--rule);
 }
 .sheet__title {
   font-family: var(--serif);
-  font-size: 1.875rem;
+  font-size: clamp(2.1rem, 1.6rem + 1.4vw, 2.85rem);
   font-weight: 600;
   line-height: 1;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
 }
 .sheet__desc {
-  margin-top: 0.5rem;
-  max-width: 30ch;
+  margin-top: 0.55rem;
+  max-width: 46ch;
   font-size: 0.875rem;
-  line-height: 1.45;
+  line-height: 1.5;
   color: var(--muted);
 }
 .sheet__close {
@@ -137,7 +106,7 @@ html[data-sheet-open] .site-header {
   place-items: center;
   width: 44px;
   height: 44px;
-  margin: -0.35rem -0.25rem 0 0;
+  margin: -0.2rem -0.5rem 0 0;
   border: 1px solid var(--rule);
   border-radius: 50%;
   background: transparent;
@@ -168,335 +137,784 @@ html[data-sheet-open] .site-header {
   stroke-linecap: round;
 }
 
+/* the list: it scrolls inside the paper, never the page */
 .sheet__body {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 0.5rem 1rem calc(1.75rem + env(safe-area-inset-bottom, 0px));
+  padding: 1.6rem 2.75rem calc(2.4rem + env(safe-area-inset-bottom, 0px)) 2.1rem;
   scrollbar-width: thin;
   scrollbar-color: var(--rule-strong) transparent;
 }
-/* a group's name, with a hairline running out from it */
-.sheet__group {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 1.6rem 0.5rem 0.4rem;
-  font-family: var(--sans);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
+
+/* ------------------------------------------------------------- the contents */
+.contents {
+  position: relative;
+  padding-left: var(--contents-rail);
 }
-.sheet__group::after {
+/* the thread down the margin, in the page's own ink */
+.contents::before {
   content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--rule);
+  position: absolute;
+  left: calc(var(--contents-rail) / 2 - 1px);
+  top: 0.55rem;
+  bottom: 3.4rem;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  transform-origin: top;
 }
-.sheet__features,
-.sheet__list,
-.sheet-entry__subs {
+.contents__list,
+.contents__subs {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-/* --- an entry: one row of the index. The project's tone lives in its tile;
-   the row itself stays on the paper until it is pointed at. */
-.sheet-entry,
-.sheet-feature {
-  --tone-k: var(--tone, var(--rule-strong));
-  --wash: color-mix(in srgb, var(--tone-k) 24%, var(--surface));
-}
-.sheet__list > li + li,
-.sheet__features > li + li {
-  border-top: 1px solid var(--rule);
-}
-.sheet-entry__link,
-.sheet-entry__head,
-.sheet-feature__link {
+/* one line of the contents: number, name, leader, role or category, vignette */
+.contents__link {
+  position: relative;
   display: grid;
-  grid-template-columns: 2.75rem minmax(0, 1fr) 1rem;
-  align-items: center;
-  gap: 0.9rem;
-  min-height: 4rem;
-  margin-block: 0.2rem;
-  padding: 0.55rem 0.75rem 0.55rem 0.5rem;
-  border-radius: 10px;
+  grid-template-columns: var(--contents-n) auto minmax(1.5rem, 1fr) auto var(--contents-v);
+  align-items: baseline;
+  column-gap: 0.85rem;
+  min-height: 3.4rem;
+  padding: 0.55rem 0 0.5rem;
   color: var(--text);
   text-decoration: none;
 }
-.sheet-feature__link {
-  grid-template-columns: 4.75rem minmax(0, 1fr) 1rem;
-}
-.sheet-entry__link,
-.sheet-feature__link {
-  transition: background-color 0.3s var(--ease);
-}
-.sheet-entry__head {
-  grid-template-columns: 2.75rem minmax(0, 1fr);
-  margin-bottom: 0;
-}
-
-/* the tile: the homepage card's own colour, in miniature */
-.sheet-entry__tile {
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 8px;
-  background: var(--tone-k);
-  box-shadow: inset 0 0 0 1px rgb(36 35 33 / 0.08);
-  color: var(--sheet-ink);
+/* each entry is a stop on the thread */
+.contents__link::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--contents-rail) / -2);
+  top: 1.55rem;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  background: var(--surface);
+  translate: -50% -50%;
   transition:
-    transform 0.35s var(--ease),
-    box-shadow 0.35s var(--ease);
+    background-color 0.25s var(--ease),
+    border-color 0.25s var(--ease),
+    scale 0.3s var(--ease);
 }
-.sheet-entry__tile--dark {
-  background: #2b2824;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tone-k) 55%, transparent);
+.contents__n {
+  position: relative;
+  justify-self: start;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  color: var(--muted);
 }
-.sheet-entry__tile img {
-  display: block;
-  width: auto;
-  max-width: 2rem;
-  height: 1.8rem;
-  object-fit: contain;
-}
-.sheet-entry__tile svg {
-  width: 1.6rem;
-  height: 1.6rem;
-}
-/* Currently: the two organisations' wordmarks, on a quiet paper tile */
-.sheet-feature__logo {
-  display: grid;
-  place-items: center;
-  height: 3rem;
-  border-radius: 8px;
-  background: var(--bg);
-  box-shadow: inset 0 0 0 1px var(--rule);
-  transition:
-    transform 0.35s var(--ease),
-    box-shadow 0.35s var(--ease);
-}
-.sheet-feature__lockup {
-  height: 2.3rem;
-  color: var(--logo-ink);
-}
-.sheet-feature__wordmark {
-  display: block;
-  width: 4rem;
-  height: auto;
-}
-
-.sheet-entry__text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
+.contents__name {
   min-width: 0;
-}
-.sheet-entry__name {
   font-family: var(--serif);
-  font-size: 1.25rem;
+  font-size: clamp(1.3rem, 1.12rem + 0.55vw, 1.62rem);
   font-weight: 600;
-  line-height: 1.08;
+  line-height: 1.12;
+  letter-spacing: -0.005em;
   text-wrap: balance;
+  transition: color 0.25s var(--ease);
 }
-.sheet-entry__note {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.15rem 0.6rem;
+/* the name's own box, for the pen's underline */
+.contents__title {
+  position: relative;
+}
+.contents__swash {
+  position: absolute;
+  left: -0.1em;
+  right: -0.15em;
+  bottom: -0.2em;
+  width: calc(100% + 0.25em);
+  height: 0.32em;
+  overflow: visible;
+  fill: none;
+  stroke: var(--v1);
+  stroke-width: 2;
+  stroke-linecap: round;
+  pointer-events: none;
+  /* drawn left to right by uncovering it (a dash can't be measured on a
+     stretched, non-scaling stroke) */
+  clip-path: inset(-50% 100% -50% 0);
+  transition: clip-path 0.2s var(--ease);
+}
+.contents__swash path {
+  vector-effect: non-scaling-stroke;
+}
+.contents__leader {
+  align-self: baseline;
+  height: 0;
+  border-bottom: 2px dotted color-mix(in srgb, var(--text) 26%, transparent);
+  translate: 0 -0.3em;
+  transition: border-color 0.25s var(--ease);
+}
+.contents__note {
   font-size: 0.8125rem;
   line-height: 1.3;
   color: var(--muted);
+  white-space: nowrap;
+  transition: color 0.25s var(--ease);
 }
 
-/* the arrow that answers a pointer: it slides in, it never jumps */
-.sheet-entry__go {
-  width: 1rem;
-  height: 1rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  color: var(--muted);
-  opacity: 0;
-  transform: translateX(-0.4rem);
-  transition:
-    opacity 0.25s var(--ease),
-    transform 0.35s var(--ease);
+/* a body of work with several pages: its pages are lettered beneath the
+   name, as a book's contents lists a chapter's sections */
+.contents__subs {
+  margin: -0.35rem calc(var(--contents-v) + 0.85rem) 0.35rem calc(var(--contents-n) + 0.85rem);
+  border-left: 1px solid var(--rule);
 }
-
-/* a group (publications, teaching): its pages hang from the name on a thread */
-.sheet-entry__subs {
-  display: grid;
-  margin: 0 0 0.45rem 1.85rem;
-  padding: 0 0 0 1.55rem;
-  border-left: 1px solid var(--rule-strong);
-}
-.sheet-entry__sub {
+.contents__sub {
   display: flex;
-  align-items: center;
-  gap: 0.55rem;
+  align-items: baseline;
+  gap: 0.7rem;
   min-height: 44px;
-  margin-left: -0.6rem;
-  padding: 0.35rem 0.75rem 0.35rem 0.6rem;
-  border-radius: 8px;
+  padding: 0.62rem 0.25rem 0.5rem 0.9rem;
   font-size: 0.9375rem;
-  line-height: 1.3;
+  line-height: 1.35;
   color: var(--text);
   text-decoration: none;
-  transition: background-color 0.3s var(--ease);
 }
-.sheet-entry__sub-text {
-  flex: 1;
-  min-width: 0;
-}
-.sheet-entry__sub .sheet-entry__go {
+.contents__letter {
+  position: relative;
   flex: none;
+  width: 0.9rem;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--muted);
+  text-align: center;
+  transition: color 0.25s var(--ease);
+}
+.contents__sub-text {
+  min-width: 0;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  transition: text-decoration-color 0.25s var(--ease);
+}
+/* a section link's role is its label; what the work is follows, quieter */
+.contents__sub-detail {
+  color: var(--muted);
 }
 
-/* hover / focus / current */
+/* the vignette: the work's mark in a few pen strokes (ContentsVignettes).
+   Pencil at rest; pointing at the entry inks it over in the mark's colours,
+   stroke by stroke, and the pen underlines the name in the same ink. */
+.vignette {
+  align-self: center;
+  justify-self: end;
+  display: block;
+  width: var(--contents-v);
+  aspect-ratio: 48 / 40;
+}
+.vignette svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.vignette__pencil {
+  stroke: color-mix(in srgb, var(--text) 30%, transparent);
+  stroke-width: 1.2;
+  transition: opacity 0.3s var(--ease);
+}
+.vignette__ink {
+  stroke: var(--v1);
+  stroke-width: 1.8;
+}
+.vignette__ink .vignette__two {
+  stroke: var(--v2, var(--v1));
+}
+.vignette path {
+  stroke-dasharray: 1 1;
+}
+.vignette__ink path {
+  stroke-dashoffset: 1;
+  /* undrawn quickly, all at once, when the pointer leaves */
+  transition: stroke-dashoffset 0.25s var(--ease);
+}
+/* inked: pointed at, focused, or the page you are on */
+:is(.contents__entry, .now__page)[data-here] .vignette__ink path,
+:is(.contents__entry, .now__page):has(:focus-visible) .vignette__ink path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.65, 0, 0.35, 1) calc(var(--k, 0) * 55ms);
+}
+:is(.contents__entry, .now__page)[data-here] .vignette__pencil,
+:is(.contents__entry, .now__page):has(:focus-visible) .vignette__pencil {
+  opacity: 0.35;
+}
+/* the supplied icons (64×64 frame): a touch heavier to match the pen ones;
+   their filled parts and accent nodes are pencil at rest and arrive in ink
+   once the lines are down (the fill fades in, the nodes pop in turn) */
+.vignette--icon .vignette__pencil {
+  stroke-width: 1.45;
+}
+.vignette--icon .vignette__ink {
+  stroke-width: 2.1;
+}
+.vignette :is(.vignette__fill, .vignette__node) {
+  stroke: none;
+}
+.vignette__pencil :is(.vignette__fill, .vignette__node) {
+  fill: color-mix(in srgb, var(--text) 30%, transparent);
+}
+.vignette__ink .vignette__fill {
+  fill: var(--v1);
+}
+.vignette__ink .vignette__node {
+  fill: var(--v2, var(--v1));
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.vignette__ink :is(.vignette__fill, .vignette__node) {
+  opacity: 0;
+  scale: 0.4;
+  transition:
+    opacity 0.2s var(--ease),
+    scale 0.2s var(--ease);
+}
+.vignette__ink .vignette__fill {
+  scale: 1;
+}
+:is(.contents__entry, .now__page)[data-here] .vignette__ink :is(.vignette__fill, .vignette__node),
+:is(.contents__entry, .now__page):has(:focus-visible) .vignette__ink :is(.vignette__fill, .vignette__node) {
+  opacity: 1;
+  scale: 1;
+  transition:
+    opacity 0.3s var(--ease) calc(0.35s + var(--k, 0) * 35ms),
+    scale 0.35s cubic-bezier(0.16, 1, 0.3, 1) calc(0.35s + var(--k, 0) * 35ms);
+}
+.contents__link:is(a):focus-visible .contents__swash,
+.contents__link[aria-current="page"] .contents__swash,
+.now__page:has(:focus-visible) .contents__swash,
+.now__link[aria-current="page"] .contents__swash,
+.contents__link--label[data-here] .contents__swash {
+  clip-path: inset(-50% -5% -50% 0);
+  transition: clip-path 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* the page you are on: its stop is filled, its number circled in ink,
+   and it says so in a quiet italic */
+.contents__link[aria-current="page"]::before,
+.contents__link--label[data-here]::before {
+  background: var(--accent);
+}
+.contents__ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2.5rem;
+  max-width: none; /* wider than the number it circles */
+  height: 1.9rem;
+  translate: -50% -54%;
+  overflow: visible;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+.contents__ring path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.contents__letter .contents__ring {
+  width: 1.7rem;
+  height: 1.35rem;
+  translate: -50% -58%;
+}
+.contents__link[aria-current="page"] .contents__n,
+.contents__link--label[data-here] .contents__n,
+.contents__sub[aria-current="page"] .contents__letter {
+  color: var(--text);
+}
+.contents__here {
+  display: inline-block;
+  margin-left: 0.55rem;
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+/* pointing: the vignette inks in the work's own colours, the pen underlines
+   the name in the same ink, the leader and the stop on the thread take it */
 @media (hover: hover) {
-  .sheet-entry__link:hover,
-  .sheet-feature__link:hover,
-  .sheet-entry__sub:hover {
-    background: var(--wash);
+  :is(.contents__entry, .now__page):hover .vignette__ink path {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.5s cubic-bezier(0.65, 0, 0.35, 1) calc(var(--k, 0) * 55ms);
   }
-  .sheet-entry__link:hover .sheet-entry__tile,
-  .sheet-feature__link:hover .sheet-feature__logo {
-    transform: translateY(-2px);
-    box-shadow:
-      inset 0 0 0 1px rgb(36 35 33 / 0.08),
-      0 8px 14px -10px rgb(var(--shade) / 0.7);
+  :is(.contents__entry, .now__page):hover .vignette__pencil {
+    opacity: 0.35;
   }
-  .sheet-entry__link:hover .sheet-entry__go,
-  .sheet-feature__link:hover .sheet-entry__go,
-  .sheet-entry__sub:hover .sheet-entry__go {
+  :is(.contents__entry, .now__page):hover .vignette__ink :is(.vignette__fill, .vignette__node) {
     opacity: 1;
-    transform: none;
+    scale: 1;
+    transition:
+      opacity 0.3s var(--ease) calc(0.35s + var(--k, 0) * 35ms),
+      scale 0.35s cubic-bezier(0.16, 1, 0.3, 1) calc(0.35s + var(--k, 0) * 35ms);
+  }
+  .contents__link:is(a):hover .contents__swash,
+  .contents__entry--group:hover .contents__swash,
+  .now__page:hover .contents__swash {
+    clip-path: inset(-50% -5% -50% 0);
+    transition: clip-path 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  .contents__entry:hover > .contents__link .contents__leader {
+    border-color: color-mix(in srgb, var(--v1) 50%, transparent);
+  }
+  .contents__link:is(a):hover .contents__note {
+    color: var(--text);
+  }
+  .contents__entry:hover > .contents__link::before {
+    scale: 1.3;
+    border-color: var(--v1);
+  }
+  .contents__sub:hover .contents__sub-text {
+    text-decoration-color: currentColor;
+  }
+  .contents__sub:hover .contents__letter {
+    color: var(--v1);
+  }
+}
+.contents__link:is(a):focus-visible,
+.contents__sub:focus-visible,
+.sheet__overview:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.contents__link:is(a):focus-visible .contents__name,
+.contents__sub:focus-visible .contents__sub-text {
+  color: var(--accent);
+}
+
+/* "Back to work overview": the contents' last line */
+.sheet__overview {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  margin-top: 1.4rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+.sheet__overview > span[aria-hidden] {
+  transition: translate 0.25s var(--ease);
+}
+@media (hover: hover) {
+  .sheet__overview:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.3em;
+  }
+  .sheet__overview:hover > span[aria-hidden] {
+    translate: -3px 0;
+  }
+}
+
+/* ------------------------------------------------------------- motion */
+/* The paper unrolls downward behind a soft-edged mask (the leading edge is
+   a 5rem fade, so it reads as paper coming over rather than a wipe), with
+   the thread drawing down beside it. The rows ink in from above, following
+   the paper; last, the pen circles where you are. Closing rolls it back up,
+   faster, with nothing staggered. */
+@media (prefers-reduced-motion: no-preference) {
+  .sheet[data-state="open"]:not([data-settled]) .sheet__panel,
+  .sheet[data-state="closing"] .sheet__panel {
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--unroll) * (100% + 5rem) - 5rem), transparent calc(var(--unroll) * (100% + 5rem)));
+    mask-image: linear-gradient(to bottom, #000 calc(var(--unroll) * (100% + 5rem) - 5rem), transparent calc(var(--unroll) * (100% + 5rem)));
+  }
+  .sheet[data-state="open"] .sheet__panel {
+    animation: sheet-unroll 0.66s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .sheet[data-state="open"] .sheet__scrim {
+    animation: sheet-fade 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  .sheet[data-state="open"] .sheet__head {
+    animation: sheet-ink 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.04s both;
+  }
+  .sheet[data-state="open"] .contents::before {
+    animation: sheet-thread 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+  }
+  .sheet[data-state="open"] :is(.contents__entry, .now__page, .sheet__overview) {
+    animation: sheet-ink 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(0.12s + var(--i, 0) * 0.03s);
+  }
+  .sheet[data-state="open"] .vignette__pencil path {
+    animation: sheet-ring 0.8s cubic-bezier(0.65, 0, 0.35, 1) both;
+    animation-delay: calc(0.2s + var(--i, 0) * 0.04s);
+  }
+  .sheet[data-state="open"] .contents__ring path {
+    animation: sheet-ring 0.6s cubic-bezier(0.65, 0, 0.35, 1) 0.62s both;
+  }
+  .sheet[data-state="closing"] .sheet__panel {
+    animation: sheet-rollup 0.26s cubic-bezier(0.55, 0, 0.8, 0.2) forwards;
+  }
+  .sheet[data-state="closing"] .sheet__scrim {
+    animation: sheet-fade-out 0.26s cubic-bezier(0.4, 0, 1, 1) forwards;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sheet[data-state="open"] .sheet__panel,
+  .sheet[data-state="open"] .sheet__scrim {
+    animation: sheet-fade 0.18s ease-out;
+  }
+  .vignette__ink path,
+  .vignette__ink :is(.vignette__fill, .vignette__node),
+  .contents__swash {
+    transition: none !important;
+  }
+  .sheet__close,
+  .sheet__overview > span[aria-hidden],
+  .contents__link::before {
+    transition: none;
+    rotate: none !important;
+    translate: -50% -50% !important;
+  }
+  .sheet__close,
+  .sheet__overview > span[aria-hidden] {
+    translate: none !important;
+  }
+}
+@keyframes sheet-unroll {
+  from {
+    --unroll: 0;
+    translate: 0 -0.6rem;
+  }
+}
+@keyframes sheet-rollup {
+  to {
+    --unroll: 0;
+    translate: 0 -0.4rem;
+  }
+}
+@keyframes sheet-thread {
+  from {
+    scale: 1 0;
+  }
+}
+@keyframes sheet-ink {
+  from {
+    opacity: 0;
+    translate: 0 -0.35rem;
+  }
+}
+@keyframes sheet-ring {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+@keyframes sheet-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes sheet-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------------- dark */
+:root[data-theme="dark"] .sheet {
+  --sheet-scrim: rgb(0 0 0 / 0.52);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .sheet {
+    --sheet-scrim: rgb(0 0 0 / 0.52);
+  }
+}
+
+/* ------------------------------------------------------------- Now */
+/* An open field notebook: one page per commitment, a soft crease between
+   them. Each page leads with its mark drawn large, then the dates, the name,
+   the role (and Lynxster's status), one line, and AMNH's two roles lettered
+   beneath; Lynxster's page ends in its call to explore. The whole page opens
+   the project; the roles are links of their own, above it. */
+.sheet[data-part="now"] {
+  --sheet-w: 50rem;
+}
+.now__spread {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+/* the crease, shaded on both sides of the fold */
+.now__spread::before {
+  content: "";
+  position: absolute;
+  top: -0.5rem;
+  bottom: -0.25rem;
+  left: 50%;
+  width: 3rem;
+  translate: -50% 0;
+  background: linear-gradient(90deg, transparent, rgb(var(--shade) / 0.05) 40%, rgb(var(--shade) / 0.13) 50%, rgb(var(--shade) / 0.05) 60%, transparent);
+  pointer-events: none;
+}
+.now__page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.25rem 2.4rem 1.25rem 0.75rem;
+}
+.now__page + .now__page {
+  padding: 0.25rem 0.75rem 1.25rem 2.4rem;
+}
+.now__art {
+  margin: 0 0 0.9rem -0.35rem;
+}
+.now__art .vignette {
+  width: 6.4rem;
+}
+.now__art .vignette__ink {
+  stroke-width: 1.5;
+}
+.now__art .vignette__pencil {
+  stroke-width: 1;
+}
+.now__art .vignette--icon .vignette__ink {
+  stroke-width: 1.7;
+}
+.now__art .vignette--icon .vignette__pencil {
+  stroke-width: 1.15;
+}
+.now__when {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.now__name {
+  margin-top: 0.3rem;
+  font-family: var(--serif);
+  font-size: clamp(1.7rem, 1.35rem + 1vw, 2.2rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.now__name .contents__here {
+  display: block;
+  margin: 0.3rem 0 0;
+}
+.now__link {
+  color: var(--text);
+  text-decoration: none;
+}
+/* the whole page is the link to the project */
+.now__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+}
+.sheet .now__link:focus-visible {
+  outline: none;
+}
+.now__link:focus-visible::after {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+.now__role {
+  margin-top: 0.7rem;
+  font-size: 0.9375rem;
+  font-weight: 550;
+  line-height: 1.35;
+}
+.now__status {
+  display: inline-block;
+  margin-left: 0.55rem;
+  padding: 0.12rem 0.55rem;
+  border: 1px solid color-mix(in srgb, var(--v1) 55%, transparent);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--v1);
+  vertical-align: 0.1em;
+}
+.now__line {
+  margin-top: 0.45rem;
+  max-width: 34ch;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.now__roles {
+  position: relative;
+  z-index: 1; /* above the page's own link */
+  align-self: stretch;
+  margin: 0.8rem 0 0;
+  padding: 0;
+  list-style: none;
+  border-left: 1px solid var(--rule);
+}
+.now__cta {
+  margin-top: 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--v1);
+}
+.now__cta span {
+  display: inline-block;
+  transition: translate 0.25s var(--ease);
+}
+.now .sheet__overview {
+  margin-top: 0.6rem;
+}
+@media (hover: hover) {
+  .now__page:hover .now__cta span {
+    translate: 4px 0;
+  }
+  .now__page:hover .now__name {
     color: var(--text);
   }
 }
-.sheet-entry__link:focus-visible .sheet-entry__go,
-.sheet-feature__link:focus-visible .sheet-entry__go,
-.sheet-entry__sub:focus-visible .sheet-entry__go {
-  opacity: 1;
-  transform: none;
-}
-.sheet-entry__link:active,
-.sheet-feature__link:active,
-.sheet-entry__sub:active {
-  background: color-mix(in srgb, var(--tone-k) 34%, var(--surface));
-  transition-duration: 0.1s;
-}
-.sheet-entry__link:active .sheet-entry__tile,
-.sheet-feature__link:active .sheet-feature__logo {
-  transform: none;
-  transition-duration: 0.1s;
-}
-.sheet-feature__link:focus-visible,
-.sheet-entry__link:focus-visible,
-.sheet-entry__sub:focus-visible {
-  outline: 2px solid var(--text);
-  outline-offset: 0;
-}
-/* the page you are on: washed in its tone, and named */
-.sheet-entry__link[aria-current="page"],
-.sheet-feature__link[aria-current="page"],
-.sheet-entry__sub[aria-current="page"] {
-  background: var(--wash);
-}
-.sheet__here {
-  font-family: var(--sans);
-  font-size: 0.6875rem;
-  font-weight: 650;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--text);
-}
-.sheet__here::before {
-  content: "";
-  display: inline-block;
-  width: 0.4rem;
-  height: 0.4rem;
-  margin-right: 0.4rem;
-  border-radius: 50%;
-  background: currentColor;
-  vertical-align: 0.08em;
-}
 
-/* --- dark: the same index on the night paper; the tiles keep their tones */
-:root[data-theme="dark"] .sheet::backdrop {
-  background: rgb(0 0 0 / 0.55);
+/* -------------------------------------------------- each work's own ink */
+/* from its mark (Lynxster's navy, Crackd's yellow, Buzzworks' orange, TMU's
+   blue and yellow, Columbia's blue); where the mark is black type (AMNH,
+   GVI) the ink is its detail page's or the page's own; Inteli-lens and the
+   publications, which have no mark, take their homepage tones, deepened */
+.sheet [data-v] {
+  --v1: var(--text);
 }
-:root[data-theme="dark"] .sheet__panel {
-  box-shadow: -24px 0 48px -24px rgb(0 0 0 / 0.7);
-}
-:root[data-theme="dark"] .sheet-entry,
-:root[data-theme="dark"] .sheet-feature {
-  --wash: color-mix(in srgb, var(--tone-k) 14%, var(--surface));
-}
-:root[data-theme="dark"] .sheet-entry--crackd { --tone-k: #d4b852; }
-:root[data-theme="dark"] .sheet-entry--buzzworks { --tone-k: #dea47c; }
-:root[data-theme="dark"] .sheet-entry--tmu { --tone-k: #97b2cf; }
-:root[data-theme="dark"] .sheet-entry--inteli { --tone-k: #b59fba; }
-:root[data-theme="dark"] .sheet-entry--gvi { --tone-k: #94b1a1; }
-:root[data-theme="dark"] .sheet-entry--pubs { --tone-k: #cd95a2; }
-:root[data-theme="dark"] .sheet-entry--teaching { --tone-k: #a0aad2; }
-:root[data-theme="dark"] .sheet-feature--amnh .sheet-feature__logo {
-  background: #f7f4ee;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) .sheet::backdrop {
-    background: rgb(0 0 0 / 0.55);
+.sheet [data-v="lynxster"] { --v1: #24467c; --v2: #2f9e8c; }
+.sheet [data-v="amnh"] { --v1: #004bb4; }
+.sheet [data-v="crackd"] { --v1: #dcaa00; --v2: #dcaa00; }
+.sheet [data-v="buzzworks"] { --v1: #d66e39; --v2: #b4532a; }
+.sheet [data-v="tmu"] { --v1: #0a4e99; --v2: #f2c200; }
+.sheet [data-v="inteli"] { --v1: #7d5f86; --v2: #a07aa9; }
+.sheet [data-v="gvi"] { --v1: var(--text); --v2: #4f7a62; }
+.sheet [data-v="pubs"] { --v1: #a85a6e; --v2: #c27f90; }
+.sheet [data-v="teaching"] { --v1: #005696; --v2: #2f7fc0; }
+:root[data-theme="dark"] .sheet [data-v="lynxster"] { --v1: #7fd6cc; --v2: #4cc7bc; }
+:root[data-theme="dark"] .sheet [data-v="amnh"] { --v1: #d7fa88; }
+:root[data-theme="dark"] .sheet [data-v="crackd"] { --v1: #f0cf55; --v2: #f0cf55; }
+:root[data-theme="dark"] .sheet [data-v="buzzworks"] { --v1: #ee9a66; --v2: #e07a45; }
+:root[data-theme="dark"] .sheet [data-v="tmu"] { --v1: #8db4e8; --v2: #fddb00; }
+:root[data-theme="dark"] .sheet [data-v="inteli"] { --v1: #c9b0d0; --v2: #b495bd; }
+:root[data-theme="dark"] .sheet [data-v="gvi"] { --v2: #8fbf9f; }
+:root[data-theme="dark"] .sheet [data-v="pubs"] { --v1: #e3a6b6; --v2: #d58c9f; }
+:root[data-theme="dark"] .sheet [data-v="teaching"] { --v1: #8ec2ee; --v2: #b9d9eb; }
+
+/* ------------------------------------------------------------- narrower */
+/* phones: full width, to the foot of the screen; the role or category
+   moves under the name and the leaders go */
+@media (max-width: 599.98px) {
+  .sheet {
+    --contents-rail: 1.5rem;
+    --contents-n: 1.7rem;
   }
-  :root:not([data-theme]) .sheet-entry,
-  :root:not([data-theme]) .sheet-feature {
-    --wash: color-mix(in srgb, var(--tone-k) 14%, var(--surface));
+  .sheet__panel {
+    right: 0;
+    max-height: calc(100% - var(--sheet-top));
+    border-inline: 0;
+    border-radius: 0 0 16px 16px;
   }
-  :root:not([data-theme]) .sheet-feature--amnh .sheet-feature__logo {
-    background: #f7f4ee;
+  .sheet__head {
+    padding: 1.3rem 1.25rem 1.05rem;
+  }
+  .sheet__body {
+    padding: 1.1rem 1.25rem calc(1.8rem + env(safe-area-inset-bottom, 0px)) 1rem;
+  }
+  .sheet {
+    --contents-v: 2.6rem;
+  }
+  .contents__subs {
+    margin-top: -0.1rem;
+    margin-right: 0;
+  }
+  .now__spread {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .now__spread::before {
+    display: none;
+  }
+  .now__page,
+  .now__page + .now__page {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 1rem;
+    padding: 0.9rem 0.25rem 1.1rem;
+  }
+  .now__page + .now__page {
+    border-top: 1px solid var(--rule);
+  }
+  .now__page > * {
+    grid-column: 1;
+  }
+  .now__art {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    margin: 0;
+  }
+  .now__art .vignette {
+    width: 4.2rem;
+  }
+  .now__roles,
+  .now__cta {
+    grid-column: 1 / -1;
+  }
+  .contents__link {
+    grid-template-columns: var(--contents-n) minmax(0, 1fr) var(--contents-v);
+    row-gap: 0.15rem;
+  }
+  .contents__leader {
+    display: none;
+  }
+  .contents__name {
+    grid-column: 2;
+  }
+  .contents__note {
+    grid-column: 2;
+    grid-row: 2;
+    white-space: normal;
+  }
+  .contents__link > .contents__note + .vignette,
+  .contents__link > span:empty + .vignette {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+  .contents__link > span:empty {
+    display: none;
+  }
+  .contents__link::before {
+    top: 1.35rem;
   }
 }
 
 /* ------------------------------------------- the header's "Work" item */
-/* it reads exactly like its sibling links (the shared underline is in
-   globals.css), plus a small chevron for the menu it opens */
+/* it reads exactly like its sibling links (the shared anatomy, 44px target
+   and pen-line underline are in globals.css), plus a small chevron for the
+   contents it opens. It takes the accent only when the page is a project
+   page (SiteHeader marks its item current) or while the sheet is open. */
 .site-nav__work {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
   gap: 0.3em;
   padding: 0;
   border: 0;
   background: none;
-  color: var(--accent); /* the page's own accent: this is the current section */
+  color: inherit;
   font: inherit;
-  font-size: 0.9375rem;
   cursor: pointer;
-  touch-action: manipulation;
-}
-.site-nav__work::before {
-  /* a ≥44px target around the text (within the header's height) */
-  content: "";
-  position: absolute;
-  inset: -0.7rem -0.4rem;
-}
-/* the label is an inline box like the links, so the shared pen-line
-   underline (globals.css) sits exactly where theirs does */
-.site-nav__label {
-  position: relative;
-  padding-block: 0.4rem;
-  /* a flex child is a block: give it the height of an inline box of the same
-     text (Inter's content area, 1.2667em), so its pen-line sits like theirs */
-  line-height: 1.2667;
 }
 .site-nav__chev {
   width: 0.7em;
@@ -516,77 +934,24 @@ html[data-sheet-open] .site-header {
   outline-offset: 4px;
   border-radius: 3px;
 }
-@media (max-width: 639.98px) {
-  .site-nav__work {
-    font-size: clamp(0.78rem, 3.4vw, 0.875rem);
-  }
-}
-@media (max-width: 359.98px) {
-  .site-nav__work {
-    font-size: 0.75rem;
-  }
-}
 @media (prefers-reduced-motion: reduce) {
   .site-nav__chev {
     transition: none;
   }
-  /* hover keeps its tint, without the movement */
-  .sheet-entry__tile,
-  .sheet-feature__logo,
-  .sheet-entry__go,
-  .sheet__overview > span[aria-hidden],
-  .sheet__close {
-    transform: none !important;
-    rotate: none !important;
-  }
-}
-
-/* "Back to work overview": the first line of the list */
-.sheet__overview {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-height: 44px;
-  margin: 0.5rem 0.5rem 0;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--accent);
-  text-decoration: none;
-}
-.sheet__overview > span[aria-hidden] {
-  transition: transform 0.25s var(--ease);
-}
-@media (hover: hover) {
-  .sheet__overview:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.3em;
-  }
-  .sheet__overview:hover > span[aria-hidden] {
-    transform: translateX(-3px);
-  }
-}
-.sheet__overview:focus-visible {
-  outline: 2px solid var(--text);
-  outline-offset: 2px;
-  border-radius: 3px;
-}
-
-/* ADI's blue pill beside its link: the cropped mark, fully rounded */
-.sheet-entry__pill {
-  display: inline-block;
-  flex: none;
-  overflow: hidden;
-  height: 1.15rem;
-  border-radius: 999px;
-}
-.sheet-entry__pill img {
-  display: block;
-  width: auto;
-  height: 100%;
 }
 /* detail headers: the items share one text baseline (the Work button is an
    inline-flex box among inline links), so text and pen-lines line up */
 .site-header[data-variant="detail"] .site-nav {
   align-items: baseline;
+}
+
+/* the arrow-key hint is for keyboards: shown where a fine pointer (mouse,
+   trackpad) is available, never on a phone or touch-only tablet */
+.sheet__keys {
+  display: none;
+}
+@media (any-pointer: fine) {
+  .sheet__keys {
+    display: inline;
+  }
 }

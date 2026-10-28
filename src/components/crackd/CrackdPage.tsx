@@ -3,13 +3,13 @@ import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import DetailLine from "@/components/DetailLine";
+import WorkPager from "@/components/WorkPager";
 import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
 import WorkDrawer from "@/components/WorkDrawer";
 import OnThisPage from "@/components/OnThisPage";
 import { crackd, crackdSections } from "@/content/crackd";
 import CrackdApps from "./CrackdApps";
-import { getNeighbours } from "@/content/work";
 import "../case/case.css";
 import "./crackd.css";
 
@@ -47,7 +47,6 @@ function Knot() {
 }
 
 export default function CrackdPage() {
-  const { prev, next } = getNeighbours("crackd-ai");
   const [p1, p2] = crackd.phases;
   const period = crackd.meta.find((m) => m.label === "Period")!;
   const facts = crackd.meta.filter((m) => m.label !== "Period");
@@ -64,7 +63,7 @@ export default function CrackdPage() {
         <header className="detail-hero case-hero ck-hero" data-line="top">
           <div className="container" data-line="content">
             <nav aria-label="Breadcrumb" className="breadcrumb label" data-line="crumb">
-              <Link href="/#work">Work</Link>
+              <Link href="/#selected-work">Work</Link>
               <span aria-hidden="true"> / </span>
               <span aria-current="page">{crackd.name}</span>
             </nav>
@@ -238,29 +237,7 @@ export default function CrackdPage() {
           </div>
         </div>
 
-        <nav className="container pager" aria-label="More work" data-line="end">
-          <Link href="/#work" className="pager__back label">
-            <span aria-hidden="true">←</span> Back to work
-          </Link>
-          <div className="pager__grid">
-            {prev ? (
-              <Link href={`/work/${prev.slug}`} className="pager__link pager__link--prev">
-                <span className="label">
-                  <span aria-hidden="true">← </span>Previous
-                </span>
-                <span className="pager__title">{prev.name}</span>
-              </Link>
-            ) : null}
-            {next ? (
-              <Link href={`/work/${next.slug}`} className="pager__link pager__link--next">
-                <span className="label">
-                  Next<span aria-hidden="true"> →</span>
-                </span>
-                <span className="pager__title">{next.name}</span>
-              </Link>
-            ) : null}
-          </div>
-        </nav>
+        <WorkPager slug={"crackd-ai"} />
       </main>
       <SiteFooter />
       <AvatarStage />

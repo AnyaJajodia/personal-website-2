@@ -234,3 +234,12 @@ They use the real `lynxster-mark.png` and a Jost Light wordmark, with navy in li
   - `handoff/assets/references/lynxster-{light,dark}-{dashboard,terms}.png` and `handoff/design/lynxster-detail-mockup.png` (committed in `d00542b`; under `handoff/`, so not served by the site).
   - `public/work/lynxster-funnel.webp` (the old homepage screenshot). It's deleted in the working tree, but committed and pushed, and it would have been publicly reachable on any deployment made from those commits.
   - Removing them from history needs a rewrite and force push. Not done; your call.
+
+
+## Labels still to decide (27 Oct 2026)
+- **TMU "Research" elsewhere.** The drawer now says "Citation tooling · TMU · Engineering". The homepage panel ("Research tooling · Toronto Metropolitan University", category Research) and the pager name (`work.ts`: "Research tooling · TMU") are unchanged. Align them if you want the same wording everywhere.
+- **AMNH's two roles** link to `#collections-digitization` and `#mantis-research` on `/work/amnh`. When each gets its own page, change `amnhLinks` in `src/content/work-index.ts` to the new slugs.
+
+## Icons and AMNH colours (28 Oct 2026)
+- **Drawer icons** for Lynxster, AMNH and Teaching come from `currently-icons-svg.zip` (Regular, Museum, Ionic column), in `src/components/ContentsVignettes.tsx` (`ICONS`). To swap one, replace its strokes, fill and nodes there.
+- **AMNH colours** are from amnh.org (blue #004BB4, lime #D7FA88) and live in `globals.css` (`--amnh-*`) and the drawer (`.sheet [data-v="amnh"]`).

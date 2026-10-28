@@ -15,10 +15,11 @@ import DotField from "@/components/DotField";
 import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
 import HeroRig from "@/components/HeroRig";
+import HeroLinks from "@/components/HeroLinks";
+import HeroLede from "@/components/HeroLede";
 import EdgePeeker from "@/components/EdgePeeker";
 import { Marked } from "@/components/Mark";
 import MarkStage from "@/components/MarkStage";
-import PanelFocus from "@/components/PanelFocus";
 import TrajectoryPicker from "@/components/TrajectoryPicker";
 import CopyEmail from "@/components/CopyEmail";
 import { hero, about, trajectory, currently, selectedWork, more, contact, person } from "@/content/site";
@@ -63,8 +64,12 @@ export default function Home() {
               ))}
             </p>
             <div className="hero__intro" data-line="hero-intro">
-              <p>{hero.intro}</p>
-              <p className="label hero__location">{hero.location}</p>
+              {/* what she does, in ink, then how she works, in her own words */}
+              <HeroLede />
+              <div className="hero__act">
+                <HeroLinks />
+                <p className="label hero__location">{hero.location}</p>
+              </div>
             </div>
             {/* she sits on the line: its run is routed through her seat (perch-l → perch-r);
                 a layered rig, so her feet and her matcha can move (HeroRig) */}
@@ -101,7 +106,10 @@ export default function Home() {
                     <button type="button" className="trajectory__point" data-line="traj-point" data-i={i} aria-pressed="false">
                       <span className="trajectory__tick" aria-hidden="true" />
                       <span className="label trajectory__n">{String(i + 1).padStart(2, "0")}</span>
-                      <span className="trajectory__title">{p.title}</span>
+                      {/* the swipe is on an inline run, so a two-line title gets it under each line */}
+                      <span className="trajectory__title">
+                        <span className="trajectory__ink">{p.title}</span>
+                      </span>
                       <span className="trajectory__caption">{p.caption}</span>
                     </button>
                   </li>
@@ -147,7 +155,7 @@ export default function Home() {
 
         {/* ---------------------------------------------- Work: Currently */}
         <section id="work" className="work" aria-label="Work">
-          <div className="section currently" data-line="current">
+          <div className="section currently" id="now" data-line="current">
             <div className="container">
             <SectionRule line="current-label" />
               <h2 className="section-heading">
@@ -247,7 +255,7 @@ export default function Home() {
           </div>
 
           {/* ------------------------------------------ Work: Selected */}
-          <div className="section selected" data-line="selected">
+          <div className="section selected" id="selected-work" data-line="selected">
             <div className="container">
             <SectionRule line="selected-label" />
               <h2 className="section-heading">
@@ -296,7 +304,10 @@ export default function Home() {
                 <p className="contact__intro">{contact.intro}</p>
                 <p className="contact__address">
                   <a className="contact__email" href={`mailto:${person.email}`}>
-                    {person.email} <span aria-hidden="true">↗</span>
+                    {person.email}
+                    <span className="contact__email-go" aria-hidden="true">
+                      ↗
+                    </span>
                   </a>
                   <CopyEmail email={person.email} />
                 </p>
@@ -309,7 +320,6 @@ export default function Home() {
       <SiteFooter toTop />
       <AvatarStage />
       <MarkStage />
-      <PanelFocus />
     </div>
   );
 }
