@@ -20,12 +20,12 @@ import EspPage from "@/components/columbia/EspPage";
 import AdiPage from "@/components/columbia/AdiPage";
 import InteliPage from "@/components/inteli/InteliPage";
 import LynxsterPage from "@/components/lynxster/LynxsterPage";
-import WorkDrawer from "@/components/WorkDrawer";
 
 export const dynamicParams = false;
 
+// AMNH has its own routes (app/work/amnh: the overview and its two projects)
 export function generateStaticParams() {
-  return work.map((w) => ({ slug: w.slug }));
+  return work.filter((w) => w.slug !== "amnh").map((w) => ({ slug: w.slug }));
 }
 
 type Params = { params: Promise<{ slug: string }> };
@@ -117,13 +117,13 @@ export default async function WorkPage({ params }: Params) {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <SiteHeader variant="detail" workMenu={<WorkDrawer current={slug} />} />
+      <SiteHeader variant="detail" drawer={slug} />
       <DetailLine theme={theme} />
       <main id="main" className="detail__main">
         <header className="detail-hero" data-line="top">
           <div className="container" data-line="content">
             <nav aria-label="Breadcrumb" className="breadcrumb label" data-line="crumb">
-              <Link href={slug === "amnh" ? "/#now" : "/#selected-work"}>Work</Link>
+              <Link href="/#selected-work">Work</Link>
               <span aria-hidden="true"> / </span>
               <span aria-current="page">{entry.name}</span>
             </nav>

@@ -22,7 +22,7 @@
   --ck-yellow-soft: rgba(242, 203, 61, 0.55); /* the highlighter */
   --ck-yellow-ink: #6f5300; /* yellow-family text on paper (AA) */
   --ck-sheet: #fffcf4;
-  --ck-ruled: rgba(60, 48, 30, 0.07);
+  --ck-ruled: rgba(60, 48, 30, 0.035); /* a paper grain, not ruling the text */
   --ck-measure: 64ch;
   --accent: #17150f; /* links and the breadcrumb in ink */
   --selection: rgba(242, 203, 61, 0.45);
@@ -43,7 +43,7 @@
   --ck-yellow-soft: rgba(224, 192, 87, 0.33);
   --ck-yellow-ink: #e3c560;
   --ck-sheet: #221f1c;
-  --ck-ruled: rgba(242, 235, 221, 0.04);
+  --ck-ruled: rgba(242, 235, 221, 0.025);
   --accent: #e8c86a;
   --selection: rgba(224, 192, 87, 0.32);
 }
@@ -63,7 +63,7 @@
     --ck-yellow-soft: rgba(224, 192, 87, 0.33);
     --ck-yellow-ink: #e3c560;
     --ck-sheet: #221f1c;
-    --ck-ruled: rgba(242, 235, 221, 0.04);
+    --ck-ruled: rgba(242, 235, 221, 0.025);
     --accent: #e8c86a;
     --selection: rgba(224, 192, 87, 0.32);
   }
@@ -118,9 +118,12 @@
 /* ------------------------------------------------------------ opening */
 .ck-hero__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(15rem, 20rem);
+  /* the facts sit beside the headline they describe, not out at the far
+     edge of a wide screen */
+  grid-template-columns: minmax(0, 40rem) minmax(15rem, 20rem);
+  justify-content: start;
   align-items: end;
-  gap: clamp(2rem, 5vw, 5.5rem);
+  gap: clamp(2rem, 6vw, 6rem);
 }
 /* the dates first, marked with the highlighter */
 /* the dates: the shared hero mark (a short stroke in the page's accent) */
@@ -226,6 +229,10 @@
 }
 .ck-prose {
   max-width: var(--ck-measure);
+}
+/* a heading straight over prose: the same breath as the other sections */
+.ck-h2 + .ck-prose {
+  margin-top: clamp(1.1rem, 2vw, 1.5rem);
 }
 .ck-prose p + p {
   margin-top: 1.1em;

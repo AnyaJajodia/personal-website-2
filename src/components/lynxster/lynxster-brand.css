@@ -72,32 +72,32 @@
 }
 
 /* ------------------------------------------------ 01 · floating (homepage) */
-/* On the homepage the plate sits beside AMNH's notebook on the portfolio's
-   warm paper, so its ground is warm too; the mark keeps Lynxster's own
-   colour (navy by day, teal at night), as the card's pill and link do.
-     light  a linen a step deeper than the page, the navy mark and glow
-     dark   an umber a step lighter and warmer than the page's night, so the
-            plate still reads as an object; the teal mark, its glow softened */
+/* On the homepage the plate shows Lynxster in its own cool world, set apart
+   from the portfolio's warm paper the way AMNH's index card is:
+     light  plain white; the navy mark with only a whisper of glow (a
+            stronger navy haze greys the white)
+     dark   near-black with a breath of teal at the centre, as Lynxster's own
+            screens are; the light-teal mark and its glow */
 .lxb-float {
-  --lxb-bg-1: #f7f3eb;
-  --lxb-bg-2: #e6dfd2;
-  --lxb-glow: rgb(36 70 124 / 0.3);
-  --lxb-glow-soft: rgb(36 70 124 / 0.1);
+  --lxb-bg-1: #ffffff;
+  --lxb-bg-2: #ffffff;
+  --lxb-glow: rgb(36 70 124 / 0.26);
+  --lxb-glow-soft: rgb(36 70 124 / 0.05);
 }
 :root[data-theme="dark"] .lxb-float {
   --lxb-mark: #86d2c6;
-  --lxb-glow: rgb(76 199 188 / 0.38);
-  --lxb-glow-soft: rgb(127 214 204 / 0.09);
-  --lxb-bg-1: #33302a;
-  --lxb-bg-2: #26231f;
+  --lxb-glow: rgb(76 199 188 / 0.4);
+  --lxb-glow-soft: rgb(127 214 204 / 0.08);
+  --lxb-bg-1: #111818;
+  --lxb-bg-2: #070909;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) .lxb-float {
     --lxb-mark: #86d2c6;
-    --lxb-glow: rgb(76 199 188 / 0.38);
-    --lxb-glow-soft: rgb(127 214 204 / 0.09);
-    --lxb-bg-1: #33302a;
-    --lxb-bg-2: #26231f;
+    --lxb-glow: rgb(76 199 188 / 0.4);
+    --lxb-glow-soft: rgb(127 214 204 / 0.08);
+    --lxb-bg-1: #111818;
+    --lxb-bg-2: #070909;
   }
 }
 .lxb-float {

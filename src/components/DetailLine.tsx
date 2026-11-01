@@ -1,20 +1,22 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { type Pt, pt, spline, resample, loop, knotShape, toPath, clamp } from "@/lib/line-geometry";
+import { type Pt, pt, spline, resample, loop, toPath, clamp } from "@/lib/line-geometry";
 import type { Theme } from "@/content/work";
 
 /**
- * The quieter detail-page version of the homepage line: one path anchored to
- * the page (title flourish → right margin), drawn on as the reader scrolls so it
- * keeps pace just ahead of the viewport. Scrolling back retracts it; no
- * scrolling, no motion. Reduced motion shows it fully drawn.
+ * The detail-page version of the homepage line: one path anchored to the page
+ * (title flourish → right margin), drawn on as the reader scrolls so it keeps
+ * pace just ahead of the viewport. It is the same pen as the homepage's (the
+ * same weight, --line-w, and the same fade-in once the fonts are set), in the
+ * page's own ink. Scrolling back retracts it; reduced motion shows it fully
+ * drawn. On phones the line is only the flourish beside the breadcrumb: it
+ * comes in from the edge, ties its mark and leaves again.
  *
- * The drawn end always carries a small nib — the pen still on the paper — so
- * a line that stops partway down the screen reads as being drawn, not as a
- * stray hairline; once the line is complete the nib rests as a full stop at
- * its end. On phones the line is only the flourish beside the breadcrumb: it
- * comes in from the edge, ties its mark and stops on that dot.
+ * Progress is continuous, not point by point: each point's "reach" is the
+ * lowest the pen has been by then (so a loop is drawn as the pen passes
+ * through it, not all at once), the reading line is interpolated between
+ * points, and the drawn length eases toward it every frame.
  */
 
 const N = 420;
@@ -61,7 +63,7 @@ function buildPath(theme: Theme, root: HTMLElement): Pt[] | null {
   if (!wide && vw < 600) {
     // phones: a compact flourish beside the breadcrumb that enters and leaves at
     // the edge. A page whose breadcrumb runs long can offer a roomier row
-    // instead (data-line="phone-flourish"); there the nib also stays clear of
+    // instead (data-line="phone-flourish"); there the knot also stays clear of
     // the screen's edge.
     const row = q("phone-flourish");
     if (row) {
@@ -69,7 +71,7 @@ function buildPath(theme: Theme, root: HTMLElement): Pt[] | null {
       const y = row.top + row.height / 2;
       pts.push(pt(vw + 30, y - 52), pt(vw - 10, y - 34), pt(f + 20, y - 20));
       pts.push(pt(f - 8, y + 6), ...loop(f, y - 4, 11, 12, { drift: 14 }));
-      pts.push(pt(f + 22, y + 14), pt(f + 40, y + 15));
+      pts.push(pt(f + 26, y + 16), pt(vw + 30, y + 32));
       return resample(spline(pts, 14), N);
     }
     const f = clamp((crumb?.right ?? vw * 0.6) + 46, vw - 110, vw - 34);
@@ -81,8 +83,7 @@ function buildPath(theme: Theme, root: HTMLElement): Pt[] | null {
     } else {
       pts.push(pt(f - 8, fy + 6), ...loop(f, fy - 4, 11, 12, { drift: 14 }));
     }
-    // …and stops, on the nib, rather than trailing off the screen
-    pts.push(pt(f + 20, fy + 14), pt(f + 34, fy + 16));
+    pts.push(pt(f + 26, fy + 18), pt(vw + 30, fy + 34));
     return resample(spline(pts, 14), N);
   }
   // A page can give the flourish a job instead of a fixed place: an element
@@ -132,7 +133,7 @@ function buildPath(theme: Theme, root: HTMLElement): Pt[] | null {
     const n = Math.max(1, Math.round((stop - startY) / 260));
     for (let i = 1; i <= n; i++) {
       const y = startY + ((stop - startY) * i) / n;
-      if (i === Math.ceil(n / 2) && n > 2) pts.push(...knotShape(gx, y, 11, { turns: 1.6, dir: -1 }));
+      if (i === Math.ceil(n / 2) && n > 2) pts.push(...loop(gx, y, 12, 16, { dir: -1 }));
       else pts.push(pt(gx + (i % 2 ? 8 : -6), y));
     }
     pts.push(...loop(gx, end.top + 4, 12, 18, { dir: -1 }));
@@ -165,7 +166,7 @@ function buildPath(theme: Theme, root: HTMLElement): Pt[] | null {
     const n = Math.max(1, Math.round((stop - startY) / 260));
     for (let i = 1; i <= n; i++) {
       const y = startY + ((stop - startY) * i) / n;
-      if (i === Math.ceil(n / 2) && n > 2) pts.push(...knotShape(gx, y, 11, { turns: 1.6, dir: -1 }));
+      if (i === Math.ceil(n / 2) && n > 2) pts.push(...loop(gx, y, 12, 16, { dir: -1 }));
       else pts.push(pt(gx + (i % 2 ? 8 : -6), y));
     }
     pts.push(...loop(gx, end.top + 4, 12, 18, { dir: -1 }));
@@ -185,29 +186,34 @@ const COLORS: Record<Theme, string> = {
 export default function DetailLine({ theme }: { theme: Theme }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
-  const nibRef = useRef<SVGCircleElement>(null);
 
   useEffect(() => {
     const svg = svgRef.current;
     const path = pathRef.current;
-    const nib = nibRef.current;
     const root = svg?.closest<HTMLElement>("[data-line-root]");
-    if (!svg || !path || !nib || !root) return;
+    if (!svg || !path || !root) return;
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     let pts: Pt[] = [];
+    /** reach[i]: the lowest y the path has been by point i (non-decreasing) */
+    let reach: number[] = [];
     let len = 0;
+    let shown = 0; // drawn fraction on screen, easing toward the target
     let raf = 0;
 
-    /** the nib sits on the drawn end of the line (hidden before any is drawn) */
-    const placeNib = (frac: number) => {
-      if (frac <= 0.004 || !len) {
-        nib.style.opacity = "0";
-        return;
+    /** the drawn fraction for the reading line at document-relative y */
+    const targetAt = (y: number) => {
+      const n = reach.length;
+      if (!n || y <= reach[0]) return 0;
+      if (y >= reach[n - 1]) return 1;
+      let lo = 0;
+      let hi = n - 1;
+      while (hi - lo > 1) {
+        const mid = (lo + hi) >> 1;
+        if (reach[mid] <= y) lo = mid;
+        else hi = mid;
       }
-      const p = path.getPointAtLength(len * frac);
-      nib.setAttribute("cx", p.x.toFixed(1));
-      nib.setAttribute("cy", p.y.toFixed(1));
-      nib.style.opacity = "1";
+      const span = reach[hi] - reach[lo];
+      return (lo + (span > 0 ? (y - reach[lo]) / span : 1)) / (n - 1);
     };
 
     const render = () => {
@@ -215,30 +221,32 @@ export default function DetailLine({ theme }: { theme: Theme }) {
       if (!pts.length) return;
       if (mq.matches) {
         path.style.strokeDashoffset = "0";
-        placeNib(1);
         return;
       }
       const vh = window.innerHeight;
       const rootTop = root.getBoundingClientRect().top + window.scrollY;
       const maxScroll = document.documentElement.scrollHeight - vh;
       const atEnd = window.scrollY >= maxScroll - 2;
-      const threshold = window.scrollY + vh * 0.82 - rootTop;
-      let i = 0;
-      while (i < pts.length && pts[i].y < threshold) i++;
-      const frac = atEnd ? 1 : clamp(i / (pts.length - 1), 0, 1);
-      path.style.strokeDashoffset = String(len * (1 - frac));
-      placeNib(frac);
+      const target = atEnd ? 1 : clamp(targetAt(window.scrollY + vh * 0.82 - rootTop), 0, 1);
+      // ease toward the target: quick enough to keep pace, never a jump
+      shown += (target - shown) * 0.16;
+      if (Math.abs(target - shown) * len < 0.5) shown = target;
+      else raf = requestAnimationFrame(render);
+      path.style.strokeDashoffset = String(len * (1 - shown));
     };
 
     const rebuild = () => {
       const p = buildPath(theme, root);
       if (!p) return;
       pts = p;
+      let m = -Infinity;
+      reach = p.map((q) => (m = Math.max(m, q.y)));
       svg.style.height = `${root.scrollHeight}px`;
       path.setAttribute("d", toPath(p));
       len = path.getTotalLength();
       path.style.strokeDasharray = `${len} ${len}`;
-      render();
+      path.style.strokeDashoffset = String(len * (1 - shown));
+      if (!raf) raf = requestAnimationFrame(render);
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(render);
@@ -249,7 +257,13 @@ export default function DetailLine({ theme }: { theme: Theme }) {
       t = window.setTimeout(rebuild, 60);
     };
     rebuild();
-    document.fonts?.ready.then(rebuild).catch(() => {});
+    // shown once the web fonts have set the page, so the line starts in place
+    const reveal = () => {
+      rebuild();
+      svg.dataset.ready = "true";
+    };
+    if (document.fonts) document.fonts.ready.then(reveal).catch(reveal);
+    else reveal();
     const ro = new ResizeObserver(schedule);
     ro.observe(root);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -266,9 +280,8 @@ export default function DetailLine({ theme }: { theme: Theme }) {
   }, [theme]);
 
   return (
-    <svg ref={svgRef} className="detail-line" aria-hidden="true" focusable="false" data-testid="detail-line">
+    <svg ref={svgRef} className="detail-line" aria-hidden="true" focusable="false" data-testid="detail-line" data-ready="false">
       <path ref={pathRef} d="" style={{ stroke: COLORS[theme] }} />
-      <circle ref={nibRef} className="detail-line__nib" r="3" cx="0" cy="0" style={{ fill: COLORS[theme], opacity: 0 }} />
     </svg>
   );
 }

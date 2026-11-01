@@ -50,11 +50,10 @@ const LOOKS: Record<string, { key: string; tone: string; logo: DrawerLogo; who?:
   "esp-teaching": { key: "teaching", tone: "#b0b9da", logo: { kind: "img", src: "/logos/columbia-crown-light.png", w: 300, h: 300 } },
 };
 
-// AMNH holds two roles on one shared page (for now): each is its own entry,
-// pointing at its stream on that page, with the role as the label
+// AMNH's two projects, each on its own page under the overview
 const amnhLinks: DrawerLink[] = [
-  { slug: "amnh", hash: "collections-digitization", label: "Volunteer", detail: "DIODE collections digitization" },
-  { slug: "amnh", hash: "mantis-research", label: "Volunteer research", detail: "Mantis behavioral trials" },
+  { slug: "amnh/diode", label: "DIODE", detail: "Collections digitization" },
+  { slug: "amnh/behavioral-research", label: "Behavioral research" },
 ];
 
 export const drawerSelected: DrawerEntry[] = selectedWork.rows.map((row) => {
@@ -82,7 +81,7 @@ export type NowEntry = {
   status?: string;
   line: string;
   cta: string;
-  /** sections of the page, each its own link (AMNH's two roles) */
+  /** its projects' own pages (AMNH's two) */
   links?: DrawerLink[];
 };
 
@@ -98,5 +97,7 @@ export const nowEntries: NowEntry[] = currently.features.map((f) => ({
   links: f.slug === "amnh" ? amnhLinks : undefined,
 }));
 
-export const nowLabels = { title: currently.label, heading: currently.heading };
-export const workLabels = { title: selectedWork.label, heading: selectedWork.heading };
+// each drawer is titled with its header item's own word, so "Now" opens "Now"
+// and "Work" opens "Work"; the homepage's section headings become the line under it
+export const nowLabels = { title: "Now", heading: currently.heading };
+export const workLabels = { title: "Work", heading: selectedWork.heading };

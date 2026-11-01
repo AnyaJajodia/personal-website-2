@@ -1,0 +1,1305 @@
+/* =====================================================================
+   The AMNH pages (components/amnh/): the overview and its two projects.
+   The museum's existing identity on this site — warm archive paper, the
+   AMNH blue for the thread and links, the lime highlighter on the title —
+   set as a documentary record: facts lettered like a specimen label,
+   projects as index cards from one drawer, the DIODE process as chapters
+   on a ruled spine, each with its plate. Scoped to .am-*.
+   ===================================================================== */
+
+.am-page {
+  /* the kraft the index cards are pinned to, as on the homepage */
+  --am-kraft: #ebe0cc;
+  --am-card-ink: #2f2a25;
+  --am-tape: rgba(215, 250, 136, 0.72);
+  --am-gap: clamp(1.25rem, 5vw, 5rem);
+}
+:root[data-theme="dark"] .am-page {
+  --am-kraft: #26231f;
+  --am-tape: rgba(215, 250, 136, 0.3);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .am-page {
+    --am-kraft: #26231f;
+    --am-tape: rgba(215, 250, 136, 0.3);
+  }
+}
+.am-page :is(section[id], article[id], [id].am-step__inner) {
+  scroll-margin-top: calc(var(--header-h) + 1.5rem);
+}
+
+/* ------------------------------------------------------------ opening */
+.am-wordmark {
+  display: block;
+  width: auto;
+  height: clamp(2.2rem, 3.4vw, 2.75rem);
+}
+:root[data-theme="dark"] .am-wordmark {
+  filter: invert(1) sepia(0.25) brightness(0.92);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .am-wordmark {
+    filter: invert(1) sepia(0.25) brightness(0.92);
+  }
+}
+.am-hero .am-hero__title {
+  max-width: 13ch;
+}
+.am-hero__subtitle {
+  max-width: 36ch;
+}
+
+/* the facts as a specimen label: a card with a fine inner rule, small caps
+   over each entry */
+.am-label {
+  position: relative;
+  display: grid;
+  margin: 0;
+  padding: 0.95rem 1.15rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  border-radius: 2px;
+  box-shadow: 0 1px 1px rgb(var(--shade) / 0.06), 0 10px 18px -14px rgb(var(--shade) / 0.35);
+}
+.am-label::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1px solid var(--rule);
+  pointer-events: none;
+}
+.am-label__row {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.1rem;
+  padding-block: 0.55rem;
+}
+.am-label__row + .am-label__row {
+  border-top: 1px dashed var(--rule);
+}
+.am-label dt {
+  font-size: 0.7rem;
+  color: var(--accent);
+}
+.am-label dd {
+  margin: 0;
+  font-size: 0.9688rem;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+/* DIODE: its three chapters, indexed under the subtitle */
+.am-chapters {
+  margin-top: clamp(1.5rem, 3vw, 2.1rem);
+}
+.am-chapters ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.am-chapters a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding-block: 0.35rem;
+  color: var(--text);
+  font-size: 0.9375rem;
+  font-weight: 550;
+  text-decoration: underline;
+  text-decoration-color: var(--rule-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  transition: text-decoration-color 0.2s ease;
+}
+.am-chapters a:hover {
+  text-decoration-color: var(--accent);
+}
+.am-chapters__n {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--accent);
+  font-variant-numeric: lining-nums;
+}
+
+/* ------------------------------------------------------- shared sections */
+.am-h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(2rem, 3.4vw, 2.9rem);
+  font-weight: 500;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+.am-intro,
+.am-draws,
+.am-further,
+.am-threads__head {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+  gap: var(--am-gap);
+}
+.am-intro,
+.am-draws,
+.am-further,
+.am-threads {
+  position: relative;
+  padding-block: clamp(2.75rem, 5.5vw, 4.25rem);
+}
+/* each section's rule spans the reading column, not the container's gutters */
+:is(.am-intro, .am-draws, .am-further, .am-threads, .am-walk)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: var(--gutter);
+  right: var(--gutter);
+  border-top: 1px solid var(--rule);
+}
+.am-intro__body,
+.am-prose,
+.am-further__body,
+.am-threads__intro {
+  max-width: 38rem;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+.am-intro__body p,
+.am-prose p,
+.am-further__body p {
+  margin: 0;
+}
+.am-intro__body p + p,
+.am-prose p + p,
+.am-further__body p + p {
+  margin-top: 1em;
+}
+.am-threads__intro {
+  margin: 0;
+}
+.am-lead {
+  font-family: var(--serif);
+  font-size: clamp(1.4rem, 2.1vw, 1.75rem);
+  line-height: 1.28;
+  color: var(--text);
+  text-wrap: pretty;
+}
+.am-intro__body .am-lead + p {
+  margin-top: 1.1em;
+}
+
+/* --------------------------------------------- overview: the two projects */
+.am-projects {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(2rem, 4vw, 3.5rem);
+  align-items: start;
+  margin: clamp(2.25rem, 4.5vw, 3.25rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.am-project {
+  position: relative;
+  display: grid;
+  align-content: start;
+}
+/* the card's ground: kraft, pinned with lime tape, a contact shadow */
+.am-project__plate {
+  position: relative;
+  aspect-ratio: 16 / 10.5;
+  overflow: hidden;
+  background: var(--am-kraft);
+  border-radius: 2px;
+  box-shadow:
+    0 1px 1px rgb(var(--shade) / 0.08),
+    2px 4px 8px -3px rgb(var(--shade) / 0.16),
+    6px 12px 18px -14px rgb(var(--shade) / 0.24);
+}
+.am-project--behavioral .am-project__plate {
+  aspect-ratio: 16 / 12.3;
+  background: none;
+  box-shadow: none;
+  overflow: visible;
+}
+.am-project--behavioral .am-card {
+  inset: 6% 7% 4%;
+}
+.am-project::before {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  top: -0.65rem;
+  left: 1.8rem;
+  width: 4.75rem;
+  height: 1.4rem;
+  pointer-events: none;
+  background: var(--am-tape);
+  mix-blend-mode: var(--tape-blend);
+  transform: rotate(3deg);
+  clip-path: polygon(3% 0, 97% 4%, 100% 30%, 96% 55%, 100% 82%, 97% 100%, 2% 96%, 0 70%, 4% 45%, 0 18%);
+}
+.am-project--behavioral::before {
+  left: auto;
+  right: 2.2rem;
+  width: 4.25rem;
+  transform: rotate(-4deg);
+}
+.am-project__title {
+  margin: 1.35rem 0 0;
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 2.4vw, 2rem);
+  font-weight: 500;
+  line-height: 1.1;
+}
+/* the title's link covers the whole entry */
+.am-project__link {
+  color: var(--text);
+  text-decoration: none;
+}
+.am-project__link::after {
+  content: "";
+  position: absolute;
+  inset: -0.5rem;
+  z-index: 4;
+}
+.am-project__link:focus-visible {
+  outline: none;
+}
+.am-project:has(.am-project__link:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 0.75rem;
+  border-radius: 4px;
+}
+.am-project__text {
+  max-width: 42ch;
+  margin: 0.6rem 0 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+.am-project__cta {
+  margin: 1rem 0 0;
+  font-weight: 600;
+  font-size: 0.9688rem;
+  color: var(--accent);
+}
+.am-project__arrow {
+  display: inline-block;
+  transition: transform 0.35s var(--ease);
+}
+.am-project .am-card {
+  transition: transform 0.6s var(--ease);
+}
+.am-project:has(.am-project__link:is(:hover, :focus-visible)) .am-card {
+  transform: rotate(calc(var(--tilt) * 0.3)) translateY(-2%);
+}
+.am-project:has(.am-project__link:is(:hover, :focus-visible)) .am-project__arrow {
+  transform: translateX(4px);
+}
+.am-project:has(.am-project__link:hover) .am-project__link {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+/* the index card: ruled, a red margin rule, the department at its head */
+.am-card {
+  position: absolute;
+  inset: 11% 9% -6% 9%;
+  padding: 1rem 1.25rem;
+  background:
+    linear-gradient(to right, transparent 2.6rem, rgba(176, 72, 64, 0.5) 2.6rem, rgba(176, 72, 64, 0.5) calc(2.6rem + 1px), transparent calc(2.6rem + 1px)),
+    repeating-linear-gradient(to bottom, transparent 0 1.6rem, rgba(73, 112, 158, 0.22) 1.6rem calc(1.6rem + 1px)),
+    #fbf7ee;
+  background-position: 0 2.4rem;
+  border-radius: 3px;
+  box-shadow:
+    0 1px 2px rgb(var(--shade) / 0.12),
+    0 20px 36px -24px rgb(var(--shade) / 0.5);
+  transform: rotate(var(--tilt, -1.2deg));
+}
+.am-card__dept,
+.am-card__entry {
+  display: block;
+  padding-left: 1.9rem;
+  font-family: var(--serif);
+  font-style: italic;
+  color: #4a3f33;
+}
+.am-card__dept {
+  font-size: var(--serif-floor);
+}
+/* one entry, written on the second ruled line */
+.am-card__entry {
+  margin-top: 1.55rem;
+  font-size: clamp(1.35rem, 2.1vw, 1.7rem);
+  line-height: 1;
+  color: var(--am-card-ink);
+}
+/* at night the card is paper under a lamp: dimmed into the page */
+:root[data-theme="dark"] .am-card {
+  filter: brightness(0.74) saturate(0.85);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .am-card {
+    filter: brightness(0.74) saturate(0.85);
+  }
+}
+
+/* overview: the closing thought, with her figure on its rule */
+.am-further {
+  position: relative;
+  border-bottom: 0;
+}
+.am-further__body {
+  grid-column: 2;
+}
+.avatar--am-further {
+  position: relative;
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: end;
+  justify-self: start;
+  width: clamp(6.5rem, 10vw, 8.5rem);
+  margin-top: 1.5rem;
+  margin-bottom: calc(-1 * clamp(2.75rem, 5.5vw, 4.25rem));
+  transform: translateY(var(--sink));
+}
+.am-further .am-h2 {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+/* ------------------------------------------------- DIODE: the walkthrough */
+.am-walk {
+  position: relative;
+  margin: 0 auto;
+  padding-block: 0;
+  list-style: none;
+}
+.am-step__inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 34rem) minmax(0, 1fr);
+  column-gap: clamp(1.25rem, 3.5vw, 3rem);
+  row-gap: clamp(1.75rem, 3vw, 2.5rem);
+  align-items: start;
+  padding-block: clamp(2.75rem, 5vw, 4rem);
+}
+/* the spine: each chapter's number, and a ruled thread down to the next */
+.am-step__n {
+  position: relative;
+  grid-column: 1;
+  grid-row: 1 / span 3;
+  align-self: stretch;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(2.6rem, 4vw, 3.4rem);
+  font-weight: 500;
+  line-height: 0.9;
+  color: var(--accent);
+  font-variant-numeric: lining-nums;
+}
+.am-step__n::after {
+  content: "";
+  position: absolute;
+  top: 3.6rem;
+  bottom: calc(-1 * clamp(2.75rem, 5vw, 4rem));
+  left: 0.85rem;
+  border-left: 1.5px dashed color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.am-step:last-child .am-step__n::after {
+  bottom: 0;
+  border-left-style: solid;
+  border-color: var(--rule);
+}
+.am-step__text {
+  grid-column: 2;
+  min-width: 0;
+}
+.am-step__h {
+  margin: 0 0 1rem;
+  font-family: var(--serif);
+  font-size: clamp(1.9rem, 3vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+.am-step__plate {
+  grid-column: 3;
+  grid-row: 1;
+  min-width: 0;
+}
+/* chapters 01 and 02: the words first, across; the figure beneath, across */
+.am-step--preparing .am-step__text,
+.am-step--capture .am-step__text {
+  grid-column: 2 / span 2;
+  grid-row: 1;
+  max-width: 40rem;
+}
+.am-step--preparing .am-step__plate,
+.am-step--capture .am-step__plate {
+  grid-column: 2 / span 2;
+  grid-row: 2;
+}
+/* arriving from a key's link: the chapter's number and heading take the
+   highlighter for a moment, then let it go */
+.am-step__inner[data-arrived] .am-step__n {
+  animation: am-arrive-n 2.2s var(--ease) both;
+}
+.am-step__inner:focus {
+  outline: none;
+}
+.am-step__h {
+  background: linear-gradient(color-mix(in srgb, var(--amnh-mark) 80%, transparent), color-mix(in srgb, var(--amnh-mark) 80%, transparent)) 0 88% / 0% 0.32em no-repeat;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  width: fit-content;
+}
+.am-step__inner[data-arrived] .am-step__h {
+  animation-name: am-arrive, am-arrive-out;
+  animation-duration: 0.7s, 0.8s;
+  animation-delay: 0s, 1.6s;
+  animation-fill-mode: forwards, forwards;
+}
+@keyframes am-arrive {
+  to {
+    background-size: 100% 0.32em;
+  }
+}
+@keyframes am-arrive-out {
+  from {
+    background-size: 100% 0.32em;
+    background-position: 100% 88%;
+  }
+  to {
+    background-size: 0% 0.32em;
+    background-position: 100% 88%;
+  }
+}
+@keyframes am-arrive-n {
+  0%,
+  100% {
+    color: var(--accent);
+  }
+  20%,
+  70% {
+    color: var(--text);
+  }
+}
+/* chapter 3: the words close the process; her figure stands on the rule below */
+.am-step--rehousing .am-step__text {
+  grid-column: 2;
+}
+.avatar--am-capture {
+  position: relative;
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: start;
+  align-self: end;
+  width: clamp(6rem, 8.5vw, 7.5rem);
+  margin-left: clamp(1rem, 6vw, 5rem);
+  margin-bottom: calc(-1 * clamp(2.75rem, 5vw, 4rem));
+  transform: translateY(var(--sink));
+}
+
+/* what draws me / lab and tools */
+.am-draws__body {
+  grid-column: 2;
+}
+.am-credits-wrap {
+  padding-block: 0 clamp(3rem, 6vw, 4.5rem);
+}
+/* the credits as a gallery label: the full width of the reading column,
+   lettered on the label card */
+.am-credits {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+  gap: var(--am-gap);
+  padding: clamp(1.5rem, 3vw, 2.1rem) clamp(1.25rem, 3vw, 2.25rem);
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  border-radius: 2px;
+}
+.am-credits::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid var(--rule);
+  pointer-events: none;
+}
+.am-credits__h {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 2.4vw, 2rem);
+  font-weight: 500;
+  line-height: 1.1;
+}
+.am-credits__body {
+  position: relative;
+  z-index: 1;
+  max-width: 40rem;
+  font-size: 0.9688rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+.am-credits__body p {
+  margin: 0;
+}
+.am-credits__body p + p {
+  margin-top: 0.9em;
+}
+
+/* --------------------------------------------- DIODE: the illustrations */
+/* the drawings sit directly on the page: the workstation's paper is the
+   page's own ground */
+.am-page {
+  --plate: var(--bg);
+}
+.dw-ws svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* a part lit from its note: its outline in the accent, nothing more */
+.dw-ws [data-part] path {
+  transition: stroke 0.25s ease, stroke-width 0.25s ease;
+}
+.dw-ws [data-part].is-lit path {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.dw-spread {
+  position: relative;
+  padding-block: clamp(0.5rem, 1.5vw, 1rem) clamp(3rem, 6vw, 4.25rem);
+}
+
+/* one figure: the artwork, and beside it the key, any closing note and the
+   caption */
+.dw-art {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr);
+  grid-template-rows: auto 1fr;
+  column-gap: clamp(1.75rem, 3.5vw, 3.25rem);
+  align-items: start;
+  margin: 0;
+}
+.dw-art__box {
+  position: relative;
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: center;
+}
+.dw-art__side {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+}
+.dw-art > .dw-caption {
+  grid-column: 2;
+  grid-row: 2;
+  align-self: end;
+}
+.dw-art__box > .dw-ws,
+.dw-art__box > img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* the workstation: about two-thirds of the width, its key alongside; the
+   pair fits under the header on a desktop screen */
+/* the tray: a comfortable medium size, its notes beside it */
+.dw-art--tray {
+  grid-template-columns: minmax(0, 21rem) minmax(0, 26rem);
+  justify-content: start;
+}
+.dw-art--tray .dw-art__box {
+  align-self: start;
+  filter: drop-shadow(0 1px 1px rgb(var(--shade) / 0.12)) drop-shadow(0 16px 22px rgb(var(--shade) / 0.22));
+}
+:root[data-theme="dark"] .dw-tray__img {
+  filter: brightness(0.86) saturate(0.92);
+}
+
+/* the numbered points: on the feature, ringed in the page's paper */
+.dw-pt {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 1.45rem;
+  height: 1.45rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  box-shadow: 0 0 0 2px var(--bg), 0 1px 4px rgb(0 0 0 / 0.3);
+  transform: translate(-50%, -50%);
+  cursor: default;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+:root[data-theme="dark"] .dw-pt {
+  color: #10141c;
+}
+.dw-pt.is-on {
+  transform: translate(-50%, -50%) scale(1.18);
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 5px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+/* the key: every note in full, always visible */
+.dw-key {
+  display: grid;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dw-key li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.7rem;
+  align-items: start;
+  margin-inline: -0.6rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+.dw-key li.is-on {
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+.dw-key__n {
+  display: inline-grid;
+  place-items: center;
+  width: 1.45rem;
+  height: 1.45rem;
+  margin-top: 0.05rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--accent);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.dw-key li.is-on .dw-key__n {
+  background: var(--accent);
+  color: var(--bg);
+}
+.dw-key__body {
+  display: grid;
+  gap: 0.05rem;
+}
+.dw-key__label {
+  font-size: 0.9375rem;
+  font-weight: 650;
+  color: var(--text);
+}
+.dw-key__text {
+  font-size: 0.9063rem;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+.dw-key__more {
+  justify-self: start;
+  margin-top: 0.25rem;
+  font-size: 0.8438rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  text-underline-offset: 0.22em;
+  transition: text-decoration-color 0.2s ease;
+}
+.dw-key__more:hover {
+  text-decoration-color: currentColor;
+}
+.dw-key__more:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.dw-caption {
+  max-width: 62ch;
+  margin: 1.25rem 0 0;
+  font-size: 0.8438rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.dw-caption__label {
+  font-weight: 650;
+  color: var(--text);
+}
+/* the tray's principle, set as a quiet closing note under its notes */
+.dw-closing {
+  margin: 1.25rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: var(--serif-floor);
+  line-height: 1.4;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+/* chapter 02: the laptop and its two screens (adapted from the prototype),
+   with the words for both views alongside */
+.lt {
+  display: grid;
+  grid-template-columns: minmax(0, 40rem) minmax(15rem, 21rem);
+  grid-template-rows: auto auto;
+  column-gap: clamp(1.75rem, 4vw, 3.5rem);
+  align-items: start;
+  margin: 0;
+}
+.lt__machine {
+  grid-column: 1;
+  grid-row: 1;
+}
+.lt__views {
+  grid-column: 1;
+  grid-row: 2;
+}
+.lt__caption {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+}
+.lt__machine {
+  padding-inline: 4%;
+}
+.lt__lid {
+  position: relative;
+  padding: 2.6% 2.6% 3.2%;
+  background: #1f1f1d;
+  border-radius: 14px 14px 4px 4px;
+  box-shadow: inset 0 0 0 1px #3a3a37, 0 24px 40px -28px rgb(var(--shade) / 0.6);
+}
+.lt__screen {
+  position: relative;
+  aspect-ratio: 16 / 10.4;
+  overflow: hidden;
+  border-radius: 3px;
+  background: linear-gradient(160deg, #9fb7cf, #c9d6df 55%, #b7c7b6);
+  container-type: inline-size;
+}
+.lt__base {
+  position: relative;
+  height: clamp(8px, 1.4vw, 13px);
+  margin-inline: -4%;
+  background: linear-gradient(#d4d2cd, #a9a7a2);
+  border-radius: 0 0 14px 14px;
+}
+.lt__base::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 16%;
+  height: 40%;
+  transform: translateX(-50%);
+  background: #9a9893;
+  border-radius: 0 0 6px 6px;
+}
+:root[data-theme="dark"] .lt__base {
+  background: linear-gradient(#8f8d88, #6a6864);
+}
+:root[data-theme="dark"] .lt__base::after {
+  background: #5d5b57;
+}
+/* both windows in the same display area; only their opacity changes */
+.lt__view {
+  position: absolute;
+  inset: 4% 5% 13%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.32s ease, visibility 0s linear 0.32s;
+}
+.lt__view[data-on] {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.32s ease, visibility 0s;
+}
+.lt__dock {
+  position: absolute;
+  left: 50%;
+  bottom: 1.6%;
+  z-index: 2;
+  display: flex;
+  padding: 0.7cqw;
+  border-radius: 1.6cqw;
+  background: rgb(255 255 255 / 0.45);
+  transform: translateX(-50%);
+}
+.lt__dock img {
+  display: block;
+  width: 5.4cqw;
+  height: 5.4cqw;
+  border-radius: 22%;
+}
+/* a recreated macOS window: light, as on the real screen */
+.lt-win {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #ececea;
+  border-radius: 7px;
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.18), 0 0 0 0.5px rgb(0 0 0 / 0.25);
+  color: #1d1d1f;
+  font: 500 max(7.5px, 1.8cqw) / 1.25 -apple-system, "SF Pro Text", var(--sans);
+}
+.lt-win__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+  padding: 1.3% 2%;
+  background: #e3e3e1;
+  border-bottom: 0.5px solid #c8c8c6;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.lt-win__bar i {
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  border-radius: 50%;
+}
+.lt-win__bar i:nth-child(1) { background: #ff5f57; }
+.lt-win__bar i:nth-child(2) { background: #febc2e; }
+.lt-win__bar i:nth-child(3) { background: #28c840; }
+.lt-win__bar span {
+  margin-left: 0.4em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lt-win__bar small {
+  margin-left: auto;
+  font-weight: 400;
+  color: #666;
+}
+.lt-win__body {
+  flex: 1;
+  min-height: 0;
+}
+.lt-cc {
+  display: grid;
+  grid-template-columns: 37% minmax(0, 1fr);
+  gap: 3%;
+  padding: 3%;
+}
+.lt-cc__settings {
+  display: grid;
+  align-content: start;
+  gap: 0.55em;
+  margin: 0;
+  padding: 5% 4%;
+  background: #f4f4f2;
+  border: 0.5px solid #c4c4c2;
+  border-radius: 4px;
+}
+.lt-cc__settings div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.4em;
+}
+.lt-cc__settings dt {
+  white-space: nowrap;
+  color: #555;
+}
+.lt-cc__settings dd {
+  width: 54%;
+  margin: 0;
+  padding: 0 0.4em;
+  overflow: hidden;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background: #fff;
+  border: 0.5px solid #cfcfcd;
+  border-radius: 3px;
+}
+.lt-cc__side {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 4%;
+  min-height: 0;
+}
+.lt-cc__proc {
+  display: grid;
+  gap: 0.45em;
+  padding: 3%;
+  background: #f4f4f2;
+  border: 0.5px solid #c4c4c2;
+  border-radius: 4px;
+}
+.lt-cc__row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45em;
+}
+.lt-btn {
+  padding: 0.3em 0.4em;
+  overflow: hidden;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background: #fff;
+  border: 0.5px solid #c9c9c7;
+  border-radius: 4px;
+}
+.lt-btn--primary {
+  box-shadow: inset 0 0 0 1.5px #0a66d8;
+}
+.lt-cc__preview {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  background: #222;
+  border: 0.5px solid #c4c4c2;
+  border-radius: 3px;
+}
+.lt-cc__preview img,
+.lt-rv__t img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.lt-win--review {
+  background: #f6f6f4;
+}
+.lt-rv {
+  display: grid;
+  grid-template-columns: 17% minmax(0, 1fr);
+}
+.lt-rv__side {
+  display: grid;
+  align-content: start;
+  gap: 10%;
+  padding: 8% 10%;
+  background: #ebebe9;
+  border-right: 0.5px solid #d0d0ce;
+}
+.lt-rv__thumb {
+  display: grid;
+  gap: 3px;
+  font-size: 0.85em;
+  text-align: center;
+  color: #444;
+}
+.lt-rv__thumb > span:last-child {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.lt-rv__t {
+  aspect-ratio: 5 / 3;
+  overflow: hidden;
+  border: 0.5px solid #c8c8c6;
+  border-radius: 2px;
+}
+.lt-rv__t--empty {
+  background: #e2e2df;
+}
+.lt-rv__thumb.is-sel .lt-rv__t {
+  box-shadow: 0 0 0 2px #0a66d8;
+}
+.lt-rv__stage {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: 4%;
+}
+.lt-rv__stage img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+}
+/* the two screens: labelled buttons, beneath the laptop */
+.lt__views {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+.lt__tab {
+  min-height: 2.5rem;
+  padding: 0.45rem 1rem;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.lt__tab:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.lt__tab[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+.lt__tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.lt__about {
+  display: block;
+  font-size: 0.8438rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.lt__list {
+  display: grid;
+  gap: 1.1rem;
+  margin: 1.1rem 0 0;
+}
+.lt__item {
+  padding-left: 0.9rem;
+  box-shadow: inset 1px 0 0 var(--rule);
+  transition: box-shadow 0.25s ease;
+}
+.lt__item[data-on] {
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+.lt__item dt {
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.25s ease;
+}
+.lt__item[data-on] dt {
+  color: var(--accent);
+}
+.lt__item dd {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0.3rem 0 0;
+}
+.lt__words {
+  font-size: 0.9688rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+  transition: color 0.25s ease;
+}
+.lt__item[data-on] .lt__words {
+  color: var(--text);
+}
+.lt__note {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* the overview's DIODE entry: the workstation drawn small, on the page */
+.am-project--diode .am-project__plate {
+  background: none;
+  box-shadow: none;
+  overflow: visible;
+}
+.am-project--diode::before {
+  display: none;
+}
+.am-project--diode .dw-thumb {
+  position: absolute;
+  inset: 4% 0 2%;
+  transition: transform 0.6s var(--ease);
+}
+.am-project--diode:has(.am-project__link:is(:hover, :focus-visible)) .dw-thumb {
+  transform: translateY(-1.5%);
+}
+
+/* ---------------------------------------------- the behavioral research */
+.am-research__hero.detail-hero {
+  padding-bottom: clamp(3rem, 7vw, 5.5rem);
+}
+.am-research__hero .case-hero__grid {
+  align-items: center;
+}
+.am-research__note {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  max-width: 36ch;
+  margin: 1.5rem 0 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1.2rem, 1.6vw, 1.35rem);
+  line-height: 1.35;
+  color: var(--ink-3);
+}
+/* a pencilled dash before the note */
+.am-research__note::before {
+  content: "";
+  flex: none;
+  width: 1.4rem;
+  height: 1px;
+  transform: translateY(-0.3em);
+  background: var(--muted);
+}
+.am-research__back {
+  margin: 1.75rem 0 0;
+}
+.am-back {
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+}
+.am-research__card {
+  position: relative;
+  aspect-ratio: 5 / 3.6;
+  width: 100%;
+  max-width: 22rem;
+  justify-self: start;
+}
+.am-research__card .am-card {
+  inset: 0;
+}
+
+/* ---------------------------------------------------------- responsive */
+@media (max-width: 1099.98px) {
+  .am-step__inner {
+    grid-template-columns: 3.75rem minmax(0, 1fr);
+  }
+  .am-step__text,
+  .am-step__plate,
+  .am-step--capture .am-step__text,
+  .am-step--capture .am-step__plate,
+  .am-step--rehousing .am-step__text,
+  .am-step--rehousing .am-step__plate {
+    grid-column: 2;
+    grid-row: auto;
+  }
+  .avatar--am-capture {
+    display: none;
+  }
+  .am-step--preparing .am-step__text,
+  .am-step--preparing .am-step__plate {
+    grid-column: 2;
+    grid-row: auto;
+  }
+}
+/* narrower: the figures stack — artwork, then its notes and caption */
+@media (max-width: 899.98px) {
+  .dw-art,
+  .dw-art--tray {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+  }
+  .dw-art__box,
+  .dw-art__side,
+  .dw-art > .dw-caption {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .dw-art__side {
+    margin-top: 1.5rem;
+  }
+  .dw-art--tray .dw-art__box {
+    width: min(100%, 22rem);
+  }
+  .lt {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .lt__caption {
+    grid-column: 1;
+    grid-row: auto;
+    margin-top: 1.5rem;
+  }
+}
+@media (max-width: 899.98px) {
+  .am-intro,
+  .am-draws,
+  .am-further,
+  .am-threads__head,
+  .am-credits {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .am-draws__body,
+  .am-further__body {
+    grid-column: 1;
+  }
+  .am-further .am-h2 {
+    grid-row: auto;
+  }
+  .avatar--am-further {
+    grid-row: auto;
+    justify-self: end;
+    width: clamp(5.5rem, 22vw, 7rem);
+  }
+  .am-projects {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 599.98px) {
+  .am-step__inner {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 1.25rem;
+  }
+  .am-step__n {
+    grid-row: auto;
+    font-size: 2.4rem;
+  }
+  .am-step__n::after {
+    display: none;
+  }
+  .am-step__text,
+  .am-step__plate,
+  .am-step--capture .am-step__text,
+  .am-step--capture .am-step__plate,
+  .am-step--rehousing .am-step__text,
+  .am-step--rehousing .am-step__plate,
+  .am-step--preparing .am-step__text,
+  .am-step--preparing .am-step__plate {
+    grid-column: 1;
+  }
+  .dw-pt {
+    width: 1.25rem;
+    height: 1.25rem;
+    font-size: 0.66rem;
+  }
+  .am-chapters ol {
+    flex-direction: column;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .am-project .am-card,
+  .am-project__arrow,
+  .lt__view,
+  .dw-pt,
+  .dw-ws [data-part] path {
+    transition: none;
+  }
+  .am-step__inner[data-arrived] .am-step__h,
+  .am-step__inner[data-arrived] .am-step__n {
+    animation: none;
+  }
+}

@@ -16,16 +16,9 @@ html[data-sheet-open] .site-header {
   padding-right: var(--sheet-scrollbar, 0px);
 }
 
-/* the unroll's progress, 0 (rolled up) → 1 (open); animatable */
-@property --unroll {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 1;
-}
-
 /* ------------------------------------------------------------ sheet */
 .sheet {
-  --sheet-out: 260; /* ms, read by the component before it closes */
+  --sheet-out: 300; /* ms, read by the component before it closes */
   --sheet-top: 4.25rem; /* the header's lower edge, measured on open */
   --sheet-scrim: rgb(28 22 16 / 0.34);
   --sheet-ink: #242321;
@@ -146,6 +139,10 @@ html[data-sheet-open] .site-header {
   padding: 1.6rem 2.75rem calc(2.4rem + env(safe-area-inset-bottom, 0px)) 2.1rem;
   scrollbar-width: thin;
   scrollbar-color: var(--rule-strong) transparent;
+  /* the list fades out at its lower edge, so a list that runs past the
+     paper reads as continuing rather than cut off */
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 2.25rem), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 2.25rem), transparent);
 }
 
 /* ------------------------------------------------------------- the contents */
@@ -529,45 +526,44 @@ html[data-sheet-open] .site-header {
 }
 
 /* ------------------------------------------------------------- motion */
-/* The paper unrolls downward behind a soft-edged mask (the leading edge is
-   a 5rem fade, so it reads as paper coming over rather than a wipe), with
-   the thread drawing down beside it. The rows ink in from above, following
-   the paper; last, the pen circles where you are. Closing rolls it back up,
-   faster, with nothing staggered. */
+/* The paper unrolls downward from under the header (a clip, so it stays on
+   the compositor), the thread drawing down beside it; the rows ink in with
+   the paper, a beat behind its leading edge; last, the pen circles where you
+   are. Closing is the same gesture in reverse, a little quicker, so it leaves
+   the way it came. The clip's sides and foot reach past the paper so its
+   shadow is never cut. */
 @media (prefers-reduced-motion: no-preference) {
-  .sheet[data-state="open"]:not([data-settled]) .sheet__panel,
-  .sheet[data-state="closing"] .sheet__panel {
-    -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--unroll) * (100% + 5rem) - 5rem), transparent calc(var(--unroll) * (100% + 5rem)));
-    mask-image: linear-gradient(to bottom, #000 calc(var(--unroll) * (100% + 5rem) - 5rem), transparent calc(var(--unroll) * (100% + 5rem)));
-  }
   .sheet[data-state="open"] .sheet__panel {
-    animation: sheet-unroll 0.66s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: sheet-unroll 0.56s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .sheet[data-state="open"] .sheet__scrim {
-    animation: sheet-fade 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+    animation: sheet-fade 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
   .sheet[data-state="open"] .sheet__head {
-    animation: sheet-ink 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.04s both;
+    animation: sheet-ink 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.02s both;
   }
   .sheet[data-state="open"] .contents::before {
-    animation: sheet-thread 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+    animation: sheet-thread 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.06s both;
   }
   .sheet[data-state="open"] :is(.contents__entry, .now__page, .sheet__overview) {
-    animation: sheet-ink 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-delay: calc(0.12s + var(--i, 0) * 0.03s);
+    animation: sheet-ink 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(0.05s + var(--i, 0) * 0.022s);
   }
   .sheet[data-state="open"] .vignette__pencil path {
-    animation: sheet-ring 0.8s cubic-bezier(0.65, 0, 0.35, 1) both;
-    animation-delay: calc(0.2s + var(--i, 0) * 0.04s);
+    animation: sheet-ring 0.7s cubic-bezier(0.65, 0, 0.35, 1) both;
+    animation-delay: calc(0.12s + var(--i, 0) * 0.03s);
   }
   .sheet[data-state="open"] .contents__ring path {
-    animation: sheet-ring 0.6s cubic-bezier(0.65, 0, 0.35, 1) 0.62s both;
+    animation: sheet-ring 0.55s cubic-bezier(0.65, 0, 0.35, 1) 0.42s both;
   }
   .sheet[data-state="closing"] .sheet__panel {
-    animation: sheet-rollup 0.26s cubic-bezier(0.55, 0, 0.8, 0.2) forwards;
+    animation: sheet-rollup 0.3s cubic-bezier(0.4, 0, 0.6, 1) forwards;
   }
   .sheet[data-state="closing"] .sheet__scrim {
-    animation: sheet-fade-out 0.26s cubic-bezier(0.4, 0, 1, 1) forwards;
+    animation: sheet-fade-out 0.3s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+  }
+  .sheet[data-state="closing"] :is(.sheet__head, .sheet__body) {
+    animation: sheet-fade-out 0.18s cubic-bezier(0.4, 0, 1, 1) forwards;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -594,14 +590,20 @@ html[data-sheet-open] .site-header {
 }
 @keyframes sheet-unroll {
   from {
-    --unroll: 0;
-    translate: 0 -0.6rem;
+    clip-path: inset(0 -4rem 100% -4rem);
+    translate: 0 -0.5rem;
+  }
+  to {
+    clip-path: inset(0 -4rem -5rem -4rem);
   }
 }
 @keyframes sheet-rollup {
+  from {
+    clip-path: inset(0 -4rem -5rem -4rem);
+  }
   to {
-    --unroll: 0;
-    translate: 0 -0.4rem;
+    clip-path: inset(0 -4rem 100% -4rem);
+    translate: 0 -0.35rem;
   }
 }
 @keyframes sheet-thread {
@@ -797,7 +799,7 @@ html[data-sheet-open] .site-header {
 .sheet [data-v] {
   --v1: var(--text);
 }
-.sheet [data-v="lynxster"] { --v1: #24467c; --v2: #2f9e8c; }
+.sheet [data-v="lynxster"] { --v1: #24467c; --v2: #24467c; } /* one ink, as the mark itself */
 .sheet [data-v="amnh"] { --v1: #004bb4; }
 .sheet [data-v="crackd"] { --v1: #dcaa00; --v2: #dcaa00; }
 .sheet [data-v="buzzworks"] { --v1: #d66e39; --v2: #b4532a; }
@@ -807,7 +809,7 @@ html[data-sheet-open] .site-header {
 .sheet [data-v="pubs"] { --v1: #a85a6e; --v2: #c27f90; }
 .sheet [data-v="teaching"] { --v1: #005696; --v2: #2f7fc0; }
 :root[data-theme="dark"] .sheet [data-v="lynxster"] { --v1: #7fd6cc; --v2: #4cc7bc; }
-:root[data-theme="dark"] .sheet [data-v="amnh"] { --v1: #d7fa88; }
+:root[data-theme="dark"] .sheet [data-v="amnh"] { --v1: #9dbcf2; }
 :root[data-theme="dark"] .sheet [data-v="crackd"] { --v1: #f0cf55; --v2: #f0cf55; }
 :root[data-theme="dark"] .sheet [data-v="buzzworks"] { --v1: #ee9a66; --v2: #e07a45; }
 :root[data-theme="dark"] .sheet [data-v="tmu"] { --v1: #8db4e8; --v2: #fddb00; }
@@ -953,5 +955,20 @@ html[data-sheet-open] .site-header {
 @media (any-pointer: fine) {
   .sheet__keys {
     display: inline;
+  }
+}
+
+/* touch screens have no pointing, so the marks would stay pencil-grey and
+   every row would read as disabled: there, each mark is inked at rest */
+@media (hover: none) {
+  .sheet .vignette__ink path {
+    stroke-dashoffset: 0;
+  }
+  .sheet .vignette__pencil {
+    opacity: 0.35;
+  }
+  .sheet .vignette__ink :is(.vignette__fill, .vignette__node) {
+    opacity: 1;
+    scale: 1;
   }
 }

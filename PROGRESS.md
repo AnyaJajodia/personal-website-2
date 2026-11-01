@@ -504,3 +504,47 @@ Decisions (keep through compaction):
   - the homepage AMNH card has its CTA in `--amnh-accent` and a lime tape.
 - **Drawer:** AMNH `--v1` is #004bb4 by day and #d7fa88 at night; Lynxster's `--v2` is #2f9e8c.
 - **Iteration 33 QA, finished:** every older suite now targets the right drawer (Now or Work) and the new anchors (#now, #selected-work).
+
+## Review pass fixes (29 Oct 2026)
+From the "Portfolio Review Pass — Oct 2026" doc. Uncommitted on `testing`.
+- Drawers: SiteHeader now renders WorkDrawer itself (`drawer="<slug>"` prop; no element crosses the server/client boundary — fixed Wildlife's hydration failure). The sheet portals into the trigger's own `.detail` (found after mount), so it survives project→project navigation, prev/next and Back. Header clicks while open pass through (own item toggles, the other item swaps drawers, other links/buttons run after close); reopening during the close works. Motion: clip-path unroll 0.56s / roll-up 0.3s, rows ink in with the paper, list fades at its foot. Titles now "Now" / "Work"; footer link "See them on the homepage"; no "Explore" link for the page you're on.
+- DetailLine: same pen as home (`--line-w`), page ink, continuous progress (running-max reach + interpolation + eased), fades in when fonts are ready, no end dot, phone flourish leaves off-screen again, mid-margin knot replaced by a clean loop.
+- Colour: Lynxster drawer mark one navy in light; dark AMNH accent = lifted AMNH blue (#9dbcf2) instead of lime; dark AMNH card on a dark plate with a dimmed index card; AMNH wordmark inverted to page ink; dark thread #b3a089; avatar rim light at night; Inteli Jupyter image dimmed at night; drawer marks inked at rest on touch screens.
+- Layout/copy: hero facts sit beside the headline (40rem column, start-justified) on Crackd/Buzzworks/case pages; ESP and ADI get the "On this page" rail; Crackd heading gap and fainter ruling; quieter pager titles; phone chevrons kept (small); "Citation tooling" everywhere; GVI breadcrumb "Conservation fieldwork"; AMNH "2026–present".
+- QA: tsc + eslint clean, production build OK. qa/check.mjs 184/191 — the 7 fails are Codex's edits to the git-ignored qa/check.mjs (panels layout and fist thresholds for its discarded geometry), not regressions.
+
+### Follow-up (30 Oct 2026)
+- Dark theme: homepage background deepened to `#191715` (`:root:has(.home)`); detail pages keep `#211e1c`.
+- Wildlife lightbox: prev/next + counter moved out of the caption and pinned (desktop: where a one-line caption put them, at the caption row's right edge; phones: bottom-right corner). Caption keeps room for them so nothing overlaps.
+- Wildlife lightbox caption: left edge follows a wider photograph's left edge (`min(20%, (100% - --fw)/2)`); 20% in is the floor, right edge fixed at the arrows.
+- Homepage work panels: logo tiles follow the theme (light paper by day; a deep well of each panel's colour at night, with a faint rim). Night variants: gvi-white, columbia-crown-dark. Crackd's yellow symbol is masked in deep gold #7a5a00 on the light tile (5.35:1) and shown as supplied at night. Removed the dark-backing exception.
+- Homepage Lynxster preview: plate now Lynxster's own cool world — white by day (navy haze cut to 0.05), near-black #111818 → #070909 at night with a faint rim; replaces the warm beige/umber that muddied the navy and teal.
+
+### AMNH restructure (31 Oct 2026)
+- AMNH split into three pages from handoff/content/work/amnh*.md: overview `/work/amnh` (app/work/amnh/page.tsx), `/work/amnh/diode`, `/work/amnh/behavioral-research`; components in `src/components/amnh/`, copy in `src/content/amnh.ts`, planned artwork in `src/content/amnh-assets.ts` (plates render a compact catalogue note until `src` is set; annotations become numbered pins + key once artwork and `at` points are added — verified with a temporary stand-in image, then reverted).
+- Old anchors `/work/amnh#collections-digitization` and `#mantis-research` redirect client-side to the new pages (LegacyAnchors).
+- Homepage AMNH card: image/title/Explore → overview; its two project names now link to their pages; DIODE text from amnh.md; "Mantis… Details to come" replaced by "Behavioral research".
+- Now drawer: AMNH's two links go to the project pages, with you-are-here; WorkPager takes `within` (overview + sibling) for the two project pages.
+
+### DIODE assets integrated (31 Oct 2026)
+- Assets: production files in `public/assets/amnh/diode/` (tinted workstation SVG, tray-position reconstruction SVG, BugBase camera preview, saved specimen image AMNH_IZC 00560622, BugBase icon — the last three extracted from the prototype); prototype, anchor JSON, ink/PNG alternatives in `references/amnh/diode/` (README there). Annotation data: `src/content/amnh-diode-art.ts` (replaces amnh-assets.ts; Plate.tsx removed).
+- DIODE page: the workstation is the principal figure after the intro (inline SVG, theme tokens, six callouts incl. the added motorized stage, parts light from the key); ch. 01 the tray reconstruction with four numbered notes; ch. 02 the laptop with two BugBase views (Camera control default, Image review) on labelled buttons; ch. 03 text with the copy-stand figure.
+- Homepage AMNH preview and the overview's DIODE entry use the annotation-free workstation (RigDrawing no longer used). SVG classes are namespaced (dw-*) — its .panel had collided with the homepage panels.
+- Anchors verified visually: camera moved onto the body; tray label/identifier/specimen points corrected; "Detached parts" not pointed at (none visible in this position).
+
+### DIODE page refinement (31 Oct 2026)
+- Workstation: drawing ~2/3 width with numbered points on the parts, numbered key (+ caption) in the right third; fits under the header at 1440×900 (~520px tall). Hover/focus on a key entry lights the part.
+- Key links ("One tray position, enlarged", "Its two screens…") are guided moves: the part lights, then a Motion-eased scroll (re-aimed per frame, user input takes over) lands the chapter under the header via scroll-margin; the chapter heading gets a brief highlighter sweep and focus; reduced motion jumps directly. Real links kept (modified clicks native).
+- Ch. 01: words across, the tray plate (21rem) left with its notes right, the principle as a quiet italic closing note (lime underline removed), then the reconstruction caption.
+- Laptop: the switch used to swap a caption of different length (79→130px), growing the page 51px so DetailLine's ResizeObserver redrew the thread. Now both windows stay mounted in one screen area and crossfade (inactive one inert); the words for both views sit beside the laptop with the current one inked — page height, scroll and thread path verified identical across switches.
+
+## Homepage AMNH preview: two-colour cards (1 Nov 2026)
+- Replaced the homepage AMNH preview's workstation drawing with the overlapping collection / research
+  cards (`src/components/amnh/AmnhCards.tsx`, `amnh-cards.css`; study in `references/amnh/home-preview/`).
+  The rig stays on the AMNH overview's DIODE entry and the DIODE page.
+- AMNH plate is now white by day, near-black (edged) at night, like Lynxster's. Unused `.feature__ws` rules removed.
+- Measured at 1440: card group 39.8% of plate height vs Lynxster mark 38.6%; caption bottoms aligned within 0.2%.
+- Hover / title or button focus: cards ease apart (±38 units, ±2.2°) and the thread draws; touch and
+  reduced motion show the thread at rest; reduced motion doesn't move the cards.
+- Checks: tsc, eslint clean; scratch production build clean; qa/check.mjs 186/194 (failures are the older
+  panel-layout checks and the borderline untangler-fist distance, both failing before this change).

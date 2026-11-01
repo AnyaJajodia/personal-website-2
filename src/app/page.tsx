@@ -5,7 +5,7 @@ import HomeScribble from "@/components/HomeScribble";
 import SiteFooter from "@/components/SiteFooter";
 import SmoothAnchors from "@/components/SmoothAnchors";
 import Image from "next/image";
-import RigDrawing from "@/components/RigDrawing";
+import AmnhCards from "@/components/amnh/AmnhCards";
 import { LynxsterMark } from "@/components/Logo";
 import { ContactList } from "@/components/ContactList";
 import WorkPanels from "@/components/WorkPanels";
@@ -175,10 +175,8 @@ export default function Home() {
                         {f.slug === "lynxster" ? (
                           <LynxsterFloat />
                         ) : (
-                          <div className="archive-card">
-                            <span className="archive-card__dept">Invertebrate Zoology</span>
-                            <RigDrawing className="archive-card__rig" />
-                          </div>
+                          // a collection card and a research page, overlapping
+                          <AmnhCards />
                         )}
                       </Link>
                       <div className="feature__body">
@@ -227,7 +225,15 @@ export default function Home() {
                           <ul className="feature__streams">
                             {f.streams.map((st) => (
                               <li key={st.name} className="feature__stream">
-                                <span className="feature__stream-name">{st.name}</span>
+                                {"href" in st && st.href ? (
+                                  // a project with its own page (AMNH's two)
+                                  <Link href={st.href} className="feature__stream-name feature__stream-link">
+                                    {st.name}
+                                    <span aria-hidden="true"> →</span>
+                                  </Link>
+                                ) : (
+                                  <span className="feature__stream-name">{st.name}</span>
+                                )}
                                 <span className="feature__stream-text">{st.text}</span>
                               </li>
                             ))}

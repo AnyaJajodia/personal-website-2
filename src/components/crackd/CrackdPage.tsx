@@ -6,7 +6,6 @@ import DetailLine from "@/components/DetailLine";
 import WorkPager from "@/components/WorkPager";
 import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
-import WorkDrawer from "@/components/WorkDrawer";
 import OnThisPage from "@/components/OnThisPage";
 import { crackd, crackdSections } from "@/content/crackd";
 import CrackdApps from "./CrackdApps";
@@ -56,7 +55,7 @@ export default function CrackdPage() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <SiteHeader variant="detail" workMenu={<WorkDrawer current="crackd-ai" />} />
+      <SiteHeader variant="detail" drawer="crackd-ai" />
       <DetailLine theme="default" />
       <main id="main" className="detail__main">
         {/* ------------------------------------------------------ opening */}

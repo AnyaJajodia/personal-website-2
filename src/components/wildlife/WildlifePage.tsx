@@ -4,7 +4,6 @@ import SiteFooter from "@/components/SiteFooter";
 import DetailLine from "@/components/DetailLine";
 import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
-import WorkDrawer from "@/components/WorkDrawer";
 import WildlifeGallery from "./WildlifeGallery";
 import { hero, rows, sequence, wildlife } from "@/content/wildlife";
 import "./wildlife.css";
@@ -42,7 +41,7 @@ export default function WildlifePage() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <SiteHeader variant="detail" workMenu={<WorkDrawer current="" />} />
+      <SiteHeader variant="detail" drawer="" />
       <DetailLine theme="default" />
       <main id="main" className="detail__main">
         <header className="detail-hero wl-hero" data-line="top">

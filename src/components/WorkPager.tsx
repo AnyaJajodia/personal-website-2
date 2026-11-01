@@ -8,14 +8,25 @@ import { person } from "@/content/site";
  * overview, the previous project, and the next. The last project's "next"
  * goes back to the first, so no page dead-ends.
  *
+ * A page inside a body of work (AMNH's two projects) passes `within`
+ * instead: its two ways on are that body's overview and its sibling page.
+ *
  * The element itself carries the closing rule (its top border), which the
  * DetailLine ends on (data-line="end") and some pages' figures stand on.
  */
-export default function WorkPager({ slug }: { slug: string }) {
-  const { prev, next } = getNeighbours(slug);
+type Way = { href: string; label: string; title: string };
+
+export default function WorkPager({ slug, within }: { slug: string; within?: { up: Way; sibling: Way } }) {
+  const { prev: p, next } = getNeighbours(slug);
   const first = work[0];
   const wrap = !next && first && first.slug !== slug ? first : undefined;
-  const onward = next ?? wrap;
+  const n = next ?? wrap;
+  const prev: Way | undefined = within ? within.up : p ? { href: `/work/${p.slug}`, label: "Previous", title: p.name } : undefined;
+  const onward: Way | undefined = within
+    ? within.sibling
+    : n
+      ? { href: `/work/${n.slug}`, label: wrap ? "Back to the first" : "Next", title: n.name }
+      : undefined;
 
   return (
     <div className="container pager" data-line="end">
@@ -35,25 +46,26 @@ export default function WorkPager({ slug }: { slug: string }) {
         </p>
       </aside>
       <nav className="pager__nav" aria-label="More work">
-        <Link href={slug === "lynxster" || slug === "amnh" ? "/#now" : "/#selected-work"} className="pager__back label">
+        <Link href={slug === "lynxster" || slug.startsWith("amnh") ? "/#now" : "/#selected-work"} className="pager__back label">
           <span aria-hidden="true">←</span> Back to work
         </Link>
         <div className="pager__grid">
           {prev ? (
-            <Link href={`/work/${prev.slug}`} className="pager__link pager__link--prev">
+            <Link href={prev.href} className="pager__link pager__link--prev">
               <span className="label">
-                <span aria-hidden="true">← </span>Previous
+                <span aria-hidden="true">← </span>
+                {prev.label}
               </span>
-              <span className="pager__title">{prev.name}</span>
+              <span className="pager__title">{prev.title}</span>
             </Link>
           ) : null}
           {onward ? (
-            <Link href={`/work/${onward.slug}`} className="pager__link pager__link--next">
+            <Link href={onward.href} className="pager__link pager__link--next">
               <span className="label">
-                {wrap ? "Back to the first" : "Next"}
+                {onward.label}
                 <span aria-hidden="true"> →</span>
               </span>
-              <span className="pager__title">{onward.name}</span>
+              <span className="pager__title">{onward.title}</span>
             </Link>
           ) : null}
         </div>

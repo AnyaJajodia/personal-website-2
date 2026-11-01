@@ -5,7 +5,6 @@ import DetailLine from "@/components/DetailLine";
 import WorkPager from "@/components/WorkPager";
 import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
-import WorkDrawer from "@/components/WorkDrawer";
 import { inteli } from "@/content/inteli";
 import "../case/case.css";
 import "./inteli.css";
@@ -54,7 +53,7 @@ export default function InteliPage() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <SiteHeader variant="detail" workMenu={<WorkDrawer current="inteli-lens" />} />
+      <SiteHeader variant="detail" drawer="inteli-lens" />
       <DetailLine theme="default" />
       <main id="main" className="detail__main">
         {/* ------------------------------------------------------ opening */}

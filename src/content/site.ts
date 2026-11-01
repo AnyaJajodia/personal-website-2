@@ -98,15 +98,16 @@ export const currently = {
       slug: "amnh",
       name: "American Museum of Natural History",
       role: "Volunteer",
-      period: "2026–now",
+      period: "2026–present",
       cta: "Explore AMNH",
-      /** two separate workstreams within the museum */
+      /** its two projects, each linking to its own page (amnh.md) */
       streams: [
         {
           name: "DIODE · Collections digitization",
-          text: "Digitizing archival dragonfly records with Jessica Ware’s lab, helping set up 3D-printed digitization rigs, and improving the workflows around them.",
+          href: "/work/amnh/diode",
+          text: "I prepare specimens and their collection labels for imaging, operate the existing capture setup, review the resulting images, and rehouse the specimens afterward.",
         },
-        { name: "Mantis behavioral trials & research", text: "Details to come." },
+        { name: "Behavioral research", href: "/work/amnh/behavioral-research", text: "I’m joining a project investigating feeding behavior." },
       ],
     },
   ],
@@ -143,12 +144,12 @@ export const selectedWork = {
       links: [{ slug: "buzzworks", label: "Buzzworks" }],
     },
     {
-      title: "Research tooling · Toronto Metropolitan University",
+      title: "Citation tooling · Toronto Metropolitan University",
       date: "2025",
       description:
         "Building citation-conversion pipelines that turn footnotes and other reference formats into publication-ready in-text citations, including the final pipeline used for a book.",
       category: "Research",
-      links: [{ slug: "tmu-citation-tooling", label: "Research tooling" }],
+      links: [{ slug: "tmu-citation-tooling", label: "Citation tooling" }],
     },
     {
       title: "Inteli-lens",

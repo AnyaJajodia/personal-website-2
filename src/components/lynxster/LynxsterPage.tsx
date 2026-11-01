@@ -5,7 +5,6 @@ import DetailLine from "@/components/DetailLine";
 import WorkPager from "@/components/WorkPager";
 import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
-import WorkDrawer from "@/components/WorkDrawer";
 import LynxsterWatch from "./LynxsterWatch";
 import LynxsterAssembly from "./LynxsterAssembly";
 import InView from "./InView";
@@ -67,7 +66,7 @@ export default function LynxsterPage() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <SiteHeader variant="detail" workMenu={<WorkDrawer current="lynxster" />} />
+      <SiteHeader variant="detail" drawer="lynxster" />
       <DetailLine theme="lynxster" />
       <main id="main" className="detail__main">
         {/* ----------------------------------------------- the header band */}

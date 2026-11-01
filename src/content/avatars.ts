@@ -67,16 +67,14 @@ export type PoseName = keyof typeof poses;
 /**
  * One or two contextual figures per project page, each set beside the
  * section it belongs to — by heading, or "stream-id/heading" inside a
- * stream. AMNH's figures stay with the digitization stream: the mantis
- * research has no details yet, so nothing illustrates it.
+ * stream. Pages with their own layout place their own figures; their
+ * entries here are kept for reference only.
  */
 export const detailAvatars: Record<string, { section: string; pose: PoseName }[]> = {
   // not used: the Lynxster page places its own figure (components/lynxster/LynxsterPage.tsx)
   lynxster: [{ section: "What I work on", pose: "notebook" }],
-  amnh: [
-    { section: "collections-digitization/Overview", pose: "archivalPaper" },
-    { section: "collections-digitization/Records, rigs, and workflows", pose: "copyStand" },
-  ],
+  // not used: the AMNH pages place their own figures (components/amnh/)
+  amnh: [{ section: "Following the questions further", pose: "archivalPaper" }],
   // not used: the Crackd page places its own two figures (components/crackd/CrackdPage.tsx)
   "crackd-ai": [{ section: "My contribution", pose: "snapping" }],
   // not used: the Buzzworks page places its own figure (components/buzzworks/BuzzworksPage.tsx)

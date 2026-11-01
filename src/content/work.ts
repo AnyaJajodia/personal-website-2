@@ -84,84 +84,18 @@ export const work: WorkEntry[] = [
     description: "Lynxster: engineering, product development, and technical leadership for independently verifiable digital records.",
   },
   {
+    // the AMNH pages are components/amnh/ (copy in content/amnh.ts): the
+    // overview at /work/amnh and its two projects beneath it. This record
+    // gives the overview its place in the pager and the Now drawer its line.
     slug: "amnh",
     name: "AMNH",
     theme: "amnh",
-    eyebrow: ["American Museum of Natural History", "Invertebrate Zoology"],
-    title: "A closer look at the archive.",
-    subtitle: "Digitizing dragonfly records and improving the tools around them.",
+    title: "Behind the collections. Into new questions.",
+    subtitle: "Collections digitization and emerging behavioral research in Invertebrate Zoology at the American Museum of Natural History.",
     role: { label: "Role", value: "Volunteer" },
-    period: {
-      label: "Period",
-      start: "2026",
-      end: "2027",
-      needsReview: true,
-      reviewNote: "Placeholder end year; start month to confirm.",
-    },
-    meta: [{ label: "Focus", value: "Archival digitization · Digitization rigs · Workflow improvement · Mantis behavioral research" }],
-    streams: [
-      {
-        id: "collections-digitization",
-        heading: "Collections digitization",
-        figure: {
-          kind: "plates",
-          note: "Original photographs to come.",
-          plates: [
-            { caption: "Archival dragonfly record, Invertebrate Zoology.", pattern: "ledger" },
-            { caption: "3D-printed digitization rig.", pattern: "grid" },
-          ],
-        },
-        sections: [
-          {
-            heading: "Overview",
-            paragraphs: [
-              "I volunteer in the American Museum of Natural History’s Invertebrate Zoology department, where I help digitize archival dragonfly records.",
-              "The work brings together historical material, careful handling, and the practical question of how to make records easier to access and use.",
-            ],
-          },
-          {
-            heading: "Records, rigs, and workflows",
-            paragraphs: [
-              "Alongside digitization, I help set up 3D-printed rigs and look for ways to improve the workflow around them. It’s a combination of working with the records themselves and paying attention to the tools and repeated steps involved in capturing them.",
-              "Small practical changes matter when a process has to be repeated across an archive.",
-            ],
-          },
-          {
-            heading: "Why this work",
-            paragraphs: [
-              "I’m interested in natural history, conservation, and the ways information moves between physical collections and digital systems. This work lets me approach those interests through something tangible: a record, a setup, and the care required to preserve what the record contains.",
-              "It also gives me a reason to spend time thinking about dragonflies. I’m comfortable with that outcome.",
-            ],
-          },
-        ],
-      },
-      {
-        id: "mantis-research",
-        heading: "Mantis behavioral research",
-        figure: {
-          kind: "plates",
-          note: "Original photographs to come.",
-          plates: [{ caption: "Mantis behavioral research.", pattern: "field" }],
-        },
-        sections: [
-          {
-            heading: "Overview",
-            paragraphs: ["I’ve joined a mantis behavioral research project at the museum."],
-          },
-        ],
-        pending: "The research question, methods, my responsibilities and any outcomes will be added once they’re confirmed.",
-      },
-    ],
-    sections: [
-      {
-        heading: "What I’m exploring",
-        paragraphs: [
-          "I’m interested in pursuing research that connects anthropology and zoology at the museum. That’s a direction I’m exploring alongside my current digitization work, not an established research project.",
-        ],
-      },
-    ],
-    description:
-      "Volunteering in AMNH Invertebrate Zoology: digitizing archival dragonfly records and improving the tools around them.",
+    period: { label: "Period", start: "2026", end: "present" },
+    sections: [],
+    description: "Collections digitization and emerging behavioral research in Invertebrate Zoology at the American Museum of Natural History.",
   },
   {
     // The Crackd page has its own layout and full copy (content/crackd.ts, from
@@ -197,7 +131,7 @@ export const work: WorkEntry[] = [
     // name (kept, so neighbouring pages' pager labels are unchanged), the page
     // <title>/description and its place in the pager.
     slug: "tmu-citation-tooling",
-    name: "Research tooling · TMU",
+    name: "Citation tooling · TMU",
     theme: "default",
     title: "Following the footnotes.",
     subtitle: "Turning a manuscript’s tangled references into in-text citations, organized bibliographies, and reviewable results.",

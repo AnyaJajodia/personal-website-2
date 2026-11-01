@@ -220,7 +220,7 @@ export default function WildlifeGallery({ hero, rows, sequence }: Props) {
       ],
       { duration: 420, delay: 140, easing: EASE_OUT, fill: "backwards" },
     );
-    d.querySelectorAll<HTMLElement>(".wl-view__close").forEach((b) =>
+    d.querySelectorAll<HTMLElement>(".wl-view__close, .wl-view__nav").forEach((b) =>
       b.animate([{ opacity: 0 }, { opacity: 1 }], {
         duration: 300,
         delay: 160,
@@ -278,7 +278,7 @@ export default function WildlifeGallery({ hero, rows, sequence }: Props) {
       easing: "ease-out",
       fill: "forwards",
     });
-    [cap, ...d.querySelectorAll<HTMLElement>(".wl-view__close")].forEach((el) =>
+    [cap, ...d.querySelectorAll<HTMLElement>(".wl-view__close, .wl-view__nav")].forEach((el) =>
       el.animate([{ opacity: getComputedStyle(el).opacity }, { opacity: 0 }], {
         duration: 140,
         easing: "ease-out",
@@ -586,23 +586,24 @@ export default function WildlifeGallery({ hero, rows, sequence }: Props) {
                         {p.caption}
                       </p>
                     </div>
-                    <div className="wl-view__nav">
-                      <button type="button" className="wl-btn" onClick={() => go(-1)} aria-label="Previous photograph">
-                        <Arrow dir="prev" />
-                      </button>
-                      <span className="wl-view__count">
-                        <span className="visually-hidden">Photograph </span>
-                        {view! + 1}
-                        <span aria-hidden="true"> / </span>
-                        <span className="visually-hidden"> of </span>
-                        {n}
-                      </span>
-                      <button type="button" className="wl-btn" onClick={() => go(1)} aria-label="Next photograph">
-                        <Arrow dir="next" />
-                      </button>
-                    </div>
                   </figcaption>
                 </figure>
+              </div>
+              {/* fixed in one place for every photograph, whatever its caption */}
+              <div className="wl-view__nav">
+                <button type="button" className="wl-btn" onClick={() => go(-1)} aria-label="Previous photograph">
+                  <Arrow dir="prev" />
+                </button>
+                <span className="wl-view__count">
+                  <span className="visually-hidden">Photograph </span>
+                  {view! + 1}
+                  <span aria-hidden="true"> / </span>
+                  <span className="visually-hidden"> of </span>
+                  {n}
+                </span>
+                <button type="button" className="wl-btn" onClick={() => go(1)} aria-label="Next photograph">
+                  <Arrow dir="next" />
+                </button>
               </div>
               <button type="button" className="wl-btn wl-view__close" ref={closeRef} onClick={close} aria-label="Close">
                 <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">

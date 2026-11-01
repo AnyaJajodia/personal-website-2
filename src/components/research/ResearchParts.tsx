@@ -4,7 +4,6 @@ import SiteFooter from "@/components/SiteFooter";
 import DetailLine from "@/components/DetailLine";
 import WorkPager from "@/components/WorkPager";
 import AvatarStage from "@/components/AvatarStage";
-import WorkDrawer from "@/components/WorkDrawer";
 import OnThisPage, { type TocItem } from "@/components/OnThisPage";
 import { companion, type Paper, type Publication, type Link as LinkT } from "@/content/research";
 import "../case/case.css";
@@ -233,7 +232,7 @@ export function ResearchShell({ slug, accent, sections, hero, children }: { slug
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <SiteHeader variant="detail" workMenu={<WorkDrawer current={slug} />} />
+      <SiteHeader variant="detail" drawer={slug} />
       <DetailLine theme="default" />
       <main id="main" className="detail__main">
         {hero}

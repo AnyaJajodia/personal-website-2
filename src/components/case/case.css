@@ -96,9 +96,12 @@
 /* title + facts side by side; the facts rest on the subtitle's last line */
 .case-hero__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(15rem, 20rem);
+  /* the facts sit beside the headline they describe, not out at the far
+     edge of a wide screen */
+  grid-template-columns: minmax(0, 40rem) minmax(15rem, 20rem);
+  justify-content: start;
   align-items: end;
-  gap: clamp(2rem, 5vw, 5.5rem);
+  gap: clamp(2rem, 6vw, 6rem);
 }
 @media (max-width: 759.98px) {
   .case-hero__grid {

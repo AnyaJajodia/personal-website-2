@@ -2,18 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cloneElement, isValidElement, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { nav, person } from "@/content/site";
 import ThemeToggle from "@/components/ThemeToggle";
+import WorkDrawer from "@/components/WorkDrawer";
 
 type Props = {
   /** home: anchors scroll in-page and the name appears once the hero name recedes */
   variant: "home" | "detail";
   /** Start dark (Lynxster opening). Switches to light once the dark band has scrolled under the header. */
   darkUntilSelector?: string;
-  /** detail pages: the "Now" and "Work" items each open this drawer (WorkDrawer),
-   * given its `part`, instead of linking home */
-  workMenu?: React.ReactNode;
+  /** detail pages: the "Now" and "Work" items each open a drawer (WorkDrawer)
+   * instead of linking home; this is the slug of the page you are on ("" for
+   * a page outside the work list). The header renders the drawers itself, so
+   * no element crosses the server/client boundary. */
+  drawer?: string;
 };
 
 /** "Anya Jajodia" → "AJ": the brand on the narrowest phones (see globals.css "header") */
@@ -22,7 +25,7 @@ const initials = person.name
   .map((w) => w[0])
   .join("");
 
-export default function SiteHeader({ variant, darkUntilSelector, workMenu }: Props) {
+export default function SiteHeader({ variant, darkUntilSelector, drawer }: Props) {
   const ref = useRef<HTMLElement>(null);
   const [settled, setSettled] = useState(variant === "detail");
   const [dark, setDark] = useState(Boolean(darkUntilSelector));
@@ -99,10 +102,10 @@ export default function SiteHeader({ variant, darkUntilSelector, workMenu }: Pro
                   </li>
                 );
               const part = item.hash === "now" ? "now" : item.hash === "selected-work" ? "work" : null;
-              if (part && isValidElement<{ part?: "now" | "work" }>(workMenu))
+              if (part && drawer !== undefined)
                 return (
                   <li key={item.hash} data-current={current ? "true" : undefined}>
-                    {cloneElement(workMenu, { part })}
+                    <WorkDrawer current={drawer} part={part} />
                   </li>
                 );
               return (

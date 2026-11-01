@@ -15,6 +15,7 @@ export default function EspPage() {
     <ColumbiaShell
       slug={e.slug}
       hero={<Hero name={e.name} dates={e.facts[1].value} title={e.title} subtitle={e.subtitle} facts={e.facts} />}
+      sections={[e.what, e.path, s, e.values].map((x) => ({ id: x.id, label: x.heading }))}
     >
       <Section id={e.what.id} heading={e.what.heading}>
         <p className="cu-lead">{e.what.paragraphs[0]}</p>

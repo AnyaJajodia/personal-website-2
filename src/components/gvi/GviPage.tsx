@@ -5,7 +5,6 @@ import DetailLine from "@/components/DetailLine";
 import WorkPager from "@/components/WorkPager";
 import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
-import WorkDrawer from "@/components/WorkDrawer";
 import OnThisPage from "@/components/OnThisPage";
 import PhotoSlot from "./PhotoSlot";
 import ThemeLogo from "@/components/ThemeLogo";
@@ -34,7 +33,7 @@ export default function GviPage() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <SiteHeader variant="detail" workMenu={<WorkDrawer current="gvi-conservation" />} />
+      <SiteHeader variant="detail" drawer="gvi-conservation" />
       <DetailLine theme="default" />
       <main id="main" className="detail__main">
         {/* ------------------------------------------------------ opening */}
@@ -43,7 +42,7 @@ export default function GviPage() {
             <nav aria-label="Breadcrumb" className="breadcrumb label" data-line="crumb">
               <Link href="/#selected-work">Work</Link>
               <span aria-hidden="true"> / </span>
-              <span aria-current="page">{g.name}</span>
+              <span aria-current="page">Conservation fieldwork</span>
             </nav>
             <div className="case-hero__grid gvi-hero__grid">
               <div className="gvi-hero__main">

@@ -5,8 +5,8 @@ import SiteFooter from "@/components/SiteFooter";
 import DetailLine from "@/components/DetailLine";
 import WorkPager from "@/components/WorkPager";
 import AvatarStage from "@/components/AvatarStage";
-import WorkDrawer from "@/components/WorkDrawer";
 import ThemeLogo from "@/components/ThemeLogo";
+import OnThisPage, { type TocItem } from "@/components/OnThisPage";
 import { COLUMBIA_WORDMARK, ADI_MARK } from "@/content/columbia";
 import "../case/case.css";
 import "./columbia.css";
@@ -89,21 +89,37 @@ export function Hero({ name, dates, title, subtitle, facts, adi = false }: { nam
 }
 
 /**
- * The Columbia pages are short (four or five sections), so they skip the
- * case-study rail: one reading column, aligned with the opening, no sticky
- * "On this page" index.
+ * The Columbia pages share the case studies' reading layout: the sticky "On
+ * this page" rail on the left and the reading column beside it, so moving
+ * between projects never shifts where the text starts. They are short, so
+ * the index is short too.
  */
-export function ColumbiaShell({ slug, hero, children }: { slug: string; hero: React.ReactNode; children: React.ReactNode }) {
+export function ColumbiaShell({
+  slug,
+  hero,
+  sections,
+  children,
+}: {
+  slug: string;
+  hero: React.ReactNode;
+  sections: TocItem[];
+  children: React.ReactNode;
+}) {
   return (
     <div className="detail theme-default theme-columbia" data-line-root>
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <SiteHeader variant="detail" workMenu={<WorkDrawer current={slug} />} />
+      <SiteHeader variant="detail" drawer={slug} />
       <DetailLine theme="default" />
       <main id="main" className="detail__main">
         {hero}
-        <div className="container">
+        <div className="container case-layout">
+          <div className="case-rail">
+            <div className="case-rail__inner">
+              <OnThisPage items={sections} />
+            </div>
+          </div>
           <div className="case-content cu-content">{children}</div>
         </div>
         <WorkPager slug={slug} />

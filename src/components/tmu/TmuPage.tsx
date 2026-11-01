@@ -6,7 +6,6 @@ import DetailLine from "@/components/DetailLine";
 import WorkPager from "@/components/WorkPager";
 import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
-import WorkDrawer from "@/components/WorkDrawer";
 import OnThisPage from "@/components/OnThisPage";
 import Walkthrough from "./Walkthrough";
 import { tmu, tmuSections, walkthrough, reviewRows, bibliographyExample, ILLUSTRATIVE_LABEL } from "@/content/tmu";
@@ -79,7 +78,7 @@ export default function TmuPage() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <SiteHeader variant="detail" workMenu={<WorkDrawer current="tmu-citation-tooling" />} />
+      <SiteHeader variant="detail" drawer="tmu-citation-tooling" />
       <DetailLine theme="default" />
       <main id="main" className="detail__main">
         {/* ------------------------------------------------------ opening */}
@@ -88,7 +87,7 @@ export default function TmuPage() {
             <nav aria-label="Breadcrumb" className="breadcrumb label" data-line="crumb">
               <Link href="/#selected-work">Work</Link>
               <span aria-hidden="true"> / </span>
-              <span aria-current="page">Research tooling</span>
+              <span aria-current="page">Citation tooling</span>
             </nav>
             <div className="tmu-hero__grid">
               <div className="tmu-hero__main">

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import "./WorkDrawer.css";
 import { drawerSelected, nowEntries, nowLabels, workLabels, type DrawerEntry, type NowEntry } from "@/content/work-index";
@@ -30,11 +30,15 @@ import Vignette from "./ContentsVignettes";
  * closes (the cancel event, after the exit plays), Tab wraps, ↑/↓ and
  * Home/End move between entries, focus starts on this page's entry and
  * returns to the trigger, background scroll is locked without a shift, and a
- * click outside the paper (the scrim, or the header strip above it) closes.
+ * click outside the paper closes. The dialog covers the header too, so a
+ * click on the header strip is passed through to the control beneath it:
+ * this drawer's own item closes it (a toggle), the other drawer's item
+ * swaps to that drawer, and any other link or button is followed once the
+ * paper has rolled up. Opening again while it rolls up simply reopens it.
  *
- * Motion (WorkDrawer.css): the paper unrolls behind a soft-edged mask; the
- * entries ink in one after another and the pencil sketches draw themselves;
- * last, the pen circles where you are. It rolls back up, faster, to close.
+ * Motion (WorkDrawer.css): the paper unrolls behind a clip; the entries ink
+ * in with it and the pencil sketches draw themselves; last, the pen circles
+ * where you are. It rolls back up the same way, a little quicker, to close.
  * Under reduced motion it fades and everything is simply there.
  */
 
@@ -162,9 +166,11 @@ function Row({ e, current, pick }: { e: Numbered; current: string; pick: Pick })
 /** Now: one notebook page per commitment */
 function NowPage({ e, k, current, pick }: { e: NowEntry; k: number; current: string; pick: Pick }) {
   const isHere = e.slug === current;
+  // on one of its projects' pages (AMNH's), the notebook page is inked too
+  const within = isHere || current.startsWith(`${e.slug}/`);
   const id = `now-${e.key}`;
   return (
-    <article className="now__page" data-v={e.key} data-here={isHere ? "" : undefined} style={stagger(k + 1)} aria-labelledby={id}>
+    <article className="now__page" data-v={e.key} data-here={within ? "" : undefined} style={stagger(k + 1)} aria-labelledby={id}>
       <div className="now__art">
         <Vignette v={e.key} />
       </div>
@@ -185,22 +191,33 @@ function NowPage({ e, k, current, pick }: { e: NowEntry; k: number; current: str
       </p>
       <p className="now__line">{e.line}</p>
       {e.links ? (
-        <ul className="now__roles" aria-label={`${e.name}: its two roles`}>
-          {e.links.map((l, j) => (
-            <li key={l.hash ?? l.slug}>
-              <Link href={`/work/${l.slug}${l.hash ? `#${l.hash}` : ""}`} className="contents__sub" data-sheet-item onClick={pick(false)}>
-                <span className="contents__letter" aria-hidden="true">
-                  {letter(j)}
-                </span>
-                <span className="contents__sub-text">
-                  {l.label}
-                  {l.detail ? <span className="contents__sub-detail"> · {l.detail}</span> : null}
-                </span>
-              </Link>
-            </li>
-          ))}
+        <ul className="now__roles" aria-label={`${e.name}: its projects`}>
+          {e.links.map((l, j) => {
+            const onPage = l.slug === current;
+            return (
+              <li key={l.hash ?? l.slug}>
+                <Link
+                  href={`/work/${l.slug}${l.hash ? `#${l.hash}` : ""}`}
+                  className="contents__sub"
+                  data-sheet-item
+                  aria-current={onPage ? "page" : undefined}
+                  onClick={pick(onPage)}
+                >
+                  <span className="contents__letter" aria-hidden="true">
+                    {letter(j)}
+                    {onPage ? ring : null}
+                  </span>
+                  <span className="contents__sub-text">
+                    {l.label}
+                    {l.detail ? <span className="contents__sub-detail"> · {l.detail}</span> : null}
+                    {onPage ? here : null}
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
-      ) : (
+      ) : isHere ? null : (
         <p className="now__cta" aria-hidden="true">
           {e.cta} <span>→</span>
         </p>
@@ -209,32 +226,33 @@ function NowPage({ e, k, current, pick }: { e: NowEntry; k: number; current: str
   );
 }
 
-const noop = () => () => {};
-
 // Work: one numbering in reading order; `i` counts every row for the stagger
 const WORK = drawerSelected.map((e, k) => ({ ...e, n: k + 1, i: k + 1 }));
 const stagger = (i: number) => ({ "--i": i }) as React.CSSProperties;
 
 type Part = "now" | "work";
 const PART = {
-  now: { label: "Now", aria: "Now: what I’m working on", title: nowLabels.title, desc: nowLabels.heading, home: "/#now" },
-  work: { label: "Work", aria: "Work: browse selected work", title: workLabels.title, desc: workLabels.heading, home: "/#selected-work" },
+  now: { label: "Now", aria: "Now: what I’m working on", title: nowLabels.title, desc: nowLabels.heading, home: "/#now", back: "See them on the homepage" },
+  work: { label: "Work", aria: "Work: browse selected work", title: workLabels.title, desc: workLabels.heading, home: "/#selected-work", back: "See them on the homepage" },
 } as const;
 
 export default function WorkDrawer({ current, part = "work" }: { current: string; part?: Part }) {
   const P = PART[part];
   const sheetId = `${part}-sheet`;
-  // the sheet is rendered into the page wrapper once hydrated, outside the header's
-  // navigation landmark (the trigger lives in the nav; the list does not)
-  const mounted = useSyncExternalStore(
-    noop,
-    () => true,
-    () => false,
-  );
   const dialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
   const closing = useRef(false);
+  const closeTimer = useRef(0);
+  // the sheet is rendered into this page's own wrapper once mounted, outside
+  // the header's navigation landmark (the trigger lives in the nav; the list
+  // does not), so it inherits the page's accent and tones. It is found from
+  // the trigger, after mount: during a page transition the outgoing page is
+  // still in the document, and a global lookup would find that one instead.
+  const [host, setHost] = useState<HTMLElement | null>(null);
+  useLayoutEffect(() => {
+    setHost(trigger.current?.closest<HTMLElement>(".detail") ?? document.body);
+  }, []);
 
 
   const unlock = () => {
@@ -243,29 +261,28 @@ export default function WorkDrawer({ current, part = "work" }: { current: string
     root.style.removeProperty("--sheet-scrollbar");
   };
 
-  const finishClose = useCallback((restore: boolean) => {
+  const finishClose = useCallback((restore: boolean, then?: () => void) => {
     const d = dialog.current;
     closing.current = false;
+    window.clearTimeout(closeTimer.current);
     if (d?.open) d.close();
-    if (d) {
-      delete d.dataset.state;
-      delete d.dataset.settled;
-    }
+    if (d) delete d.dataset.state;
     unlock();
     setOpen(false);
     if (restore) trigger.current?.focus({ preventScroll: true });
+    then?.();
   }, []);
 
   const close = useCallback(
-    (restore = true) => {
+    (restore = true, then?: () => void) => {
       const d = dialog.current;
       if (!d?.open || closing.current) return;
       closing.current = true;
       d.dataset.state = "closing";
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const ms = reduced ? 0 : parseFloat(getComputedStyle(d).getPropertyValue("--sheet-out")) || 0;
-      if (ms === 0) return finishClose(restore);
-      window.setTimeout(() => finishClose(restore), ms);
+      if (ms === 0) return finishClose(restore, then);
+      closeTimer.current = window.setTimeout(() => finishClose(restore, then), ms);
     },
     [finishClose],
   );
@@ -278,9 +295,18 @@ export default function WorkDrawer({ current, part = "work" }: { current: string
     } else close(false);
   };
 
-  const show = () => {
+  const show = useCallback(() => {
     const d = dialog.current;
-    if (!d || d.open) return;
+    if (!d) return;
+    // still rolling up: unroll it again from where it is
+    if (closing.current) {
+      window.clearTimeout(closeTimer.current);
+      closing.current = false;
+      d.dataset.state = "open";
+      setOpen(true);
+      return;
+    }
+    if (d.open) return;
     const root = document.documentElement;
     // the paper hangs from the header's lower edge, wherever the header is
     const header = document.querySelector<HTMLElement>(".site-header");
@@ -289,7 +315,6 @@ export default function WorkDrawer({ current, part = "work" }: { current: string
     // keep the page from shifting when its scrollbar disappears
     root.style.setProperty("--sheet-scrollbar", `${window.innerWidth - root.clientWidth}px`);
     root.dataset.sheetOpen = "true";
-    delete d.dataset.settled;
     d.dataset.state = "open";
     d.showModal();
     setOpen(true);
@@ -303,7 +328,7 @@ export default function WorkDrawer({ current, part = "work" }: { current: string
       const b = body.getBoundingClientRect();
       if (r.bottom > b.bottom - 24) body.scrollTop += r.bottom - b.bottom + b.height / 3;
     }
-  };
+  }, []);
 
   useEffect(() => {
     const d = dialog.current;
@@ -312,14 +337,19 @@ export default function WorkDrawer({ current, part = "work" }: { current: string
       e.preventDefault(); // play the exit, then close
       close();
     };
-    // a click outside the paper: the scrim, or the header strip above it
+    // a click outside the paper: the scrim, or the header strip above it. On
+    // the header, find the control under the pointer (the page is inert
+    // behind the dialog, so it never receives the click itself).
     const onClick = (e: MouseEvent) => {
       const t = e.target as HTMLElement;
-      if (t === d || t.classList.contains("sheet__scrim")) close();
-    };
-    // the unroll is done: drop the mask so scrolling the list stays cheap
-    const onEnd = (e: AnimationEvent) => {
-      if (e.animationName === "sheet-unroll" && d.dataset.state === "open") d.dataset.settled = "true";
+      if (t !== d && !t.classList.contains("sheet__scrim")) return;
+      const under = Array.from(document.querySelectorAll<HTMLElement>(".site-header :is(a[href], button)")).find((el) => {
+        const r = el.getBoundingClientRect();
+        return r.width > 0 && e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+      });
+      if (!under) return close();
+      if (under === trigger.current) return closing.current ? show() : close();
+      close(false, () => under.click());
     };
     const onKey = (e: KeyboardEvent) => {
       // Tab wraps inside the sheet (a modal dialog alone lets focus out to the browser's own controls)
@@ -348,15 +378,13 @@ export default function WorkDrawer({ current, part = "work" }: { current: string
     d.addEventListener("cancel", onCancel);
     d.addEventListener("click", onClick);
     d.addEventListener("keydown", onKey);
-    d.addEventListener("animationend", onEnd);
     return () => {
       d.removeEventListener("cancel", onCancel);
       d.removeEventListener("click", onClick);
       d.removeEventListener("keydown", onKey);
-      d.removeEventListener("animationend", onEnd);
       unlock(); // leaving the page with the sheet open
     };
-  }, [close, mounted]);
+  }, [close, show, host]);
 
   return (
     <>
@@ -370,7 +398,7 @@ export default function WorkDrawer({ current, part = "work" }: { current: string
         aria-expanded={open}
         aria-controls={sheetId}
         aria-label={P.aria}
-        onClick={show}
+        onClick={() => (open ? close() : show())}
       >
         <span className="site-nav__label">{P.label}</span>
         <svg className="site-nav__chev" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
@@ -378,7 +406,7 @@ export default function WorkDrawer({ current, part = "work" }: { current: string
         </svg>
       </button>
 
-      {mounted
+      {host
         ? createPortal(
             <dialog
               ref={dialog}
@@ -417,7 +445,7 @@ export default function WorkDrawer({ current, part = "work" }: { current: string
                         ))}
                       </div>
                       <Link href={P.home} className="sheet__overview" data-sheet-item onClick={pick(false)} style={stagger(3)}>
-                        <span aria-hidden="true">←</span> Back to work overview
+                        <span aria-hidden="true">←</span> {P.back}
                       </Link>
                     </nav>
                   ) : (
@@ -428,7 +456,7 @@ export default function WorkDrawer({ current, part = "work" }: { current: string
                         ))}
                       </ol>
                       <Link href={P.home} className="sheet__overview" data-sheet-item onClick={pick(false)} style={stagger(WORK.length + 1)}>
-                        <span aria-hidden="true">←</span> Back to work overview
+                        <span aria-hidden="true">←</span> {P.back}
                       </Link>
                     </nav>
                   )}
@@ -437,7 +465,7 @@ export default function WorkDrawer({ current, part = "work" }: { current: string
             </dialog>,
             // inside the page's theme wrapper, so the sheet inherits its accent
             // and tones (a modal dialog renders in the top layer regardless)
-            document.querySelector(".detail") ?? document.body,
+            host,
           )
         : null}
     </>

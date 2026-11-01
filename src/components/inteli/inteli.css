@@ -370,3 +370,14 @@
     font-size: 0.875rem;
   }
 }
+
+/* at night the light Jupyter reconstruction is dimmed into the page, so it
+   reads as a screen in a dark room rather than a white slab */
+:root[data-theme="dark"] .il-figure__img {
+  filter: brightness(0.8);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .il-figure__img {
+    filter: brightness(0.8);
+  }
+}

@@ -13,6 +13,7 @@ export default function AdiPage() {
     <ColumbiaShell
       slug={a.slug}
       hero={<Hero name={a.name} dates={a.facts[1].value} title={a.title} subtitle={a.subtitle} facts={a.facts} adi />}
+      sections={[a.what, a.themes, a.beyond].map((x) => ({ id: x.id, label: x.heading }))}
     >
       <Section id={a.what.id} heading={a.what.heading} className="cu-what">
         <p className="cu-lead">{a.what.paragraphs[0]}</p>

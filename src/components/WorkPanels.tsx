@@ -22,13 +22,16 @@ import type { SelectedRow } from "@/content/site";
  * night page as deep paper of the same hues with cream ink. These are
  * portfolio colours, not official brand tokens.
  *
- * Every identifier uses the same three layers:
+ * Every identifier uses the same three layers, the same in every panel:
  *   1. the panel surface;
- *   2. a small square container whose BACKGROUND alone is translucent (light
- *      paper, or charcoal behind Crackd's yellow symbol so it stays visible);
+ *   2. a small square tile that follows the theme: translucent light paper by
+ *      day, a deeper well of the panel's own colour at night;
  *   3. the logo artwork, fully opaque, on its own transparent background.
- * Logos are the supplied files, unaltered (Crackd and Buzzworks use their
- * compact `-minimal` symbols). Each is sized by its VISIBLE artwork: `art` is
+ * Where a mark would vanish on one theme's tile it carries a variant for it:
+ * `dark` is the supplied light-on-dark file (GVI, Columbia), and `ink`
+ * redraws a one-colour mark in a deeper shade of its own hue (Crackd's yellow
+ * as a deep gold on the light tile, ≥5:1). Crackd and Buzzworks use their
+ * compact `-minimal` symbols. Each is sized by its VISIBLE artwork: `art` is
  * the share of the image height the artwork occupies and `size` the target
  * visible height, so padded symbols and full-bleed marks match optically.
  */
@@ -43,17 +46,21 @@ type Logo =
       art: number;
       /** target visible artwork height, px */
       size: number;
+      /** the supplied light-on-dark file, used on the night tile */
+      dark?: string;
+      /** a one-colour mark redrawn in this colour on the light tile */
+      ink?: string;
     }
   | { kind: "mark"; mark: "lens" | "pages" | "mentor" };
 
-type Look = { key: string; tone: string; logo: Logo; backing?: "dark" };
+type Look = { key: string; tone: string; logo: Logo };
 
 const LOOKS: Record<string, Look> = {
   "crackd-ai": {
     key: "crackd",
     tone: "#f8d74d",
-    backing: "dark",
-    logo: { kind: "img", src: "/logos/crackd-minimal.png", w: 148, h: 178, art: 156 / 178, size: 30 },
+    // its yellow symbol in a deep gold on the light tile; as supplied at night
+    logo: { kind: "img", src: "/logos/crackd-minimal.png", w: 148, h: 178, art: 156 / 178, size: 30, ink: "#7a5a00" },
   },
   buzzworks: {
     key: "buzzworks",
@@ -69,16 +76,22 @@ const LOOKS: Record<string, Look> = {
   "gvi-conservation": {
     key: "gvi",
     tone: "#a5bdb0",
-    logo: { kind: "img", src: "/logos/gvi.webp", w: 300, h: 237, art: 1, size: 25 },
+    logo: { kind: "img", src: "/logos/gvi.webp", w: 300, h: 237, art: 1, size: 25, dark: "/logos/gvi-white.png" },
   },
   "pmmy-research": { key: "pubs", tone: "#d3a1ad", logo: { kind: "mark", mark: "pages" } },
-  // the Columbia crown, in the same translucent tile as every other card;
-  // the tile stays light paper in both themes, so its deep-blue artwork is
-  // the legible variant in both.
+  // the Columbia crown: deep blue by day, its light-blue variant at night
   "esp-teaching": {
     key: "teaching",
     tone: "#b0b9da",
-    logo: { kind: "img", src: "/logos/columbia-crown-light.png", w: 300, h: 300, art: 239 / 300, size: 29 },
+    logo: {
+      kind: "img",
+      src: "/logos/columbia-crown-light.png",
+      dark: "/logos/columbia-crown-dark.png",
+      w: 300,
+      h: 300,
+      art: 239 / 300,
+      size: 29,
+    },
   },
 };
 
@@ -109,25 +122,49 @@ const MARKS = {
   ),
 };
 
-function LogoBlock({ logo, backing }: { logo: Logo; backing?: "dark" }) {
-  return (
-    <span className={`panel__logo${backing ? ` panel__logo--${backing}` : ""}`} aria-hidden="true">
-      {logo.kind === "mark" ? (
+function LogoBlock({ logo }: { logo: Logo }) {
+  if (logo.kind === "mark")
+    return (
+      <span className="panel__logo" aria-hidden="true">
         <svg viewBox="0 0 40 40" focusable="false">
           <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
             {MARKS[logo.mark]}
           </g>
         </svg>
+      </span>
+    );
+  const h = Math.round(logo.size / logo.art);
+  const w = Math.round((h * logo.w) / logo.h);
+  const img = (src: string, theme?: "light" | "dark") => (
+    <Image
+      src={src}
+      alt=""
+      width={logo.w}
+      height={logo.h}
+      unoptimized
+      loading="eager"
+      className={theme ? `panel__art panel__art--${theme}` : "panel__art"}
+      style={{ height: h, width: "auto" }}
+    />
+  );
+  return (
+    <span className="panel__logo" aria-hidden="true">
+      {logo.ink ? (
+        <>
+          {/* the same artwork as a mask, filled with the deeper ink */}
+          <span
+            className="panel__art panel__art--light panel__ink"
+            style={{ width: w, height: h, backgroundColor: logo.ink, "--mark": `url(${logo.src})` } as React.CSSProperties}
+          />
+          {img(logo.src, "dark")}
+        </>
+      ) : logo.dark ? (
+        <>
+          {img(logo.src, "light")}
+          {img(logo.dark, "dark")}
+        </>
       ) : (
-        <Image
-          src={logo.src}
-          alt=""
-          width={logo.w}
-          height={logo.h}
-          unoptimized
-          loading="eager"
-          style={{ height: Math.round(logo.size / logo.art), width: "auto" }}
-        />
+        img(logo.src)
       )}
     </span>
   );
@@ -147,7 +184,7 @@ function Panel({ row, size }: { row: SelectedRow; size: string }) {
   // university or country the logo already shows) stays in the heading for AT
   const head = (
     <span className="panel__head">
-      <LogoBlock logo={look.logo} backing={look.backing} />
+      <LogoBlock logo={look.logo} />
       <span className="panel__label">
         <span className="panel__name" role="heading" aria-level={3}>
           <span aria-hidden={showFull || undefined}>{short}</span>

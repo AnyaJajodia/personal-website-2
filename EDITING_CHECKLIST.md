@@ -13,7 +13,7 @@ Per your request, uncertain end dates show **2027** in the preview. Replace with
 | Page | Shown now | What to confirm |
 |------|-----------|-----------------|
 | Lynxster | 2026–2027 | End date; start month (not verified); formal title (currently "Engineering & technical leadership") |
-| AMNH | 2026–2027 | End date; start month |
+| AMNH | 2026–present | Resolved by amnh.md (31 Oct 2026); start month still to confirm |
 | Crackd.ai | September 2025–May 2026 | Resolved by crackd-ai.md (25 Oct 2026) |
 | Buzzworks | May 2025–May 2026 | Resolved by buzzworks.md (25 Oct 2026) |
 | TMU research tooling | 2025 | Shown as "2025" (tmu-citation-tooling.md). The end month, September or October 2025, is still to be settled |
@@ -23,11 +23,13 @@ Per your request, uncertain end dates show **2027** in the preview. Replace with
 
 Confirmed and unchanged: ESP Jan 2024–Dec 2024; both publications 2022.
 
-### AMNH mantis research (added 21 Oct 2026)
-The research is described only as joining. The homepage now reads "Mantis behavioral trials & research — Details to come." (home.md, 25 Oct 2026); the detail page reads "I’ve joined a mantis behavioral research project at the museum." followed by a note that the details will be added once confirmed. All of this is in `src/content/work.ts` → `amnh.streams` and `src/content/site.ts` → `currently.features[1].streams`.
-- [ ] The research question, methods, your responsibilities and any outcomes (then delete the `pending` note)
-- [ ] Whether it sits in Invertebrate Zoology: the page eyebrow currently names only that department
-- [ ] Whether the AMNH subtitle ("Digitizing dragonfly records…") and "What I’m exploring" ("not an established research project") still read correctly next to the new workstream
+### AMNH behavioral research (revised 31 Oct 2026)
+AMNH is now three pages (`src/content/amnh.ts`): the overview `/work/amnh`, `/work/amnh/diode` and `/work/amnh/behavioral-research`. The research page carries only the supplied placeholder copy ("joining… investigating feeding behavior"). Before expanding it, confirm (per amnh-behavioral-research.md):
+- [ ] Organism identity, scientific name and public terminology ("mantis" is kept out of titles, routes and the homepage until then; the About paragraph in `site.ts` still mentions "mantis behavioral research" in your own words, so check it reads as you want)
+- [ ] Project title and research question approved for public description
+- [ ] Supervisor's name, role and attribution; your tasks, role label and start date
+- [ ] Methods, setup, images that may be shared, status, credits
+- [ ] DIODE: the BugBase developer credit, if you'd like one shown (none is invented)
 
 ### Homepage dates and roles now differ from the detail pages (25 Oct 2026)
 The homepage takes its roles and dates from the revised `handoff/content/home.md` (`site.ts` → `currently.features[].role/period`, `selectedWork.rows[].date`). The detail pages were deliberately not rewritten in this pass, so `work.ts` still shows the older values. Reconcile them in the detail-page pass:
@@ -66,9 +68,7 @@ The homepage takes its roles and dates from the revised `handoff/content/home.md
 | Placeholder | Where | Needed |
 |-------------|-------|--------|
 | Lynxster application screenshot | `/work/lynxster` (dark frame "Application screenshot · To be selected") | Pick a screenshot, crop the browser chrome, and replace or redact identifying demo data (e.g. "Smoke Test Law Firm", hashes, the DEV bar in the supplied references). The reference screenshots were deliberately **not** copied into `public/`. Implement in `ScreenshotFrame` (`src/components/Figures.tsx`) |
-| AMNH Plate 1 — archival dragonfly record | `/work/amnh` | Original photograph |
-| AMNH Plate 2 — 3D-printed digitization rig | `/work/amnh` | Original photograph |
-| AMNH Plate 3 — mantis behavioral research | `/work/amnh` (Mantis behavioral research section) | Original photograph |
+| DIODE illustrations | `/work/amnh/diode`, homepage AMNH preview, `/work/amnh` | Supplied and integrated 31 Oct 2026 (`public/assets/amnh/diode/`). Still to confirm: public-use permission for the specimen images and the BugBase screen recreations; the corresponding label image for AMNH_IZC 00560622 (the review view shows an empty card thumbnail); an optional rehousing photograph |
 | GVI fieldwork photograph | `/work/gvi-conservation` | Original photograph |
 | Logos (supplied) | `public/logos/` ← `handoff/assets/logos/` | AMNH, Crackd, Buzzworks, TMU and GVI are now used. Runtime copies have transparent margins trimmed (some downscaled); the originals are untouched. Check each organisation's brand guidelines (clear space, approved backgrounds) before publishing |
 | Lynxster product crop | `public/work/lynxster-funnel.webp` (Currently) | Cropped from your reference `lynxster-light-dashboard.png`: the Disclosure funnel card only, with no browser chrome, names or hashes. It shows demo data from that screenshot; swap it for an approved product image before publishing |

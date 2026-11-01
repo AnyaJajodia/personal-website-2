@@ -367,6 +367,10 @@
   color: var(--text);
   overscroll-behavior: contain;
 }
+.wl-view {
+  --wl-pad-t: clamp(4.25rem, 9vh, 5.5rem);
+  --wl-pad-b: clamp(1rem, 3.5vh, 2.25rem);
+}
 .wl-view::backdrop {
   background: transparent;
 }
@@ -383,8 +387,6 @@
   inset: 0;
   display: grid;
   place-items: center;
-  --wl-pad-t: clamp(4.25rem, 9vh, 5.5rem);
-  --wl-pad-b: clamp(1rem, 3.5vh, 2.25rem);
   padding: var(--wl-pad-t) 0 var(--wl-pad-b);
   overflow-y: auto; /* a last resort on very short screens */
   cursor: zoom-out;
@@ -437,15 +439,14 @@
   opacity: 1;
 }
 
-/* one fixed, centred row for every photograph: 60% of the screen wide, equal
-   space either side; the words on the left, the arrows on the right */
+/* the caption row ends where the arrows are pinned (20% in from the right);
+   it starts at 20% in from the left, or further out to line up with a wider
+   photograph's left edge — never further in */
 .wl-view__cap {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.75rem 2rem;
-  width: 60%;
-  margin-inline: auto;
+  width: auto;
+  margin-left: min(20%, (100% - var(--fw)) / 2);
+  margin-right: 20%;
+  padding-right: 11rem;
   cursor: auto;
 }
 .wl-view__text {
@@ -478,13 +479,19 @@
   text-wrap: pretty;
 }
 .wl-view__nav {
+  /* pinned where a one-line caption puts them (the lowest they ever sat),
+     at the caption row's right edge, so they never move between photographs */
+  --wl-cap-1: calc(clamp(1.5rem, 2.4vw, 1.9rem) * 1.1 + 0.35rem + 0.9875rem * 1.55);
+  position: absolute;
+  right: 20%;
+  bottom: calc(var(--wl-pad-b) + var(--wl-cap-1) - 2.75rem);
+  z-index: 1;
   display: flex;
-  flex: none;
   align-items: center;
   gap: 0.35rem;
 }
 .wl-view__count {
-  min-width: 4.5ch;
+  min-width: 7ch;
   font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
   text-align: center;
@@ -589,18 +596,19 @@
   }
 }
 @media (max-width: 639.98px) {
-  /* the caption takes the full width; the arrows follow on their own line */
+  /* the caption takes the full width, keeping a line free below it; the
+     arrows sit in the bottom corner for every photograph */
   .wl-view__cap {
-    flex-wrap: wrap;
     width: auto;
     margin-inline: 0.75rem;
+    padding: 0 0 calc(2.75rem + 0.75rem);
   }
   .wl-view__text {
-    flex: 1 1 100%;
     max-width: none;
   }
   .wl-view__nav {
-    margin-left: auto;
+    right: 0.75rem;
+    bottom: max(var(--wl-pad-b), env(safe-area-inset-bottom));
   }
 }
 @media (max-width: 599.98px) {

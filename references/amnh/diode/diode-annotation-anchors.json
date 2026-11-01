@@ -1,0 +1,76 @@
+{
+  "units": "percent of the artwork width/height (x, y)",
+  "markers": {
+    "1_camera": [
+      25.1,
+      24.9
+    ],
+    "2_lighting": [
+      19.8,
+      19.4
+    ],
+    "3_prepared_tray": [
+      31.4,
+      70.0
+    ],
+    "4_laptop": [
+      67.7,
+      56.8
+    ],
+    "5_waiting_specimens": [
+      74.0,
+      86.1
+    ]
+  },
+  "zoom_boxes": {
+    "tray": {
+      "x0": 18.0,
+      "y0": 56.1,
+      "x1": 45.1,
+      "y1": 78.8
+    },
+    "screen": {
+      "x0": 59.6,
+      "y0": 51.4,
+      "x1": 75.5,
+      "y1": 66.8
+    }
+  },
+  "tray_photo_markers": {
+    "note": "now refer to diode-tray-position-recreation (1640x2000)",
+    "1_label_card": [
+      50,
+      28
+    ],
+    "2_identifier": [
+      86.6,
+      3.6
+    ],
+    "3_specimen": [
+      38,
+      63
+    ],
+    "4_colour_target": [
+      66.6,
+      59.3
+    ],
+    "5_scale": [
+      90,
+      84
+    ]
+  },
+  "exported_image_markers": {
+    "1_identifier": [
+      21,
+      9.4
+    ],
+    "2_colour_target": [
+      82,
+      17
+    ],
+    "3_scale": [
+      95,
+      67
+    ]
+  }
+}
