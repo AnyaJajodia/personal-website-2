@@ -1,0 +1,80 @@
+<svg class="rig chae" xmlns="http://www.w3.org/2000/svg" viewBox="-247.1 -472.6 607.7 703.2"><style>
+.rig { --ink:#2b2723; --hair:#2b272399; --paper:var(--plate, #f8f3ee); --grid:#cfc7b8;
+  --mat:#dcd6cb; --rail:#4a4741; --railf:#3b3934; --raill:#5a564f; --stand:#34322e; --standf:#2a2825; --standl:#45423d;
+  --cam:#3f3d39; --camf:#33312e; --caml:#4d4a45; --lens:#2c2a27; --bracket:#8a857c; --panel:#3a3834; --lit:#fffbea;
+  --ctrl:#c2beb6; --ctrlf:#b2aea6; --lap:#d8d6d1; --lapf:#c8c6c0; --lid:#cfcdc8; --screen:#5d86b8; --win:#f6f4f0; --winbar:#e4e1db; --winprev:#d9d3c2; --winbtn:#c7d4ea;
+  --trayb:#bcb8b0; --traybf:#aaa69e; --card:#f1e7d0; --plat:#cfccc5; --target:#2b2723; --scale:#f6f4f0; --bug:#8b5a2b;
+  --green:#3fb950; --blue:#2f4fd0; --env:#efe2c4; --motor:#55524d; --cable:#2b2723; --usb:#2f4fd0; }
+:root[data-theme="dark"] .rig:not(.light), .rig.dark { --ink:#e9e3d6; --hair:#e9e3d6aa; --paper:var(--plate, #1b1d1a); --grid:#2f322c;
+  --mat:#1e201c; --rail:#3a3c37; --railf:#2e302b; --raill:#464943; --stand:#43453f; --standf:#363833; --standl:#50534c;
+  --cam:#4a4c46; --camf:#3c3e39; --caml:#575a53; --lens:#30322d; --bracket:#77796f; --panel:#40423c; --lit:#fff3cf;
+  --ctrl:#5a5c56; --ctrlf:#4c4e48; --lap:#5f615b; --lapf:#51534d; --lid:#555750; --screen:#2c4a72; --win:#d9d6cf; --winbar:#b9b6af; --winprev:#8f8a7c; --winbtn:#90b0e8;
+  --trayb:#56585a; --traybf:#47494b; --card:#d9cdb3; --plat:#7c7a74; --target:#151714; --scale:#e9e3d6; --bug:#c88a4e;
+  --green:#4fcf63; --blue:#5f7ff0; --env:#cdbf9f; --motor:#5c5e58; --cable:#c9c3b6; --usb:#90b0e8; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .rig:not(.light) { --ink:#e9e3d6; --hair:#e9e3d6aa; --paper:var(--plate, #1b1d1a); --grid:#2f322c;
+  --mat:#1e201c; --rail:#3a3c37; --railf:#2e302b; --raill:#464943; --stand:#43453f; --standf:#363833; --standl:#50534c;
+  --cam:#4a4c46; --camf:#3c3e39; --caml:#575a53; --lens:#30322d; --bracket:#77796f; --panel:#40423c; --lit:#fff3cf;
+  --ctrl:#5a5c56; --ctrlf:#4c4e48; --lap:#5f615b; --lapf:#51534d; --lid:#555750; --screen:#2c4a72; --win:#d9d6cf; --winbar:#b9b6af; --winprev:#8f8a7c; --winbtn:#90b0e8;
+  --trayb:#56585a; --traybf:#47494b; --card:#d9cdb3; --plat:#7c7a74; --target:#151714; --scale:#e9e3d6; --bug:#c88a4e;
+  --green:#4fcf63; --blue:#5f7ff0; --env:#cdbf9f; --motor:#5c5e58; --cable:#c9c3b6; --usb:#90b0e8; } }
+.rig path { stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; stroke-linecap: round; fill: var(--paper); }
+.rig .grid { stroke: var(--grid); stroke-width: .7; fill: none; }
+.rig .mat { fill: var(--mat); }
+.rig .rail { fill: var(--rail); } .rig .rail.f { fill: var(--railf); } .rig .rail.l { fill: var(--raill); }
+.rig .motor, .rig .motor.f, .rig .motor.l { fill: var(--motor); }
+.rig .stand { fill: var(--stand); } .rig .stand.f { fill: var(--standf); } .rig .stand.l { fill: var(--standl); }
+.rig .cam { fill: var(--cam); } .rig .cam.f { fill: var(--camf); } .rig .cam.l { fill: var(--caml); }
+.rig .lens, .rig .lens.cy { fill: var(--lens); stroke-width:.5; } .rig .lensend { fill: var(--lens); }
+.rig .bracket, .rig .bracket.f, .rig .bracket.l { fill: var(--bracket); }
+.rig .panel { fill: var(--panel); } .rig .panel.lit { fill: var(--lit); }
+.rig .fin { stroke: #8a857c; stroke-width: .6; fill: none; }
+.rig .arm { stroke-width: 1.6; fill: none; }
+.rig .knob { fill: var(--stand); stroke-width:.6; }
+.rig .bug.faint { opacity:.6; }
+.rig .ctrl { fill: var(--ctrl); } .rig .ctrl.f, .rig .ctrl.l { fill: var(--ctrlf); }
+.rig .lap { fill: var(--lap); } .rig .lap.f, .rig .lap.l { fill: var(--lapf); }
+.rig .keys { fill: var(--lapf); stroke-width: .6; } .rig .pad { fill: var(--lap); stroke-width: .6; }
+.rig .lid { fill: var(--lid); } .rig .screen { fill: var(--screen); }
+.rig .win { fill: var(--win); stroke-width: .5; } .rig .winbar { fill: var(--winbar); stroke: none; }
+.rig .winpanel { fill: var(--winbar); stroke: none; } .rig .winprev { fill: var(--winprev); stroke: none; } .rig .winbtn { fill: var(--winbtn); stroke: none; }
+.rig .trayb { fill: var(--trayb); } .rig .trayb.f, .rig .trayb.l { fill: var(--traybf); }
+.rig .card { fill: var(--card); stroke-width: .6; } .rig .cardlab { fill: var(--scale); stroke-width: .4; } .rig .code { fill: var(--ink); stroke: none; }
+.rig .frame.g { fill: var(--green); stroke-width: .6; } .rig .frame.b { fill: var(--blue); stroke-width: .6; }
+.rig .plat { fill: var(--plat); stroke-width: .4; }
+.rig .target { fill: var(--target); stroke: none; } .rig .scale { fill: var(--scale); stroke-width: .4; }
+.rig .bug { stroke: var(--bug); stroke-width: 1.6; fill: none; } .rig .bugw { stroke: var(--bug); stroke-width: .6; fill: color-mix(in srgb, var(--bug) 25%, transparent); }
+.rig .env { fill: var(--env); stroke-width: .5; opacity: .92; }
+.rig .cable { stroke: var(--cable); stroke-width: 1.2; fill: none; } .rig .cable.thin { stroke-width: .8; }
+.rig .cable.usb { stroke: var(--usb); stroke-width: 1.6; }
+/* line-only style: neutral fills, keep tray accents + lit panel */
+.rig.line path:not(.frame):not(.lit):not(.card):not(.env):not(.screen):not(.grid):not(.code):not(.target):not(.bugw):not(.bug):not(.cable):not(.fin):not(.arm) { fill: var(--paper); }
+.rig.line .screen { fill: color-mix(in srgb, var(--usb) 22%, var(--paper)); }
+.rig.line .target { fill: var(--ink); }
+.rig.line .fin { stroke: var(--ink); }
+
+.rig { --basec:#cfccc5; --fgrid:#cfc7b8; --twig:#7d6a54; --twigd:#4f4234; --mbody:#bb9c70; --mbody2:#8e6d49; --mhead:#a4825a; --mspot:#7a5c40; --meye:#4a3a28; --glass:#c9dbe8; --glassop:.22; --glassfront:.12; --page:#f3ead6; --rule:#cdbf9f; --mark:#0038a8; --trace:#0038a8; --cover:#5b6472; --leaf:#8c9a6a; --scr:#d3d8d2; }
+:root[data-theme="dark"] .rig:not(.light), .rig.dark { --basec:#262824; --fgrid:#3f423b; --twig:#b09372; --twigd:#6b5640; --mbody:#c9a676; --mbody2:#a27c52; --mhead:#b88f62; --mspot:#7b5e40; --meye:#3a2d20; --glass:#b9cde2; --glassop:.035; --glassfront:.015; --page:#d9cdb3; --rule:#a79a7e; --mark:#90b0e8; --trace:#90b0e8; --cover:#3e434b; --leaf:#8f9d6c; --scr:#3a413f; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .rig:not(.light) { --basec:#262824; --fgrid:#3f423b; --twig:#b09372; --twigd:#6b5640; --mbody:#c9a676; --mbody2:#a27c52; --mhead:#b88f62; --mspot:#7b5e40; --meye:#3a2d20; --glass:#b9cde2; --glassop:.035; --glassfront:.015; --page:#d9cdb3; --rule:#a79a7e; --mark:#90b0e8; --trace:#90b0e8; --cover:#3e434b; --leaf:#8f9d6c; --scr:#3a413f; } }
+.rig .twigo { fill:none; stroke:var(--ink); stroke-linecap:round; stroke-linejoin:round; }
+.rig .twigf { fill:none; stroke:var(--twig); stroke-linecap:round; stroke-linejoin:round; }
+.rig .nick { fill:none; stroke:var(--twigd) !important; stroke-width:.8 !important; }
+.rig .glass, .rig .glass.l { fill:var(--glass); fill-opacity:var(--glassop); stroke:var(--ink); stroke-width:1; }
+.rig .glass.f { fill:var(--glass); fill-opacity:var(--glassfront); stroke:var(--ink); stroke-width:1; }
+.rig .gline { fill:none; stroke:#fff !important; stroke-opacity:.5; stroke-width:1.2 !important; }
+.rig .base { fill:var(--basec); } .rig .base.f, .rig .base.l { fill:var(--basec); filter:brightness(.9); }
+.rig .page { fill:var(--page); stroke-width:.8; } .rig .ruled { fill:none; stroke:var(--rule) !important; stroke-width:.6 !important; }
+.rig .cover, .rig .cover.f, .rig .cover.l { fill:var(--cover); }
+.rig .leaf { fill:var(--leaf); stroke-width:.9; } .rig .leafv { fill:none; stroke:var(--twigd) !important; stroke-width:.6 !important; }
+.rig .mantis path, .rig .mantis circle, .rig .mantis ellipse { stroke:var(--ink); stroke-linecap:round; stroke-linejoin:round; }
+.rig .mantis .mbody { fill:var(--mbody); } .rig .mantis .mbody2 { fill:var(--mbody2); } .rig .mantis .mhead { fill:var(--mhead); } .rig .mantis .meye { fill:var(--meye); }
+.rig .mantis .mspot { fill:var(--mspot); stroke:none !important; opacity:.5; }
+.rig .mantis .mband path { stroke:var(--mspot) !important; } .rig .mantis .mbands path { stroke:var(--mspot) !important; fill:none; }
+.rig .mantis .mvein, .rig .mantis .mleg, .rig .mantis .mant { fill:none; }
+.rig .mantis .mvein { stroke:var(--mspot); } .rig .mantis .far { opacity:.45; }
+.rig .mantis .mk { fill:var(--plate,#f8f3ee); stroke:var(--mark); }
+.rig .mantis.sketch .mbody, .rig .mantis.sketch .mbody2, .rig .mantis.sketch .meye, .rig .mantis.sketch .mhead { fill:none; } .rig .mantis.sketch .mspots, .rig .mantis.sketch .mbands { display:none; } .rig .mantis.sketch path, .rig .mantis.sketch circle { stroke:#3a3430; opacity:.85; }
+.rig .trace { fill:none; stroke:var(--trace) !important; stroke-width:1.6 !important; stroke-dasharray:3 5; }
+.rig .tdot { fill:var(--trace); stroke:none; }
+.rig .floorgrid { fill:none; stroke:var(--fgrid) !important; stroke-width:.6 !important; }
+.rig .scr { fill:var(--scr); } .rig .frame2 { fill:var(--win); stroke-width:.6; }
+</style><g data-part="base"><path class="base" d="M-192.8 210.0 L352.6 146.2 L239.0 -23.0 L-239.1 25.4 Z"/><path class="base l" d="M-192.2 222.6 L-238.4 36.8 L-239.1 25.4 L-192.8 210.0 Z"/><path class="base f" d="M-192.2 222.6 L351.6 158.5 L352.6 146.2 L-192.8 210.0 Z"/></g><g data-part="gback"><path class="glass l" d="M-217.0 32.7 L226.5 -12.5 L238.7 -238.1 L-229.1 -199.5 Z"/><path class="glass l" d="M-173.5 195.2 L-217.0 32.7 L-229.1 -199.5 L-184.6 -59.5 Z"/><path class="glass" d="M-173.5 195.2 L324.8 137.5 L226.5 -12.5 L-217.0 32.7 Z"/></g><g data-part="leaf"><path class="leaf" d="M228.2 -158.9 L234.4 -165.8 L240.7 -173.6 L245.7 -181.0 L248.8 -187.9 L249.6 -194.2 L248.2 -199.9 L244.8 -205.0 L240.0 -209.8 L235.3 -213.8 L229.2 -208.8 L223.0 -203.1 L218.1 -197.2 L215.1 -191.2 L214.3 -184.9 L215.7 -178.5 L218.9 -171.8 L223.5 -164.9 Z"/><path class="leafv" d="M228.2 -158.9 L235.3 -213.8"/></g><g data-part="leaf"><path class="leaf" d="M148.9 -69.3 L156.8 -75.8 L165.3 -83.2 L172.5 -90.5 L177.9 -97.5 L181.3 -104.2 L182.7 -110.5 L182.4 -116.6 L180.7 -122.5 L178.8 -127.6 L171.0 -123.0 L162.7 -117.7 L155.7 -112.1 L150.3 -106.0 L146.9 -99.3 L145.4 -92.2 L145.6 -84.5 L147.1 -76.5 Z"/><path class="leafv" d="M148.9 -69.3 L178.8 -127.6"/></g><g data-part="twig"><path class="twigo" d="M-158.4 156.6 L-144.8 144.8 L-131.3 133.1 L-117.8 121.6 L-104.4 110.4 L-91.1 99.4 L-77.8 88.6 L-64.6 78.0 L-51.4 67.7 L-38.4 57.5 L-25.3 47.5 L-12.4 37.8 L0.5 28.2 L13.4 18.8 L26.1 9.7 L38.9 0.7 L51.5 -8.1 L64.2 -16.7 L76.7 -25.1 L89.2 -33.3 L102.3 -47.6 L115.1 -60.7 L127.5 -72.9 L139.5 -84.1 L151.1 -94.5 L162.3 -104.2 L173.1 -113.2 L183.4 -121.7 L193.3 -129.7 L202.7 -137.3 L211.7 -144.7 L220.2 -151.9 L228.2 -158.9" style="stroke-width:8.3"/><path class="twigf" d="M-158.4 156.6 L-144.8 144.8 L-131.3 133.1 L-117.8 121.6 L-104.4 110.4 L-91.1 99.4 L-77.8 88.6 L-64.6 78.0 L-51.4 67.7 L-38.4 57.5 L-25.3 47.5 L-12.4 37.8 L0.5 28.2 L13.4 18.8 L26.1 9.7 L38.9 0.7 L51.5 -8.1 L64.2 -16.7 L76.7 -25.1 L89.2 -33.3 L102.3 -47.6 L115.1 -60.7 L127.5 -72.9 L139.5 -84.1 L151.1 -94.5 L162.3 -104.2 L173.1 -113.2 L183.4 -121.7 L193.3 -129.7 L202.7 -137.3 L211.7 -144.7 L220.2 -151.9 L228.2 -158.9" style="stroke-width:6.5"/><path class="nick" d="M-117.8 121.6L-111.1 114.5"/><path class="nick" d="M-25.3 47.5L-18.9 41.1"/><path class="nick" d="M64.2 -16.7L70.4 -22.4"/><path class="nick" d="M151.1 -94.5L156.7 -100.8"/></g><g data-part="twig2"><path class="twigo" d="M89.2 -33.3 L100.8 -42.4 L113.0 -50.1 L125.6 -56.6 L138.7 -62.2 L152.1 -66.9 L165.7 -71.0 L179.4 -74.5 L193.3 -77.7 L207.1 -80.8 L220.7 -83.8 L234.2 -87.1 L247.4 -90.7 L260.2 -94.9" style="stroke-width:6.22"/><path class="twigf" d="M89.2 -33.3 L100.8 -42.4 L113.0 -50.1 L125.6 -56.6 L138.7 -62.2 L152.1 -66.9 L165.7 -71.0 L179.4 -74.5 L193.3 -77.7 L207.1 -80.8 L220.7 -83.8 L234.2 -87.1 L247.4 -90.7 L260.2 -94.9" style="stroke-width:4.42"/><path class="nick" d="M125.6 -56.6L132.2 -60.9"/><path class="nick" d="M220.7 -83.8L227.5 -86.9"/></g><g data-part="leaf"><path class="leaf" d="M62.1 12.4 L62.3 10.7 L62.9 8.8 L64.7 7.0 L67.8 5.2 L72.7 3.6 L79.2 2.1 L87.2 0.6 L96.2 -0.7 L104.6 -1.9 L104.3 -2.0 L103.4 -1.9 L101.6 -1.4 L98.3 -0.4 L93.4 1.2 L87.0 3.5 L79.1 6.3 L70.3 9.5 Z"/><path class="leafv" d="M62.1 12.4 L104.6 -1.9"/></g><g data-part="mantis"><g class="mantis" transform="matrix(-0.7916 0.6057 0.0081 0.9363 80.42 -41.44)"><path class="mleg far" d="M112 -22L118 -2L106 8M150 -22L202 0L232 8" stroke-width="1.273" style="stroke-width:1.273"/><path class="mant" d="M36 -57C70 -118 190 -142 336 -112M42 -55C70 -128 150 -170 270 -176" stroke-width="0.926" style="stroke-width:0.926"/><path class="mbody" d="M84 -56C130 -66 204 -60 254 -42C263 -36 259 -26 248 -23C196 -14 136 -16 86 -26Z" stroke-width="1.273" style="stroke-width:1.273"/><g class="mspots"><ellipse class="mspot" cx="110" cy="-46" rx="5" ry="2"/><ellipse class="mspot" cx="132" cy="-52" rx="4" ry="1.6"/><ellipse class="mspot" cx="150" cy="-40" rx="6" ry="2.2"/><ellipse class="mspot" cx="172" cy="-50" rx="4" ry="1.6"/><ellipse class="mspot" cx="196" cy="-44" rx="5" ry="2"/><ellipse class="mspot" cx="224" cy="-36" rx="4" ry="1.6"/><ellipse class="mspot" cx="122" cy="-30" rx="3.5" ry="1.5"/><ellipse class="mspot" cx="184" cy="-30" rx="5" ry="1.8"/><ellipse class="mspot" cx="238" cy="-30" rx="3" ry="1.4"/><ellipse class="mspot" cx="208" cy="-54" rx="3" ry="1.3"/><ellipse class="mspot" cx="160" cy="-56" rx="3" ry="1.2"/><ellipse class="mspot" cx="140" cy="-34" rx="3" ry="1.3"/></g><path class="mvein" d="M92 -48C146 -54 206 -48 248 -36M98 -37C150 -40 200 -36 236 -28M140 -60L150 -20" stroke-width="0.695" style="stroke-width:0.695"/><path class="mbody2" d="M44 -51C56 -58 72 -58 84 -52L86 -28C74 -23 56 -23 46 -24Z" stroke-width="1.273" style="stroke-width:1.273"/><path class="mhead" d="M20 -58C10 -52 8 -38 16 -28L30 -14C40 -20 50 -34 48 -50C44 -60 30 -62 20 -58Z" stroke-width="1.273" style="stroke-width:1.273"/><circle class="meye" cx="30" cy="-47" r="10" stroke-width="1.158" style="stroke-width:1.158"/><path class="mleg" d="M28 -14L24 -4M32 -16L30 -6 M250 -26L282 -16M248 -23L276 -6" stroke-width="0.926" style="stroke-width:0.926"/><path class="mleg" d="M100 -22L95 -4L80 8 M132 -20L178 -4L210 8" stroke-width="1.505" style="stroke-width:1.505"/><g class="mbands" style="stroke-width:2.778"><path class="mband" d="M94 -12l6 -3"/><path class="mband" d="M153 -12l6 -3"/><path class="mband" d="M193 0l6 -3"/><path class="mband" d="M113 -8l6 -3"/></g><path class="mleg fore" d="M60 -26L30 6L-20 -40L8 -6" stroke-width="1.621" style="stroke-width:1.621"/><path class="mleg" d="M24.4 0.9l5 7.2 M18.9 -4.2l5 10.8 M13.3 -9.3l5 7.2 M7.8 -14.4l5 10.8 M2.2 -19.6l5 7.2 M-3.3 -24.7l5 10.8 M-8.9 -29.8l5 7.2 M-14.4 -34.9l5 10.8 M-15.3 -34.3l-7 3 M-10.7 -28.7l-7 3 M-6.0 -23.0l-7 3 M-1.3 -17.3l-7 3 M3.3 -11.7l-7 3" stroke-width="0.810" style="stroke-width:0.810"/></g></g><g data-part="leaf"><path class="leaf" d="M260.2 -94.9 L263.0 -96.7 L266.7 -98.8 L271.2 -101.0 L276.7 -103.2 L283.5 -105.4 L291.6 -107.6 L300.7 -109.8 L310.5 -111.9 L319.4 -113.8 L316.4 -114.4 L312.6 -114.7 L308.1 -114.4 L302.6 -113.2 L295.8 -111.0 L287.9 -107.9 L278.9 -103.8 L269.1 -99.2 Z"/><path class="leafv" d="M260.2 -94.9 L319.4 -113.8"/></g><g data-part="lid"><path class="glass f" d="M-229.1 -199.5 L238.7 -238.1 L303.5 -464.6 L-223.8 -431.3 Z"/></g><g data-part="gfront"><path class="glass f" d="M-173.5 195.2 L324.8 137.5 L344.6 -109.4 L-184.6 -59.5 Z"/><path class="glass f" d="M324.8 137.5 L226.5 -12.5 L238.7 -238.1 L344.6 -109.4 Z"/><path class="gline" d="M-136.0 -21.7 L-42.6 50.8"/><path class="gline" d="M-89.7 -33.2 L-27.9 15.6"/></g></svg>

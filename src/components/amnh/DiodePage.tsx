@@ -24,7 +24,7 @@ export default function DiodePage() {
     <AmnhShell
       drawer="amnh/diode"
       className="am-diode"
-      pager={<Pager slug="amnh/diode" sibling={{ href: AMNH_ROUTES.behavioral, title: "Behavioral research" }} />}
+      pager={<Pager slug="amnh/diode" sibling={{ href: AMNH_ROUTES.behavioral, title: "Chaeteessa · Behavioral research" }} />}
     >
       <Hero
         crumbs={[{ href: "/#now", label: "Work" }, { href: AMNH_ROUTES.overview, label: "AMNH" }, { label: "DIODE" }]}

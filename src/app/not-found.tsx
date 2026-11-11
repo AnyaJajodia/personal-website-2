@@ -4,7 +4,7 @@ import SiteFooter from "@/components/SiteFooter";
 
 export default function NotFound() {
   return (
-    <div className="detail theme-default">
+    <div className="detail detail--short theme-default">
       <SiteHeader variant="detail" />
       <main id="main" className="detail__main not-found">
         <div className="container">

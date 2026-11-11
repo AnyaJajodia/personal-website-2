@@ -5,12 +5,13 @@ import HomeScribble from "@/components/HomeScribble";
 import SiteFooter from "@/components/SiteFooter";
 import SmoothAnchors from "@/components/SmoothAnchors";
 import Image from "next/image";
-import AmnhCards from "@/components/amnh/AmnhCards";
+import { withGenus } from "@/components/amnh/genus";
 import { LynxsterMark } from "@/components/Logo";
 import { ContactList } from "@/components/ContactList";
 import WorkPanels from "@/components/WorkPanels";
-import MoreBento from "@/components/MoreBento";
-import LynxsterFloat from "@/components/lynxster/LynxsterFloat";
+import PhotoStack from "@/components/wildlife/PhotoStack";
+import { homepagePhotos } from "@/content/wildlife";
+import ThreadPreview from "@/components/ThreadPreview";
 import DotField from "@/components/DotField";
 import Avatar from "@/components/Avatar";
 import AvatarStage from "@/components/AvatarStage";
@@ -164,7 +165,7 @@ export default function Home() {
                 </span>
               </h2>
               <div className="features">
-                {/* stands on the AMNH card holding the thread up: the line runs into her fist */}
+                {/* stands above the AMNH preview holding the thread up: the line runs into her fist */}
                 <Avatar pose="untangling" role="untangling" enterAt={0.97} probes={{ fist: "untangle-fist", foot: "untangle-foot" }} />
                 {currently.features.map((f) => {
                   return (
@@ -172,12 +173,8 @@ export default function Home() {
                       {/* the preview also opens the page: a duplicate of the title link,
                           so it is skipped by keyboard and screen readers */}
                       <Link href={`/work/${f.slug}`} className="feature__visual" tabIndex={-1} aria-hidden="true">
-                        {f.slug === "lynxster" ? (
-                          <LynxsterFloat />
-                        ) : (
-                          // a collection card and a research page, overlapping
-                          <AmnhCards />
-                        )}
+                        {/* the mark drawn in thread over a scrap of its colour */}
+                        <ThreadPreview which={f.slug} caption={f.preview} />
                       </Link>
                       <div className="feature__body">
                         {/* caption line: the organisation's own mark is the heading, set
@@ -228,13 +225,13 @@ export default function Home() {
                                 {"href" in st && st.href ? (
                                   // a project with its own page (AMNH's two)
                                   <Link href={st.href} className="feature__stream-name feature__stream-link">
-                                    {st.name}
+                                    {withGenus(st.name)}
                                     <span aria-hidden="true"> →</span>
                                   </Link>
                                 ) : (
                                   <span className="feature__stream-name">{st.name}</span>
                                 )}
-                                <span className="feature__stream-text">{st.text}</span>
+                                <span className="feature__stream-text">{withGenus(st.text)}</span>
                               </li>
                             ))}
                           </ul>
@@ -282,16 +279,30 @@ export default function Home() {
         <section id="more" className="section more" data-line="more" aria-labelledby="more-heading">
           <div className="container">
             <SectionRule line="more-label" />
-            <div className="more__head">
-              <h2 className="section-heading" id="more-heading">
-                <span data-line="more-heading">
-                  <Marked text={more.heading} word="other" kind="highlight" />
-                </span>
-              </h2>
-              <p className="more__intro">{more.intro}</p>
+            {/* photography, why it matters to her, and three of the photographs */}
+            <div className="more__grid">
+              <div className="more__copy">
+                <h2 className="section-heading" id="more-heading">
+                  <span data-line="more-heading">
+                    <Marked text={more.heading} word="afield" kind="highlight" />
+                  </span>
+                </h2>
+                <div className="more__intro">
+                  {more.intro.map((t) => (
+                    <p key={t}>{t}</p>
+                  ))}
+                </div>
+                <p className="more__go">
+                  <Link href={more.cta.href} className="more__link">
+                    {more.cta.label}
+                    <span className="more__arrow" aria-hidden="true">
+                      →
+                    </span>
+                  </Link>
+                </p>
+              </div>
+              <PhotoStack photos={homepagePhotos} href={more.cta.href} label="Wildlife photography: open the gallery" />
             </div>
-            <MoreBento items={more.items} links={more.links} />
-            <p className="more__note">{more.note}</p>
           </div>
         </section>
 

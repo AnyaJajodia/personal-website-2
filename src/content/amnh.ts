@@ -4,10 +4,12 @@
  * Source: handoff/content/work/amnh.md, amnh-diode.md and
  * amnh-behavioral-research.md. Copy is the factual authority: keep it faithful,
  * add nothing those files don't say (their internal notes list what may not be
- * claimed — Anya did not design the rig or trays, did not develop BugBase, and
- * the behavioral research has not begun).
+ * claimed — Anya did not design the rig or trays, did not develop BugBase; the
+ * behavioral research is ongoing: no results, counts, protocols or novelty
+ * claims, and processing and analysis are still to come).
  *
- * The planned artwork for the DIODE walkthrough lives in amnh-assets.ts.
+ * The DIODE walkthrough's artwork lives in amnh-diode-art.ts; the behavioral
+ * research's drawings are in public/assets/amnh/behavioral/.
  */
 
 export type Fact = { label: string; value: string };
@@ -30,7 +32,7 @@ export const AMNH_LEGACY_ANCHORS: Record<string, string> = {
 export const amnhOverview = {
   name: "American Museum of Natural History",
   title: "Behind the collections. Into new questions.",
-  subtitle: "Collections digitization and emerging behavioral research in Invertebrate Zoology at the American Museum of Natural History.",
+  subtitle: "Collections digitization and behavioral research in Invertebrate Zoology at the American Museum of Natural History.",
   facts: [
     { label: "Role", value: "Volunteer" },
     { label: "Period", value: "2026–present" },
@@ -40,7 +42,7 @@ export const amnhOverview = {
   threads: {
     heading: "Two threads at the museum",
     intro:
-      "Beyond its public galleries, AMNH is a place of scientific collections and ongoing research. I volunteer in Jessica Ware’s lab, where my work is beginning to span both: helping digitize dragonfly specimens and joining a behavioral research project.",
+      "Beyond its public galleries, AMNH is a place of scientific collections and ongoing research. I volunteer in Jessica Ware’s lab, where my work spans both: helping digitize dragonfly specimens and contributing to an ongoing behavioral study of Chaeteessa mantises.",
     projects: [
       {
         key: "diode",
@@ -52,8 +54,8 @@ export const amnhOverview = {
       {
         key: "behavioral",
         href: AMNH_ROUTES.behavioral,
-        title: "Behavioral research",
-        text: "I’m joining a project investigating feeding behavior. More on the research and my contribution once the work begins.",
+        title: "Chaeteessa · Behavioral research",
+        text: "I’m contributing to an ongoing study of feeding behavior in Chaeteessa mantises, from building filming enclosures and helping run behavioral trials to data collection and, subsequently, processing and analysis.",
         cta: "Explore behavioral research",
       },
     ],
@@ -64,7 +66,7 @@ export const amnhOverview = {
       "I came to the museum wanting to spend more time with questions about animals and their behavior. Working with the collections has given me another way into those questions—and a closer look at the care and tools behind the records researchers use.",
     ],
   },
-  description: "Collections digitization and emerging behavioral research in Invertebrate Zoology at the American Museum of Natural History.",
+  description: "Collections digitization and behavioral research in Invertebrate Zoology at the American Museum of Natural History.",
 };
 
 /* ---------------------------------------------------------------- DIODE */
@@ -138,12 +140,49 @@ export const diode = {
 };
 
 /* ---------------------------------------------------- behavioral research */
+/* Source: handoff/content/work/amnh-behavioral-research.md. "I" for Anya's
+   part, "we" for the team's; processing and analysis are future work. The
+   genus is set in italics where it renders (components/amnh/genus.tsx). */
 
 export const behavioral = {
-  name: "Behavioral research",
-  title: "A new set of questions.",
-  lead: "I’m joining a behavioral research project in Invertebrate Zoology at the American Museum of Natural History, investigating feeding behavior.",
-  note: "More on the research and my contribution soon.",
-  back: "Back to my work at AMNH",
-  description: "Joining a behavioral research project in Invertebrate Zoology at the American Museum of Natural History, investigating feeding behavior.",
+  name: "Chaeteessa · Behavioral research",
+  title: "Chaeteessa · Behavioral research",
+  status: "Ongoing",
+  lead: "Feeding behavior in a genus of mantises whose behavior remains poorly understood, studied through behavioral trials and extended video observation.",
+  facts: [
+    { label: "Institution", value: "American Museum of Natural History" },
+    { label: "Lab", value: "Jessica Ware’s lab · Invertebrate Zoology" },
+    { label: "Working with", value: "Lohitashwa Garikipati, Ph.D. student in Comparative Biology" },
+  ] satisfies Fact[],
+  sections: [
+    {
+      id: "the-study",
+      heading: "The study",
+      paragraphs: [
+        "At AMNH, I’m working with Lohitashwa Garikipati in Jessica Ware’s lab on an ongoing study of feeding behavior in Chaeteessa mantises collected in Guyana. Through behavioral trials and extended video observations, the project explores a genus whose behavior remains poorly understood.",
+      ],
+    },
+    {
+      id: "my-contribution",
+      heading: "My contribution",
+      paragraphs: [
+        "My involvement spans the practical setup and the research process. I’m building enclosures for behavioral filming and helping develop and run trials, record observations, and collect data. As data collection progresses, I’ll also help process and analyze the recordings and the resulting data.",
+      ],
+    },
+    {
+      id: "where-it-stands",
+      heading: "Where it stands",
+      paragraphs: [
+        "Alongside the feeding study, we’re conducting mating observations to document more of these animals’ behavior. The work is ongoing, with further trials and data collection planned over the coming months.",
+      ],
+    },
+  ] satisfies Prose[],
+  /* the page's one illustration (components/amnh/Enclosures.tsx): repeated
+     observation in general, not the study's protocol or its number of
+     enclosures, and the mantis is stylized, not a drawn specimen */
+  art: {
+    caption: "Illustrative behavioral observation setup.",
+    alt: "Illustration of three closed, transparent enclosures in a row, each holding a forked twig, a few leaves and a stylized mantis resting on the twig.",
+  },
+  description: "An ongoing study of feeding behavior in Chaeteessa mantises in Jessica Ware’s lab at the American Museum of Natural History.",
 };

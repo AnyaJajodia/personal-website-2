@@ -91,11 +91,11 @@ export const work: WorkEntry[] = [
     name: "AMNH",
     theme: "amnh",
     title: "Behind the collections. Into new questions.",
-    subtitle: "Collections digitization and emerging behavioral research in Invertebrate Zoology at the American Museum of Natural History.",
+    subtitle: "Collections digitization and behavioral research in Invertebrate Zoology at the American Museum of Natural History.",
     role: { label: "Role", value: "Volunteer" },
     period: { label: "Period", start: "2026", end: "present" },
     sections: [],
-    description: "Collections digitization and emerging behavioral research in Invertebrate Zoology at the American Museum of Natural History.",
+    description: "Collections digitization and behavioral research in Invertebrate Zoology at the American Museum of Natural History.",
   },
   {
     // The Crackd page has its own layout and full copy (content/crackd.ts, from

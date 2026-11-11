@@ -2,7 +2,7 @@
 
 ## Behind the collections. Into new questions.
 
-Collections digitization and emerging behavioral research in Invertebrate Zoology at the American Museum of Natural History.
+Collections digitization and behavioral research in Invertebrate Zoology at the American Museum of Natural History.
 
 **Role:** Volunteer  
 **Period:** 2026–present  
@@ -11,7 +11,7 @@ Collections digitization and emerging behavioral research in Invertebrate Zoolog
 
 ## Two threads at the museum
 
-Beyond its public galleries, AMNH is a place of scientific collections and ongoing research. I volunteer in Jessica Ware’s lab, where my work is beginning to span both: helping digitize dragonfly specimens and joining a behavioral research project.
+Beyond its public galleries, AMNH is a place of scientific collections and ongoing research. I volunteer in Jessica Ware’s lab, where my work spans both: helping digitize dragonfly specimens and contributing to an ongoing behavioral study of *Chaeteessa* mantises.
 
 ### DIODE · Collections digitization
 
@@ -19,9 +19,9 @@ I prepare specimens and their collection labels for imaging, operate the existin
 
 **Explore collections digitization ↗**
 
-### Behavioral research
+### *Chaeteessa* · Behavioral research
 
-I’m joining a project investigating feeding behavior. More on the research and my contribution once the work begins.
+I’m contributing to an ongoing study of feeding behavior in *Chaeteessa* mantises, from building filming enclosures and helping run behavioral trials to data collection and, subsequently, processing and analysis.
 
 **Explore behavioral research ↗**
 
@@ -50,9 +50,8 @@ Dr. Jessica L. Ware is Curator and Chair of Invertebrate Zoology.
 Keep project-specific supervisors and tool attribution on the relevant detail page.
 
 BEHAVIORAL RESEARCH
-The research has not yet begun for Anya at the time of this draft.
-Keep “joining” rather than implying completed trials or analysis.
-Organism identity and public project terminology require confirmation.
+Updated 10 Nov 2026: the research is ongoing (see amnh-behavioral-research.md).
+Processing and analysis are future work; do not imply results.
 Do not publish novelty claims, specimen counts, transport losses, experimental conditions or findings.
 
 VISUALS

@@ -53,7 +53,7 @@ const LOOKS: Record<string, { key: string; tone: string; logo: DrawerLogo; who?:
 // AMNH's two projects, each on its own page under the overview
 const amnhLinks: DrawerLink[] = [
   { slug: "amnh/diode", label: "DIODE", detail: "Collections digitization" },
-  { slug: "amnh/behavioral-research", label: "Behavioral research" },
+  { slug: "amnh/behavioral-research", label: "Chaeteessa", detail: "Behavioral research" },
 ];
 
 export const drawerSelected: DrawerEntry[] = selectedWork.rows.map((row) => {

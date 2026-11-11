@@ -41,7 +41,6 @@
   --grain: 0.32;
   --panel-dim: 0%; /* how far coloured panels sink into the page */
   --tape-blend: multiply;
-  --vf: #2b2723; /* viewfinder corners */
   --sheet-edge: transparent; /* the contact sheet's edge on dark plates */
   --logo-ink: #101412;
 
@@ -64,6 +63,8 @@
   --amnh-accent: #004bb4;
   --amnh-blue: #004bb4;
   --amnh-lime: #d7fa88;
+  /* the lime's own family, deepened to an olive that holds a link on paper */
+  --amnh-green: #4d6b12;
   --amnh-mark: #d7fa88;
 
   --serif: "Cormorant Garamond", "Cormorant", "EB Garamond", Garamond, "Times New Roman", serif;
@@ -111,7 +112,6 @@
   --grain: 0.12;
   --panel-dim: 10%;
   --tape-blend: normal;
-  --vf: #f2ebdd;
   --sheet-edge: rgba(242, 235, 221, 0.14);
   --logo-ink: #f2ebdd;
   --amnh-bg: #181918;
@@ -120,6 +120,7 @@
   --amnh-muted: #c3c1b8;
   --amnh-rule: #3a3b37;
   --amnh-accent: #9dbcf2; /* the AMNH blue, lifted for night (lime stays the mark colour) */
+  --amnh-green: #d7fa88;
   --amnh-mark: rgba(215, 250, 136, 0.9);
 }
 @media (prefers-color-scheme: dark) {
@@ -146,7 +147,6 @@
     --grain: 0.12;
     --panel-dim: 10%;
     --tape-blend: normal;
-    --vf: #f2ebdd;
     --sheet-edge: rgba(242, 235, 221, 0.14);
     --logo-ink: #f2ebdd;
     --amnh-bg: #181918;
@@ -155,6 +155,7 @@
     --amnh-muted: #c3c1b8;
     --amnh-rule: #3a3b37;
     --amnh-accent: #9dbcf2; /* the AMNH blue, lifted for night (lime stays the mark colour) */
+    --amnh-green: #d7fa88;
     --amnh-mark: rgba(215, 250, 136, 0.9);
   }
 }
@@ -397,10 +398,14 @@ ol {
 
 /* ------------------------------------------------------- the line (home) */
 
+/* fills its page (.home, which holds the footer) and no more: sized by the
+   page rather than by the document's scroll height, which it would itself
+   hold open — a page that grew once (a narrow load, a reflow) never shrank */
 .scribble {
   position: absolute;
-  inset: 0 0 auto 0;
+  inset: 0;
   width: 100%;
+  height: 100%;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
@@ -887,8 +892,8 @@ section[id],
 
 /* ------------------------------------------------------------ currently */
 
-/* two commitments, equal weight: a visual plate (real product / archival
-   drawing) above, the organisation's own mark as the heading below */
+/* two commitments, equal weight: a drawn preview above, the
+   organisation's own mark as the heading below */
 .features {
   margin-top: clamp(1.75rem, 3.5vw, 2.75rem);
   display: grid;
@@ -900,49 +905,17 @@ section[id],
   display: flex;
   flex-direction: column;
 }
-.feature--lynxster {
-  --plate: #ffffff;
-}
-.feature--amnh {
-  --plate: #ffffff;
-}
+/* the previews stand on the page (components/ThreadPreview): no plate,
+   edge or shadow; the box keeps the drawings' 16:9.5 frame, which the
+   homepage line and the untangler above it are measured from */
 .feature__visual {
   position: relative;
   aspect-ratio: 16 / 9.5;
-  overflow: hidden;
-  background: var(--plate);
-  border-radius: 2px;
-}
-/* Lynxster: the branded preview fills the plate (LynxsterFloat, Lynxster's
-   own white / near-black per theme). At night the near-black plate, darker
-   than the page, gets a faint paper edge so it reads as an object. */
-.feature--lynxster .feature__visual {
-  background: var(--plate);
-}
-:root[data-theme="dark"] .feature--lynxster {
-  --plate: #070909;
-  --plate-edge: rgb(242 235 221 / 0.1);
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) .feature--lynxster {
-    --plate: #070909;
-    --plate-edge: rgb(242 235 221 / 0.1);
-  }
-}
-/* AMNH: two overlapping cards (components/amnh/AmnhCards) on the same white
-   plate as Lynxster's by day, and a near-black one, edged, at night */
-:root[data-theme="dark"] .feature--amnh {
-  --plate: #070807;
-  --plate-edge: rgb(242 235 221 / 0.1);
 }
 :root[data-theme="dark"] .archive-card {
   filter: brightness(0.74) saturate(0.85);
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) .feature--amnh {
-    --plate: #070807;
-    --plate-edge: rgb(242 235 221 / 0.1);
-  }
   :root:not([data-theme]) .archive-card {
     filter: brightness(0.74) saturate(0.85);
   }
@@ -1506,22 +1479,166 @@ a.feature__visual {
 
 /* ----------------------------------------------------------------- more */
 
-.more__head {
+/* A little further afield: photography, in her words, beside two of the
+   photographs (components/wildlife/PhotoStack). The copy and the
+   arrangement share one row, centred on each other, so neither leaves a
+   column of empty page beside the other; below 900px they stack. */
+.more__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(1.5rem, 6vw, 6rem);
-  align-items: end;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  column-gap: clamp(2.5rem, 6vw, 6rem);
+  align-items: center;
 }
 .more__intro {
-  max-width: 40ch;
-  color: var(--muted);
+  max-width: 36rem;
+  margin-top: clamp(1.25rem, 2.2vw, 1.75rem);
+  color: var(--ink-2);
 }
-.more__note {
-  margin-top: 1.25rem;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 1.2rem;
-  color: var(--muted);
+.more__intro p {
+  margin: 0;
+}
+.more__intro p + p {
+  margin-top: 1em;
+}
+.more__go {
+  margin: 1.6rem 0 0;
+}
+.more__link {
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition: text-decoration-color 0.25s var(--ease);
+}
+.more__link:hover,
+.more__link:focus-visible {
+  text-decoration-color: currentColor;
+}
+.more__arrow {
+  display: inline-block;
+  margin-left: 0.45rem;
+  transition: transform 0.35s var(--ease);
+}
+.more__link:hover .more__arrow,
+.more__link:focus-visible .more__arrow {
+  transform: translateX(5px);
+}
+
+/* the photographs: the leading one in front, a little off-square, and one
+   set behind it to the upper left, enough of it showing to know it (the
+   jacana's bird stays clear of the lion). Positions are shares of the
+   arrangement, so it scales as one piece. By day the margin is a warm card
+   a shade deeper than the page, so each print reads as its own object. */
+.more__photos {
+  --mat: #e9e1d3;
+  --mat-edge: inset 0 0 0 1px rgb(var(--shade) / 0.06);
+  --mat-shadow: 0 1px 1px rgb(var(--shade) / 0.14), 0 6px 14px -10px rgb(var(--shade) / 0.45);
+  --out: cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  display: block;
+  aspect-ratio: 1.6;
+  color: inherit;
+  border-radius: 4px;
+}
+:root[data-theme="dark"] .more__photos {
+  --mat: #e6dfd2;
+  --mat-edge: none;
+  --mat-shadow: 0 1px 1px rgb(0 0 0 / 0.45), 0 8px 16px -10px rgb(0 0 0 / 0.7);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .more__photos {
+    --mat: #e6dfd2;
+    --mat-edge: none;
+    --mat-shadow: 0 1px 1px rgb(0 0 0 / 0.45), 0 8px 16px -10px rgb(0 0 0 / 0.7);
+  }
+}
+.more__photo {
+  position: absolute;
+  display: block;
+  padding: clamp(4px, 0.45vw, 6px);
+  background: var(--mat);
+  box-shadow: var(--mat-edge), var(--mat-shadow);
+  transition:
+    translate 0.7s var(--out),
+    rotate 0.7s var(--out),
+    scale 0.7s var(--out);
+}
+.more__photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--ar);
+  background: var(--tone);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+:root[data-theme="dark"] .more__photo img {
+  background: var(--tone-dark);
+}
+.more__photo--lead {
+  z-index: 2;
+  left: 31%;
+  top: 9%;
+  width: 67%;
+  rotate: 1.4deg;
+}
+.more__photo--behind {
+  z-index: 1;
+  left: 1%;
+  top: 2%;
+  width: 43%;
+  rotate: -4deg;
+  /* it grows out from under the lion, its tucked-in edge staying put */
+  transform-origin: 100% 60%;
+}
+/* on hover / focus, one calm movement for both: the one behind grows a
+   little, easing out from under the lion, and the front one lifts */
+.more__photos:is(:hover, :focus-visible) .more__photo--lead {
+  translate: 0 -1.5%;
+}
+.more__photos:is(:hover, :focus-visible) .more__photo--behind {
+  scale: 1.06;
+  rotate: -4.8deg;
+}
+.more__photos:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 12px;
+}
+@media (max-width: 899.98px) {
+  .more__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .more__photos {
+    width: min(100%, 36rem);
+    margin-top: clamp(2.25rem, 6vw, 3rem);
+    aspect-ratio: 1.35;
+  }
+  /* recomposed for a narrower column: the lead larger, the jacana's bird
+     still clear of it */
+  .more__photo--lead {
+    left: 31%;
+    top: 18%;
+    width: 68%;
+  }
+  .more__photo--behind {
+    left: 0;
+    width: 47%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .more__photo,
+  .more__arrow {
+    transition: none;
+  }
+  .more__photos:is(:hover, :focus-visible) .more__photo {
+    translate: none;
+    scale: none;
+  }
+  .more__photos:is(:hover, :focus-visible) .more__photo--behind {
+    rotate: -4deg;
+  }
 }
 
 /* More is a different material from the panels above: no cards, no frames.
@@ -1682,28 +1799,6 @@ a.feature__visual {
   fill: #b9ab98;
 }
 
-/* Wildlife photography: a mounted print — one of the photographs, whole, at
-   its own proportions (never cropped), inside an even paper border */
-.scene-photo {
-  padding: clamp(0.6rem, 1.1vw, 0.85rem);
-}
-.photo-preview {
-  position: relative;
-  width: 100%;
-  aspect-ratio: var(--ar);
-}
-.scene-photo .viewfinder {
-  inset: -0.45rem;
-}
-.photo-preview__img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: 1px;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
 /* Experiments: a slip of graph paper, nothing on it yet */
 .scene-graph {
   aspect-ratio: 5 / 4;
@@ -1739,9 +1834,6 @@ a.feature__visual {
   }
 }
 @media (max-width: 639.98px) {
-  .more__head {
-    grid-template-columns: 1fr;
-  }
   /* phones: the print leads, full width; the two pieces still to come sit
      side by side under it (only the print is a link, so focus order holds) */
   .bento {
@@ -1933,10 +2025,12 @@ a.contact-list__row:is(:hover, :focus-visible) .contact-list__meta {
   color: var(--text);
 }
 /* the same pen as the homepage's line (--line-w), in the page's own ink */
+/* fills its page (.detail, footer included), as the homepage's line does */
 .detail-line {
   position: absolute;
-  inset: 0 0 auto 0;
+  inset: 0;
   width: 100%;
+  height: 100%;
   z-index: 2;
   pointer-events: none;
   overflow: hidden;
@@ -2407,7 +2501,14 @@ a.contact-list__row:is(:hover, :focus-visible) .contact-list__meta {
 
 /* ------------------------------------------------------------ 404 page */
 
+/* shorter than the screen: the message takes the room, so the footer sits
+   at the foot of the window rather than above a strip of blank page */
+.detail--short {
+  display: flex;
+  flex-direction: column;
+}
 .not-found {
+  flex: 1;
   padding-block: calc(var(--header-h) + 6rem) 8rem;
 }
 .not-found .detail-hero__subtitle {
@@ -2748,7 +2849,7 @@ a.contact-list__row:is(:hover, :focus-visible) .contact-list__meta {
   }
 }
 
-/* 2. Two threads — on the AMNH card's top edge, the line running into her fist */
+/* 2. Two threads — above the AMNH preview, on the line, which runs into her fist */
 .features {
   position: relative;
 }
@@ -3041,60 +3142,16 @@ body::before {
   stroke-linecap: butt;
 }
 
-/* --- Currently: the plates are pinned in with washi tape. Paper on paper:
-   no ruled border, just a contact shadow — tight, offset down and to the
-   right as the page's other paper, with a modest blur (the free corner's
-   lift on hover is in the refinement pass) */
-.feature__visual {
-  border: 0;
-  box-shadow:
-    0 0 0 1px var(--plate-edge, transparent),
-    0 1px 1px rgb(var(--shade) / 0.08),
-    2px 4px 8px -3px rgb(var(--shade) / 0.16),
-    6px 12px 18px -14px rgb(var(--shade) / 0.24);
-  transition:
-    box-shadow 0.45s var(--ease),
-    transform 0.45s var(--ease);
-}
-/* two strips of the same quiet paper tape, one cut a little shorter: a cool
-   grey-sage for Lynxster's navy, an unbleached kraft for the archive card
-   (not the highlighter's yellow) */
-.feature {
-  --tape: rgba(186, 200, 192, 0.58);
-}
-.feature--amnh {
-  --tape: rgba(215, 250, 136, 0.72);
-}
-/* AMNH's card speaks in the museum's colours: its link in AMNH blue by day,
-   lime at night (outranks the dark theme's one-accent link rule) */
+/* AMNH's card speaks in the museum's green, as its preview's scrap does: an
+   olive by day, the lime at night (outranks the dark theme's one-accent
+   link rule) */
 :root .feature.feature--amnh .feature__cta {
-  color: var(--amnh-accent);
+  color: var(--amnh-green);
 }
 .feature--amnh:has(.feature__cta:focus-visible),
 .feature--amnh .feature__title-link:focus-visible {
-  outline-color: var(--amnh-accent);
+  outline-color: var(--amnh-green);
 }
-.feature::before {
-  content: "";
-  position: absolute;
-  z-index: 3;
-  top: -0.7rem;
-  left: 1.4rem;
-  width: 5.25rem;
-  height: 1.45rem;
-  pointer-events: none;
-  background: var(--tape);
-  mix-blend-mode: var(--tape-blend);
-  transform: rotate(-4deg);
-  /* torn ends */
-  clip-path: polygon(3% 0, 97% 4%, 100% 30%, 96% 55%, 100% 82%, 97% 100%, 2% 96%, 0 70%, 4% 45%, 0 18%);
-}
-.feature--amnh::before {
-  left: 2.2rem;
-  width: 4.75rem;
-  transform: rotate(3deg);
-}
-
 /* --- Selected work and More: their paper (edge, contact shadow, lift) lives
    in their own sections above */
 
@@ -3374,22 +3431,7 @@ body::before {
   }
 }
 
-/* --- taped previews: the free corner lifts (the taped one stays put), the
-   shadow follows it, and a pencilled arrow points back at the link */
-.feature__visual {
-  transform-origin: 0 0;
-  border-radius: 2px;
-}
-.feature:hover .feature__visual,
-.feature:has(.feature__cta:focus-visible) .feature__visual,
-.feature:has(.feature__title-link:focus-visible) .feature__visual {
-  transform: perspective(1100px) rotateX(2.4deg) rotateY(-3deg);
-  box-shadow:
-    0 0 0 1px var(--plate-edge, transparent),
-    0 1px 1px rgb(var(--shade) / 0.06),
-    16px 26px 38px -26px rgb(var(--shade) / 0.5),
-    4px 6px 10px -8px rgb(var(--shade) / 0.22);
-}
+/* --- a pencilled arrow points back at the link */
 .feature__foot {
   position: relative;
   display: flex;
@@ -3433,10 +3475,10 @@ body::before {
 }
 
 
-/* --- More: the photo print's viewfinder */
-/* a piece with a page: its name is the link, stretched over the piece and
-   its caption (the content is not positioned, so the link's overlay
-   measures against the whole item) */
+/* --- More (held back): a piece with a page */
+/* its name is the link, stretched over the piece and its caption (the
+   content is not positioned, so the link's overlay measures against the
+   whole item) */
 .bento__card--link .bento__content {
   position: static;
 }
@@ -3460,62 +3502,6 @@ body::before {
   outline-offset: 8px;
   border-radius: 4px;
 }
-.viewfinder {
-  position: absolute;
-  inset: -0.95rem;
-  pointer-events: none;
-}
-.viewfinder i {
-  position: absolute;
-  width: 1rem;
-  height: 1rem;
-  border: 0 solid var(--vf);
-  opacity: 0;
-  transition:
-    transform 0.55s cubic-bezier(0.3, 0.7, 0.3, 1),
-    opacity 0.25s var(--ease);
-}
-.bento__card--photo:is(:hover, :focus-visible, :has(.bento__link:focus-visible)) .viewfinder i {
-  opacity: 1;
-}
-@media (max-width: 899.98px) {
-  .viewfinder {
-    inset: -0.6rem;
-  }
-}
-.viewfinder i:nth-child(1) {
-  left: 0;
-  top: 0;
-  border-width: 2px 0 0 2px;
-}
-.viewfinder i:nth-child(2) {
-  right: 0;
-  top: 0;
-  border-width: 2px 2px 0 0;
-}
-.viewfinder i:nth-child(3) {
-  left: 0;
-  bottom: 0;
-  border-width: 0 0 2px 2px;
-}
-.viewfinder i:nth-child(4) {
-  right: 0;
-  bottom: 0;
-  border-width: 0 2px 2px 0;
-}
-.bento__card--photo:is(:hover, :focus-visible, :has(.bento__link:focus-visible)) .viewfinder i:nth-child(1) {
-  transform: translate(0.55rem, 0.55rem);
-}
-.bento__card--photo:is(:hover, :focus-visible, :has(.bento__link:focus-visible)) .viewfinder i:nth-child(2) {
-  transform: translate(-0.55rem, 0.55rem);
-}
-.bento__card--photo:is(:hover, :focus-visible, :has(.bento__link:focus-visible)) .viewfinder i:nth-child(3) {
-  transform: translate(0.55rem, -0.55rem);
-}
-.bento__card--photo:is(:hover, :focus-visible, :has(.bento__link:focus-visible)) .viewfinder i:nth-child(4) {
-  transform: translate(-0.55rem, -0.55rem);
-}
-
 /* --- contact: copy the address, with a drawn check */
 .contact__address {
   display: flex;
@@ -3820,6 +3806,113 @@ body::before {
   }
 }
 
+/* ============================================================ résumé pill */
+
+/* homepage header, beside the theme button and drawn in the same pen: its
+   hairline ring and paper wash, a label and a download arrow. On hover the
+   arrow drops a little into its tray. Until the PDF is supplied it is a
+   placeholder (aria-disabled): the same pill, at rest and without the hover */
+.resume-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  gap: 0.4rem;
+  height: 2.25rem;
+  margin-left: clamp(0.75rem, 1.8vw, 1.5rem);
+  padding: 0 0.8rem 0 0.95rem;
+  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    border-color 0.2s var(--ease),
+    background-color 0.2s var(--ease);
+}
+/* a 44px-tall target around the 36px pill */
+.resume-pill::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+}
+.resume-pill__glyph {
+  width: 1.05rem;
+  height: 1.05rem;
+  margin-top: -1px;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.resume-pill__arrow {
+  transition: translate 0.35s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+.resume-pill:not([aria-disabled="true"]):hover {
+  border-color: color-mix(in srgb, currentColor 55%, transparent);
+}
+.resume-pill:not([aria-disabled="true"]):active {
+  scale: 0.96;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .resume-pill:not([aria-disabled="true"]):is(:hover, :focus-visible) .resume-pill__arrow {
+    translate: 0 1.5px;
+  }
+}
+.resume-pill[aria-disabled="true"] {
+  cursor: default;
+}
+.resume-pill:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+/* narrower than the full row: the arrow alone, a disc the size of the
+   theme button (its name still announced); on the narrowest phones, where
+   the row has no room left, it gives way — the résumé stays in Say hello */
+@media (max-width: 719.98px) {
+  .resume-pill {
+    justify-content: center;
+    width: 2.25rem;
+    padding: 0;
+  }
+  .resume-pill__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+}
+@media (max-width: 639.98px) {
+  .resume-pill {
+    width: 1.9rem;
+    height: 1.9rem;
+    margin-left: 0;
+  }
+  .resume-pill::before {
+    inset: -7px;
+  }
+  .resume-pill__glyph {
+    width: 0.95rem;
+    height: 0.95rem;
+  }
+}
+@media (max-width: 519.98px) {
+  .resume-pill {
+    display: none;
+  }
+}
+
 /* switching themes: colours ease over a moment (only while switching, never
    with reduced motion — applyTheme doesn't set the flag then) */
 :root[data-theme-changing] :not(.theme-toggle__glyph, .theme-toggle__glyph *),
@@ -3984,15 +4077,6 @@ body::before {
 .site-nav a:focus-visible,
 .pager__link:focus-visible .pager__title {
   color: var(--accent);
-}
-
-/* Currently: the tape is paper at night too — dimmed into the page instead
-   of glowing on it */
-:root[data-theme="dark"] .feature {
-  --tape: rgba(150, 166, 158, 0.3);
-}
-:root[data-theme="dark"] .feature--amnh {
-  --tape: rgba(215, 250, 136, 0.3);
 }
 
 /* Currently: both cards' caption rows share one height, so their rules,

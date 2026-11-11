@@ -548,3 +548,75 @@ From the "Portfolio Review Pass — Oct 2026" doc. Uncommitted on `testing`.
   reduced motion show the thread at rest; reduced motion doesn't move the cards.
 - Checks: tsc, eslint clean; scratch production build clean; qa/check.mjs 186/194 (failures are the older
   panel-layout checks and the borderline untangler-fist distance, both failing before this change).
+
+## Release content pass: More, AMNH behavioral research (10 Nov 2026)
+- Writing and Experiments removed from the homepage More section (their only entry points; no routes, no sitemap
+  exists). Source kept: `more.deferred` in site.ts, their scenes in MoreBento, their CSS. With one piece, More is a
+  two-column composition (heading and intro beside the print) from 900px up, stacked below that.
+- `/work/amnh/behavioral-research`: *Chaeteessa* · Behavioral research, Ongoing pill, facts label (institution, lab,
+  working with), three short sections (The study, My contribution, Where it stands). Genus italicized via
+  `components/amnh/genus.tsx` (homepage streams, overview, drawer, pager).
+- Overview intro and project summary, homepage AMNH stream, subtitles in amnh.ts/work.ts, handoff amnh.md and
+  amnh-behavioral-research.md updated; "joining" / "once the work begins" / "emerging" removed.
+- Checks: tsc, eslint clean; scratch production build clean; qa/check.mjs 184/195 (all More and AMNH checks pass;
+  failures are the older panel checks and borderline avatar-line distances that vary between runs).
+
+## Chaeteessa illustrations (10 Nov 2026)
+- Assets in `public/assets/amnh/behavioral/`: `enclosure-lid-open.svg` (the final file's option 1, viewBox cropped to
+  the drawing) and `enclosures-row.svg` (three copies of the same enclosure, lid closed, along one front edge; one
+  small leaf varies per box; no tripod). Inlined by `components/amnh/Enclosures.tsx` through the new shared loader
+  `inline-svg.ts` (the workstation now uses it too), classes namespaced `ch-` beside DIODE's `dw-`.
+- Overview: the enclosure replaces the index card (IndexCard and its kraft/tape/card CSS removed). The two entries
+  share a subgrid (drawing, title, text, link), so the titles start on one line; stacked below 900px.
+- Research page: the row under the study's opening on the reading column, captioned and labelled; full-bleed under
+  600px.
+- Checks: tsc, eslint clean; scratch production build clean; qa/check.mjs 185/197 (two new illustration checks pass;
+  failures are the older homepage panel checks and borderline avatar-line distances).
+
+## Homepage "Two threads" previews (10 Nov 2026)
+- Option 10 of the preview studies ("On the page, with a colour scrap"): `public/assets/lynxster/home-preview.svg`
+  and `public/assets/amnh/home-preview.svg` (the study's artwork; loose thread tails removed, filter ids made unique,
+  viewBox zoomed evenly inside the same 16:9.5 frame), inlined by `components/ThreadPreview.tsx` (+ .css) through
+  `lib/inline-svg.ts` (moved from components/amnh). Captions "lynxster" / "collections · research" on one line.
+- Free-standing: plate, edge, shadow, tape and corner lift removed from `.feature__visual`; the box keeps its frame,
+  so the homepage line and the untangler are unchanged. Old LynxsterFloat, AmnhCards and their CSS removed.
+- Motion: drawn once on entry (InView); hover / title or button focus tightens the lynx's nodes and parts the AMNH
+  cards; reduced motion shows the finished drawing, still.
+- Colour (per Anya): the scraps are tints of each project's colour — Lynxster navy/teal (as its link and pill), AMNH
+  green; "Explore AMNH" now in the new `--amnh-green` (olive #4d6b12 by day, lime at night).
+- Checks: tsc, eslint clean; scratch production build clean; qa/lynxster.mjs 103/103 (updated for the new previews);
+  qa/check.mjs 186/197 (failures are the older panel checks and borderline avatar-line distances).
+
+## Homepage More: wildlife photography (10 Nov 2026)
+- "A little further afield." with Anya's two-paragraph intro and "Explore the photographs →" (`more` in site.ts;
+  the former heading/intro kept in its comment). Beside it, `components/wildlife/PhotoStack.tsx`: Casper (white lion)
+  in front, the jacana set behind it (`homepage` in wildlife-photos.json, now a list; Anya chose two over three),
+  each whole at its own proportions on a slim margin (by day a warm card a shade deeper than the page), one link to
+  the gallery with its own focus ring.
+- Old mounted print, viewfinder corners (and `--vf`), and the single-piece composition removed; MoreBento keeps only
+  the held-back Writing and Experiments scenes. The homepage line measures `.more__photos` in place of `.bento`.
+- Hover / focus: the one behind grows a little (scale, from its tucked-in edge) and the lead lifts (transform only); reduced motion: still.
+
+## Blank scrolling below the footer (10 Nov 2026)
+- Cause: both scroll lines (HomeScribble's `.scribble`, DetailLine's `.detail-line`) set their SVG's height from
+  the scroll height (`documentElement.scrollHeight` / the page root's `scrollHeight`), which includes the SVG itself.
+  So the line could only ever grow the page: once the page was taller (a narrow window then widened, a reflow before
+  the web fonts, content expanded then closed) the SVG held the old height open, as blank page past the footer
+  (homepage 390→1440: 2427px; Crackd: 1325px).
+- Fix (shared): both SVGs are sized by CSS to fill their page root (`inset: 0; height: 100%` — the root holds the
+  footer); the JS height writes are gone, and DetailLine's tail clamps to the root's `clientHeight`. 404: short
+  pages (`.detail--short`) let the message take the room so the footer sits at the window's foot.
+- Verified (scratch qa/tail2.mjs, ratchet.mjs): all 16 routes (home, 13 detail pages, wildlife gallery, 404) at
+  1440×900 and 390×844, light and dark, after scrolling through (entrances done), after opening every collapsed
+  control and closing it again, after a narrow→wide resize, and with web fonts held back 2.5s: page ends at the
+  footer's bottom, no horizontal overflow, each line's SVG exactly its page's height and its path inside it.
+
+## Homepage header: Résumé pill (10 Nov 2026)
+- `SiteHeader` (home variant only): a "Résumé" pill with an authored download glyph, beside the theme button and
+  drawn in its pen (hairline ring, paper wash, 36px; 1.7 stroke). Driven by the Résumé entry in `contact.links`:
+  while `url` is null it is a placeholder button (aria-disabled, "Updated PDF to come" as title and announced text,
+  no hover); with a url it becomes a download link and its arrow drops into the tray on hover/focus.
+- Widths: full pill ≥720px; the arrow alone in a disc 520–719px (label still announced); hidden below 520px, where
+  the phone row has no room left (the résumé stays in Say hello). Theme button and gutters unchanged at every width.
+- Checked: tsc, eslint; header measured at 320–1440px (no horizontal overflow, no squeezed targets); screenshots
+  in light/dark, at rest, settled and hovered at 1440/768/560 (scratchpad qa/shots/pill-sheet.png).

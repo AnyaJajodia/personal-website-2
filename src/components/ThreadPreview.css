@@ -1,0 +1,151 @@
+/* =====================================================================
+   The homepage's two previews (ThreadPreview.tsx), after option 10 of the
+   preview studies: each mark drawn in thread straight on the page, over a
+   torn scrap of its colour, and a quiet caption beneath. No plate, edge,
+   glow or tape — the drawings stand on the page. The study's thread (plum
+   by day; at night the text colour of the writing beneath it, --text); each scrap in its
+   project's colour family
+   ===================================================================== */
+.pv {
+  --pv-thread: #3b2537;
+  position: absolute;
+  inset: 0;
+  container-type: size;
+}
+/* each scrap is a tint of its project's own colour on the page: Lynxster's
+   navy (teal at night), as its link and Patent pending pill; AMNH's green,
+   as its link */
+.pv--lynxster {
+  --pv-scrap: color-mix(in oklch, var(--lx-ink) 24%, var(--bg));
+}
+.pv--amnh {
+  --pv-scrap: color-mix(in oklch, var(--amnh-green) 26%, var(--bg));
+}
+:root[data-theme="dark"] .pv {
+  --pv-thread: var(--text);
+}
+:root[data-theme="dark"] .pv--lynxster {
+  --pv-scrap: color-mix(in oklch, var(--lx-ink) 20%, var(--bg));
+}
+:root[data-theme="dark"] .pv--amnh {
+  --pv-scrap: color-mix(in oklch, var(--amnh-green) 14%, var(--bg));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .pv {
+    --pv-thread: var(--text);
+  }
+  :root:not([data-theme]) .pv--lynxster {
+    --pv-scrap: color-mix(in oklch, var(--lx-ink) 20%, var(--bg));
+  }
+  :root:not([data-theme]) .pv--amnh {
+    --pv-scrap: color-mix(in oklch, var(--amnh-green) 14%, var(--bg));
+  }
+}
+
+.pv__art,
+.pv__art svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.pv-scrap {
+  fill: var(--pv-scrap);
+}
+/* both captions on one line, under the drawings' common centre */
+.pv__caption {
+  position: absolute;
+  top: 85%;
+  left: 0;
+  right: 0;
+  font-family: var(--sans);
+  font-size: clamp(0.6875rem, 2.25cqw, 0.875rem);
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-indent: 0.26em; /* balances the tracking after the last letter */
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+/* --- the entrance: drawn once, as the preview comes into view (InView sets
+   data-inview; without JavaScript the drawing is simply finished) */
+.pv[data-inview] .pv-thr path {
+  stroke-dasharray: 1 1;
+}
+.pv[data-inview="false"] .pv-thr path {
+  stroke-dashoffset: 1;
+}
+.pv[data-inview="true"] .pv-thr path {
+  animation: pv-draw 1.9s cubic-bezier(0.45, 0, 0.2, 1) both;
+}
+@keyframes pv-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.pv-node {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.5s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+/* the nodes hide at once, and settle onto the drawn lines late in the draw */
+.pv[data-inview="false"] .pv-node {
+  opacity: 0;
+}
+.pv[data-inview="true"] .pv-node {
+  transition:
+    opacity 0.4s ease 1.1s,
+    transform 0.5s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+
+/* --- hover, or keyboard focus on the feature's title or button (the
+   preview link itself is a pointer-only duplicate): the lynx lifts a little
+   off its scrap and its nodes tighten; the AMNH cards part a little. The
+   scrap and the caption stay where they are. */
+.pv-card {
+  transition: transform 0.7s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+/* (the lift only where motion is welcome: there is nothing to undo under
+   reduced motion) */
+@media (prefers-reduced-motion: no-preference) {
+  /* the drawn mark alone (the scrap is outside it), in the drawing's own
+     units: about 2.5% of the frame */
+  .pv--lynxster .pv-thr {
+    transition: translate 0.7s cubic-bezier(0.3, 0.7, 0.2, 1);
+  }
+  :is(.feature:hover, .feature:has(.feature__title-link:focus-visible), .feature:has(.feature__cta:focus-visible)) .pv--lynxster .pv-thr {
+    translate: 0 -11px;
+  }
+}
+:is(.feature:hover, .feature:has(.feature__title-link:focus-visible), .feature:has(.feature__cta:focus-visible)) .pv-node {
+  transform: scale(0.78);
+}
+:is(.feature:hover, .feature:has(.feature__title-link:focus-visible), .feature:has(.feature__cta:focus-visible)) .pv-card--a {
+  transform: translate(-22px, 3px);
+}
+:is(.feature:hover, .feature:has(.feature__title-link:focus-visible), .feature:has(.feature__cta:focus-visible)) .pv-card--b {
+  transform: translate(22px, -2px);
+}
+
+/* reduced motion: the finished drawing, still */
+@media (prefers-reduced-motion: reduce) {
+  .pv .pv-thr path {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+  .pv .pv-node {
+    opacity: 1 !important;
+  }
+  .pv-node,
+  .pv-card {
+    transition: none;
+    transform: none !important;
+  }
+}

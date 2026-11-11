@@ -94,7 +94,8 @@ function measure(root: HTMLElement): HomeLayout {
     panels: docRect(q("panels")),
     moreLabel: docRect(q("more-label")),
     moreIntro: docRect(root.querySelector(".more__intro")),
-    bento: docRect(root.querySelector(".bento")),
+    // the More section's artwork: its photographs
+    bento: docRect(root.querySelector(".more__photos")),
     contact: docRect(q("contact")),
     contactHeading: docRect(q("contact-heading")),
     greeter: (() => {
@@ -219,7 +220,6 @@ export default function HomeScribble() {
       const cum = [0];
       for (let i = 1; i < dense.length; i++) cum.push(cum[i - 1] + Math.hypot(dense[i].x - dense[i - 1].x, dense[i].y - dense[i - 1].y));
       total = cum[cum.length - 1] || 1;
-      svg.style.height = `${document.documentElement.scrollHeight}px`;
       const d = toPath(dense);
       line.setAttribute("d", d);
       svgLen = line.getTotalLength() || total;

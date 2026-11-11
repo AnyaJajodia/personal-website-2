@@ -3,7 +3,7 @@ import BehavioralPage from "@/components/amnh/BehavioralPage";
 import { behavioral } from "@/content/amnh";
 
 export const metadata: Metadata = {
-  title: "Behavioral research · AMNH — Anya Jajodia",
+  title: "Chaeteessa · Behavioral research · AMNH — Anya Jajodia",
   description: behavioral.description,
 };
 

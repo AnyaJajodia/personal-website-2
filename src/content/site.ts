@@ -80,7 +80,7 @@ export const currently = {
   /** role and dates are the homepage's own (home.md); the detail pages keep theirs */
   features: [
     {
-      slug: "lynxster",
+      slug: "lynxster" as const,
       name: "Lynxster",
       role: "CTO & Co-founder",
       period: "April 2026–present",
@@ -88,6 +88,8 @@ export const currently = {
       status: "Patent pending",
       description: "Engineering, product development, and technical leadership for independently verifiable digital records.",
       cta: "Explore Lynxster",
+      /** the preview's caption, under its drawing */
+      preview: "lynxster",
       /** two rows, like AMNH's workstreams (condensed from lynxster.md) */
       streams: [
         { name: "From developer to co-founder", text: "Joined in April 2026 as a Junior Developer; now Chief Technology Officer and Co-founder." },
@@ -95,11 +97,12 @@ export const currently = {
       ],
     },
     {
-      slug: "amnh",
+      slug: "amnh" as const,
       name: "American Museum of Natural History",
       role: "Volunteer",
       period: "2026–present",
       cta: "Explore AMNH",
+      preview: "collections · research",
       /** its two projects, each linking to its own page (amnh.md) */
       streams: [
         {
@@ -107,7 +110,11 @@ export const currently = {
           href: "/work/amnh/diode",
           text: "I prepare specimens and their collection labels for imaging, operate the existing capture setup, review the resulting images, and rehouse the specimens afterward.",
         },
-        { name: "Behavioral research", href: "/work/amnh/behavioral-research", text: "I’m joining a project investigating feeding behavior." },
+        {
+          name: "Chaeteessa · Behavioral research",
+          href: "/work/amnh/behavioral-research",
+          text: "I’m contributing to an ongoing study of feeding behavior in Chaeteessa mantises.",
+        },
       ],
     },
   ],
@@ -195,12 +202,20 @@ export const selectedWork = {
 
 export const more = {
   label: "More",
-  heading: "There are other things.",
-  intro: "Writing, wildlife photography, and a few experiments that don’t fit neatly under “work.”",
-  items: ["Writing", "Wildlife photography", "Experiments"],
-  /** the items that have a page; the rest are non-clickable placeholders */
-  links: { "Wildlife photography": "/wildlife-photography" } as Record<string, string>,
-  note: "This part is still taking shape.",
+  heading: "A little further afield.",
+  /** why photography matters to her: Anya's own words (the gallery page
+   * describes the photographs; this doesn't repeat it) */
+  intro: [
+    "I fell in love with photography when I was young, and wildlife has become one of my favorite reasons to pick up a camera. It’s something I do for myself, and something I want to keep getting better at.",
+    "This is a growing collection of photographs I’m proud of. I’ll keep adding to it as I go—hopefully with a little progress visible along the way.",
+  ],
+  cta: { label: "Explore the photographs", href: "/wildlife-photography" },
+  /** held back from this release, kept for later: Writing and Experiments
+   * (MoreBento keeps their scenes, globals.css their layout). The former
+   * heading was "There are other things.", the former intro "Writing,
+   * wildlife photography, and a few experiments that don’t fit neatly under
+   * “work.”", with the note "This part is still taking shape." */
+  deferred: ["Writing", "Experiments"],
 };
 
 export const contact = {

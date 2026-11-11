@@ -1,20 +1,20 @@
 /**
- * "More" as three loose things laid on the page — not cards: a sheet of
- * ruled writing paper, a mounted print of one of the photographs, and a slip
- * of graph paper for experiments. Each sits a touch off-square on its own
- * short paper shadow with its caption underneath on the page itself, so the
- * section reads as a different material from the coloured panels above.
+ * Held back from this release (content/site.ts `more.deferred`): the loose
+ * pieces Writing and Experiments were laid out as. Wildlife photography now
+ * has its own composition (wildlife/PhotoStack.tsx); this keeps the other
+ * two for later: loose things laid on the page, not cards — a sheet of
+ * ruled writing paper and a slip of graph paper for experiments. Each sits
+ * a touch off-square on its own short paper shadow with its caption
+ * underneath on the page itself.
  * On hover / focus a piece straightens and lifts a little.
  *
- * Writing's sheet has a nib that has just written the site's line; the
- * print is the supplied photograph, whole, at its own proportions. The
+ * Writing's sheet has a nib that has just written the site's line. The
  * graph-paper slip is blank, so it claims no experiment. An item with a page
  * (`links`) is one link, stretched over the whole piece and its caption; the
  * others are not links (their caption says "Later"). Drawings are
  * aria-hidden and claim no work.
  */
 import Link from "next/link";
-import { homepagePhoto, sequence } from "@/content/wildlife";
 
 /** Writing: a nib that has just written a flourish in the site's own line. */
 function WritingScene() {
@@ -39,37 +39,14 @@ function WritingScene() {
   );
 }
 
-/** Photography: one of the photographs — the supplied file, whole, at its
- * own proportions (never cropped), mounted with a paper border — with the
- * viewfinder corners that close in on hover / focus. */
-function PhotoScene() {
-  const p = homepagePhoto;
-  return (
-    <div className="bento__scene scene-photo" aria-hidden="true">
-      <div className="photo-preview" style={{ "--ar": p.width / p.height } as React.CSSProperties}>
-        <span className="viewfinder" aria-hidden="true">
-          <i />
-          <i />
-          <i />
-          <i />
-        </span>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="photo-preview__img" src={p.src} width={p.width} height={p.height} alt="" loading="lazy" decoding="async" draggable={false} />
-      </div>
-    </div>
-  );
-}
-
 const SCENES: Record<string, React.ReactNode> = {
   Writing: <WritingScene />,
-  "Wildlife photography": <PhotoScene />,
   // a slip of graph paper: drawn in CSS, nothing on it yet
   Experiments: <div className="bento__scene scene-graph" aria-hidden="true" />,
 };
 
 const KEYS: Record<string, string> = {
   Writing: "writing",
-  "Wildlife photography": "photo",
   Experiments: "experiments",
 };
 
@@ -94,7 +71,7 @@ export default function MoreBento({ items, links = {} }: { items: string[]; link
               <span className="label bento__soon">
                 {href ? (
                   <>
-                    {item === "Wildlife photography" ? `${sequence.length} photographs` : "View"}
+                    View
                     {" "}
                     <span className="bento__go" aria-hidden="true">
                       →

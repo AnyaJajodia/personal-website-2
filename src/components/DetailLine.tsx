@@ -47,7 +47,7 @@ function buildPath(theme: Theme, root: HTMLElement): Pt[] | null {
   const end = q("end");
   if (!title || !top || !content || !end) return null;
   const vw = document.documentElement.clientWidth;
-  const H = root.scrollHeight;
+  const H = root.clientHeight; // the page itself, footer included
   const gutter = vw - content.right;
   const wide = vw >= 1000;
   const gx = gutter >= 64 ? content.right + gutter * 0.5 : vw - Math.max(10, gutter * 0.38);
@@ -241,7 +241,6 @@ export default function DetailLine({ theme }: { theme: Theme }) {
       pts = p;
       let m = -Infinity;
       reach = p.map((q) => (m = Math.max(m, q.y)));
-      svg.style.height = `${root.scrollHeight}px`;
       path.setAttribute("d", toPath(p));
       len = path.getTotalLength();
       path.style.strokeDasharray = `${len} ${len}`;

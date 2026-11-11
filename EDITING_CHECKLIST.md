@@ -23,13 +23,15 @@ Per your request, uncertain end dates show **2027** in the preview. Replace with
 
 Confirmed and unchanged: ESP Jan 2024–Dec 2024; both publications 2022.
 
-### AMNH behavioral research (revised 31 Oct 2026)
-AMNH is now three pages (`src/content/amnh.ts`): the overview `/work/amnh`, `/work/amnh/diode` and `/work/amnh/behavioral-research`. The research page carries only the supplied placeholder copy ("joining… investigating feeding behavior"). Before expanding it, confirm (per amnh-behavioral-research.md):
-- [ ] Organism identity, scientific name and public terminology ("mantis" is kept out of titles, routes and the homepage until then; the About paragraph in `site.ts` still mentions "mantis behavioral research" in your own words, so check it reads as you want)
-- [ ] Project title and research question approved for public description
-- [ ] Supervisor's name, role and attribution; your tasks, role label and start date
-- [ ] Methods, setup, images that may be shared, status, credits
+### AMNH behavioral research (revised 10 Nov 2026)
+`/work/amnh/behavioral-research` is now a short, finished page, *Chaeteessa* · Behavioral research (Ongoing), from the copy supplied 10 Nov 2026 (`handoff/content/work/amnh-behavioral-research.md` → `src/content/amnh.ts`). The overview, homepage and drawer summaries were updated to match. Still open:
+- [ ] Your role label and start date for this project (the page shows neither; the overview's "Volunteer · 2026–present" covers AMNH as a whole)
+- [ ] Any images that may be shared publicly (none are used or invented)
+- [ ] Update "Where it stands" when the trials and analysis move on (it says processing and analysis are still to come)
 - [ ] DIODE: the BugBase developer credit, if you'd like one shown (none is invented)
+
+### Held back from this release (10 Nov 2026)
+Writing and Experiments are hidden from the homepage's More section (they had no pages, only "Later" cards). To bring one back, add its name to `more.items` in `src/content/site.ts` (`more.deferred` lists them and keeps the former intro and note); `MoreBento.tsx` and `globals.css` still hold their artwork and layout. The About paragraph still mentions writing as an interest.
 
 ### Homepage dates and roles now differ from the detail pages (25 Oct 2026)
 The homepage takes its roles and dates from the revised `handoff/content/home.md` (`site.ts` → `currently.features[].role/period`, `selectedWork.rows[].date`). The detail pages were deliberately not rewritten in this pass, so `work.ts` still shows the older values. Reconcile them in the detail-page pass:
@@ -55,7 +57,7 @@ The homepage takes its roles and dates from the revised `handoff/content/home.md
 | Item | Where | Status |
 |------|-------|--------|
 | LinkedIn profile | `contact.links` in `site.ts` | **Supplied (home.md, 25 Oct 2026):** https://www.linkedin.com/in/anya-jajodia/ |
-| Résumé PDF | `contact.links` in `site.ts` | `url: null` → shows "Updated PDF to come". Add the PDF to `public/` and set `url` |
+| Résumé PDF | `contact.links` in `site.ts` | `url: null` → shows "Updated PDF to come" in Say hello, and the homepage header's Résumé pill is a placeholder (aria-disabled). Add the PDF to `public/` and set `url`: both become download links |
 | PMMY paper | `src/content/research.ts` → `pmmy.publication.paperLink` | No verified URL supplied, so none is shown (no placeholder). Add `paperLink: { label, url }` once a publisher URL or public PDF exists |
 | Teenage pregnancy paper | `src/content/research.ts` | **Linked** (supplied in the Markdown, checked live: IJSHRE PDF), with Project Ārogya’s page |
 | Crackd.ai repositories | `src/content/crackd.ts` → `apps[].repo` | One per application, each linked from its own application (all three checked public, 26 Oct) |
@@ -69,6 +71,7 @@ The homepage takes its roles and dates from the revised `handoff/content/home.md
 |-------------|-------|--------|
 | Lynxster application screenshot | `/work/lynxster` (dark frame "Application screenshot · To be selected") | Pick a screenshot, crop the browser chrome, and replace or redact identifying demo data (e.g. "Smoke Test Law Firm", hashes, the DEV bar in the supplied references). The reference screenshots were deliberately **not** copied into `public/`. Implement in `ScreenshotFrame` (`src/components/Figures.tsx`) |
 | DIODE illustrations | `/work/amnh/diode`, homepage AMNH preview, `/work/amnh` | Supplied and integrated 31 Oct 2026 (`public/assets/amnh/diode/`). Still to confirm: public-use permission for the specimen images and the BugBase screen recreations; the corresponding label image for AMNH_IZC 00560622 (the review view shows an empty card thumbnail); an optional rehousing photograph |
+| *Chaeteessa* illustrations | `/work/amnh`, `/work/amnh/behavioral-research` | Supplied and integrated 10 Nov 2026 (`public/assets/amnh/behavioral/`, from the selected “lid” and “row” options; the row redrawn as three closed enclosures without the camera). Stylized and captioned as illustrative; replace if real photographs become shareable |
 | GVI fieldwork photograph | `/work/gvi-conservation` | Original photograph |
 | Logos (supplied) | `public/logos/` ← `handoff/assets/logos/` | AMNH, Crackd, Buzzworks, TMU and GVI are now used. Runtime copies have transparent margins trimmed (some downscaled); the originals are untouched. Check each organisation's brand guidelines (clear space, approved backgrounds) before publishing |
 | Lynxster product crop | `public/work/lynxster-funnel.webp` (Currently) | Cropped from your reference `lynxster-light-dashboard.png`: the Disclosure funnel card only, with no browser chrome, names or hashes. It shows demo data from that screenshot; swap it for an approved product image before publishing |

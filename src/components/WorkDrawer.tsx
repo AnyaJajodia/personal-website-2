@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import "./WorkDrawer.css";
 import { drawerSelected, nowEntries, nowLabels, workLabels, type DrawerEntry, type NowEntry } from "@/content/work-index";
 import Vignette from "./ContentsVignettes";
+import { withGenus } from "@/components/amnh/genus";
 
 /**
  * The two work drawers, one per header item, as the homepage splits its work:
@@ -150,7 +151,7 @@ function Row({ e, current, pick }: { e: Numbered; current: string; pick: Pick })
                   {isHere ? ring : null}
                 </span>
                 <span className="contents__sub-text">
-                  {l.label}
+                  {withGenus(l.label)}
                   {l.detail ? <span className="contents__sub-detail"> · {l.detail}</span> : null}
                   {isHere ? here : null}
                 </span>
@@ -208,7 +209,7 @@ function NowPage({ e, k, current, pick }: { e: NowEntry; k: number; current: str
                     {onPage ? ring : null}
                   </span>
                   <span className="contents__sub-text">
-                    {l.label}
+                    {withGenus(l.label)}
                     {l.detail ? <span className="contents__sub-detail"> · {l.detail}</span> : null}
                     {onPage ? here : null}
                   </span>

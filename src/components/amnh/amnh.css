@@ -2,27 +2,14 @@
    The AMNH pages (components/amnh/): the overview and its two projects.
    The museum's existing identity on this site — warm archive paper, the
    AMNH blue for the thread and links, the lime highlighter on the title —
-   set as a documentary record: facts lettered like a specimen label,
-   projects as index cards from one drawer, the DIODE process as chapters
-   on a ruled spine, each with its plate. Scoped to .am-*.
+   set as a documentary record: facts lettered like a specimen label, the
+   projects as line drawings set on the page, the DIODE process as chapters
+   on a ruled spine, each with its plate. Scoped to .am-* (the drawings'
+   own classes are .dw-* and .ch-*).
    ===================================================================== */
 
 .am-page {
-  /* the kraft the index cards are pinned to, as on the homepage */
-  --am-kraft: #ebe0cc;
-  --am-card-ink: #2f2a25;
-  --am-tape: rgba(215, 250, 136, 0.72);
   --am-gap: clamp(1.25rem, 5vw, 5rem);
-}
-:root[data-theme="dark"] .am-page {
-  --am-kraft: #26231f;
-  --am-tape: rgba(215, 250, 136, 0.3);
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) .am-page {
-    --am-kraft: #26231f;
-    --am-tape: rgba(215, 250, 136, 0.3);
-  }
 }
 .am-page :is(section[id], article[id], [id].am-step__inner) {
   scroll-margin-top: calc(var(--header-h) + 1.5rem);
@@ -193,11 +180,14 @@
 }
 
 /* --------------------------------------------- overview: the two projects */
+/* the two entries share four rows — the drawing, the title, the text, the
+   link — so both titles start on one line whatever the drawings' shapes */
 .am-projects {
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  gap: clamp(2rem, 4vw, 3.5rem);
-  align-items: start;
+  grid-template-rows: repeat(4, auto);
+  column-gap: clamp(2rem, 4vw, 3.5rem);
+  row-gap: 0;
   margin: clamp(2.25rem, 4.5vw, 3.25rem) 0 0;
   padding: 0;
   list-style: none;
@@ -205,48 +195,32 @@
 .am-project {
   position: relative;
   display: grid;
-  align-content: start;
+  grid-row: span 4;
+  grid-template-rows: subgrid;
 }
-/* the card's ground: kraft, pinned with lime tape, a contact shadow */
+/* the drawings stand directly on the page; the DIODE row sets the height,
+   and the enclosure is drawn to the workstation's height on the same floor */
 .am-project__plate {
   position: relative;
   aspect-ratio: 16 / 10.5;
-  overflow: hidden;
-  background: var(--am-kraft);
-  border-radius: 2px;
-  box-shadow:
-    0 1px 1px rgb(var(--shade) / 0.08),
-    2px 4px 8px -3px rgb(var(--shade) / 0.16),
-    6px 12px 18px -14px rgb(var(--shade) / 0.24);
 }
 .am-project--behavioral .am-project__plate {
-  aspect-ratio: 16 / 12.3;
-  background: none;
-  box-shadow: none;
-  overflow: visible;
+  aspect-ratio: auto;
 }
-.am-project--behavioral .am-card {
-  inset: 6% 7% 4%;
-}
-.am-project::before {
-  content: "";
+.am-project__plate > :is(.dw-thumb, .ch-thumb) {
   position: absolute;
-  z-index: 3;
-  top: -0.65rem;
-  left: 1.8rem;
-  width: 4.75rem;
-  height: 1.4rem;
-  pointer-events: none;
-  background: var(--am-tape);
-  mix-blend-mode: var(--tape-blend);
-  transform: rotate(3deg);
-  clip-path: polygon(3% 0, 97% 4%, 100% 30%, 96% 55%, 100% 82%, 97% 100%, 2% 96%, 0 70%, 4% 45%, 0 18%);
+  transition: transform 0.6s var(--ease);
 }
-.am-project--behavioral::before {
-  left: auto;
-  right: 2.2rem;
-  width: 4.25rem;
-  transform: rotate(-4deg);
+.am-project__plate > .dw-thumb {
+  inset: 4% 0 2%;
+}
+/* the workstation's drawing fills 7.5%–94.5% of its plate; the enclosure
+   (its lid standing open above it) a little more, on the same floor line */
+.am-project__plate > .ch-thumb {
+  inset: 2% 0 5.5%;
+}
+.am-project:has(.am-project__link:is(:hover, :focus-visible)) :is(.dw-thumb, .ch-thumb) {
+  transform: translateY(-1.5%);
 }
 .am-project__title {
   margin: 1.35rem 0 0;
@@ -291,12 +265,6 @@
   display: inline-block;
   transition: transform 0.35s var(--ease);
 }
-.am-project .am-card {
-  transition: transform 0.6s var(--ease);
-}
-.am-project:has(.am-project__link:is(:hover, :focus-visible)) .am-card {
-  transform: rotate(calc(var(--tilt) * 0.3)) translateY(-2%);
-}
 .am-project:has(.am-project__link:is(:hover, :focus-visible)) .am-project__arrow {
   transform: translateX(4px);
 }
@@ -305,50 +273,6 @@
   text-decoration-color: var(--accent);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
-}
-
-/* the index card: ruled, a red margin rule, the department at its head */
-.am-card {
-  position: absolute;
-  inset: 11% 9% -6% 9%;
-  padding: 1rem 1.25rem;
-  background:
-    linear-gradient(to right, transparent 2.6rem, rgba(176, 72, 64, 0.5) 2.6rem, rgba(176, 72, 64, 0.5) calc(2.6rem + 1px), transparent calc(2.6rem + 1px)),
-    repeating-linear-gradient(to bottom, transparent 0 1.6rem, rgba(73, 112, 158, 0.22) 1.6rem calc(1.6rem + 1px)),
-    #fbf7ee;
-  background-position: 0 2.4rem;
-  border-radius: 3px;
-  box-shadow:
-    0 1px 2px rgb(var(--shade) / 0.12),
-    0 20px 36px -24px rgb(var(--shade) / 0.5);
-  transform: rotate(var(--tilt, -1.2deg));
-}
-.am-card__dept,
-.am-card__entry {
-  display: block;
-  padding-left: 1.9rem;
-  font-family: var(--serif);
-  font-style: italic;
-  color: #4a3f33;
-}
-.am-card__dept {
-  font-size: var(--serif-floor);
-}
-/* one entry, written on the second ruled line */
-.am-card__entry {
-  margin-top: 1.55rem;
-  font-size: clamp(1.35rem, 2.1vw, 1.7rem);
-  line-height: 1;
-  color: var(--am-card-ink);
-}
-/* at night the card is paper under a lamp: dimmed into the page */
-:root[data-theme="dark"] .am-card {
-  filter: brightness(0.74) saturate(0.85);
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) .am-card {
-    filter: brightness(0.74) saturate(0.85);
-  }
 }
 
 /* overview: the closing thought, with her figure on its rule */
@@ -1117,71 +1041,53 @@
   color: var(--muted);
 }
 
-/* the overview's DIODE entry: the workstation drawn small, on the page */
-.am-project--diode .am-project__plate {
-  background: none;
-  box-shadow: none;
-  overflow: visible;
+/* ---------------------------------------------- the behavioral research */
+/* a short page: the opening, then three brief sections on the ruled column.
+   The title runs to two lines (the genus, then the project), and the status
+   is a quiet pill in the museum blue. */
+.am-research .am-hero .am-hero__title {
+  max-width: 11ch;
 }
-.am-project--diode::before {
-  display: none;
+.genus {
+  font-style: italic;
 }
-.am-project--diode .dw-thumb {
-  position: absolute;
-  inset: 4% 0 2%;
-  transition: transform 0.6s var(--ease);
+.am-research__status {
+  margin: 1.4rem 0 0;
 }
-.am-project--diode:has(.am-project__link:is(:hover, :focus-visible)) .dw-thumb {
-  transform: translateY(-1.5%);
+.am-status {
+  border-color: color-mix(in oklch, var(--accent) 32%, transparent);
+  background: color-mix(in oklch, var(--accent) 7%, var(--bg));
+  color: var(--accent);
+}
+.am-status svg {
+  stroke: var(--accent);
+}
+/* the sections are brief: a little less air between them than the DIODE
+   page's long ones, and the last one closes onto the pager */
+.am-research__section {
+  padding-block: clamp(2.25rem, 4.5vw, 3.5rem);
+}
+.am-research__section:last-of-type {
+  padding-bottom: clamp(3rem, 6vw, 4.5rem);
+}
+/* the one illustration, under the study's opening on the reading column: a
+   shallow row of enclosures, its caption beneath */
+.am-research__fig {
+  grid-column: 2;
+  margin: clamp(0.25rem, 1vw, 0.75rem) 0 0;
+}
+.am-research__fig .ch-row {
+  aspect-ratio: 1760.6 / 612.6;
+}
+.am-research__fig .dw-caption {
+  margin-top: 0.9rem;
 }
 
-/* ---------------------------------------------- the behavioral research */
-.am-research__hero.detail-hero {
-  padding-bottom: clamp(3rem, 7vw, 5.5rem);
-}
-.am-research__hero .case-hero__grid {
-  align-items: center;
-}
-.am-research__note {
-  display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-  max-width: 36ch;
-  margin: 1.5rem 0 0;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: clamp(1.2rem, 1.6vw, 1.35rem);
-  line-height: 1.35;
-  color: var(--ink-3);
-}
-/* a pencilled dash before the note */
-.am-research__note::before {
-  content: "";
-  flex: none;
-  width: 1.4rem;
-  height: 1px;
-  transform: translateY(-0.3em);
-  background: var(--muted);
-}
-.am-research__back {
-  margin: 1.75rem 0 0;
-}
-.am-back {
-  font-weight: 600;
-  color: var(--accent);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.25em;
-}
-.am-research__card {
-  position: relative;
-  aspect-ratio: 5 / 3.6;
+/* the enclosure drawings (components/amnh/Enclosures.tsx) */
+.ch-art svg {
+  display: block;
   width: 100%;
-  max-width: 22rem;
-  justify-self: start;
-}
-.am-research__card .am-card {
-  inset: 0;
+  height: 100%;
 }
 
 /* ---------------------------------------------------------- responsive */
@@ -1244,7 +1150,8 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .am-draws__body,
-  .am-further__body {
+  .am-further__body,
+  .am-research__fig {
     grid-column: 1;
   }
   .am-further .am-h2 {
@@ -1257,9 +1164,28 @@
   }
   .am-projects {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    row-gap: clamp(2.75rem, 8vw, 3.5rem);
+  }
+  .am-project {
+    grid-row: auto;
+    grid-template-rows: none;
+    align-content: start;
+  }
+  /* one above the other, the enclosure keeps its own proportions */
+  .am-project--behavioral .am-project__plate {
+    width: min(66%, 18rem);
+    aspect-ratio: 607.7 / 703.2;
+  }
+  .am-project__plate > .ch-thumb {
+    inset: 0;
   }
 }
 @media (max-width: 599.98px) {
+  /* the row runs to the screen's edges, so each animal is drawn larger */
+  .am-research__fig .ch-row {
+    margin-inline: calc(-1 * var(--gutter));
+  }
   .am-step__inner {
     grid-template-columns: minmax(0, 1fr);
     row-gap: 1.25rem;
@@ -1291,7 +1217,7 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .am-project .am-card,
+  .am-project__plate > :is(.dw-thumb, .ch-thumb),
   .am-project__arrow,
   .lt__view,
   .dw-pt,

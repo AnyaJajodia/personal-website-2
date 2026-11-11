@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { nav, person } from "@/content/site";
+import { contact, nav, person } from "@/content/site";
 import ThemeToggle from "@/components/ThemeToggle";
 import WorkDrawer from "@/components/WorkDrawer";
 
@@ -20,6 +20,17 @@ type Props = {
 };
 
 /** "Anya Jajodia" → "AJ": the brand on the narrowest phones (see globals.css "header") */
+/** the résumé (content/site.ts contact.links): a placeholder until its PDF is supplied */
+const resume = contact.links.find((l) => l.label === "Résumé");
+
+/** an arrow settling into a tray, in the theme button's pen (24-unit grid, 1.7 stroke) */
+const DownloadGlyph = () => (
+  <svg className="resume-pill__glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path className="resume-pill__arrow" d="M12 4.5v10.2M7.6 10.6 12 15l4.4-4.4" />
+    <path d="M5 15.8v2.4c0 .9.7 1.6 1.6 1.6h10.8c.9 0 1.6-.7 1.6-1.6v-2.4" />
+  </svg>
+);
+
 const initials = person.name
   .split(/\s+/)
   .map((w) => w[0])
@@ -118,6 +129,22 @@ export default function SiteHeader({ variant, darkUntilSelector, drawer }: Props
             })}
           </ul>
         </nav>
+        {variant === "home" && resume ? (
+          resume.url ? (
+            <a className="resume-pill" href={resume.url} download>
+              <span className="resume-pill__label">{resume.label}</span>
+              <DownloadGlyph />
+            </a>
+          ) : (
+            // no PDF yet: in place, but it announces itself as unavailable
+            // rather than leading nowhere
+            <button className="resume-pill" type="button" aria-disabled="true" title={resume.pendingNote}>
+              <span className="resume-pill__label">{resume.label}</span>
+              <span className="visually-hidden"> ({resume.pendingNote})</span>
+              <DownloadGlyph />
+            </button>
+          )
+        ) : null}
         <ThemeToggle />
       </div>
     </header>

@@ -2,16 +2,18 @@ import Image from "next/image";
 import Link from "next/link";
 import Avatar from "@/components/Avatar";
 import { amnhOverview as o } from "@/content/amnh";
-import { AmnhShell, Facts, Hero, IndexCard, Pager } from "./AmnhParts";
+import { AmnhShell, Facts, Hero, Pager } from "./AmnhParts";
+import { EnclosureThumb } from "./Enclosures";
 import LegacyAnchors from "./LegacyAnchors";
+import { withGenus } from "./genus";
 import { WorkstationThumb } from "./Workstation";
 
 /**
  * AMNH — the entrance to the museum work, not a third case study: who and
  * where (the museum's wordmark, the title, the facts as a specimen label),
- * the two projects — the DIODE workstation drawn small, and the research's
- * index card with its one entry — each opening its own page, and one
- * closing paragraph.
+ * the two projects — the DIODE workstation and the research's enclosure,
+ * drawn small side by side, their titles on one line — each opening its own
+ * page, and one closing paragraph.
  */
 export default function AmnhOverview() {
   const [diode, research] = o.threads.projects;
@@ -31,22 +33,22 @@ export default function AmnhOverview() {
           <h2 className="am-h2" id="two-threads">
             {o.threads.heading}
           </h2>
-          <p className="am-threads__intro">{o.threads.intro}</p>
+          <p className="am-threads__intro">{withGenus(o.threads.intro)}</p>
         </div>
         <ul className="am-projects">
           {[
             { p: diode, card: <WorkstationThumb /> },
-            { p: research, card: <IndexCard entry="Feeding behavior" tilt={1.1} /> },
+            { p: research, card: <EnclosureThumb /> },
           ].map(({ p, card }) => (
             <li key={p.key} className={`am-project am-project--${p.key}`}>
               <div className="am-project__plate">{card}</div>
               <h3 className="am-project__title">
                 {/* the title is the link; it covers the whole entry */}
                 <Link href={p.href} className="am-project__link">
-                  {p.title}
+                  {withGenus(p.title)}
                 </Link>
               </h3>
-              <p className="am-project__text">{p.text}</p>
+              <p className="am-project__text">{withGenus(p.text)}</p>
               <p className="am-project__cta" aria-hidden="true">
                 {p.cta} <span className="am-project__arrow">→</span>
               </p>

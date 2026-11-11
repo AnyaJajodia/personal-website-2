@@ -101,7 +101,8 @@ export const rows: Row[] = (manifest.rows as ManifestRow[]).map((r) => {
 });
 /** the whole collection in viewing order: the opening photograph, then the rows */
 export const sequence: Photo[] = [hero, ...rows.flatMap((r) => r.photos)];
-export const homepagePhoto: Photo = photo(manifest.homepage);
+/** the homepage's pair: the leading photograph, then the one set behind it */
+export const homepagePhotos: Photo[] = manifest.homepage.map(photo);
 
 export const wildlife = {
   name: "Wildlife photography",

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getNeighbours, work } from "@/content/work";
 import { person } from "@/content/site";
+import { withGenus } from "@/components/amnh/genus";
 
 /**
  * The end of every project page, shared: a quiet close in the page's own
@@ -56,7 +57,7 @@ export default function WorkPager({ slug, within }: { slug: string; within?: { u
                 <span aria-hidden="true">← </span>
                 {prev.label}
               </span>
-              <span className="pager__title">{prev.title}</span>
+              <span className="pager__title">{withGenus(prev.title)}</span>
             </Link>
           ) : null}
           {onward ? (
@@ -65,7 +66,7 @@ export default function WorkPager({ slug, within }: { slug: string; within?: { u
                 {onward.label}
                 <span aria-hidden="true"> →</span>
               </span>
-              <span className="pager__title">{onward.title}</span>
+              <span className="pager__title">{withGenus(onward.title)}</span>
             </Link>
           ) : null}
         </div>

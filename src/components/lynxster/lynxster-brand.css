@@ -1,6 +1,6 @@
 /* =====================================================================
-   Lynxster brand pieces, adapted from the "01 Floating", "05 Watching" and
-   "09B Package assembly" studies (kept locally in .local-references/): the
+   Lynxster brand pieces, adapted from the "05 Watching" and "09B Package
+   assembly" studies (kept locally in .local-references/): the
    real mark (public/assets/lynxster/lynxster-mark.png, as a mask) and the
    wordmark set in Jost Light. Each theme has its own colour:
      light  mark and glow in Lynxster navy #24467C
@@ -69,107 +69,6 @@
   color: var(--lxb-mark);
   line-height: 1;
   transition: color 0.4s ease;
-}
-
-/* ------------------------------------------------ 01 · floating (homepage) */
-/* On the homepage the plate shows Lynxster in its own cool world, set apart
-   from the portfolio's warm paper the way AMNH's index card is:
-     light  plain white; the navy mark with only a whisper of glow (a
-            stronger navy haze greys the white)
-     dark   near-black with a breath of teal at the centre, as Lynxster's own
-            screens are; the light-teal mark and its glow */
-.lxb-float {
-  --lxb-bg-1: #ffffff;
-  --lxb-bg-2: #ffffff;
-  --lxb-glow: rgb(36 70 124 / 0.26);
-  --lxb-glow-soft: rgb(36 70 124 / 0.05);
-}
-:root[data-theme="dark"] .lxb-float {
-  --lxb-mark: #86d2c6;
-  --lxb-glow: rgb(76 199 188 / 0.4);
-  --lxb-glow-soft: rgb(127 214 204 / 0.08);
-  --lxb-bg-1: #111818;
-  --lxb-bg-2: #070909;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) .lxb-float {
-    --lxb-mark: #86d2c6;
-    --lxb-glow: rgb(76 199 188 / 0.4);
-    --lxb-glow-soft: rgb(127 214 204 / 0.08);
-    --lxb-bg-1: #111818;
-    --lxb-bg-2: #070909;
-  }
-}
-.lxb-float {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  container-type: size;
-  background:
-    radial-gradient(46% 52% at 50% 44%, var(--lxb-glow-soft), transparent 72%),
-    radial-gradient(70% 70% at 50% 45%, var(--lxb-bg-1), var(--lxb-bg-2) 82%);
-}
-.lxb-float__lock {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 7cqh;
-}
-.lxb-float__bob {
-  width: min(40cqw, 52cqh);
-  filter: drop-shadow(0 0 6px var(--lxb-glow-soft));
-}
-.lxb-float__shadow {
-  width: min(22cqw, 26cqh);
-  height: 3.2cqh;
-  margin-top: -5cqh;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, var(--lxb-glow), transparent);
-  opacity: 0.75;
-}
-.lxb-float .lxb-word {
-  font-size: clamp(0.8rem, 5cqh, 1.45rem);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .lxb-float__bob {
-    animation:
-      lxb-bob 6s ease-in-out infinite,
-      lxb-glow 6s ease-in-out infinite;
-  }
-  .lxb-float__shadow {
-    animation: lxb-shadow 6s ease-in-out infinite;
-  }
-}
-@keyframes lxb-bob {
-  0%,
-  100% {
-    transform: translateY(5px);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-@keyframes lxb-glow {
-  0%,
-  100% {
-    filter: drop-shadow(0 0 5px var(--lxb-glow-soft));
-  }
-  50% {
-    filter: drop-shadow(0 0 9px var(--lxb-glow)) drop-shadow(0 0 26px var(--lxb-glow));
-  }
-}
-@keyframes lxb-shadow {
-  0%,
-  100% {
-    transform: scaleX(1);
-    opacity: 0.75;
-  }
-  50% {
-    transform: scaleX(0.72);
-    opacity: 0.4;
-  }
 }
 
 /* ------------------------------------- 09B · assembly (the detail page) */

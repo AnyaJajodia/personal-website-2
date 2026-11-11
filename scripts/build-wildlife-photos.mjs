@@ -134,7 +134,7 @@ for (const id of seq) if (!m.photos[id]) fail(`sequence names an unknown photogr
 const dupes = seq.filter((id, i) => seq.indexOf(id) !== i);
 if (dupes.length) fail(`listed more than once: ${dupes.join(", ")}`);
 for (const id of Object.keys(m.photos)) if (!seq.includes(id)) fail(`not placed in the sequence: ${id}`);
-if (!m.photos[m.homepage]) fail(`homepage preview names an unknown photograph: ${m.homepage}`);
+for (const id of [m.homepage].flat()) if (!m.photos[id]) fail(`homepage preview names an unknown photograph: ${id}`);
 // every supplied file is in the collection
 const listed = new Set(Object.values(m.photos).map((p) => p.file));
 for (const dir of readdirSync(SRC)) {

@@ -73,7 +73,7 @@ export function Hero({
   className = "",
 }: {
   crumbs: Crumb[];
-  title: string;
+  title: ReactNode;
   subtitle?: ReactNode;
   /** the identity line above the title (the museum's wordmark) */
   id?: ReactNode;
@@ -124,19 +124,5 @@ export function Facts({ facts }: { facts: Fact[] }) {
         </div>
       ))}
     </dl>
-  );
-}
-
-/**
- * A collection index card: the department at its head, ruled lines and a
- * margin rule, and one handwritten entry on otherwise blank lines (the
- * behavioral research, on the overview and its own page).
- */
-export function IndexCard({ entry, tilt = -1.2 }: { entry?: string; tilt?: number }) {
-  return (
-    <div className="am-card" style={{ "--tilt": `${tilt}deg` } as React.CSSProperties} aria-hidden="true">
-      <span className="am-card__dept">Invertebrate Zoology</span>
-      {entry ? <span className="am-card__entry">{entry}</span> : null}
-    </div>
   );
 }
