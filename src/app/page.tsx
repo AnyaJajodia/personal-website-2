@@ -23,7 +23,50 @@ import { Marked } from "@/components/Mark";
 import MarkStage from "@/components/MarkStage";
 import TrajectoryPicker from "@/components/TrajectoryPicker";
 import CopyEmail from "@/components/CopyEmail";
-import { hero, about, trajectory, currently, selectedWork, more, contact, person } from "@/content/site";
+import type { Metadata } from "next";
+import { hero, about, trajectory, currently, selectedWork, more, contact, person, site } from "@/content/site";
+import { pageMeta } from "@/lib/page-meta";
+
+export const metadata: Metadata = pageMeta({ title: `${person.name} — ${hero.tagline}`, description: `${hero.intro} ${hero.location}`, path: "/" });
+
+/**
+ * Who this site is about, for search engines (schema.org JSON-LD): the name,
+ * the roles and places already stated on this page, and the profiles it
+ * links to, so a search for the name can find this as her own site. Only
+ * facts the page itself shows.
+ */
+const PROFILES = contact.links.flatMap((l) => (l.url ? [l.url] : []));
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${site.url}/#website`,
+      url: site.url,
+      name: person.name,
+      inLanguage: "en",
+      publisher: { "@id": `${site.url}/#person` },
+    },
+    {
+      "@type": "Person",
+      "@id": `${site.url}/#person`,
+      name: person.name,
+      url: site.url,
+      email: `mailto:${person.email}`,
+      image: `${site.url}/opengraph-image`,
+      description: `${hero.intro} ${hero.location}`,
+      jobTitle: "Chief Technology Officer & Co-founder",
+      worksFor: { "@type": "Organization", name: "Lynxster" },
+      affiliation: [
+        { "@type": "CollegeOrUniversity", name: "Barnard College" },
+        { "@type": "Museum", name: "American Museum of Natural History" },
+      ],
+      address: { "@type": "PostalAddress", addressLocality: "New York", addressRegion: "NY", addressCountry: "US" },
+      knowsAbout: ["Software engineering", "Full-stack development", "Cryptography", "Artificial intelligence", "Natural history collections", "Wildlife photography"],
+      sameAs: PROFILES,
+    },
+  ],
+};
 
 /** A hairline opening each section. The headings carry the sections on their
  * own (the header nav names them); the rule gives the line a landmark. */
@@ -34,6 +77,7 @@ function SectionRule({ line }: { line: string }) {
 export default function Home() {
   return (
     <div className="home" data-line-root id="top">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />
       <a className="skip-link" href="#main">
         Skip to content
       </a>

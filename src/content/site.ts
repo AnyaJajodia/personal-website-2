@@ -19,6 +19,17 @@ export const person = {
   email: "anya@jajodia.org",
 };
 
+/**
+ * The public site: its address (every canonical URL, the sitemap and the
+ * share previews are built from it) and search-engine verification. Paste
+ * Google Search Console's HTML-tag code into `google` (the content="…" value
+ * only) and Bing's into `bing`; empty strings add nothing to the page.
+ */
+export const site = {
+  url: "https://anya.jajodia.org",
+  verification: { google: "", bing: "" },
+};
+
 export const hero = {
   nameLines: ["Anya", "Jajodia."],
   tagline: "Building ideas. Exploring possibilities. Asking better questions.",

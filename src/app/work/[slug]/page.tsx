@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/page-meta";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const entry = getWork(slug);
   if (!entry) return {};
-  return { title: `${entry.name} — Anya Jajodia`, description: entry.description };
+  return pageMeta({ title: `${entry.name} — Anya Jajodia`, description: entry.description, path: `/work/${slug}` });
 }
 
 function MetaRow({ entry }: { entry: WorkEntry }) {

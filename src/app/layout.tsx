@@ -4,14 +4,33 @@ import "@fontsource/cormorant-garamond/latin-500-italic.css";
 import "@fontsource/cormorant-garamond/latin-600.css";
 import "@fontsource-variable/inter/wght.css";
 import "./globals.css";
-import { hero, person } from "@/content/site";
+import { hero, person, site } from "@/content/site";
 import HomeSectionLinks from "@/components/HomeSectionLinks";
 
 // the approved hero copy, verbatim (src/content/site.ts)
+// every page's canonical URL and share preview resolve against the public
+// address; each page names its own canonical path (alternates)
+const description = `${hero.intro} ${hero.location}`;
 export const metadata: Metadata = {
+  metadataBase: new URL(site.url),
   title: `${person.name} — ${hero.tagline}`,
-  description: `${hero.intro} ${hero.location}`,
-  robots: { index: false, follow: false }, // private preview — remove before publishing
+  description,
+  applicationName: person.name,
+  authors: [{ name: person.name, url: site.url }],
+  creator: person.name,
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "website",
+    siteName: person.name,
+    locale: "en_US",
+    title: person.name,
+    description,
+  },
+  twitter: { card: "summary_large_image", title: person.name, description },
+  verification: {
+    google: site.verification.google || undefined,
+    other: site.verification.bing ? { "msvalidate.01": site.verification.bing } : undefined,
+  },
 };
 
 export const viewport: Viewport = {

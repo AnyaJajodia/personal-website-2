@@ -1,6 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+
+// a page that isn't there is never a search result
+export const metadata: Metadata = { title: "Page not found — Anya Jajodia", robots: { index: false, follow: true } };
 
 export default function NotFound() {
   return (
