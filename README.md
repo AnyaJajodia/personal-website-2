@@ -1,20 +1,52 @@
-# Anya Jajodia — portfolio (private preview)
+# Anya Jajodia — Personal Portfolio
 
-Next.js 16 (App Router) + TypeScript, static output. The design and content handoff lives in `handoff/` (unchanged).
+**Software, research, and a little curiosity.**
 
-Requires Node 22 (`.nvmrc`; Node 20.9+ works). Dependencies are pinned in `package.json` / `package-lock.json`.
+A personal website exploring the work I've done across software engineering, applied AI, and natural-history research.
+
+**[Visit the website](https://anya.jajodia.org/)**
+
+## About the project
+
+Designed and built with **Next.js, TypeScript, and React**, this portfolio is both a home for my work and a small design experiment in its own right.
+
+The experience combines an illustrated visual language with responsive layouts, an interactive background, and a scroll-linked line that guides the reader through the site. Project pages highlight selected engineering and research experiences.
+
+## Technology
+
+- Next.js 16 (App Router) and React
+- TypeScript
+- Custom interactive UI components and scroll-linked graphics
+- Vercel for deployment
+
+## Running locally
+
+Requires Node.js 22 (see `.nvmrc`).
 
 ```bash
 npm install
-npm run dev     # http://localhost:3100
-npm run check   # typecheck + lint + build
-npm run start   # production preview on :3100
-node qa/check.mjs   # browser QA suite (server must be running; qa/ is local-only, not in git)
+npm run dev
 ```
 
-Deploying: Vercel detects Next.js and runs `next build`; no environment variables are needed. `.vercelignore` keeps `handoff/`, `scripts/` and the working notes out of the upload. The site is `noindex` (`src/app/layout.tsx`) until it is published.
+Visit `http://localhost:3100`.
 
-- Edit copy, dates, metrics, and links in `src/content/site.ts` and `src/content/work.ts`.
-- The scroll-linked line: `src/lib/line-geometry.ts`, `src/lib/home-route.ts` (route + scroll schedule), `src/components/HomeScribble.tsx`, `src/components/DetailLine.tsx`.
-- Homepage sections: `RigDrawing.tsx` (AMNH plate), `WorkPanels.tsx` (Selected work), `MoreBento.tsx` (More plates; Experiments is an empty reserved plate), `DotField.tsx` (hero/Contact dot field). Avatars: poses + anchors + per-page assignments in `src/content/avatars.ts`, rendered by `Avatar.tsx` and cued by `AvatarStage.tsx`; derived AVIF images in `public/assets/avatar/` come from `node scripts/build-avatars.mjs` (originals stay in `handoff/assets/avatar/`). Line route: `src/lib/home-route.ts`; line visibility audit: `node qa/visible.mjs <WxH>`. Runtime logos live in `public/logos/` (originals in `handoff/assets/`).
-- Before publishing, see `EDITING_CHECKLIST.md`. QA evidence is in `QA.md` and `REVIEW.md`.
+Additional commands:
+
+```bash
+npm run check   # typecheck, lint, and build
+npm run start   # production preview on port 3100
+```
+
+## Where things live
+
+- `src/content/site.ts` and `src/content/work.ts` — site copy and project information
+- `src/components/` — interactive sections and visual components
+- `src/lib/home-route.ts` and `src/lib/line-geometry.ts` — geometry and scroll-linked line logic
+- `src/content/avatars.ts` — illustrated avatar configurations
+- `public/` — public image and logo assets
+
+This repository also includes development notes and implementation references. The [live site](https://anya.jajodia.org/) is the best place to experience the design.
+
+---
+
+Made by [Anya Jajodia](https://github.com/AnyaJajodia).
