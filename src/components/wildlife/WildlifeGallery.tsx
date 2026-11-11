@@ -438,7 +438,7 @@ export default function WildlifeGallery({ hero, rows, sequence }: Props) {
 
   /** one photograph in the collection: a button that opens it (a render
    * function, not a component, so tiles keep their identity across renders) */
-  const tile = (ph: Photo, eager = false, className = "") => {
+  const tile = (ph: Photo, eager = false, share = 1, className = "") => {
     const i = indexOf(ph);
     return (
       <motion.button
@@ -461,11 +461,14 @@ export default function WildlifeGallery({ hero, rows, sequence }: Props) {
           } as React.CSSProperties
         }
       >
-        {/* the supplied file itself, scaled by the browser; never cropped */}
+        {/* a web copy near the size it is shown at (rows stack full-width on
+            phones); never cropped */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className="wl-tile__img"
           src={ph.src}
+          srcSet={ph.srcSet}
+          sizes={`(max-width: 640px) 100vw, min(${Math.ceil(share * 100)}vw, ${Math.ceil(share * 1240)}px)`}
           width={ph.width}
           height={ph.height}
           alt={ph.alt}
@@ -514,7 +517,7 @@ export default function WildlifeGallery({ hero, rows, sequence }: Props) {
                         } as React.CSSProperties
                       }
                     >
-                      {tile(ph, r === 0)}
+                      {tile(ph, r === 0, row.width * cell.share)}
                     </div>
                   );
                 };
@@ -562,12 +565,15 @@ export default function WildlifeGallery({ hero, rows, sequence }: Props) {
                       } as React.CSSProperties
                     }
                   >
-                    {/* the whole photograph, the same file as its tile (already loaded) */}
+                    {/* the whole photograph, at the size the view needs (its
+                        place holds the photograph's tone until it arrives) */}
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       key={p.id}
                       className="wl-view__img"
                       src={p.src}
+                      srcSet={p.srcSet}
+                      sizes="100vw"
                       width={p.width}
                       height={p.height}
                       alt={p.alt}

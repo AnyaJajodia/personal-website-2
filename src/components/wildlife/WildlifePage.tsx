@@ -84,7 +84,7 @@ export default function WildlifePage() {
           <WildlifeGallery hero={hero} rows={rows} sequence={sequence} />
         </section>
 
-        <nav className="container pager wl-pager" aria-label="More" data-line="end">
+        <nav className="container pager wl-pager" aria-label="More" data-line="end" data-line-return="none">
           {/* kneeling on the rule at the end of the collection, lens turned back on it */}
           <Avatar pose="kneelingCamera" role="wl-shoot" />
           <Link href="/#more" className="pager__back label">

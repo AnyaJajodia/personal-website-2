@@ -192,7 +192,7 @@ Page: `components/inteli/InteliPage.tsx` + `inteli.css`; copy: `content/inteli.t
 ## Wildlife photography page (26 Oct 2026, final selection)
 Page: `/wildlife-photography` (`components/wildlife/`). The collection, its copy and its order are in `content/wildlife-photos.json`. The homepage plate shows `highlights/homepage.png`.
 
-**The photographs are served exactly as supplied.** There are no resized or re-encoded copies; checksums were identical before and after this pass. `scripts/build-wildlife-photos.mjs` only reads them, for pixel size and a loading colour, and it fails on any of these:
+**Experiment branch (`experiment/design-pass`) only:** the supplied files stay untouched, but the pages now serve web-sized WebP copies made from them (`node scripts/build-wildlife-web.mjs` → `public/assets/wildlife-web/`; run it after adding or replacing a photograph). Page weight: gallery 44 MB → 1.6 MB, homepage 9.4 MB → 1.1 MB. To go back to the originals, revert `wildlife.ts`, `WildlifeGallery.tsx` and `PhotoStack.tsx`. On the committed baseline the following still holds. **The photographs are served exactly as supplied.** There are no resized or re-encoded copies; checksums were identical before and after this pass. `scripts/build-wildlife-photos.mjs` only reads them, for pixel size and a loading colour, and it fails on any of these:
 - a missing file
 - a file in the folders that isn't in the collection
 - a photograph listed twice

@@ -2067,9 +2067,25 @@ a.contact-list__row:is(:hover, :focus-visible) .contact-list__meta {
     padding-block: 0.9rem;
     margin-block: -0.9rem;
   }
-  .pager__back {
+  .pager__back,
+  .pager__prev {
     padding-block: 0.8rem;
     margin-block: -0.8rem;
+  }
+  /* the homepage's text links: the same words, a taller place to land a
+     thumb (the padding is taken back in margin, so nothing moves) */
+  .hero__cue,
+  .feature__cta,
+  a.feature__stream-name,
+  .feature__title-link,
+  .site-footer__top {
+    padding-block: 0.7rem;
+    margin-block: -0.7rem;
+  }
+  /* the address keeps its space above; only its own box grows */
+  .contact__email {
+    padding-block: 0.35rem;
+    margin-bottom: -0.35rem;
   }
 }
 .breadcrumb a:hover {
@@ -2240,31 +2256,139 @@ a.contact-list__row:is(:hover, :focus-visible) .contact-list__meta {
   text-decoration: underline;
   text-underline-offset: 0.3em;
 }
-.pager__grid {
-  margin-top: 2.5rem;
+/* the way on: the next project's headline, as large as this page's own
+   was, between two hairlines. One link. Reaching for it draws a thread
+   along its foot and sends the arrow on */
+.pager__onward {
+  /* its ink: the colour of the page it leads to (WorkPager), else this page's */
+  --go: var(--next, var(--accent));
+  position: relative;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: clamp(1.25rem, 4vw, 4rem);
+  align-items: end;
+  padding-block: clamp(1.6rem, 3.2vw, 2.5rem) clamp(1.8rem, 3.6vw, 2.9rem);
+  border-block: 1px solid var(--rule);
+  color: inherit;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
 }
-.pager__link {
+.pager__onward::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -1px 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--go);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.7s cubic-bezier(0.2, 0.75, 0.2, 1);
+}
+.pager__onward-label,
+.pager__onward-title,
+.pager__onward-text {
+  grid-column: 1;
+}
+.pager__onward-label {
+  color: var(--go);
+}
+.pager__onward-name {
+  color: var(--muted);
+}
+.pager__onward-title {
+  margin-top: 0.7rem;
+  max-width: 17ch;
+  font-family: var(--serif);
+  font-size: clamp(2.15rem, 5.4vw, 4.4rem);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
+  transition: color 0.3s var(--ease);
+}
+.pager__onward-text {
+  margin-top: 1rem;
+  max-width: 46ch;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.pager__onward-go {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  display: grid;
+  place-items: center;
+  width: clamp(3rem, 5vw, 4.25rem);
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, currentColor 24%, transparent);
+  border-radius: 999px;
+  transition:
+    border-color 0.3s var(--ease),
+    background-color 0.3s var(--ease),
+    color 0.3s var(--ease);
+}
+.pager__onward-go svg {
+  width: 42%;
+  height: 42%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: translate 0.45s cubic-bezier(0.2, 0.75, 0.2, 1);
+}
+.pager__onward:is(:hover, :focus-visible)::after {
+  transform: scaleX(1);
+}
+.pager__onward:is(:hover, :focus-visible) .pager__onward-title {
+  color: var(--go);
+}
+.pager__onward:is(:hover, :focus-visible) .pager__onward-go {
+  border-color: var(--go);
+  background: var(--go);
+  color: var(--bg);
+}
+.pager__onward:is(:hover, :focus-visible) .pager__onward-go svg {
+  translate: 3px 0;
+}
+.pager__onward:active .pager__onward-go {
+  scale: 0.95;
+}
+.pager__onward:focus-visible {
+  outline: 2px solid var(--go);
+  outline-offset: 6px;
+}
+:root[data-theme="dark"] .pager__onward {
+  --go: var(--next-night, var(--accent));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .pager__onward {
+    --go: var(--next-night, var(--accent));
+  }
+}
+/* beneath it, quietly: back to the work, and the project before */
+.pager__ways {
   display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem 2.5rem;
+  margin-top: clamp(1.4rem, 2.6vw, 2rem);
+}
+.pager__prev {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.7em;
   text-decoration: none;
 }
-.pager__link--next {
-  grid-column: 2;
-  text-align: right;
-  align-items: flex-end;
-}
-/* a step quieter than the page's section headings: the way on, not a new section */
 .pager__title {
   font-family: var(--serif);
-  font-size: clamp(1.3rem, 1.9vw, 1.6rem);
+  font-size: 1.3rem;
   line-height: 1.1;
   transition: color 0.2s;
 }
-.pager__link:hover .pager__title {
+.pager__prev:is(:hover, :focus-visible) .pager__title {
   color: var(--accent);
 }
 
@@ -2514,6 +2638,36 @@ a.contact-list__row:is(:hover, :focus-visible) .contact-list__meta {
 .not-found .detail-hero__subtitle {
   margin-bottom: 2rem;
 }
+/* the thread that led here, in the site's pen: drawn once as the page opens */
+.not-found__thread {
+  display: block;
+  width: min(100%, 40rem);
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+  overflow: visible;
+}
+.not-found__thread path {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: var(--line-w);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1 1;
+  animation: not-found-draw 2.2s cubic-bezier(0.45, 0, 0.2, 1) 0.35s both;
+}
+@keyframes not-found-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .not-found__thread path {
+    animation: none;
+  }
+}
 
 /* =========================================================== responsive */
 
@@ -2595,13 +2749,9 @@ a.contact-list__row:is(:hover, :focus-visible) .contact-list__meta {
   .plates--1 .plate__frame {
     aspect-ratio: 4 / 3;
   }
-  .pager__grid {
-    grid-template-columns: 1fr;
-  }
-  .pager__link--next {
-    grid-column: auto;
-    text-align: left;
-    align-items: flex-start;
+  .pager__onward-go {
+    align-self: start;
+    grid-row: 1 / span 2;
   }
   .site-footer__inner {
     flex-direction: column;
@@ -3301,12 +3451,6 @@ body::before {
   box-shadow:
     0 1px 1px rgb(var(--shade) / 0.05),
     0 16px 30px -24px rgb(var(--shade) / 0.42);
-}
-.pager__link {
-  transition: transform 0.35s var(--ease);
-}
-.pager__link:hover {
-  transform: translateY(-2px);
 }
 
 /* ======================================================= refinement pass
@@ -4074,8 +4218,7 @@ body::before {
   text-decoration: underline;
   text-underline-offset: 0.3em;
 }
-.site-nav a:focus-visible,
-.pager__link:focus-visible .pager__title {
+.site-nav a:focus-visible {
   color: var(--accent);
 }
 

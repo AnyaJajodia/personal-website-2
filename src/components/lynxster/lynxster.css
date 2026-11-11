@@ -92,9 +92,6 @@
 .theme-lx .pager__back {
   color: var(--accent);
 }
-.theme-lx .pager__link:hover .pager__title {
-  color: var(--accent);
-}
 /* the site header sits on the band */
 .theme-lx .site-header[data-settled="true"] {
   background: color-mix(in srgb, var(--lx-band) 92%, transparent);

@@ -16,9 +16,17 @@ export default function NotFound() {
               Back to the homepage <span aria-hidden="true">→</span>
             </Link>
           </p>
+          {/* the thread that led here: it wanders in, ties itself in a knot
+              and stops */}
+          <svg className="not-found__thread" viewBox="0 0 640 170" aria-hidden="true" focusable="false">
+            <path
+              pathLength="1"
+              d="M-12 96C48 70 96 128 160 104S244 34 292 70c26 20 6 60-22 50-30-11-12-66 34-62 44 4 52 62 14 74-34 10-52-36-14-52 42-18 86 30 138 20s58-52 100-46c22 3 30 26 14 34-13 6-24-6-17-17"
+            />
+          </svg>
         </div>
       </main>
-      <SiteFooter />
+      <SiteFooter toTop={false} />
     </div>
   );
 }

@@ -1,0 +1,136 @@
+{
+  "highlights/hero.png": {
+    "stem": "highlights-hero",
+    "widths": [
+      480,
+      800,
+      1200,
+      1600,
+      2048
+    ]
+  },
+  "highlights/homepage.png": {
+    "stem": "highlights-homepage",
+    "widths": [
+      480,
+      800,
+      1200,
+      1570
+    ]
+  },
+  "main-gallery/Golden_Hour_Lion.png": {
+    "stem": "main-gallery-Golden_Hour_Lion",
+    "widths": [
+      480,
+      800,
+      1200,
+      1600,
+      1999
+    ]
+  },
+  "main-gallery/Elephant_Among_Trees.png": {
+    "stem": "main-gallery-Elephant_Among_Trees",
+    "widths": [
+      480,
+      800,
+      1251
+    ]
+  },
+  "main-gallery/Collared_Cheetah.png": {
+    "stem": "main-gallery-Collared_Cheetah",
+    "widths": [
+      480,
+      800,
+      1200,
+      1868
+    ]
+  },
+  "main-gallery/Walking_Leopard.png": {
+    "stem": "main-gallery-Walking_Leopard",
+    "widths": [
+      480,
+      800,
+      1200,
+      1600,
+      1980
+    ]
+  },
+  "main-gallery/Sunset_Giraffes.png": {
+    "stem": "main-gallery-Sunset_Giraffes",
+    "widths": [
+      480,
+      800,
+      1200,
+      1600,
+      2047
+    ]
+  },
+  "main-gallery/African_Fish_Eagle.png": {
+    "stem": "main-gallery-African_Fish_Eagle",
+    "widths": [
+      480,
+      800,
+      1200,
+      1600,
+      1983
+    ]
+  },
+  "main-gallery/Twilight_Hippos.png": {
+    "stem": "main-gallery-Twilight_Hippos",
+    "widths": [
+      480,
+      800,
+      1200,
+      1600,
+      2048
+    ]
+  },
+  "secondary-gallery/Hornbill.png": {
+    "stem": "secondary-gallery-Hornbill",
+    "widths": [
+      480,
+      800,
+      1200,
+      1600,
+      1935
+    ]
+  },
+  "secondary-gallery/Perched_Raptor.png": {
+    "stem": "secondary-gallery-Perched_Raptor",
+    "widths": [
+      480,
+      800,
+      1200,
+      1600,
+      1938
+    ]
+  },
+  "secondary-gallery/Feeding_Giraffe.png": {
+    "stem": "secondary-gallery-Feeding_Giraffe",
+    "widths": [
+      480,
+      800,
+      1200,
+      1600,
+      1928
+    ]
+  },
+  "secondary-gallery/Elephant_Family.png": {
+    "stem": "secondary-gallery-Elephant_Family",
+    "widths": [
+      480,
+      800,
+      1200,
+      1600,
+      1976
+    ]
+  },
+  "secondary-gallery/Elephant_Profile.png": {
+    "stem": "secondary-gallery-Elephant_Profile",
+    "widths": [
+      480,
+      800,
+      1297
+    ]
+  }
+}

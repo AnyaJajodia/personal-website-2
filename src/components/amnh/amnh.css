@@ -1229,3 +1229,11 @@
     animation: none;
   }
 }
+
+/* touch: the key's two "see it larger" links get a taller place to land */
+@media (pointer: coarse) {
+  .dw-key__more {
+    padding-block: 0.65rem;
+    margin-block: -0.4rem -0.65rem;
+  }
+}

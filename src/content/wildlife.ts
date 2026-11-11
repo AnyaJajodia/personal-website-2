@@ -4,8 +4,11 @@
  * The collection (files, titles, captions, the viewing sequence) lives in
  * wildlife-photos.json; each file's pixel size and loading tone are read from
  * the photographs themselves by scripts/build-wildlife-photos.mjs into
- * wildlife-photos.generated.json. The photographs are served exactly as
- * supplied: no resized or re-encoded copies.
+ * wildlife-photos.generated.json. The supplied files stay untouched; the
+ * pages serve web sizes derived from them (scripts/build-wildlife-web.mjs →
+ * public/assets/wildlife-web, widths in wildlife-photos.web.json), so a
+ * photograph loads at the size it is shown and the whole collection weighs
+ * megabytes less. Nothing is cropped.
  *
  * Visual weight comes from the folder a file sits in (main-gallery → larger,
  * secondary-gallery → smaller); it shapes the layout only and is never shown.
@@ -13,6 +16,7 @@
  */
 import manifest from "./wildlife-photos.json";
 import generated from "./wildlife-photos.generated.json";
+import web from "./wildlife-photos.web.json";
 
 type Generated = { width: number; height: number; bytes: number; tone: { light: string; dark: string } };
 type ManifestPhoto = { file: string; title: string; hover: string; caption: string; alt: string };
@@ -20,7 +24,10 @@ type ManifestRow = { photos: (string | string[])[]; width?: number; space?: "tig
 
 export type Photo = {
   id: string;
+  /** the largest web copy (the original's own pixel size) */
   src: string;
+  /** every web copy, for a responsive srcset */
+  srcSet: string;
   title: string;
   /** the short caption: shown on hover and keyboard focus */
   hover: string;
@@ -41,6 +48,8 @@ export type Cell = {
   photos: Photo[];
   /** its width, as CSS: chosen so every cell in the row is exactly as tall */
   width: string;
+  /** roughly its share of the row's width (for the photographs' `sizes`) */
+  share: number;
 };
 
 export type Row = {
@@ -60,9 +69,13 @@ function photo(id: string): Photo {
   const p = all[id];
   const g = p && gen[p.file];
   if (!p || !g) throw new Error(`wildlife: no data for "${id}" — run node scripts/build-wildlife-photos.mjs`);
+  const w = (web as Record<string, { stem: string; widths: number[] }>)[p.file];
+  if (!w) throw new Error(`wildlife: no web sizes for "${id}" — run node scripts/build-wildlife-web.mjs`);
+  const at = (width: number) => `/assets/wildlife-web/${w.stem}-${width}.webp`;
   return {
     id,
-    src: `/assets/wildlife-photography/${p.file}`,
+    src: at(w.widths[w.widths.length - 1]),
+    srcSet: w.widths.map((width) => `${at(width)} ${width}w`).join(", "),
     title: p.title,
     hover: p.hover,
     caption: p.caption,
@@ -91,6 +104,7 @@ function layoutRow(groups: Photo[][]): Cell[] {
   return groups.map((ps) => ({
     photos: ps,
     width: ps.length === 1 ? `calc(${H} * ${+ar(ps[0]).toFixed(6)})` : `calc((${H} - var(--g) * ${ps.length - 1}) / ${+S(ps).toFixed(6)})`,
+    share: (ps.length === 1 ? ar(ps[0]) : 1 / S(ps)) / A,
   }));
 }
 

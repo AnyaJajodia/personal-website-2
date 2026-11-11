@@ -10,8 +10,10 @@ import type { Theme } from "@/content/work";
  * pace just ahead of the viewport. It is the same pen as the homepage's (the
  * same weight, --line-w, and the same fade-in once the fonts are set), in the
  * page's own ink. Scrolling back retracts it; reduced motion shows it fully
- * drawn. On phones the line is only the flourish beside the breadcrumb: it
- * comes in from the edge, ties its mark and leaves again.
+ * drawn. On phones there is no margin to run in, so the line is a flourish
+ * beside the breadcrumb — it comes in from the edge, ties its mark and
+ * leaves again — and it comes back at the foot of the page, to tie its knot
+ * on the closing rule (it runs down between the two off the screen's edge).
  *
  * Progress is continuous, not point by point: each point's "reach" is the
  * lowest the pen has been by then (so a loop is drawn as the pen passes
@@ -44,7 +46,16 @@ function buildPath(theme: Theme, root: HTMLElement): Pt[] | null {
   const contentEl = root.querySelector('[data-line="content"]');
   const content = q("content");
   if (content && contentEl) content.right -= parseFloat(getComputedStyle(contentEl).paddingRight) || 0;
+  const endEl = root.querySelector<HTMLElement>('[data-line="end"]');
   const end = q("end");
+  // phones: the knot's place on the closing rule is free unless the page says
+  // otherwise or a figure already stands there
+  const knotFree = () =>
+    endEl?.dataset.lineReturn !== "none" &&
+    !Array.from(root.querySelectorAll<HTMLElement>("[data-avatar]")).some((a) => {
+      const r = rel(a, rootTop)!;
+      return r.width > 0 && r.right > document.documentElement.clientWidth - 90 && r.bottom > end!.top - 70 && r.top < end!.top + 70;
+    });
   if (!title || !top || !content || !end) return null;
   const vw = document.documentElement.clientWidth;
   const H = root.clientHeight; // the page itself, footer included
@@ -72,7 +83,7 @@ function buildPath(theme: Theme, root: HTMLElement): Pt[] | null {
       pts.push(pt(vw + 30, y - 52), pt(vw - 10, y - 34), pt(f + 20, y - 20));
       pts.push(pt(f - 8, y + 6), ...loop(f, y - 4, 11, 12, { drift: 14 }));
       pts.push(pt(f + 26, y + 16), pt(vw + 30, y + 32));
-      return resample(spline(pts, 14), N);
+      return phone(pts, vw, end.top, knotFree());
     }
     const f = clamp((crumb?.right ?? vw * 0.6) + 46, vw - 110, vw - 34);
     pts.push(pt(vw + 30, fy - 46), pt(vw - 8, fy - 30), pt(f + 18, fy - 18));
@@ -84,7 +95,7 @@ function buildPath(theme: Theme, root: HTMLElement): Pt[] | null {
       pts.push(pt(f - 8, fy + 6), ...loop(f, fy - 4, 11, 12, { drift: 14 }));
     }
     pts.push(pt(f + 26, fy + 18), pt(vw + 30, fy + 34));
-    return resample(spline(pts, 14), N);
+    return phone(pts, vw, end.top, knotFree());
   }
   // A page can give the flourish a job instead of a fixed place: an element
   // marked data-line="flourish" (wide screens only; every other page and
@@ -183,6 +194,30 @@ const COLORS: Record<Theme, string> = {
   default: "var(--accent)",
 };
 
+/**
+ * Phones: the flourish (`head`), then off the screen's edge down the page,
+ * and back in at the closing rule (`endY`) to tie a knot on its right-hand
+ * end and trail off beneath it. The two visible parts are sampled finely;
+ * the run between them, never seen, is a few points.
+ */
+function phone(head: Pt[], vw: number, endY: number, back = true): Pt[] {
+  const top = resample(spline(head, 14), 260);
+  const last = top[top.length - 1];
+  // a page too short to leave and return, or one whose closing rule is taken
+  // (data-line-return="none": a figure stands where the knot would be)
+  if (!back || endY - last.y < 420) return top;
+  const off = vw + 34;
+  const kx = vw - 40;
+  const between: Pt[] = [];
+  const steps = Math.max(2, Math.round((endY - 150 - last.y) / 500));
+  for (let i = 1; i <= steps; i++) between.push(pt(off, last.y + ((endY - 150 - last.y) * i) / steps));
+  const tail = resample(
+    spline([pt(off, endY - 150), pt(vw + 14, endY - 84), pt(kx + 20, endY - 26), ...loop(kx, endY + 2, 11, 13, { dir: -1 }), pt(kx - 4, endY + 30), pt(kx + 12, endY + 58)], 14),
+    150,
+  );
+  return [...top, ...between, ...tail];
+}
+
 export default function DetailLine({ theme }: { theme: Theme }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
@@ -196,6 +231,8 @@ export default function DetailLine({ theme }: { theme: Theme }) {
     let pts: Pt[] = [];
     /** reach[i]: the lowest y the path has been by point i (non-decreasing) */
     let reach: number[] = [];
+    /** cum[i]: the path's length up to point i, as a fraction of the whole */
+    let cum: number[] = [];
     let len = 0;
     let shown = 0; // drawn fraction on screen, easing toward the target
     let raf = 0;
@@ -213,7 +250,8 @@ export default function DetailLine({ theme }: { theme: Theme }) {
         else hi = mid;
       }
       const span = reach[hi] - reach[lo];
-      return (lo + (span > 0 ? (y - reach[lo]) / span : 1)) / (n - 1);
+      // by length, not by point: the points needn't be evenly spaced
+      return cum[lo] + (cum[hi] - cum[lo]) * (span > 0 ? (y - reach[lo]) / span : 1);
     };
 
     const render = () => {
@@ -241,6 +279,9 @@ export default function DetailLine({ theme }: { theme: Theme }) {
       pts = p;
       let m = -Infinity;
       reach = p.map((q) => (m = Math.max(m, q.y)));
+      let d = 0;
+      cum = p.map((q, i) => (d += i ? Math.hypot(q.x - p[i - 1].x, q.y - p[i - 1].y) : 0));
+      cum = cum.map((v) => v / (d || 1));
       path.setAttribute("d", toPath(p));
       len = path.getTotalLength();
       path.style.strokeDasharray = `${len} ${len}`;

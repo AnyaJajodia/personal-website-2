@@ -620,3 +620,26 @@ From the "Portfolio Review Pass — Oct 2026" doc. Uncommitted on `testing`.
   the phone row has no room left (the résumé stays in Say hello). Theme button and gutters unchanged at every width.
 - Checked: tsc, eslint; header measured at 320–1440px (no horizontal overflow, no squeezed targets); screenshots
   in light/dark, at rest, settled and hovered at 1440/768/560 (scratchpad qa/shots/pill-sheet.png).
+
+## Experimental design pass — branch `experiment/design-pass` (10 Nov 2026)
+Cut from `testing` @ 516f965. Nothing committed, merged, pushed or deployed. Direction: "follow the thread through" —
+the site's strongest idea is the thread; it dropped away at page endings, on phones, and under the gallery's weight.
+- Critique (rendered, all 16 routes, 1440/390, light/dark): type sizes and contrast clean on every page (0 failures),
+  focus rings present everywhere, homepage composition and panels sound → left alone. Weak: project-page endings
+  (way on was the quietest thing on the page); gallery served 44 MB of originals (25 MB at load on a phone), homepage
+  9.4 MB; on phones the project-page thread vanished after the top flourish; no way back up 11–16k px pages; 404 plain.
+- Page ending (`WorkPager.tsx`, globals.css "pager"): the next project's own headline, large, with its opening line,
+  as one link between hairlines; label "Next thread · Name"; a thread draws along its foot and the arrow fills on
+  hover/focus; drawn in the NEXT page's ink (`INK` map mirrors each theme's --accent). Back to work + previous sit
+  quietly beneath. AMNH sub-pages keep their overview/sibling pair in the same form. DOM order: onward, back, previous.
+- Phones (`DetailLine.tsx`): the thread leaves after the flourish, runs off-screen, and returns to tie its knot on the
+  closing rule; skipped where an avatar stands there (auto) or `data-line-return="none"` (wildlife). Progress is now by
+  path length, not point index.
+- Wildlife weight: `scripts/build-wildlife-web.mjs` → `public/assets/wildlife-web/*.webp` + `wildlife-photos.web.json`;
+  gallery tiles, the opened view and the homepage pair use srcset/sizes. Originals untouched. 44.3 → 1.6 MB (0.7 phone).
+- Small: "Back to top" in every footer (not 404); 404 gets a drawn thread that ties a knot and stops; taller tap areas
+  (coarse pointers) for homepage text links, footer link, DIODE key links.
+- Verified: tsc, eslint, scratch production build clean; footer-ending/overflow sweep 64/64 (16 routes × 2 sizes × 2
+  themes, incl. expand/collapse, late fonts, narrow→wide resize); keyboard stops all ringed; touch targets 0 under
+  40px; reduced motion (line drawn, no thread animation); Enter/tap on the onward link navigate; qa/check.mjs 190/198
+  (same known failures: 6 older panel checks, 2 borderline avatar-line distances). Before/after: qa/screenshots/experiment/.
