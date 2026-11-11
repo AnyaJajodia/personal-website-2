@@ -27,7 +27,7 @@ export const person = {
  */
 export const site = {
   url: "https://anya.jajodia.org",
-  verification: { google: "", bing: "" },
+  verification: { google: "pMQh2w3VzGaBXhP32J5gXtMKWixgEK7GQoaiA_chb2U", bing: "" },
 };
 
 export const hero = {
