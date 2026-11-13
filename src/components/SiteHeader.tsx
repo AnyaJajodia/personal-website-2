@@ -20,7 +20,8 @@ type Props = {
 };
 
 /** "Anya Jajodia" → "AJ": the brand on the narrowest phones (see globals.css "header") */
-/** the résumé (content/site.ts contact.links): a placeholder until its PDF is supplied */
+/** the résumé (content/site.ts contact.links): opens the PDF in a new tab,
+ * where the browser's viewer saves it; Say hello also offers a Download link */
 const resume = contact.links.find((l) => l.label === "Résumé");
 
 /** an arrow settling into a tray, in the theme button's pen (24-unit grid, 1.7 stroke) */
@@ -131,8 +132,9 @@ export default function SiteHeader({ variant, darkUntilSelector, drawer }: Props
         </nav>
         {variant === "home" && resume ? (
           resume.url ? (
-            <a className="resume-pill" href={resume.url} download>
+            <a className="resume-pill" href={resume.url} target="_blank" rel="noopener">
               <span className="resume-pill__label">{resume.label}</span>
+              <span className="visually-hidden"> (PDF, opens in a new tab)</span>
               <DownloadGlyph />
             </a>
           ) : (

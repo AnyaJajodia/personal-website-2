@@ -1979,6 +1979,65 @@ a.contact-list__row:is(:hover, :focus-visible) {
 a.contact-list__row:is(:hover, :focus-visible) .contact-list__meta {
   translate: 2px -2px;
 }
+/* a file of the site's own (the résumé): the row opens it in a new tab, and
+   a Download link sits at its end behind a short hairline */
+.contact-list__split {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--rule);
+}
+.contact-list__split > .contact-list__row {
+  flex: 1;
+  min-width: 0;
+  border-bottom: 0;
+}
+.contact-list__download {
+  position: relative;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  margin-left: 1rem;
+  padding-left: 1rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+  text-decoration: none;
+  touch-action: manipulation;
+  transition: color 0.25s var(--ease);
+}
+/* the hairline: shorter than the row, so the target stays its full height */
+.contact-list__download::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 1.4rem;
+  translate: 0 -50%;
+  border-left: 1px solid var(--rule);
+}
+.contact-list__download:is(:hover, :focus-visible) {
+  color: var(--accent);
+}
+.contact-list__download-glyph {
+  width: 1rem;
+  height: 1rem;
+  margin-top: -1px;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.contact-list__download-arrow {
+  transition: translate 0.35s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .contact-list__download:is(:hover, :focus-visible) .contact-list__download-arrow {
+    translate: 0 1.5px;
+  }
+}
 /* not supplied yet: the same row, its note in the detail column, in the
    site's italic hand */
 .contact-list__note {

@@ -11,6 +11,8 @@ export type ExternalLink = {
   url: string | null;
   /** Shown instead of a link while url is null */
   pendingNote?: string;
+  /** a file on this site: the name it saves under, offered as a Download link */
+  download?: string;
 };
 
 export const person = {
@@ -236,9 +238,11 @@ export const contact = {
   links: [
     { label: "LinkedIn", url: "https://www.linkedin.com/in/anya-jajodia/" },
     { label: "GitHub", url: "https://github.com/AnyaJajodia" },
-    // Résumé: no PDF supplied yet — never render a dead download button.
-    { label: "Résumé", url: null, pendingNote: "Updated PDF to come" },
-  ] satisfies ExternalLink[],
+    // Résumé: the PDF in public/resume/. To update it, replace that file
+    // (keep the name) — every résumé link on the site points here. It opens
+    // in a new tab; `download` is the file name it saves under.
+    { label: "Résumé", url: "/resume/anya-jajodia-resume.pdf", download: "Anya Jajodia Résumé.pdf" },
+  ] as ExternalLink[],
   footer: "Anya Jajodia · New York",
 };
 

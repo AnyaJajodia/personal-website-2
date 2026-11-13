@@ -57,7 +57,7 @@ The homepage takes its roles and dates from the revised `handoff/content/home.md
 | Item | Where | Status |
 |------|-------|--------|
 | LinkedIn profile | `contact.links` in `site.ts` | **Supplied (home.md, 25 Oct 2026):** https://www.linkedin.com/in/anya-jajodia/ |
-| Résumé PDF | `contact.links` in `site.ts` | `url: null` → shows "Updated PDF to come" in Say hello, and the homepage header's Résumé pill is a placeholder (aria-disabled). Add the PDF to `public/` and set `url`: both become download links |
+| Résumé PDF | `public/resume/anya-jajodia-resume.pdf`, linked from `contact.links` in `site.ts` | **Done (Nov 2026 PDF).** The header pill, the hero links and Say hello open it in a new tab; Say hello also has a Download link. To update it, replace the file and keep its name |
 | PMMY paper | `src/content/research.ts` → `pmmy.publication.paperLink` | No verified URL supplied, so none is shown (no placeholder). Add `paperLink: { label, url }` once a publisher URL or public PDF exists |
 | Teenage pregnancy paper | `src/content/research.ts` | **Linked** (supplied in the Markdown, checked live: IJSHRE PDF), with Project Ārogya’s page |
 | Crackd.ai repositories | `src/content/crackd.ts` → `apps[].repo` | One per application, each linked from its own application (all three checked public, 26 Oct) |
